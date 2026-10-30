@@ -1,0 +1,1398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Control Room, connected station</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#050a1c}
+button{font-family:inherit}
+.roomhit{fill:rgba(255,209,102,0);cursor:pointer;transition:fill .15s}
+.roomhit:hover{fill:rgba(255,209,102,0.10)}
+</style>
+</helmet>
+<div id="zoom-root" style="position: relative; width: 2440px; height: 1400px; background: #050a1c; overflow: hidden; touch-action: pan-x pan-y; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #e8eeff">
+<div id="zoom-station" style="position: absolute; left: 0; top: 0; width: 2440px; height: 1400px; transform-origin: 0 0; transform: {{zStation}}">
+<svg width="2440" height="1400" viewBox="0 0 2440 1400" style="position: absolute; left: 0; top: 0" role="img" aria-label="The whole station seen from an angle: seven rooms joined by a hallway. Tap a room to open it.">
+<sc-for list="{{stars}}" as="s" hint-placeholder-count="520">
+<circle cx="{{s.x}}" cy="{{s.y}}" r="{{s.r}}" style="fill: #ffffff; fill-opacity: {{s.o}}"></circle>
+</sc-for>
+<sc-for list="{{bg}}" as="c" hint-placeholder-count="6">
+<circle cx="{{c.x}}" cy="{{c.y}}" r="{{c.r}}" style="fill: {{c.fill}}; fill-opacity: {{c.op}}"></circle>
+</sc-for>
+<sc-for list="{{polys}}" as="p" hint-placeholder-count="3000">
+<polygon points="{{p.pts}}" style="fill: {{p.fill}}; stroke: {{p.stroke}}; stroke-width: {{p.sw}}; fill-opacity: {{p.op}}; stroke-linejoin: round; stroke-linecap: round"></polygon>
+</sc-for>
+<sc-for list="{{circles}}" as="c" hint-placeholder-count="10">
+<circle cx="{{c.x}}" cy="{{c.y}}" r="{{c.r}}" style="fill: {{c.fill}}; fill-opacity: {{c.op}}"></circle>
+</sc-for>
+<sc-for list="{{roomHits}}" as="h" hint-placeholder-count="7">
+<polygon class="roomhit" points="{{h.pts}}" onClick="{{h.go}}" aria-label="{{h.label}}"></polygon>
+</sc-for>
+</svg>
+<sc-for list="{{labels}}" as="t" hint-placeholder-count="60">
+<div style="position: absolute; left: {{t.x}}px; top: {{t.y}}px; width: 0; height: 0; pointer-events: none">
+<div style="position: absolute; white-space: nowrap; pointer-events: none; font-family: 'Chakra Petch', sans-serif; font-size: {{t.size}}px; font-weight: {{t.weight}}; color: {{t.fill}}; text-shadow: {{t.sh}}; transform: {{t.tf}}; line-height: 1">{{t.text}}</div>
+</div>
+</sc-for>
+<div style="position: absolute; left: 40px; top: 28px; right: 40px; pointer-events: none">
+<div style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; letter-spacing: 0.2em; color: #5ce1ff">{{kicker}}</div>
+<div style="font-family: 'Chakra Petch', sans-serif; font-size: 44px; font-weight: 700; letter-spacing: 0.04em">{{title}}</div>
+<div style="font-size: 20px; color: #9fb0d6; margin-top: 4px">{{sub}}</div>
+</div>
+</div>
+<sc-if value="{{roomOn}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; top: 0; width: 2440px; height: 1400px; background: rgba(5, 10, 28, 0.94)">
+<div id="zoom-room" style="position: absolute; left: 0; top: 0; width: 1280px; height: 900px; transform: {{zRoom}}; transform-origin: 0 0; background: #050a1c; overflow: hidden; border: 2px solid #c9a227; box-sizing: border-box; color: #e8eeff">
+<svg width="1280" height="900" viewBox="0 0 1280 900" style="position: absolute; left: 0; top: 0" role="img" aria-label="{{room.title}}">
+<sc-for list="{{room.stars}}" as="s" hint-placeholder-count="140">
+<circle cx="{{s.x}}" cy="{{s.y}}" r="{{s.r}}" style="fill: #ffffff; fill-opacity: {{s.o}}"></circle>
+</sc-for>
+<sc-for list="{{room.polys}}" as="p" hint-placeholder-count="900">
+<polygon points="{{p.pts}}" style="fill: {{p.fill}}; stroke: {{p.stroke}}; stroke-width: {{p.sw}}; fill-opacity: {{p.op}}; stroke-linejoin: round; stroke-linecap: round"></polygon>
+</sc-for>
+<sc-for list="{{room.circles}}" as="c" hint-placeholder-count="10">
+<circle cx="{{c.x}}" cy="{{c.y}}" r="{{c.r}}" style="fill: {{c.fill}}; fill-opacity: {{c.op}}"></circle>
+</sc-for>
+
+</svg>
+<sc-for list="{{room.labels}}" as="t" hint-placeholder-count="30">
+<div style="position: absolute; left: {{t.x}}px; top: {{t.y}}px; width: 0; height: 0; pointer-events: none">
+<div style="position: absolute; white-space: nowrap; pointer-events: none; font-family: 'Chakra Petch', sans-serif; font-size: {{t.size}}px; font-weight: {{t.weight}}; color: {{t.fill}}; text-shadow: {{t.sh}}; transform: {{t.tf}}; line-height: 1">{{t.text}}</div>
+</div>
+</sc-for>
+<div style="position: absolute; left: 28px; top: 16px; right: 200px">
+<div style="font-family: 'Chakra Petch', sans-serif; font-size: 13px; letter-spacing: 0.2em; color: #ffd166">{{room.kicker}}</div>
+<div style="font-family: 'Chakra Petch', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 0.04em">{{room.title}}</div>
+<div style="font-size: 14px; color: #9fb0d6; margin-top: 2px">{{room.sub}}</div>
+</div>
+<button onClick="{{room.toggleHints}}" style="position: absolute; right: 236px; top: 20px; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 2px solid #c9a227; background: #1a1630; color: #ffd166; font-size: 14px; font-weight: 600; cursor: pointer">{{room.hintsLabel}}</button>
+<button onClick="{{closeRoom}}" style="position: absolute; right: 24px; top: 20px; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 2px solid #5ce1ff; background: #10223e; color: #e8f6ff; font-size: 14px; font-weight: 600; cursor: pointer">Back to the station</button>
+<sc-for list="{{room.hits}}" as="h" hint-placeholder-count="10">
+<button onClick="{{h.go}}" aria-label="{{h.label}}" style="position: absolute; left: {{h.l}}px; top: {{h.t}}px; width: {{h.w}}px; height: {{h.h}}px; padding: 0; margin: 0; background: transparent; border: {{h.bd}}; border-radius: 10px; cursor: pointer"></button>
+</sc-for>
+<div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 12px">
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center">
+<sc-for list="{{room.previews}}" as="b" hint-placeholder-count="4">
+<button onClick="{{b.go}}" style="min-height: 40px; padding: 0 14px; border-radius: 8px; border: 2px solid {{b.edge}}; background: {{b.bg}}; color: #f1f5ff; font-size: 14px; font-weight: 600; cursor: pointer">{{b.label}}</button>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{room.ov.on}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(5, 10, 28, 0.96); overflow-y: auto; padding: 24px 40px; box-sizing: border-box">
+<div style="max-width: 1000px; margin: 0 auto">
+<button onClick="{{room.ov.back}}" style="min-height: 48px; padding: 0 22px; border-radius: 10px; border: 2px solid #5ce1ff; background: #10223e; color: #e8f6ff; font-size: 16px; font-weight: 600; cursor: pointer">{{room.ov.backLabel}}</button>
+<div style="font-family: 'Chakra Petch', sans-serif; font-size: 34px; font-weight: 700; margin-top: 16px; color: #ffd166">{{room.ov.title}}</div>
+<div style="font-size: 16px; color: #9fb0d6; margin-bottom: 14px">{{room.ov.sub}}</div>
+<sc-for list="{{room.ov.cards}}" as="c" hint-placeholder-count="0">
+<button onClick="{{c.go}}" style="display: inline-flex; flex-direction: column; justify-content: space-between; width: 226px; height: 112px; margin: 0 12px 12px 0; padding: 12px 14px; box-sizing: border-box; text-align: left; border-radius: 12px; border: 3px solid {{c.edge}}; background: {{c.bg}}; color: #0a0f24; cursor: pointer; vertical-align: top">
+<span style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700">{{c.name}}</span>
+<span style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600"><span>{{c.role}}</span><span style="width: 22px; height: 22px; border-radius: 11px; background: {{c.dot}}; border: 2px solid #0a0f24"></span></span>
+</button>
+</sc-for>
+<sc-for list="{{room.ov.rows}}" as="r" hint-placeholder-count="5">
+<div style="display: flex; gap: 14px; padding: 12px 14px; margin-bottom: 8px; border-radius: 10px; background: #0f1a36; border-left: 6px solid {{r.edge}}; font-size: 17px; line-height: 1.35">
+<div style="width: 210px; flex-shrink: 0; color: #9fb0d6; font-weight: 600">{{r.k}}</div>
+<div style="flex-grow: 1">{{r.v}}</div>
+</div>
+</sc-for>
+<div style="margin-top: 10px">
+<sc-for list="{{room.ov.actions}}" as="a" hint-placeholder-count="0">
+<button onClick="{{a.go}}" style="min-height: 52px; padding: 0 20px; margin: 0 10px 10px 0; border-radius: 10px; border: 2px solid {{a.edge}}; background: {{a.bg}}; color: #f1f5ff; font-size: 16px; font-weight: 600; cursor: pointer">{{a.label}}</button>
+</sc-for>
+</div>
+<div style="font-size: 13px; color: #6f7fa8; margin-top: 12px">{{room.ov.note}}</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2440,"height":1400}}'>
+let A = 44, B = 22, C = 44;
+let PS = 1, OX = 0, OY = 0, COMP = false, TS = 1, WOP = 1, SW = 1280, SH = 900;
+let WH = 3.4;
+let S = null, seed = 5;
+function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+function shade(hex, f) {
+const n = parseInt(hex.slice(1), 16);
+const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(f >= 0 ? v + (255 - v) * f : v * (1 + f)));
+return '#' + c.map((v) => ('0' + v.toString(16)).slice(-2)).join('');
+}
+function P(x, y, z) { return [S.ox + (x + OX - y - OY) * A, S.oy + (x + OX + y + OY) * B - z * C]; }
+function pts(arr) { return arr.map((p) => P(p[0], p[1], p[2]).map((v) => v.toFixed(1)).join(',')).join(' '); }
+function newScene(W, D, k) { if (COMP) return; k = k || 1; A = 44 * k; B = 22 * k; C = 44 * k; S = { W: W, D: D, ox: 640 - (W - D) * A / 2, oy: 270, items: [], floor: [], circles: [], texts: [], hits: [] }; seed = 5; }
+function Fl(x0, y0, x1, y1, fill, stroke, sw) { S.floor.push({ pts: pts([[x0, y0, 0], [x1, y0, 0], [x1, y1, 0], [x0, y1, 0]]), fill: fill, stroke: stroke || 'none', sw: sw || 1, op: 1 }); }
+function Bx(x, y, w, d, h, color, z0, extra) {
+const b = Object.assign({ t: 'box', x: x, y: y, w: w, d: d, h: h, color: color, z0: z0 || 0, decals: null }, extra || {});
+b.key = b.wall ? -999 : x + w / 2 + y + d / 2 + OX + OY; b.ox = OX; b.oy = OY; S.items.push(b); return b;
+}
+function Cy(x, y, r, h, color, z0, extra) {
+const c = Object.assign({ t: 'cyl', x: x, y: y, r: r, h: h, color: color, z0: z0 || 0 }, extra || {});
+c.key = x + y + OX + OY; c.ox = OX; c.oy = OY; S.items.push(c); return c;
+}
+let SKIPPE = false;
+function Cat(x, y, o) { return Pe(x, y, Object.assign({ kind: 'cat' }, o)); }
+function Pe(x, y, o) { if (SKIPPE) return {}; const p = Object.assign({ t: 'person', x: x, y: y, z0: 0, zoff: 0 }, o); p.key = x + y + OX + OY + (o.kadd || 0); p.ox = OX; p.oy = OY; S.items.push(p); return p; }
+function Raw(polys) { S.items.push({ t: 'raw', key: -998, z0: 0, polys: polys }); }
+function WP(plane, uvs, fill, stroke, sw) {
+const a = uvs.map((p) => (plane === 'N' ? [p[0], 0.01, p[1]] : [0.01, p[0], p[1]]));
+return { pts: pts(a), fill: fill, stroke: stroke || 'none', sw: sw || 1, op: 1 };
+}
+function R(face, u0, u1, v0, v1, fill, stroke, sw) { return { face: face, u0: u0, u1: u1, v0: v0, v1: v1, fill: fill, stroke: stroke || 'none', sw: sw || 1 }; }
+function fuv(b, face, u, v) {
+if (face === 'S') return [b.x + u * b.w, b.y + b.d, b.z0 + v * b.h];
+if (face === 'E') return [b.x + b.w, b.y + u * b.d, b.z0 + v * b.h];
+return [b.x + u * b.w, b.y + v * b.d, b.z0 + b.h];
+}
+function faceDecal(b, d) {
+const q = [[d.u0, d.v0], [d.u1, d.v0], [d.u1, d.v1], [d.u0, d.v1]].map((p) => fuv(b, d.face, p[0], p[1]));
+return { pts: pts(q), fill: d.fill, stroke: d.stroke, sw: d.sw, op: 1 };
+}
+function FT(b, face, u, v, text, size, fill, wt) {
+const p = P.apply(null, fuv(b, face, u, v));
+const m = face === 'E' ? 'skewY(-26.57deg)' : face === 'S' ? 'skewY(26.57deg)' : 'matrix(1, 0.5, -1, 0.5, 0, 0)';
+S.texts.push({ x: p[0].toFixed(1), y: p[1].toFixed(1), text: text, size: size * TS, weight: wt || 700, fill: fill, tf: 'translate(-50%, -50%) ' + m, sh: 'none' });
+}
+function T(x, y, z, text, size, fill) { const p = P(x, y, z); S.texts.push({ x: p[0].toFixed(1), y: p[1].toFixed(1), text: text, size: size * TS, weight: 700, fill: fill, tf: 'translate(-50%, -50%)', sh: '0 0 3px #050a1c, 0 0 3px #050a1c, 0 0 2px #050a1c' }); }
+function hitBox(id, label, x0, y0, z0, x1, y1, z1, pad) {
+let l = 1e9, t = 1e9, r = -1e9, b = -1e9;
+[x0, x1].forEach((x) => [y0, y1].forEach((y) => [z0, z1].forEach((z) => { const p = P(x, y, z); l = Math.min(l, p[0]); r = Math.max(r, p[0]); t = Math.min(t, p[1]); b = Math.max(b, p[1]); })));
+const pd = pad === undefined ? 12 : pad;
+S.hits.push({ id: id, label: label, l: l - pd, t: t - pd, w: r - l + 2 * pd, h: b - t + 2 * pd });
+}
+function hitPerson(id, label, x, y, z) { if (SKIPPE) return; const f = P(x, y, z || 0); S.hits.push({ id: id, label: label, l: f[0] - 36, t: f[1] - 132, w: 72, h: 142 }); }
+function drawBox(out, b) {
+const z0 = b.z0, z1 = b.z0 + b.h, x1 = b.x + b.w, y1 = b.y + b.d, st = '#0d0806';
+out.push({ pts: pts([[b.x, y1, z0], [x1, y1, z0], [x1, y1, z1], [b.x, y1, z1]]), fill: shade(b.color, -0.05), stroke: st, sw: 1, op: b.op || 1 });
+out.push({ pts: pts([[x1, b.y, z0], [x1, y1, z0], [x1, y1, z1], [x1, b.y, z1]]), fill: shade(b.color, -0.3), stroke: st, sw: 1, op: b.op || 1 });
+out.push({ pts: pts([[b.x, b.y, z1], [x1, b.y, z1], [x1, y1, z1], [b.x, y1, z1]]), fill: shade(b.color, 0.2), stroke: st, sw: 1, op: b.op || 1 });
+(b.decals || []).forEach((d) => out.push(faceDecal(b, d)));
+}
+function drawCyl(out, c) {
+const z1 = c.z0 + c.h, st = '#0d0806', side = [], topring = [], hi = [];
+for (let i = 0; i <= 12; i++) { const th = (-45 + i * 15) * Math.PI / 180; side.push([c.x + Math.cos(th) * c.r, c.y + Math.sin(th) * c.r]); }
+const lo = side.map((p) => P(p[0], p[1], c.z0)), up = side.map((p) => P(p[0], p[1], z1)).reverse();
+out.push({ pts: lo.concat(up).map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), fill: shade(c.color, -0.12), stroke: st, sw: 1, op: 1 });
+for (let i = 0; i < 18; i++) { const th = i / 18 * Math.PI * 2; topring.push([c.x + Math.cos(th) * c.r, c.y + Math.sin(th) * c.r, z1]); }
+out.push({ pts: pts(topring), fill: c.top || shade(c.color, 0.22), stroke: st, sw: 1, op: 1 });
+}
+function octa(cx, cy, r) { const a = []; for (let i = 0; i < 10; i++) { const t = (i / 10) * Math.PI * 2; a.push([cx + Math.cos(t) * r, cy + Math.sin(t) * r]); } return a; }
+function drawCat(out, X, Y, o) {
+const s = 2.6 * (typeof PS === 'undefined' ? 1 : PS), ink = '#2a1608', or = '#e8832a', dk = '#b8581a', lt = '#f6c48a', d = o.dir || 1;
+const q = (arr, fill, stroke, sw) => out.push({ pts: arr.map((p) => (X + p[0] * d * s).toFixed(1) + ',' + (Y + p[1] * s).toFixed(1)).join(' '), fill: fill || 'none', stroke: stroke || 'none', sw: sw || 0.8, op: 1 });
+out.push({ pts: [[-10, -0.5], [10, -0.5], [9, 1.8], [-9, 1.8]].map((p) => (X + p[0] * s).toFixed(1) + ',' + (Y + p[1] * s).toFixed(1)).join(' '), fill: '#000000', stroke: 'none', sw: 1, op: 0.3 });
+if (o.pose === 'sleep') {
+q([[-9, 0], [-8, -4], [-4, -7], [3, -7], [8, -4], [9, 0]], or, ink, 0.8);
+q([[-4, -7], [-2, -7], [-2, -1], [-4, -1]], dk); q([[0, -7], [2, -7], [2, -1], [0, -1]], dk);
+q([[3, -6], [10, -6], [11, -1], [3, -1]], or, ink, 0.8);
+q([[3.5, -6], [4.5, -9], [6.5, -6]], or, ink, 0.7); q([[7.5, -6], [9.5, -9], [10.5, -6]], or, ink, 0.7);
+q([[5, -3.6], [6.6, -3.6]], 'none', ink, 1); q([[8, -3.6], [9.6, -3.6]], 'none', ink, 1);
+q([[7, -2.4], [8, -2.4]], 'none', '#e07fa0', 1.2);
+q([[-9, 0], [-7, 1], [3, 1.2], [9, 0.6], [9, -0.6], [3, 0], [-7, -0.4]], dk, ink, 0.6);
+return;
+}
+if (o.pose === 'sit') {
+q([[-6, -1], [-9.5, -1], [-10.5, -6], [-8.8, -6], [-7.8, -3.2], [-5.5, -3.2]], or, ink, 0.7);
+q([[-6, -1], [5.5, -1], [6.5, -6], [3.5, -12.5], [-3, -12.5], [-6.5, -6]], or, ink, 0.8);
+q([[-4, -9], [-2.4, -9], [-2.4, -2], [-4, -2]], dk); q([[-0.5, -9], [1.1, -9], [1.1, -2], [-0.5, -2]], dk);
+q([[2.5, -1], [6, -1], [6.5, -7], [2.5, -9]], lt, ink, 0.6);
+q([[0.6, -19.5], [8, -19.5], [8.8, -12.6], [0.6, -12.6]], or, ink, 0.8);
+q([[1, -19.5], [2.2, -23], [4.2, -19.5]], or, ink, 0.7); q([[5, -19.5], [6.8, -23], [8, -19.5]], or, ink, 0.7);
+q([[5.8, -17], [7, -17], [7, -15.8], [5.8, -15.8]], ink); q([[2.4, -17], [3.6, -17], [3.6, -15.8], [2.4, -15.8]], ink);
+q([[4.3, -14.8], [5.3, -14.8], [5.3, -14], [4.3, -14]], '#e07fa0');
+return;
+}
+const ph = o.ph ? 1 : 0;
+q([[-7, -4], [-5.4, -4], [-5.4, ph ? 0 : -0.8], [-7, ph ? 0 : -0.8]], dk, ink, 0.5); q([[3, -4], [4.6, -4], [4.6, ph ? -0.8 : 0], [3, ph ? -0.8 : 0]], dk, ink, 0.5);
+q([[-8, -10], [5, -10], [6, -4], [-8, -4]], or, ink, 0.8);
+q([[-5, -10], [-3.4, -10], [-3.4, -4], [-5, -4]], dk); q([[-1.4, -10], [0.2, -10], [0.2, -4], [-1.4, -4]], dk);
+q([[-4.2, -4], [-2.6, -4], [-2.6, ph ? -0.8 : 0], [-4.2, ph ? -0.8 : 0]], or, ink, 0.5); q([[1, -4], [2.6, -4], [2.6, ph ? 0 : -0.8], [1, ph ? 0 : -0.8]], or, ink, 0.5);
+q([[-8, -9], [-10.5, -11], [-10.5, -17], [-8.8, -17], [-8.8, -11.5], [-7.5, -8]], or, ink, 0.7);
+q([[4.6, -13], [11, -13], [11.6, -7], [4.6, -7]], or, ink, 0.8);
+q([[5, -13], [6.2, -16.5], [8, -13]], or, ink, 0.7); q([[8.6, -13], [10.2, -16.5], [11, -13]], or, ink, 0.7);
+q([[9.2, -10.6], [10, -10.6], [10, -9.4], [9.2, -9.4]], ink); q([[6.2, -10.6], [7, -10.6], [7, -9.4], [6.2, -9.4]], ink);
+q([[8.2, -8.4], [9.2, -8.4], [9.2, -7.8], [8.2, -7.8]], '#e07fa0');
+}
+const FACE_DEG = { S: 0, SE: 45, E: 90, NE: 135, N: 180, NW: 225, W: 270, SW: 315 };
+function faceDeg(o) { if (o.face && FACE_DEG[o.face] !== undefined) return FACE_DEG[o.face]; return o.back ? 180 : 0; }
+function pBack(o) { const d = faceDeg(o); return d > 90 && d < 270; }
+function shadeC(hex, f) {
+if (!hex || hex[0] !== '#' || hex.length !== 7) return hex;
+const n = parseInt(hex.slice(1), 16), c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.max(0, Math.min(255, Math.round(v * f))));
+return '#' + c.map((v) => (v < 16 ? '0' : '') + v.toString(16)).join('');
+}
+function drawPerson(out, txt, X, Y, o) {
+if (o.kind === 'cat') { drawCat(out, X, Y, o); return; }
+const s = 2 * (typeof PS === 'undefined' ? 1 : PS), ink = '#0a0f24', k = o.kind || 'plain', skin = o.skin || '#f1c9a5', K = 0.5;
+const deg = faceDeg(o) * Math.PI / 180, fx = Math.sin(deg), fd = Math.cos(deg), rx = -Math.cos(deg), rd = Math.sin(deg);
+const seated = !!o.seated, H = seated ? 1 : 15, F = seated ? 22 * (o.zoff || 0.5) : 0, ph = o.ph ? 1 : 0, mv = !seated && o.ph !== undefined;
+const PA = { captain: '#141c38', police: '#161a26', librarian: '#4a5568', engineer: '#37598a', plain: '#3b5a8a' };
+const TOP = { captain: o.shirt || '#1f2f5a', police: '#12151c', librarian: '#e8a0b8', engineer: '#3d6296', plain: '#eeeae0' };
+const SLV = { captain: o.shirt || '#1f2f5a', police: '#4a5a7a', librarian: '#e8a0b8', engineer: '#3d6296', plain: '#eeeae0' };
+const HAIR = { captain: skin, police: '#141414', librarian: '#e8c872', engineer: '#5a3a22', plain: '#6a4a2a' };
+const pants = o.pants || PA[k] || '#26364a', top = TOP[k] || o.shirt || '#888888', sleeve = SLV[k] || top, hair = HAIR[k] || o.hair || '#2a2220';
+const shoe = k === 'plain' ? '#e8e8e8' : k === 'engineer' ? '#3a2a1a' : '#10131c';
+const parts = [], texts = [];
+const B = (cx, cy, z0, w, d, h, c, dec, ex) => { const p = Object.assign({ cx: cx, cy: cy, z0: z0, w: w, d: d, h: h, c: c, dec: dec || {} }, ex || {}); parts.push(p); return p; };
+const R4 = (u0, u1, v0, v1, fill, op, stroke, sw) => ({ p: [[u0, v0], [u1, v0], [u1, v1], [u0, v1]], fill: fill, op: op === undefined ? 1 : op, stroke: stroke || 'none', sw: sw || 1 });
+const LN = (pts, stroke, sw) => ({ p: pts, fill: 'none', stroke: stroke, sw: sw, op: 1 });
+const OC = (cu, cv, ru, rv, fill, stroke, sw) => { const p = []; for (let i = 0; i < 8; i++) { const a = (i * 45 + 22.5) * Math.PI / 180; p.push([cu + ru * Math.cos(a), cv + rv * Math.sin(a)]); } return { p: p, fill: fill, op: 1, stroke: stroke || 'none', sw: sw || 1 }; };
+const hx = (x) => (7 - x) / 14, hz = (z) => (z - 36) / 14, tx = (x) => (8 - x) / 16, tz = (z) => (z - 15) / 21;
+const swing = mv ? (ph ? 2.2 : -2.2) : 0;
+// legs
+if (!seated) {
+[-3, 3].forEach((cx, i) => {
+const sw = i ? swing : -swing, dec = k === 'engineer' ? { f: [R4(0.05, 0.95, 0.33, 0.56, '#1f3556', 0.8)] } : {};
+B(cx, sw, 1.5, 4.4, 5.6, H - 1.5, pants, dec); B(cx, sw + 1.1, 0, 4.8, 8, 2, shoe);
+});
+} else {
+[-3, 3].forEach((cx) => { B(cx, 2.8, 0, 4.6, 11, 4.4, pants); B(cx, 8.0, -F + 2, 4.4, 4.6, F + 2.4, pants); B(cx, 9.4, -F, 4.8, 8, 2, shoe); });
+}
+// torso
+const tf = [], tb = [];
+if (k === 'captain') { tf.push({ p: [[0.281, 1], [0.719, 1], [0.625, 0.762], [0.375, 0.762]], fill: '#f2f2f2', op: 1, stroke: 'none', sw: 1 }); [31, 26, 21].forEach((z) => { tf.push(OC(tx(3), tz(z), 1.1 / 16, 1.1 / 21, '#ffd166')); tf.push(OC(tx(-3), tz(z), 1.1 / 16, 1.1 / 21, '#ffd166')); }); }
+if (k === 'librarian') { tf.push({ p: [[0.3125, 1], [0.6875, 1], [0.65, 0.286], [0.35, 0.286]], fill: '#f4ecd8', op: 1, stroke: ink, sw: 0.5 }); [31, 27, 23].forEach((z) => tf.push(OC(0.5, tz(z), 0.8 / 16, 0.8 / 21, '#c9a227'))); }
+if (k === 'police') { tf.push(R4(0.3125, 0.6875, 0, 1, '#4a5a7a')); tf.push(OC(tx(5.5), tz(31), 1.7 / 16, 1.7 / 21, '#ffd166', ink, 0.5)); }
+if (k === 'engineer') {
+tf.push(R4(tx(5), tx(-5), tz(22), tz(31), '#2f5280', 1, ink, 0.6)); tf.push(R4(tx(6), tx(3), tz(31), 1, '#2f5280')); tf.push(R4(tx(-3), tx(-6), tz(31), 1, '#2f5280'));
+tf.push(OC(tx(3), tz(26), 1.5 / 16, 1.5 / 21, '#1a2a4a')); tf.push(OC(tx(-4), tz(33), 1.1 / 16, 1.1 / 21, '#1a2a4a')); tf.push(OC(tx(5), tz(18), 1.3 / 16, 1.3 / 21, '#1a2a4a'));
+tf.forEach((d) => { if (d.fill === '#1a2a4a') d.op = 0.7; });
+tf.push({ p: [[tx(3.4), 1], [tx(-3.4), 1], [tx(-2), tz(33)], [tx(2), tz(33)]], fill: '#b8b4a8', op: 1, stroke: ink, sw: 0.4 });
+}
+const tdec = { f: tf, b: tb };
+B(0, 0, H, 16, 10, 21, top, tdec, { txt: k === 'police' ? [{ face: 'f', v: tz(25), text: 'SECURITY', size: 2.5, fill: '#e8eeff' }, { face: 'b', v: tz(31), text: 'SECURITY', size: 2.75, fill: '#ffffff' }] : null });
+if (k === 'police') { B(0, 0, 16, 16.6, 9.6, 2.8, '#07080b', { f: [R4(0.44, 0.56, 0.1, 0.9, '#c9a227')] }); B(-5.85, 5.2, 30, 2.7, 1.8, 5, '#2a2f3a'); B(-5.8, 5.2, 35, 0.6, 0.6, 4, '#2a2f3a'); B(-9.3, 0, 12, 2.8, 5, 7, '#2a2f3a'); }
+if (k === 'captain') { [-6.25, 6.25].forEach((x) => B(x, 0, 34, 6.5, 5.6, 3, '#c9a227')); }
+if (k === 'engineer') B(-5.5, 5.6, 12.5, 4, 1.2, 7, '#c0302a', { f: [R4(0, 1, 0.85, 1, '#8a1f1a')] });
+// arms
+[-1, 1].forEach((sg) => {
+const x = sg * 9.7, sw = mv ? (sg > 0 ? -swing : swing) * 0.7 : 0, short = k === 'plain';
+if (!seated) {
+if (short) { B(x, sw, H + 13, 3.4, 4.8, 6, sleeve); B(x, sw, H + 2, 3.2, 4.2, 11, skin); }
+else { B(x, sw, H + 5, 3.4, 4.8, 14, sleeve); B(x, sw, H + 2, 3.2, 3.8, 3.4, skin); }
+} else {
+if (short) { B(x, 0, H + 13, 3.4, 4.8, 6, sleeve); B(x, 0, H + 9, 3.2, 4.2, 4, skin); B(x, 5.5, H + 9, 3.2, 9, 3.4, skin); }
+else { B(x, 0, H + 9, 3.4, 4.8, 10, sleeve); B(x, 5.5, H + 9, 3.4, 9, 3.6, sleeve); }
+B(x, 11.4, H + 9, 3.2, 3.4, 3.4, skin);
+}
+});
+// head
+const headDec = { f: [] }, hf = headDec.f;
+hf.push(R4(hx(3.9), hx(1.9), hz(42.4), hz(44.2), '#1a1a1a')); hf.push(R4(hx(-1.9), hx(-3.9), hz(42.4), hz(44.2), '#1a1a1a'));
+if (o.mood === 'worried') { hf.push(LN([[hx(4.6), hz(46.4)], [hx(1.4), hz(45.2)]], '#111111', 1.4)); hf.push(LN([[hx(-1.4), hz(45.2)], [hx(-4.6), hz(46.4)]], '#111111', 1.4)); }
+else { hf.push(LN([[hx(4.4), hz(45.7)], [hx(1.6), hz(45.7)]], '#2a2018', 1.2)); hf.push(LN([[hx(-1.6), hz(45.7)], [hx(-4.4), hz(45.7)]], '#2a2018', 1.2)); }
+if (k === 'librarian' || k === 'plain') hf.push({ p: [[hx(2.1), hz(39.9)], [hx(1), hz(39.2)], [hx(-1), hz(39.2)], [hx(-2.1), hz(39.9)], [hx(-1.8), hz(39.3)], [hx(-0.9), hz(38.6)], [hx(0.9), hz(38.6)], [hx(1.8), hz(39.3)]], fill: '#b5705a', op: 1, stroke: 'none', sw: 1 });
+if (k === 'librarian') { hf.push(OC(hx(3.2), hz(43.3), 2.7 / 14, 2.7 / 14, 'none', '#6b4a2a', 1)); hf.push(OC(hx(-3.2), hz(43.3), 2.7 / 14, 2.7 / 14, 'none', '#6b4a2a', 1)); hf.push(LN([[hx(0.5), hz(43.3)], [hx(-0.5), hz(43.3)]], '#6b4a2a', 1)); hf.push(R4(hx(3), hx(1.6), hz(37.5), hz(38), '#e8a0a0', 0.8)); }
+if (Math.abs(fd) < 0.2) { const side = rd > 0 ? 'r' : 'l', u0 = rd > 0 ? 0.76 : 0.12, glassy = k === 'librarian'; headDec[side] = [R4(u0, u0 + 0.12, hz(42.6), hz(44), '#1a1a1a'), LN([[u0 - 0.04, hz(46)], [u0 + 0.16, hz(45.2)]], '#111111', 1.2)]; if (glassy) headDec[side].push(OC(u0 + 0.06, hz(43.3), 0.14, 2.7 / 14, 'none', '#6b4a2a', 1)); if (k === 'librarian' || k === 'plain') headDec[side].push(LN([[u0 - 0.02, hz(39.2)], [u0 + 0.14, hz(39.2)]], '#7a3a2a', 1)); }
+B(0, 0, H + 21, 14, 13, 14, skin, headDec);
+const hb = H - 15;
+if (k === 'librarian') B(0, -5.4, 36 + hb, 14.8, 3.8, 11, hair, {}, { nt: true, lay: 1 }); else if (k !== 'captain') B(0, -5.4, 40 + hb, 14.8, 3.8, 7, hair, {}, { nt: true, lay: 1 });
+if (k === 'captain' || k === 'engineer') { const bu = (x) => (7.4 - x) / 14.8; B(0, 0.3, 34 + hb, 14.8, 13.4, 7.6, '#5a3a22', { f: [R4(bu(2), bu(-2), (37.6 - 34) / 7.6, (38.8 - 34) / 7.6, '#3a1f14')] }, { nt: true, lay: 1 }); }
+if (k === 'police') { B(0, 6.9, 38.7 + hb, 8.4, 1.6, 2.1, '#141414', {}, { nt: true, lay: 1 }); [-7.3, 7.3].forEach((x) => B(x, -2.6, 42.5 + hb, 1.8, 5, 4.5, '#141414', {}, { nt: true, lay: 1 })); }
+if (k === 'captain') {
+B(0, 0, 46.6 + hb, 16.4, 15, 2.6, '#10183a', { f: [OC(0.5, 0.5, 1.4 / 16.4, 1.2 / 2.6, '#ffd166', ink, 0.4)] }); B(0, 0, 49.2 + hb, 16.2, 15, 4.6, '#f4f4f0'); B(0, 7.6, 46.4 + hb, 12, 2, 1.4, '#0a0f24');
+}
+if (k === 'police') { B(0, 0, 47 + hb, 15.2, 14.2, 1.8, '#0a0f24'); B(0, 0, 48.8 + hb, 14.8, 13.8, 4.6, '#17224a', { f: [OC(0.5, 0.4, 1.4 / 14.8, 1.4 / 4.6, '#ffd166', ink, 0.4)] }); B(0, 8.0, 46 + hb, 16, 2.6, 1.8, '#0a0f24'); }
+if (k === 'engineer') { B(0, 0, 47 + hb, 15.2, 14.2, 1.6, '#0f1b3d', { f: [R4(0.34, 0.66, 0.2, 0.85, '#8a95a8')] }); B(0, 0, 48.6 + hb, 14.8, 13.8, 4.6, '#1d2f5e'); B(0, -9, 46.4 + hb, 14, 5, 1.6, '#0f1b3d'); }
+if (k === 'plain') { B(0, 0, 46.8 + hb, 14.8, 14, 4.4, hair); [-7.2, 7.2].forEach((x) => B(x, -2.5, 44.6 + hb, 1.6, 7, 2.2, '#6a4a2a', {}, { nt: true, lay: 1 })); }
+if (k === 'librarian') { B(0, 0, 46.8 + hb, 14.8, 14, 4.4, hair); B(0, -2.5, 51 + hb, 7.4, 7.4, 1.3, '#c97fa0'); B(0, -2.5, 52.2 + hb, 7.2, 7.2, 6.2, hair); }
+if (o.carry === 'book') B(0, 6.2, H + 2.5, 9, 2.4, 9.5, '#7a2a3a', { f: [R4(0.1, 0.9, 0.1, 0.9, '#f2efe6')], t: [R4(0.05, 0.95, 0.05, 0.95, '#f2efe6')] });
+if (o.clip) B(-12.4, 2, H + 3, 1.2, 8, 12, '#8a5a2a', { l: [R4(0.1, 0.9, 0.08, 0.92, '#f2efe6'), LN([[0.25, 0.65], [0.75, 0.65]], '#6a6a6a', 0.8), LN([[0.25, 0.45], [0.75, 0.45]], '#6a6a6a', 0.8)], r: [R4(0.1, 0.9, 0.08, 0.92, '#f2efe6')] });
+// render
+parts.forEach((p) => { p.dep = p.cx * rd + p.cy * fd; p.zc = p.z0 + p.h / 2; });
+parts.sort((a, b) => (Math.abs(a.dep - b.dep) > 0.01 ? a.dep - b.dep : ((a.lay || 0) - (b.lay || 0) || a.zc - b.zc)));
+if (!seated) out.push({ pts: [[-9, -1], [9, -1], [8, 2], [-8, 2]].map((p) => (X + p[0] * s).toFixed(1) + ',' + (Y + p[1] * s).toFixed(1)).join(' '), fill: '#000000', stroke: 'none', sw: 1, op: 0.35 });
+const pr = (x, y, z) => [X + s * (x * rx + y * fx), Y + s * (-z + K * (x * rd + y * fd))];
+const fs = (px) => px.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+const FACES = { f: [0, 1, 0], b: [0, -1, 0], r: [1, 0, 0], l: [-1, 0, 0], t: [0, 0, 1] };
+const cor = (p, f, u, v) => {
+const x0 = p.cx, y0 = p.cy, w = p.w, d = p.d, z = p.z0 + v * p.h;
+if (f === 'f') return [x0 + w / 2 - u * w, y0 + d / 2, z];
+if (f === 'b') return [x0 - w / 2 + u * w, y0 - d / 2, z];
+if (f === 'r') return [x0 + w / 2, y0 - d / 2 + u * d, z];
+if (f === 'l') return [x0 - w / 2, y0 + d / 2 - u * d, z];
+return [x0 - w / 2 + u * w, y0 - d / 2 + v * d, p.z0 + p.h];
+};
+parts.forEach((p) => {
+Object.keys(FACES).forEach((f) => {
+const n = FACES[f], nd = n[0] * rd + n[1] * fd;
+if (nd + K * n[2] <= 0.001 || (f === 't' && p.nt)) return;
+const nxs = n[0] * rx + n[1] * fx, sh = f === 't' ? 1.1 : 1 - 0.1 * nxs;
+const proj = (u, v) => { const c = cor(p, f, u, v); return pr(c[0], c[1], c[2]); };
+out.push({ pts: fs([proj(0, 0), proj(1, 0), proj(1, 1), proj(0, 1)]), fill: shadeC(p.c, sh), stroke: ink, sw: 0.6, op: 1 });
+(p.dec[f] || []).forEach((d) => { out.push({ pts: fs(d.p.map((q) => proj(q[0], q[1]))), fill: d.fill, stroke: d.stroke, sw: d.sw, op: d.op }); });
+(p.txt || []).forEach((t) => {
+if (t.face !== f) return;
+const a = f === 'f' ? -rx : rx, bb = f === 'f' ? -K * rd : K * rd;
+if (Math.abs(a) < 0.35) return;
+const c = proj(0.5, t.v);
+txt.push({ x: c[0].toFixed(1), y: c[1].toFixed(1), text: t.text, size: (t.size * s).toFixed(1), weight: 700, fill: t.fill, tf: 'translate(-50%, -50%) matrix(' + a.toFixed(3) + ', ' + bb.toFixed(3) + ', 0, 1, 0, 0)', sh: 'none' });
+});
+});
+});
+}
+function drawItem(out, txt, it) {
+if (it.t === 'box') drawBox(out, it);
+else if (it.t === 'cyl') drawCyl(out, it);
+else if (it.t === 'raw') it.polys.forEach((p) => out.push(p));
+else { const f = P(it.x, it.y, it.zoff || 0); drawPerson(out, txt, f[0], f[1], it); }
+}
+function itemBox(it) {
+const ox = it.ox || 0, oy = it.oy || 0, PSv = (typeof PS === 'undefined' ? 1 : PS), sp = 2 * PSv;
+if (it.t === 'box') return { x0: it.x + ox, x1: it.x + it.w + ox, y0: it.y + oy, y1: it.y + it.d + oy, z0: it.z0, z1: it.z0 + it.h };
+if (it.t === 'cyl') return { x0: it.x - it.r + ox, x1: it.x + it.r + ox, y0: it.y - it.r + oy, y1: it.y + it.r + oy, z0: it.z0, z1: it.z0 + it.h };
+const z0 = it.zoff || 0;
+if (it.kind === 'cat') return { x0: it.x - 0.4 + ox, x1: it.x + 0.4 + ox, y0: it.y - 0.3 + oy, y1: it.y + 0.3 + oy, z0: z0, z1: z0 + 0.7 };
+return { x0: it.x - 0.2 + ox, x1: it.x + 0.2 + ox, y0: it.y - 0.2 + oy, y1: it.y + 0.2 + oy, z0: z0, z1: z0 + 54 * sp / C };
+}
+function itemRect(it, b) {
+const sx = (X, Y) => S.ox + (X - Y) * A, sy = (X, Y, Z) => S.oy + (X + Y) * B - Z * C;
+if (it.t === 'person') {
+const sp = 2 * (typeof PS === 'undefined' ? 1 : PS), ox = it.ox || 0, oy = it.oy || 0, fx = sx(it.x + ox, it.y + oy), fy = sy(it.x + ox, it.y + oy, it.zoff || 0) + 0;
+return it.kind === 'cat' ? [fx - 12 * sp, fy - 19 * sp, fx + 12 * sp, fy + 3 * sp] : [fx - 12 * sp, fy - 58 * sp, fx + 16 * sp, fy + 3 * sp];
+}
+let l = 1e9, t = 1e9, r = -1e9, bt = -1e9;
+[b.x0, b.x1].forEach((X) => [b.y0, b.y1].forEach((Y) => [b.z0, b.z1].forEach((Z) => { const px = sx(X, Y), py = sy(X, Y, Z); l = Math.min(l, px); r = Math.max(r, px); t = Math.min(t, py); bt = Math.max(bt, py); })));
+return [l, t, r, bt];
+}
+function depthSort(items) {
+const pre = [], mid = [];
+items.forEach((it, i) => { it._k = it.key; it._i = i; if (it.wall || it.t === 'raw') pre.push(it); else mid.push(it); });
+pre.sort((p, q) => (p.key - q.key) || (p._i - q._i));
+const n = mid.length, bx = mid.map((it) => itemBox(it)), rc = mid.map((it, i) => itemRect(it, bx[i]));
+const out = [], indeg = new Array(n).fill(0);
+for (let i = 0; i < n; i++) mid[i]._adj = [];
+const E = 1e-6;
+for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+const a = rc[i], c = rc[j];
+if (a[2] <= c[0] || c[2] <= a[0] || a[3] <= c[1] || c[3] <= a[1]) continue;
+const p = bx[i], q = bx[j];
+const sg = [p.x1 <= q.x0 + E ? -1 : q.x1 <= p.x0 + E ? 1 : 0, p.y1 <= q.y0 + E ? -1 : q.y1 <= p.y0 + E ? 1 : 0, p.z1 <= q.z0 + E ? -1 : q.z1 <= p.z0 + E ? 1 : 0];
+const neg = sg.indexOf(-1) >= 0, pos = sg.indexOf(1) >= 0;
+if (neg === pos) continue;
+if (neg) { mid[i]._adj.push(j); indeg[j]++; } else { mid[j]._adj.push(i); indeg[i]++; }
+}
+const done = new Array(n).fill(false), ready = [];
+const kk = (i) => (mid[i].z0 || 0) * 0 + mid[i].key;
+for (let i = 0; i < n; i++) if (indeg[i] === 0) ready.push(i);
+let placed = 0;
+while (placed < n) {
+let bi = -1;
+if (ready.length) { let m = 0; for (let r2 = 1; r2 < ready.length; r2++) if (kk(ready[r2]) < kk(ready[m]) || (kk(ready[r2]) === kk(ready[m]) && ready[r2] < ready[m])) m = r2; bi = ready.splice(m, 1)[0]; }
+else { for (let i = 0; i < n; i++) if (!done[i] && (bi < 0 || indeg[i] < indeg[bi] || (indeg[i] === indeg[bi] && kk(i) < kk(bi)))) bi = i; }
+done[bi] = true; placed++; out.push(mid[bi]);
+mid[bi]._adj.forEach((j) => { indeg[j]--; if (indeg[j] === 0 && !done[j]) ready.push(j); });
+}
+return pre.concat(out);
+}
+function finish() {
+const polys = S.floor.slice(), txt = [];
+const ord = depthSort(S.items); ord.forEach((it) => { OX = it.ox || 0; OY = it.oy || 0; drawItem(polys, txt, it); });
+OX = 0; OY = 0;
+const stars = [];
+for (let i = 0; i < (COMP ? 520 : 140); i++) stars.push({ x: (rnd() * SW).toFixed(1), y: (rnd() * SH).toFixed(1), r: (0.5 + rnd() * 1.1).toFixed(2), o: (0.3 + rnd() * 0.7).toFixed(2) });
+(S.top || []).forEach((p) => polys.push(p));
+return { bg: S.bg || [], stars: stars, polys: polys, circles: S.circles, texts: S.texts.concat(txt), hits: S.hits, ord: ord };
+}
+function glow(x, y, z, r, fill, op) { const p = P(x, y, z); S.circles.push({ x: p[0].toFixed(1), y: p[1].toFixed(1), r: r * TS, fill: fill, op: op }); }
+function walls(W, D, gx, wc, trim, lowc) {
+const N = Bx(0, -0.2, W, 0.2, WH, wc, 0, { wall: true, op: WOP, decals: [R('S', 0, 1, 0, 0.05, trim), R('S', 0, 1, 0.94, 1, trim)] });
+const Wt = Bx(-0.2, 0, 0.2, D, WH, shade(wc, -0.1), 0, { wall: true, op: WOP, decals: [R('E', 0, 1, 0, 0.05, trim), R('E', 0, 1, 0.94, 1, trim)] });
+Bx(W - 0.075, 0, 0.15, D, 1.0, lowc);
+Bx(0, D - 0.075, gx - 0.9, 0.15, 1.0, lowc); Bx(gx + 0.9, D - 0.075, W - gx - 0.9, 0.15, 1.0, lowc);
+Bx(gx - 1.05, D - 0.15, 0.2, 0.3, 2.3, trim); Bx(gx + 0.85, D - 0.15, 0.2, 0.3, 2.3, trim); Bx(gx - 1.05, D - 0.15, 2.1, 0.3, 0.18, trim, 2.3);
+return { N: N, W: Wt };
+}
+function hall(W, D) { if (COMP) return;
+Fl(0, D, W, D + 2.5, '#0b1330', '#2a3a6b', 1.5);
+for (let x = 0.6; x < W - 0.5; x += 1.6) S.floor.push({ pts: pts([[x, D + 1.2, 0], [x + 0.8, D + 1.2, 0], [x + 0.8, D + 1.3, 0], [x, D + 1.3, 0]]), fill: '#3a6acc', stroke: 'none', sw: 0, op: 0.8 });
+}
+function caseDecals(face, earned, wh) {
+const d = [R(face, 0, 1, 0.94, 1, '#c9a227'), R(face, 0.02, 0.98, 0.05, 0.93, '#0c1426', '#c9a227', 2)];
+for (let r = 0; r < 3; r++) {
+const sb = 0.1 + r * 0.28;
+d.push(R(face, 0.03, 0.97, sb - 0.02, sb, '#c9a227'));
+for (let k = 0; k < 5; k++) {
+const u = 0.14 + k * 0.18, on = k < earned[r], f = on ? '#ffd166' : '#1b2442', sk = on ? '#8a6a2a' : '#5a5a7a';
+d.push(R(face, u - 0.045, u + 0.045, sb, sb + 0.025, f, sk, 0.6)); d.push(R(face, u - 0.01, u + 0.01, sb + 0.025, sb + 0.08, f, sk, 0.6)); d.push(R(face, u - 0.05, u + 0.05, sb + 0.08, sb + 0.17, f, sk, 0.6));
+}
+}
+if (wh) {
+const sb = 0.38, am = '#c4701b', dk = '#7a3f0c';
+d.push(R(face, 0.44, 0.97, sb, sb + 0.19, '#0c1426'));
+d.push(R(face, 0.57, 0.69, sb, sb + 0.105, am, dk, 1)); d.push(R(face, 0.6, 0.66, sb + 0.105, sb + 0.145, am, dk, 1)); d.push(R(face, 0.617, 0.643, sb + 0.145, sb + 0.185, am, dk, 1)); d.push(R(face, 0.612, 0.648, sb + 0.185, sb + 0.2, '#d9b98a', '#7a5a2a', 0.8));
+d.push(R(face, 0.585, 0.675, sb + 0.025, sb + 0.075, '#f2e6c8', '#7a3f0c', 0.6)); d.push(R(face, 0.6, 0.66, sb + 0.04, sb + 0.06, '#7a3f0c'));
+d.push(R(face, 0.575, 0.585, sb + 0.01, sb + 0.1, '#ffd9a0'));
+d.push(R(face, 0.79, 0.89, sb, sb + 0.1, '#cfe0ff', '#8fa8d8', 1)); d.push(R(face, 0.8, 0.88, sb + 0.005, sb + 0.045, '#d98a2b'));
+}
+return d;
+}
+function trophyN(id, label, x0, w, earned) { Bx(x0, 0, w, 0.3, 1.9, '#4a2c1a', 0.9, { decals: caseDecals('S', earned) }); T(x0 + w / 2, 0.3, 3.0, label, 11, '#ffd166'); hitBox(id, label, x0, 0, 0.9, x0 + w, 0.3, 2.8); }
+function trophyG(id, label, y0, len, earned, wh) { Bx(0, y0, 0.45, len, 2.3, '#4a2c1a', 0, { decals: caseDecals('E', earned, wh) }); hitBox(id, label, 0, y0, 0, 0.45, y0 + len, 2.3); }
+function trophyW(id, label, y0, len, earned) { Bx(0, y0, 0.3, len, 1.9, '#4a2c1a', 0.9, { decals: caseDecals('E', earned) }); hitBox(id, label, 0, y0, 0.9, 0.3, y0 + len, 2.8); }
+function lamp(x, y, z) { Cy(x, y, 0.16, 0.06, '#c9a227', z); Cy(x, y, 0.035, 0.45, '#c9a227', z + 0.06); Cy(x, y, 0.2, 0.16, '#ffd166', z + 0.5, { top: '#fff0b0' }); glow(x, y, z + 0.6, 34, '#ffd166', 0.14); }
+function mug(x, y, z) { Cy(x, y, 0.13, 0.24, '#f2efe6', z, { top: '#3b1f10' }); Bx(x + 0.12, y - 0.04, 0.1, 0.08, 0.14, '#f2efe6', z + 0.05); }
+function plant(x, y) { Cy(x, y, 0.3, 0.45, '#8a5a3a'); Cy(x, y, 0.34, 0.5, '#2f7d4a', 0.45); Cy(x, y, 0.22, 0.4, '#3f9a5c', 0.95); Cy(x, y, 0.1, 0.3, '#56b377', 1.35); }
+function clockN(x, z, r) {
+const pl = [], a = [];
+for (let i = 0; i < 18; i++) { const t = i / 18 * Math.PI * 2; a.push([x + Math.cos(t) * r, z + Math.sin(t) * r]); }
+pl.push(WP('N', a, '#f2efe6', '#c9a227', 2));
+pl.push(WP('N', [[x - 0.03, z], [x + 0.03, z], [x + 0.03, z + r * 0.8], [x - 0.03, z + r * 0.8]], '#222222'));
+pl.push(WP('N', [[x, z - 0.03], [x + r * 0.55, z - 0.03], [x + r * 0.55, z + 0.03], [x, z + 0.03]], '#222222'));
+Raw(pl);
+}
+function clockW(y, z, r) {
+const pl = [], a = [];
+for (let i = 0; i < 18; i++) { const t = i / 18 * Math.PI * 2; a.push([y + Math.cos(t) * r, z + Math.sin(t) * r]); }
+pl.push(WP('W', a, '#f2efe6', '#c9a227', 2));
+pl.push(WP('W', [[y - 0.03, z], [y + 0.03, z], [y + 0.03, z + r * 0.8], [y - 0.03, z + r * 0.8]], '#222222'));
+pl.push(WP('W', [[y, z - 0.03], [y + r * 0.55, z - 0.03], [y + r * 0.55, z + 0.03], [y, z + 0.03]], '#222222'));
+Raw(pl);
+}
+function swivel(x, y, color) { Cy(x, y, 0.3, 0.06, '#1d2233', 0); Cy(x, y, 0.04, 0.35, '#2a2f3d', 0.06); Cy(x, y, 0.34, 0.12, color, 0.4); Bx(x - 0.3, y + 0.24, 0.6, 0.1, 0.65, color, 0.52); }
+const ROSTER = [
+{ k: 'captain', name: 'Captain', role: 'Leader', color: '#ffd166', light: 'g', doing: 'Reviewing the crew board and the approvals tray', stuck: 'Nothing', level: 7, also: 'Also does the old Coordinator job (task list) and the old Technical Advisor job (reviews every change before it reaches you).' },
+{ k: 'librarian', name: 'Librarian', role: 'Records', color: '#b388eb', light: 'g', doing: 'Filing last meeting minutes', stuck: 'Nothing', level: 4, also: 'Also does the old Janitor job: sorts old files into keep, trash and for-Kylar piles. Nothing is deleted without Kylar.' },
+{ k: 'security', name: 'Security', role: 'Threat and health watch', color: '#4a6fa5', light: 'g', doing: 'Checking for unknown devices', stuck: 'Nothing', level: 4, also: 'Also does the old Watchdog job: watches the Pi, Wi-Fi, devices, Pi-hole and backups.' },
+{ k: 'mechanic', name: 'Mechanic', role: 'Fixes and builds', color: '#f4a261', light: 'y', doing: 'Reading the backup script for weak spots', stuck: 'Nothing', level: 3, also: 'Also does the old Reliability Engineer, Operator, Developer, Designer and Instrumentation jobs: finds weak spots, applies approved changes with a backup, builds features and sensors, and changes the look of the station.' },
+{ k: 'trainer', name: 'Trainer', role: 'Trains Jarvis', color: '#ffb703', light: 'g', doing: 'Idle', stuck: 'Nothing', level: 1, also: '' }
+];
+function agent(k) { return ROSTER.filter((a) => a.k === k)[0]; }
+const LIGHT = { g: '#2fbf71', y: '#ffd166', r: '#ff3b3b' };
+function dotsDecals(face, rows, u0, u1, v0, step, dotc) { return []; }
+function logBoard() {
+return [R('S', 0, 1, 0, 1, '#0a1426', '#c9a227', 2), R('S', 0.03, 0.97, 0.82, 0.96, '#3a2f12')];
+}
+let RW = 13, RD = 8, GX = 6.5;
+function setDims(w, d) { RW = w; RD = d; GX = w / 2; }
+const SL = { g: '#2fbf71', y: '#ffd166', r: '#ff3b3b' };
+function statusLight(x, col, blink, on) { const lit = !blink || on; Bx(x, 0.1, 0.6, 0.5, 0.15, '#2a2a2a', 3.0); Bx(x + 0.1, 0.2, 0.4, 0.4, 0.3, lit ? col : shade(col, -0.75), 2.7); }
+let LIGHT_OV = null;
+function agentLight(ks, st) { const ord = { g: 0, y: 1, r: 2 }; let w = 'g'; ks.forEach((k) => { const l = (LIGHT_OV && LIGHT_OV[k]) || agent(k).light; if (ord[l] > ord[w]) w = l; }); statusLight(RW - 1.0, SL[w], w === 'r', st.on); }
+function plants(skip) { [[0.8, 0.8, 'bl'], [RW - 0.8, 0.8, 'br'], [0.8, RD - 0.8, 'fl'], [RW - 0.8, RD - 0.8, 'fr']].forEach((p) => { if (skip.indexOf(p[2]) < 0) plant(p[0], p[1]); }); }
+function ux(x) { return x / RW; }
+function board(N, x0, x1, band, trim) { N.decals.push(R('S', ux(x0), ux(x1), 0.2, 0.92, '#0a1426', trim || '#c9a227', 2)); N.decals.push(R('S', ux(x0 + 0.08), ux(x1 - 0.08), 0.8, 0.9, band || '#3a2f12')); }
+function sceneCaptain(st) {
+setDims(8, 13);
+newScene(RW, RD);
+const wl = walls(RW, RD, GX, '#3a2a22', '#c9a227', '#4a2c1a');
+Fl(0, 0, RW, RD, '#3b2718', '#8a6a2a', 1.5); hall(RW, RD);
+const ex = -2.5, ey = 1.6;
+Fl(3.7 + ex, 2.0 + ey, 9.3 + ex, 6.5 + ey, '#5a1f2b', '#c9a227', 1.5); Fl(4.0 + ex, 2.3 + ey, 9.0 + ex, 6.2 + ey, 'none', '#8a6a2a', 0.8);
+const N = wl.N, Wt = wl.W, lg = st.log, nlog = Math.min(5, lg.length);
+const uy = (y) => y / RD;
+const boardW = (y0, y1) => { Wt.decals.push(R('E', uy(y0), uy(y1), 0.2, 0.92, '#0a1426', '#c9a227', 2)); Wt.decals.push(R('E', uy(y0 + 0.08), uy(y1 - 0.08), 0.8, 0.9, '#3a2f12')); };
+const L0 = 0.95, L1 = 3.55, M0 = 1.8, M1 = 4.0;
+const boardL = (x0, x1) => { N.decals.push(R('S', ux(x0), ux(x1), 0.2, 0.92, '#0a1426', '#c9a227', 2)); N.decals.push(R('S', ux(x0 + 0.08), ux(x1 - 0.08), 0.8, 0.9, '#3a2f12')); };
+boardL(L0, L1);
+for (let i = 0; i < 5; i++) {
+const v = 0.68 - i * 0.11, ok = i < nlog, c = ok ? (lg[i].res === 'Denied' ? '#ff8a6a' : lg[i].res === 'Done' ? '#ffd166' : '#7be0a0') : '#2a3454';
+N.decals.push(R('S', ux(L0 + 0.2), ux(L0 + 0.35), v, v + 0.06, c)); N.decals.push(R('S', ux(L0 + 0.55), ux(L1 - 0.2 - (i % 3) * 0.4), v, v + 0.06, ok ? '#cfe0ff' : '#2a3454'));
+}
+FT(N, 'S', ux((L0 + L1) / 2), 0.85, 'DECISION LOG', 11, '#ffd166');
+board(N, 4.95, 6.65);
+for (let i = 0; i < 6; i++) {
+const x0 = 5.03 + i * 0.26, v0 = 0.3, a = ROSTER[i];
+if (!a) { N.decals.push(R('S', ux(x0), ux(x0 + 0.21), v0, v0 + 0.34, '#141c36', '#2a3454', 1)); continue; }
+N.decals.push(R('S', ux(x0), ux(x0 + 0.21), v0, v0 + 0.34, a.color, '#0a1426', 1)); N.decals.push(R('S', ux(x0 + 0.04), ux(x0 + 0.12), v0 + 0.03, v0 + 0.09, LIGHT[a.light]));
+}
+FT(N, 'S', ux(5.8), 0.85, 'CREW', 9, '#ffd166');
+boardW(M0, M1);
+Wt.decals.push(R('E', uy(M0 + 0.15), uy(M1 - 0.15), 0.675, 0.69, '#8a6a2a')); Wt.decals.push(R('E', uy(M0 + 0.15), uy(M1 - 0.15), 0.315, 0.33, '#8a6a2a'));
+const gc = ['#2fbf71', '#ffd166', '#ff3b3b', '#ffd166'];
+for (let i = 0; i < 4; i++) Wt.decals.push(R('E', uy(M0 + 0.2), uy(M0 + 0.35), 0.545 - i * 0.07, 0.585 - i * 0.07, gc[i], '#0a1426', 0.6));
+const mc = (M0 + M1) / 2;
+FT(Wt, 'E', uy(mc), 0.85, 'MISSION', 10, '#ffd166');
+FT(Wt, 'E', uy(mc), 0.74, 'Keep the house running', 7.5, '#ffffff', 700);
+FT(Wt, 'E', uy(mc), 0.64, 'TODAY', 7, '#ffd166');
+['Check Pi-hole', 'Review voice ports', 'Approve trash list', 'Test wake word'].forEach((g, i) => FT(Wt, 'E', uy(mc + 0.1), 0.565 - i * 0.07, g, 7, '#e8eeff', 600));
+FT(Wt, 'E', uy(mc), 0.255, 'No excuses. Only uptime.', 7, '#ffd166');
+hitBox('declog', 'Decision log', L0, 0, 0.68, L1, 0.1, 3.13, 8); hitBox('crewboard', 'Crew board', 4.95, 0, 0.68, 6.65, 0.1, 3.13, 8); hitBox('mission', 'Mission board', 0, M0, 0.68, 0.1, M1, 3.13, 8);
+trophyG('trophy:captain', 'ACHIEVEMENTS', 7.6, 2.8, [4, 2, 1], true);
+[6.5, 11.5].forEach((y) => { Bx(0.0, y - 0.2, 0.06, 0.4, 0.62, '#c9a227', 1.55); Bx(0.06, y - 0.04, 0.26, 0.08, 0.06, '#c9a227', 1.62); Cy(0.36, y, 0.13, 0.06, '#c9a227', 1.6); Cy(0.36, y, 0.065, 0.4, '#f2efe6', 1.66); Cy(0.36, y, 0.035, 0.13, '#ffb030', 2.06, { top: '#ffe080' }); glow(0.36, y, 2.15, 30, '#ffd166', 0.14); glow(0.36, y, 2.15, 14, '#ffd166', 0.3); });
+Cy(0.55, 0.65, 0.22, 0.12, '#3a3f4a', 0); Cy(0.55, 0.65, 0.04, 2.7, '#c9a227', 0.12); Cy(0.55, 0.65, 0.09, 0.12, '#ffd166', 2.8);
+const fd = []; for (let i = 0; i < 13; i++) fd.push(R('E', 0, 1, i / 13, (i + 1) / 13, i % 2 === 0 ? '#f2efe6' : '#b22234'));
+fd.push(R('E', 0, 0.42, 0.46, 1, '#3c3b6e')); for (let r = 0; r < 4; r++) for (let k = 0; k < 3; k++) fd.push(R('E', 0.05 + k * 0.12, 0.09 + k * 0.12, 0.52 + r * 0.115, 0.56 + r * 0.115, '#ffffff'));
+Bx(0.52, 0.72, 0.05, 1.05, 0.7, '#f2efe6', 1.95, { decals: fd });
+const sx = 3.8, sg = st.gold, sd = [R('S', 0.06, 0.94, 0.06, 0.94, '#2c303a', '#9aa0ad', 1.5), R('S', 0.14, 0.86, 0.14, 0.88, '#0e0f14', '#555a66', 1)];
+for (let i = 0; i < 20; i++) { if (i >= sg) continue; const r = Math.floor(i / 5), c = i % 5, u0 = 0.17 + c * 0.13, v0 = 0.17 + r * 0.17; sd.push(R('S', u0, u0 + 0.115, v0, v0 + 0.14, '#ffd166', '#8a6a2a', 0.8)); }
+Bx(sx, 0.6, 0.9, 0.9, 1.1, '#4b505c', 0, { decals: sd }); T(sx + 0.45, 1.05, 1.55, '$' + sg + '/$20', 11, '#ffd166');
+const lit = st.health === 'green' ? true : st.on, sc = st.health === 'green' ? '#2fbf71' : st.health === 'yellow' ? '#ffd166' : '#ff3b3b', sc2 = lit ? sc : (st.health === 'yellow' ? '#5a4a1f' : '#4a1515');
+const lx = RW - 0.8;
+Bx(lx, 0.1, 0.6, 0.5, 0.15, '#2a2a2a', 3.0); Bx(lx + 0.1, 0.2, 0.4, 0.4, 0.3, sc2, 2.7);
+if (lit) { glow(lx + 0.3, 0.4, 2.8, 58, sc, st.health === 'green' ? 0.08 : 0.16); glow(lx + 0.3, 0.4, 2.8, 28, sc, 0.25); }
+hitBox('safe', 'Safe', sx, 0.6, 0, sx + 0.9, 1.5, 1.1, 12); hitBox('siren', 'Siren light', lx, 0.1, 2.6, lx + 0.6, 0.6, 3.15, 24);
+Bx(4.7 + ex, 3.0 + ey, 3.6, 1.5, 0.95, '#7a4a26', 0, { decals: [R('S', 0, 1, 0.88, 0.97, '#c9a227'), R('S', 0.08, 0.92, 0.1, 0.8, '#6a3f1f', '#3b2412', 1)] });
+Bx(6.05 + ex, 1.45 + ey, 0.9, 0.15, 1.6, '#5a1f2b'); Bx(6.05 + ex, 1.6 + ey, 0.9, 0.8, 0.5, '#6a2a35');
+lamp(5.25 + ex, 3.4 + ey, 0.95);
+Bx(5.55 + ex, 3.85 + ey, 0.5, 0.35, 0.12, '#c0302a', 0.95); Bx(5.5 + ex, 3.82 + ey, 0.6, 0.1, 0.08, '#8a1f1a', 1.07);
+Bx(6.05 + ex, 3.2 + ey, 0.9, 0.55, 0.06, '#3a3f4d', 0.95, { decals: [R('T', 0.1, 0.9, 0.2, 0.75, '#1c1f28')] });
+Bx(6.05 + ex, 3.74 + ey, 0.9, 0.06, 0.6, '#59606f', 1.01, { decals: [R('S', 0.44, 0.56, 0.4, 0.62, '#dfe6f5')] });
+const np = Bx(6.05 + ex, 4.1 + ey, 0.9, 0.12, 0.16, '#c9a227', 0.95); FT(np, 'S', 0.5, 0.5, 'CAPTAIN', 6.5, '#2a1a08');
+mug(7.3 + ex, 3.95 + ey, 0.95);
+const n = st.pending.length;
+Bx(7.55 + ex, 3.3 + ey, 0.75, 0.6, 0.07, '#2a2d38', 0.95);
+let tp = null;
+for (let i = 0; i < n; i++) { const tc = ['#2fbf71', '#ffd166', '#ff6a5a'][i % 3]; tp = Bx(7.6 + ex + (i % 2) * 0.02, 3.35 + ey, 0.6, 0.5, 0.05, '#f2efe6', 1.02 + i * 0.05, { decals: [R('S', 0.1, 0.8, 0.3, 0.5, '#c8c2b0')] }); Bx(8.22 + ex, 3.42 + ey + (i % 3) * 0.12, 0.08, 0.1, 0.05, tc, 1.02 + i * 0.05); }
+if (n > 0) { FT(tp, 'T', 0.5, 0.5, '' + n, 22, '#8a1f1a', 800); } else T(7.95 + ex, 3.6 + ey, 1.2, '0', 14, '#7be0a0');
+hitBox('tray', 'Paper tray', 7.55 + ex, 3.3 + ey, 0.95, 8.3 + ex, 3.9 + ey, 1.6, 20);
+Bx(5.2 + ex, 5.2 + ey, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(5.2 + ex, 5.9 + ey, 0.8, 0.15, 1.1, '#8a3b2a'); Bx(7.0 + ex, 5.2 + ey, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(7.0 + ex, 5.9 + ey, 0.8, 0.15, 1.1, '#8a3b2a');
+Pe(6.5 + ex, 2.3 + ey, { shirt: '#1f2f5a', kind: 'captain', mood: st.mood }); hitPerson('captain', 'The Captain', 6.5 + ex, 2.3 + ey);
+Bx(GX - 0.3, RD - 0.1, 0.6, 0.2, 0.3, st.busy ? '#ff4b3e' : '#2fbf71', 2.48);
+[['mechanic', 2.7], ['librarian', 4.0], ['trainer', 5.3]].forEach((w) => { const a = agent(w[0]); const wy = RD + 1.0; Pe(w[1], wy, { shirt: a.color, kind: w[0] === 'librarian' ? 'librarian' : w[0] === 'mechanic' ? 'engineer' : 'plain', hair: '#5a3a22' }); T(w[1], wy, 2.75, '?', 18, '#ffd166'); hitPerson('ask:' + w[0], a.name + ' waiting', w[1], wy); });
+
+return { kicker: 'COMMAND BRIDGE / CAPTAIN (THE LEADER)', title: "THE CAPTAIN'S OFFICE", sub: 'Sample numbers. Use Show clickable to see what you can tap.' };
+}
+function sceneConference(st) {
+setDims(10, 17);
+newScene(RW, RD, 0.82);
+const gy = 15, WC = '#3a2a22', TR = '#c9a227', LC = '#4a2c1a';
+const N = Bx(0, -0.2, RW, 0.2, WH, WC, 0, { wall: true, op: WOP, decals: [R('S', 0, 1, 0, 0.05, TR), R('S', 0, 1, 0.94, 1, TR)] });
+const Wt = Bx(-0.2, 0, 0.2, RD, WH, shade(WC, -0.1), 0, { wall: true, op: WOP, decals: [R('E', 0, 1, 0, 0.05, TR), R('E', 0, 1, 0.94, 1, TR)] });
+Bx(RW - 0.075, 0, 0.15, gy - 0.9, 1.0, LC); Bx(RW - 0.075, gy + 0.9, 0.15, RD - gy - 0.9, 1.0, LC);
+Bx(RW - 0.15, gy - 1.05, 0.3, 0.2, 2.3, TR); Bx(RW - 0.15, gy + 0.85, 0.3, 0.2, 2.3, TR); Bx(RW - 0.15, gy - 1.05, 0.3, 2.1, 0.18, TR, 2.3);
+Bx(0, RD - 0.075, RW, 0.15, 1.0, LC);
+Fl(0, 0, RW, RD, '#3b1f18', '#8a6a2a', 1.5);
+if (typeof COMP === 'undefined') Fl(RW, gy - 2, RW + 3, gy + 2, '#0b1330', '#2a3a6b', 1.5);
+Fl(RW - 0.25, gy - 0.9, RW + 0.35, gy + 0.9, '#4a5870', '#8a9ab5', 1);
+Fl(1.8, 3.2, 8.2, 13.6, '#5a1f2b', '#c9a227', 1.5); Fl(2.1, 3.5, 7.9, 13.3, 'none', '#8a6a2a', 0.8);
+const m = st.meeting;
+N.decals.push(R('S', ux(3.1), ux(6.9), 0.2, 0.92, '#0a1426', '#c9a227', 2)); N.decals.push(R('S', ux(3.18), ux(6.82), 0.8, 0.9, '#3a2f12'));
+FT(N, 'S', ux(5.0), 0.85, 'LIVE MEETING', 10, '#ffd166');
+FT(N, 'S', ux(5.0), 0.68, m ? 'Lock the voice ports' : 'No meeting right now', 14, m ? '#ffffff' : '#6f7fa8', 700);
+FT(N, 'S', ux(5.0), 0.53, m ? 'ROUND 2 OF 3' : 'ROUND -', 9, '#7be0ff');
+const ags = ROSTER.filter((a) => a.k !== 'captain');
+const vcol = ['#2fbf71', '#ff3b3b', '#ffd166', '#2fbf71'];
+ags.forEach((a, i) => { const x0 = 3.6 + i * 0.8; N.decals.push(R('S', ux(x0), ux(x0 + 0.55), 0.27, 0.45, m ? a.color : '#2a3454', '#0a1426', 1)); N.decals.push(R('S', ux(x0 + 0.2), ux(x0 + 0.35), 0.21, 0.25, m ? vcol[i] : '#2a3454')); });
+hitBox('live', 'Live meeting screen', 3.1, 0, 0.68, 6.9, 0.1, 3.13, 8);
+for (let i = 0; i < 3; i++) Bx(0.6 + i * 0.7, 0.05, 0.7, 0.6, 1.9, '#7d8594', 0, { decals: [0, 1, 2, 3].map((r) => R('S', 0.1, 0.9, 0.06 + r * 0.235, 0.06 + r * 0.235 + 0.2, '#98a1b3', '#4a5263', 1)).concat([0, 1, 2, 3].map((r) => R('S', 0.38, 0.62, 0.13 + r * 0.235, 0.16 + r * 0.235, '#e8eef5'))) });
+hitBox('history', 'Filing cabinet: past meetings', 0.6, 0.05, 0, 2.7, 0.65, 1.9, 10);
+const sl = st.stale, slc = sl === 'ok' ? '#2fbf71' : sl === 'slow' ? '#ffd166' : '#ff3b3b';
+statusLight(8.7, slc, sl === 'stuck', st.on);
+const uy = (y) => y / RD, wb = (y0, y1) => { Wt.decals.push(R('E', uy(y0), uy(y1), 0.2, 0.92, '#0a1426', '#c9a227', 2)); Wt.decals.push(R('E', uy(y0 + 0.08), uy(y1 - 0.08), 0.8, 0.9, '#3a2f12')); };
+wb(0.5, 2.8);
+FT(Wt, 'E', uy(1.65), 0.85, 'FOLLOW-UPS', 9, '#ffd166');
+[['Lock ports', 'Mechanic', '#ffd166'], ['File minutes', 'Librarian', '#7be0a0'], ['Retest wake', 'Trainer', '#ff8a6a']].forEach((t, i) => { const v = 0.66 - i * 0.17; Wt.decals.push(R('E', uy(0.7), uy(0.85), v + 0.02, v + 0.08, t[2])); FT(Wt, 'E', uy(1.85), v + 0.05, t[0] + ': ' + t[1], 6.5, '#e8eeff', 600); });
+wb(3.2, 5.5);
+FT(Wt, 'E', uy(4.35), 0.85, 'VOTE HISTORY', 9, '#ffd166');
+[['#2fbf71', 5], ['#ff3b3b', 2], ['#ffd166', 1]].forEach((t, i) => { const v = 0.62 - i * 0.17; for (let k = 0; k < t[1]; k++) Wt.decals.push(R('E', uy(3.5 + k * 0.28), uy(3.72 + k * 0.28), v, v + 0.1, t[0], '#0a1426', 0.6)); });
+FT(Wt, 'E', uy(4.9), 0.3, 'Approved 5  Denied 2', 6.5, '#9fb0cc', 600);
+hitBox('followups', 'Follow-ups board', 0, 0.5, 0.68, 0.1, 2.8, 3.13, 8); hitBox('votes', 'Vote history', 0, 3.2, 0.68, 0.1, 5.5, 3.13, 8);
+const skin = ['#f1c9a5', '#f1c9a5', '#e0b08a', '#f1c9a5', '#d9a982'];
+ROSTER.forEach((a, i) => { const y0 = 6.2 + i * 0.95; Wt.decals.push(R('E', uy(y0), uy(y0 + 0.75), 0.3, 0.9, '#0a1426', '#c9a227', 2)); Wt.decals.push(R('E', uy(y0 + 0.1), uy(y0 + 0.65), 0.34, 0.5, a.color)); Wt.decals.push(R('E', uy(y0 + 0.24), uy(y0 + 0.51), 0.5, 0.7, skin[i])); Wt.decals.push(R('E', uy(y0 + 0.24), uy(y0 + 0.51), 0.66, 0.72, '#2a2220')); });
+Wt.decals.push(R('E', uy(11.4), uy(16.3), 0.3, 0.9, '#1f2f5a', '#c9a227', 2)); Wt.decals.push(R('E', uy(11.5), uy(16.2), 0.33, 0.87, 'none', '#8a6a2a', 1));
+FT(Wt, 'E', uy(13.85), 0.66, 'NO EXCUSES.', 10, '#ffd166', 800); FT(Wt, 'E', uy(13.85), 0.5, 'ONLY UPTIME.', 10, '#ffd166', 800);
+Bx(3.3, 4.6, 3.4, 7.0, 0.8, '#6b4a2a', 0, { decals: [R('T', 0.02, 0.98, 0.03, 0.97, '#7a5632', '#c9a227', 1.5)] });
+const ys = [6.4, 9.6];
+ys.forEach((y) => { Bx(2.6, y - 0.35, 0.6, 0.7, 0.45, '#2a3f78'); Bx(2.5, y - 0.35, 0.1, 0.7, 0.95, '#2a3f78'); Bx(6.8, y - 0.35, 0.6, 0.7, 0.45, '#2a3f78'); Bx(7.4, y - 0.35, 0.1, 0.7, 0.95, '#2a3f78'); });
+Bx(4.55, 11.8, 1.0, 0.8, 0.5, '#6a2a35'); Bx(4.45, 11.8, 0.12, 0.8, 0.8, '#5a1f2b'); Bx(5.45, 11.8, 0.12, 0.8, 0.8, '#5a1f2b'); Bx(4.45, 12.6, 1.2, 0.14, 1.6, '#5a1f2b', 0, { decals: [R('S', 0, 1, 0.9, 1, '#c9a227'), R('S', 0.1, 0.9, 0.08, 0.2, '#c9a227')] });
+ys.forEach((y, i) => { Bx(3.55, y - 0.1, 0.2, 0.2, 0.09, m ? vcol[i] : '#3a4466', 0.8); Bx(6.25, y - 0.1, 0.2, 0.2, 0.09, m ? vcol[i + 2] : '#3a4466', 0.8); });
+const dp = Bx(4.5, 7.7, 0.9, 0.6, 0.04, '#0a1426', 0.8, { decals: [R('T', 0.03, 0.97, 0.06, 0.94, '#10304a', '#5ce1ff', 1.5)] });
+FT(dp, 'T', 0.5, 0.52, m ? 'ROUND 2' : 'ROUND -', 8, '#7be0ff');
+const gv = st.gv;
+Bx(5.6, 10.7, 0.5, 0.3, 0.06, '#5a3a1a', 0.8); Bx(5.75, 10.75, 0.12, 0.45, 0.1, '#7a4a26', gv === 1 ? 1.1 : 0.86); Bx(5.7, 10.7, 0.22, 0.2, 0.18, '#7a4a26', gv === 1 ? 1.2 : 0.86);
+if (gv === 2) glow(5.0, 8.0, 0.9, 150, '#ffd166', 0.28);
+Bx(7.5, 0.1, 2.1, 0.8, 0.9, '#4a3a2a');
+Bx(7.95, 0.25, 0.55, 0.45, 0.08, '#1d2030', 0.9); Bx(7.95, 0.25, 0.55, 0.15, 0.6, '#2a2d38', 0.98); Bx(7.95, 0.25, 0.55, 0.45, 0.1, '#2a2d38', 1.48); Bx(8.35, 0.62, 0.08, 0.05, 0.08, '#ff3b3b', 1.3);
+Cy(8.22, 0.52, 0.14, 0.32, '#9fc3d6', 0.98, { top: '#7a4a26' }); Cy(8.22, 0.52, 0.12, 0.16, '#5a2f14', 0.98, { top: '#3b1f10' });
+mug(8.95, 0.5, 0.9); mug(9.2, 0.5, 0.9);
+Cy(5.7, 5.5, 0.17, 0.42, '#9fd8ff', 0.8, { top: '#d6efff' }); Bx(5.85, 5.45, 0.12, 0.08, 0.2, '#9fd8ff', 0.9); Cy(5.1, 5.5, 0.09, 0.2, '#cfe9ff', 0.8, { top: '#e8f6ff' }); Cy(4.6, 5.5, 0.09, 0.2, '#cfe9ff', 0.8, { top: '#e8f6ff' });
+Cy(8.5, 12.3, 0.3, 0.1, '#2a2f3d', 0); Bx(8.45, 12.25, 0.1, 0.1, 0.9, '#8a95a8', 0.1);
+const ap = Bx(7.95, 12.1, 1.1, 0.12, 0.75, '#0a1426', 1.0, { decals: [R('S', 0.04, 0.96, 0.06, 0.94, '#10304a', '#5ce1ff', 1.5)] });
+FT(ap, 'S', 0.5, 0.74, 'NEXT', 6, '#7be0ff'); FT(ap, 'S', 0.5, 0.42, '4:00 am', 9, '#ffffff', 800);
+hitBox('agenda', 'Next meeting', 7.95, 12.0, 0, 9.05, 12.4, 1.75, 10);
+if (m) {
+const kd = (k) => (k === 'security' ? 'police' : k === 'mechanic' ? 'engineer' : k === 'librarian' ? 'librarian' : 'plain');
+ags.forEach((a, i) => { const west = i < 2, y = ys[i % 2]; Pe(west ? 2.9 : 7.1, y, { shirt: a.color, zoff: 0.45, seated: true, face: west ? 'SE' : 'NW', kadd: west ? 0.3 : 0.6, kind: kd(a.k), hair: '#4a3a2a' }); });
+Pe(5.05, 12.2, { shirt: '#1f2f5a', zoff: 0.45, seated: true, face: 'NE', kadd: 0.9, kind: 'captain' });
+}
+return { kicker: 'CONFERENCE ROOM', title: 'THE CONFERENCE ROOM', sub: 'Agents and the Captain only. Tap the big screen for the live meeting, the filing cabinet for past ones.' };
+}
+function stripes(x0, y0, x1, y1) { Fl(x0, y0, x1, y1, '#1a1c22', '#3a3d46', 1); const n = 6, h = (y1 - y0) / n; for (let i = 0; i < n; i += 2) Fl(x0, y0 + i * h, x1, y0 + (i + 1) * h, '#e0b020', 'none', 0); }
+function sceneWatch(st) {
+setDims(8, 13);
+newScene(RW, RD);
+const wl = walls(RW, RD, GX, '#2a3140', '#7a8aa0', '#323a4a');
+Fl(0, 0, RW, RD, '#20252f', '#4a5668', 1.5); hall(RW, RD);
+Fl(1.2, 0.9, 6.8, 5.6, '#171b24', '#3a4658', 1.0);
+const N = wl.N, Wt = wl.W;
+const names = ['PI HEALTH', 'WI-FI + NET', 'DEVICES', 'PI-HOLE', 'BACKUPS', 'ALERTS'];
+for (let i = 0; i < 6; i++) {
+const r = Math.floor(i / 3), c = i % 3, x0 = 1.2 + c * 1.85, x1 = x0 + 1.7, v0 = r === 0 ? 0.59 : 0.22, v1 = v0 + 0.33;
+N.decals.push(R('S', ux(x0), ux(x1), v0, v1, '#06101e', i === 4 && st.alert && st.on ? '#ff3b3b' : '#5ce1ff', 1.5)); N.decals.push(R('S', ux(x0 + 0.1), ux(x0 + 0.2), v1 - 0.1, v1 - 0.04, i === 4 && st.alert ? '#ffd166' : '#2fbf71'));
+for (let k = 0; k < 4; k++) N.decals.push(R('S', ux(x0 + 0.15 + k * 0.3), ux(x0 + 0.3 + k * 0.3), v0 + 0.03, v0 + 0.03 + 0.04 + ((k * 7 + i * 3) % 5) * 0.025, '#2f7ad0'));
+FT(N, 'S', ux((x0 + x1) / 2), v1 - 0.07, names[i], 6.5, '#7be0ff');
+}
+hitBox('monitors', 'Monitor wall', 1.2, 0, 0.68, 6.75, 0.1, 3.13, 8);
+Wt.decals.push(R('E', uy(1.3), uy(4.1), 0.2, 0.92, '#0a1426', '#7a8aa0', 2));
+for (let i = 0; i < 7; i++) { const u0 = 1.5 + (i % 4) * 0.62, v0 = i < 4 ? 0.62 : 0.36; Wt.decals.push(R('E', uy(u0), uy(u0 + 0.5), v0, v0 + 0.16, i === 3 ? '#ffd166' : '#2f5a9a', '#7be0ff', 0.8)); }
+FT(Wt, 'E', uy(2.7), 0.85, 'STATION MAP', 9, '#7be0ff');
+trophyW('trophy:security', 'SECURITY SHELF', 5.0, 2.0, [2, 1, 0]);
+function uy(y) { return y / RD; }
+Bx(2.0, 1.2, 4.0, 1.2, 0.95, '#3a4252', 0, { decals: [R('S', 0, 1, 0.9, 0.98, '#7be0ff')] });
+lamp(2.5, 1.7, 0.95); mug(4.9, 2.0, 0.95);
+Bx(5.2, 1.4, 0.55, 0.4, 0.14, '#d12a2a', 0.95); Bx(5.15, 1.36, 0.65, 0.12, 0.1, '#a01a1a', 1.09); Cy(5.48, 1.85, 0.05, 0.05, '#a01a1a', 0.95);
+Bx(3.2, 1.6, 0.7, 0.4, 0.08, '#2a2f3d', 0.95, { decals: [R('T', 0.1, 0.9, 0.2, 0.8, '#7be0ff')] });
+swivel(4.0, 3.1, '#1f2a3f');
+Pe(4.0, 3.1, { shirt: '#1d2a45', seated: true, face: 'NE', zoff: 0.52, kind: 'police', hair: '#1a1a1a' });
+hitPerson('agent:security', 'Security', 4.0, 3.1, 0.52);
+stripes(0.9, 8.0, 1.9, 10.4);
+Bx(0, 8.2, 0.7, 2.0, 2.6, '#3d4658', 0, { decals: [R('E', 0.05, 0.95, 0.03, 0.97, '#4a5568', '#8a95a8', 1.5), R('E', 0.495, 0.505, 0.03, 0.97, '#1a1d26'), R('E', 0.4, 0.46, 0.45, 0.5, '#e0b020', '#6a5010', 1), R('E', 0.54, 0.6, 0.45, 0.5, '#e0b020', '#6a5010', 1)] });
+
+hitBox('lockerx', 'Locker', 0, 8.2, 0, 0.7, 10.2, 2.6, 4);
+Bx(0, 10.6, 0.55, 1.4, 0.95, '#3a4252');
+Bx(0.1, 10.7, 0.35, 0.5, 0.18, '#1f2530', 0.95, { decals: [R('E', 0.1, 0.9, 0.3, 0.7, '#2fbf71')] }); Bx(0.15, 11.4, 0.5, 0.12, 0.1, '#222222', 0.95); Cy(0.25, 11.75, 0.06, 0.4, '#8a95a8', 0.95);
+Bx(6.5, 4.8, 0.9, 0.9, 0.95, '#3a4252'); Bx(6.65, 4.95, 0.5, 0.45, 0.55, '#262b36', 0.95); Cy(6.9, 5.45, 0.05, 0.05, '#ff3b3b', 1.1); mug(6.9, 5.6, 0.95);
+agentLight(['security'], st);
+return { kicker: 'SECURITY OFFICE / SECURITY', title: 'THE SECURITY OFFICE', sub: 'Security watches the screens, investigates anything unknown, and keeps an eye on the Pi.' };
+}
+function sceneTrainer(st) {
+setDims(8, 13);
+newScene(RW, RD);
+const wl = walls(RW, RD, GX, '#2a3140', '#7a8aa0', '#323a4a');
+Fl(0, 0, RW, RD, '#241d18', '#6a5a3a', 1.5); hall(RW, RD);
+Fl(1.2, 2.0, 6.8, 8.6, '#3a2418', '#c9a227', 1.2);
+const N = wl.N, Wt = wl.W;
+const uy = (y) => y / RD;
+N.decals.push(R('S', ux(1.0), ux(6.4), 0.2, 0.92, '#0a1426', '#c9a227', 2));
+N.decals.push(R('S', ux(1.1), ux(6.3), 0.8, 0.9, '#3a2f12'));
+[[1.5, 3.0, 0.55], [3.4, 4.9, 0.55], [5.0, 6.0, 0.55], [2.2, 4.2, 0.3]].forEach((b) => N.decals.push(R('S', ux(b[0]), ux(b[1]), b[2], b[2] + 0.13, '#12284a', '#5ce1ff', 1)));
+N.decals.push(R('S', ux(3.0), ux(3.4), 0.6, 0.62, '#5ce1ff')); N.decals.push(R('S', ux(4.9), ux(5.0), 0.6, 0.62, '#5ce1ff')); N.decals.push(R('S', ux(4.2), ux(4.4), 0.43, 0.55, '#5ce1ff'));
+FT(N, 'S', ux(3.7), 0.85, 'TRAINING', 10, '#ffd166');
+hitBox('trainboard', 'Training board', 1.0, 0, 0.68, 6.4, 0.1, 3.13, 8);
+const bs = []; for (let r = 0; r < 4; r++) for (let k = 0; k < 8; k++) { const u0 = 0.07 + k * 0.11, v0 = 0.07 + r * 0.23; bs.push(R('E', u0, u0 + 0.09, v0, v0 + 0.19, ['#c0302a', '#2f5a9a', '#c9a227', '#3a7a4a'][(k + r) % 4], '#0a1426', 0.8)); }
+Bx(0, 1.2, 0.55, 2.4, 2.4, '#4a2c1a', 0, { decals: [R('E', 0.02, 0.98, 0.02, 0.98, '#241810', '#c9a227', 2)].concat(bs) });
+hitBox('bookshelf', 'Training notes', 0, 1.2, 0, 0.55, 3.6, 2.4, 4);
+trophyW('trophy:trainer', 'TRAINER SHELF', 5.2, 2.2, [1, 0, 0]);
+Bx(2.4, 3.1, 3.2, 1.3, 0.95, '#2d3442', 0, { decals: [R('S', 0, 1, 0.88, 0.97, '#c9a227')] });
+lamp(2.9, 3.6, 0.95); mug(5.0, 3.9, 0.95);
+Bx(3.7, 3.4, 0.5, 0.6, 0.04, '#8a5a2a', 0.95); Bx(3.75, 3.46, 0.4, 0.48, 0.02, '#f2efe6', 0.99);
+Bx(4.4, 3.5, 0.35, 0.3, 0.1, '#2a2f3d', 0.95);
+Bx(2.2, 6.0, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(2.2, 6.7, 0.8, 0.15, 1.1, '#8a3b2a'); Bx(5.0, 6.0, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(5.0, 6.7, 0.8, 0.15, 1.1, '#8a3b2a');
+Pe(4.0, 2.5, { shirt: '#ffb703', kind: 'plain', hair: '#4a3a2a', clip: true }); hitPerson('agent:trainer', 'Trainer', 4.0, 2.5);
+agentLight(['trainer'], st);
+return { kicker: 'TRAINING ROOM / TRAINER', title: 'THE TRAINING ROOM', sub: 'A briefing room. He trains Jarvis first, and helps any agent do better.' };
+}
+function sceneSleeping(st) {
+setDims(10, 17);
+newScene(RW, RD, 0.82);
+const gy = 15, WC = '#3a2a22', TR = '#c9a227', LC = '#4a2c1a', ge = gy - 0.9, uyw = (y) => y / ge;
+const N = Bx(0, -0.2, RW, 0.2, WH, WC, 0, { wall: true, op: WOP, decals: [R('S', 0, 1, 0, 0.05, TR), R('S', 0, 1, 0.94, 1, TR)] });
+const Wt = Bx(-0.2, 0, 0.2, ge, WH, shade(WC, -0.1), 0, { wall: true, op: WOP, decals: [R('E', 0, 1, 0, 0.05, TR), R('E', 0, 1, 0.94, 1, TR)] });
+Bx(-0.2, ge, 0.2, 1.8, 0.7, shade(WC, -0.1), 2.7, { wall: true, op: WOP, decals: [R('E', 0, 1, 0, 0.1, TR)] });
+Bx(-0.075, gy + 0.9, 0.15, RD - gy - 0.9, 1.0, LC);
+Bx(-0.15, gy - 1.05, 0.3, 0.2, 2.7, TR); Bx(-0.15, gy + 0.85, 0.3, 0.2, 2.7, TR);
+Bx(RW - 0.075, 0, 0.15, RD, 1.0, LC); Bx(0, RD - 0.075, RW, 0.15, 1.0, LC);
+Fl(0, 0, RW, RD, '#2e1c14', '#8a6a2a', 1.5);
+for (let y = 1.7; y < RD; y += 1.7) S.floor.push({ pts: pts([[0, y, 0], [RW, y, 0], [RW, y + 0.04, 0], [0, y + 0.04, 0]]), fill: '#1f120c', stroke: 'none', sw: 0, op: 0.7 });
+if (typeof COMP === 'undefined') Fl(-3, gy - 2, 0, gy + 2, '#0b1330', '#2a3a56', 1.5);
+Fl(-0.35, gy - 0.9, 0.25, gy + 0.9, '#4a5870', '#8a9ab5', 1);
+Fl(1.2, 6.8, 7.9, 13.9, '#2a3f35', '#c9a227', 1.5); Fl(1.5, 7.1, 7.6, 13.6, 'none', '#8a6a2a', 0.8);
+const col = { captain: '#ffd166', librarian: '#b388eb', security: '#4a6fa5', mechanic: '#f4a261', trainer: '#ffb703' };
+const nm = { captain: 'CAPTAIN', librarian: 'LIBRARIAN', security: 'SECURITY', mechanic: 'MECHANIC', trainer: 'TRAINER' };
+const BL = '#2a3f78', SHT = '#efe9d8', PW = '#f4f1e8', FR = '#5a3a22';
+const item = (k, x, y, z) => {
+if (k === 'captain') { Bx(x, y, 0.4, 0.3, 0.1, '#10183a', z); Bx(x + 0.05, y, 0.3, 0.3, 0.05, '#ffd166', z + 0.1); }
+if (k === 'librarian') { Bx(x, y, 0.45, 0.35, 0.1, '#7a2a3a', z); Bx(x + 0.02, y + 0.02, 0.41, 0.31, 0.03, '#f2efe6', z + 0.1); }
+if (k === 'security') { Bx(x, y, 0.28, 0.28, 0.05, '#ffd166', z); Bx(x + 0.07, y + 0.07, 0.14, 0.14, 0.03, '#8a6a2a', z + 0.05); }
+if (k === 'mechanic') { Bx(x, y, 0.75, 0.12, 0.07, '#a8aebb', z); Bx(x + 0.65, y - 0.07, 0.18, 0.26, 0.07, '#a8aebb', z); }
+if (k === 'trainer') { Bx(x, y, 0.42, 0.55, 0.05, '#8a5a2a', z); Bx(x + 0.04, y + 0.05, 0.34, 0.45, 0.03, '#f2efe6', z + 0.05); }
+};
+const nstand = (x, y) => { Bx(x, y, 0.5, 0.5, 0.55, '#6a4326', 0, { decals: [R('S', 0.1, 0.9, 0.12, 0.45, '#4a2c1a', '#2a1a10', 0.8), R('S', 0.4, 0.6, 0.25, 0.3, '#c9a227')] }); Cy(x + 0.25, y + 0.25, 0.1, 0.03, '#c9a227', 0.55); Cy(x + 0.25, y + 0.25, 0.03, 0.2, '#c9a227', 0.58); Cy(x + 0.25, y + 0.25, 0.13, 0.14, '#ffd166', 0.78, { top: '#fff0b0' }); glow(x + 0.25, y + 0.25, 0.85, 28, '#ffd166', 0.14); };
+const bedN = (x, k) => {
+Bx(x, 0.3, 1.4, 2.8, 0.3, FR, 0); Bx(x + 0.05, 0.35, 1.3, 2.7, 0.16, SHT, 0.3); Bx(x + 0.05, 1.15, 1.3, 1.9, 0.12, BL, 0.46); Bx(x + 0.25, 0.42, 0.9, 0.5, 0.1, PW, 0.46);
+Bx(x, 0.2, 1.4, 0.1, 0.85, FR, 0); const fb = Bx(x, 3.1, 1.4, 0.1, 0.55, '#6a4326', 0, { decals: [R('S', 0.08, 0.92, 0.12, 0.88, '#1a1008', col[k], 1.2)] }); FT(fb, 'S', 0.5, 0.5, nm[k], 5.5, col[k], 800);
+item(k, x + 0.45, 2.1, 0.58);
+hitBox('bunk:' + k, nm[k] + ' bunk', x, 0.2, 0, x + 1.4, 3.2, 0.9, 4);
+};
+const bedW = (y, k) => {
+Bx(0.3, y, 2.8, 1.4, 0.3, FR, 0); Bx(0.35, y + 0.05, 2.7, 1.3, 0.16, SHT, 0.3); Bx(1.15, y + 0.05, 1.9, 1.3, 0.12, BL, 0.46); Bx(0.42, y + 0.25, 0.5, 0.9, 0.1, PW, 0.46);
+Bx(0.2, y, 0.1, 1.4, 0.85, FR, 0); const fb = Bx(3.1, y, 0.1, 1.4, 0.55, '#6a4326', 0, { decals: [R('E', 0.08, 0.92, 0.12, 0.88, '#1a1008', col[k], 1.2)] }); FT(fb, 'E', 0.5, 0.5, nm[k], 5.5, col[k], 800);
+item(k, 2.0, y + 0.45, 0.58);
+hitBox('bunk:' + k, nm[k] + ' bunk', 0.2, y, 0, 3.2, y + 1.4, 0.9, 4);
+};
+bedW(0.5, 'captain'); nstand(0.3, 1.95); bedW(2.55, 'librarian'); nstand(0.3, 3.99);
+bedN(4.2, 'security'); nstand(3.65, 0.3); bedN(6.2, 'mechanic'); nstand(5.65, 0.3); bedN(8.2, 'trainer'); nstand(7.65, 0.3);
+Wt.decals.push(R('E', uyw(8.4), uyw(12.0), 0.2, 0.86, '#10141c', '#8a95a8', 2.5)); Wt.decals.push(R('E', uyw(8.55), uyw(11.85), 0.26, 0.8, '#13243a', '#2a3a56', 1));
+FT(Wt, 'E', uyw(10.2), 0.53, 'CREW TV', 12, '#5ce1ff', 700); FT(Wt, 'E', uyw(10.2), 0.4, 'standby', 8, '#5a7a98', 600);
+Bx(0, 8.4, 0.5, 3.6, 0.45, '#4a2c1a', 0, { decals: [R('E', 0.04, 0.48, 0.15, 0.85, '#2a1a10', '#c9a227', 0.8), R('E', 0.52, 0.96, 0.15, 0.85, '#2a1a10', '#c9a227', 0.8)] });
+Wt.decals.push(R('E', uyw(4.9), uyw(6.5), 0.2, 0.9, '#4a2c1a', '#c9a227', 1.5)); [0.45, 0.7].forEach((v) => Wt.decals.push(R('E', uyw(5.0), uyw(6.4), v, v + 0.03, '#c9a227')));
+['#c0453a', '#4a8fd6', '#7bc47f', '#d9a441'].forEach((c, i) => { Wt.decals.push(R('E', uyw(5.05 + i * 0.33), uyw(5.05 + i * 0.33 + 0.27), 0.5, 0.67, c, '#1a0f08', 0.5)); Wt.decals.push(R('E', uyw(5.05 + i * 0.33), uyw(5.05 + i * 0.33 + 0.27), 0.25, 0.42, ['#e8e2d0', '#c0453a', '#4a8fd6', '#d9a441'][i], '#1a0f08', 0.5)); });
+N.decals.push(R('S', ux(0.8), ux(2.6), 0.42, 0.84, '#0a1426', '#c9a227', 2));
+FT(N, 'S', ux(1.7), 0.7, 'TEAM RULES', 8, '#ffd166'); FT(N, 'S', ux(1.7), 0.57, 'Rest well', 7, '#e8eeff', 600); FT(N, 'S', ux(1.7), 0.48, 'Wake ready', 7, '#e8eeff', 600);
+[[4.5, 5.7], [6.5, 7.7], [8.4, 9.4]].forEach((q, i) => { N.decals.push(R('S', ux(q[0]), ux(q[1]), 0.6, 0.88, '#3a2a12', '#c9a227', 1.5)); N.decals.push(R('S', ux(q[0] + 0.1), ux(q[1] - 0.1), 0.65, 0.83, ['#14264a', '#2a1a40', '#1a3a3a'][i])); });
+Bx(4.4, 8.8, 1.5, 3.2, 0.45, '#8a4a3a'); Bx(5.9, 8.8, 0.4, 3.2, 1.2, '#7a3a2a'); Bx(4.4, 8.8, 1.5, 0.3, 0.8, '#7a3a2a'); Bx(4.4, 11.7, 1.5, 0.3, 0.8, '#7a3a2a'); Bx(4.45, 9.15, 1.3, 1.1, 0.12, '#a85a46', 0.45); Bx(4.45, 10.3, 1.3, 1.1, 0.12, '#a85a46', 0.45); Bx(4.7, 9.0, 0.28, 0.3, 0.3, '#d9a441', 0.57);
+Bx(2.4, 9.8, 1.2, 1.6, 0.4, '#6a4326', 0, { decals: [R('T', 0.06, 0.94, 0.06, 0.94, '#7a5232', '#3b2412', 1)] });
+mug(2.9, 10.1, 0.4); Bx(2.8, 10.7, 0.3, 0.2, 0.05, '#2a2f3d', 0.4);
+const fl = (x, y) => { Cy(x, y, 0.2, 0.06, '#2a2f3d', 0); Cy(x, y, 0.04, 1.7, '#c9a227', 0.06); Cy(x, y, 0.26, 0.4, '#ffd166', 1.7, { top: '#fff0b0' }); glow(x, y, 1.9, 56, '#ffd166', 0.12); };
+fl(6.6, 8.2);
+plant(0.8, 13.0);
+Fl(7.6, 13.7, 9.8, 16.5, '#3a2418', '#c9a227', 1);
+Cy(8.5, 15.1, 0.55, 0.18, '#b0452f', 0); Cy(8.5, 15.1, 0.42, 0.06, '#e8d8b8', 0.14);
+Cy(9.3, 14.3, 0.17, 0.1, '#9fc3d6', 0, { top: '#5ca8d6' }); Cy(9.3, 15.9, 0.17, 0.1, '#c9a227', 0, { top: '#6a4a1a' });
+Cat(8.5, 15.1, { pose: 'sleep', zoff: 0.2, z0: 0.3 }); hitBox('cat', 'The cat', 7.9, 14.5, 0, 9.1, 15.7, 0.9, 6);
+return { kicker: 'SLEEPING QUARTERS', title: 'THE SLEEPING QUARTERS', sub: 'Five single bunks and a lounge. During a Wi-Fi outage everyone sleeps here with the lights low.' };
+}
+function sceneArchive(st) {
+setDims(8, 13);
+newScene(RW, RD);
+const wl = walls(RW, RD, GX, '#2a3140', '#7a8aa0', '#323a4a');
+const N = wl.N, Wt = wl.W, uy = (y) => y / RD;
+Fl(0, 0, RW, RD, '#2a2018', '#8a6a2a', 1.5); hall(RW, RD);
+Fl(1.2, 2.8, 6.8, 10.8, '#4a3a6a', '#b388eb', 1.2); Fl(1.5, 3.1, 6.5, 10.5, 'none', '#8a6a9a', 0.8);
+const SH0 = 3.1, SLN = 9.4;
+const bk = [R('E', 0.01, 0.99, 0.03, 0.97, '#2a1a10', '#c9a227', 1.5)], pal = ['#c0453a', '#d9a441', '#4a8fd6', '#7bc47f', '#b388eb', '#e07fb0', '#e8e2d0'];
+for (let r = 0; r < 4; r++) { const vb = 0.07 + r * 0.23; bk.push(R('E', 0.015, 0.985, vb - 0.015, vb + 0.005, '#c9a227')); let u = 0.02; while (u < 0.965) { const w = 0.008 + rnd() * 0.012, e = Math.min(0.975, u + w), h = 0.13 + rnd() * 0.07; bk.push(R('E', u, e, vb + 0.005, vb + 0.005 + h, pal[Math.floor(rnd() * pal.length)], '#1a0f08', 0.5)); u = e + 0.003; } }
+Bx(0, SH0, 0.55, SLN, 2.9, '#4a2c1a', 0, { decals: bk });
+hitBox('bookshelf', 'Bookshelf wall', 0, SH0, 0, 0.55, SH0 + SLN, 2.9, 10);
+Bx(0.62, 6.4, 0.08, 0.08, 2.5, '#a67c52'); Bx(0.62, 7.3, 0.08, 0.08, 2.5, '#a67c52'); [0.5, 1.0, 1.5, 2.0].forEach((z) => Bx(0.62, 6.4, 0.08, 0.98, 0.06, '#a67c52', z)); Bx(0.58, 6.3, 0.06, 1.2, 0.08, '#6a4a2a', 2.55);
+trophyW('trophy:librarian', 'LIBRARIAN SHELF', 0.4, 2.3, [3, 1, 1]);
+board(N, 0.9, 4.5);
+FT(N, 'S', ux(2.7), 0.85, 'ARCHIVE INDEX', 10, '#ffd166');
+['#c0453a', '#4a8fd6', '#7bc47f', '#d9a441', '#b388eb', '#e07fb0'].forEach((c, i) => N.decals.push(R('S', ux(1.1 + i * 0.54), ux(1.1 + i * 0.54 + 0.42), 0.38, 0.68, c, '#0a1426', 0.8)));
+const fcS = [R('S', 0.04, 0.96, 0.03, 0.97, '#34493e', '#c9a227', 1.2)];
+[0.05, 0.37, 0.69].forEach((v) => { fcS.push(R('S', 0.1, 0.9, v, v + 0.26, '#2a3b33', '#0a1410', 0.8)); fcS.push(R('S', 0.38, 0.62, v + 0.15, v + 0.19, '#e0b84a')); fcS.push(R('S', 0.3, 0.7, v + 0.06, v + 0.12, '#f2efe6')); });
+[0, 1, 2].forEach((i) => Bx(4.9 + i * 0.95, 0, 0.9, 0.8, 1.5, '#3f5a4a', 0, { decals: fcS }));
+hitBox('filing', 'Filing cabinets', 4.9, 0, 0, 7.75, 0.8, 1.5, 8);
+Bx(2.4, 3.6, 3.2, 1.3, 0.95, '#7a4a26', 0, { decals: [R('S', 0, 1, 0.88, 0.97, '#c9a227')] });
+lamp(2.9, 4.0, 0.95); mug(5.1, 4.2, 0.95);
+Bx(3.55, 3.85, 0.9, 0.6, 0.05, '#f2efe6', 0.95, { decals: [R('T', 0.49, 0.51, 0.04, 0.96, '#8a8a8a'), R('T', 0.08, 0.44, 0.2, 0.3, '#c8c2b0'), R('T', 0.08, 0.44, 0.45, 0.55, '#c8c2b0'), R('T', 0.56, 0.92, 0.2, 0.3, '#c8c2b0'), R('T', 0.56, 0.92, 0.45, 0.55, '#c8c2b0')] });
+Bx(3.55, 1.9, 0.9, 0.8, 0.5, '#5a1f2b'); Bx(3.55, 1.75, 0.9, 0.15, 1.3, '#5a1f2b');
+[2.2, 4.8].forEach((x) => { Bx(x, 6.0, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(x, 6.7, 0.8, 0.15, 1.1, '#8a3b2a'); });
+[8.0, 10.6].forEach((y) => { Bx(6.0, y - 0.4, 0.8, 0.8, 0.45, '#8a4a3a'); Bx(6.8, y - 0.4, 0.15, 0.8, 1.1, '#7a3a2a'); Bx(6.0, y - 0.4, 0.8, 0.12, 0.75, '#7a3a2a'); Bx(6.0, y + 0.28, 0.8, 0.12, 0.75, '#7a3a2a'); });
+Bx(6.3, 8.95, 0.5, 0.5, 0.7, '#6a4326'); lamp(6.55, 9.2, 0.7);
+Bx(6.9, 2.0, 0.6, 0.6, 1.0, '#cfc8b4'); Cy(7.2, 2.3, 0.24, 0.35, '#e8e2d0', 1.06); Cy(7.2, 2.3, 0.16, 0.22, '#f1c9a5', 1.4); Bx(6.9, 2.0, 0.6, 0.6, 0.06, '#9a9382', 1.0);
+plant(7.3, 12.2);
+const n = st.n || 0, u = n % 40, A3 = [1.4, 7.5];
+const lp = (uu) => {
+if (uu >= 14 && uu < 20) { const k = (uu - 14) / 6 * 7.8; return k < 2.6 ? { x: 4.0 - k, y: 2.3, mode: 'walk', face: 'NW' } : { x: 1.4, y: 2.3 + (k - 2.6), mode: 'walk', face: 'SW' }; }
+if (uu >= 20 && uu < 28) return { x: A3[0], y: A3[1], mode: 'stand', face: 'NW' };
+if (uu >= 28 && uu < 34) { const k = (uu - 28) / 6 * 7.8; return k < 5.2 ? { x: 1.4, y: 7.5 - k, mode: 'back', face: 'NE' } : { x: 1.4 + (k - 5.2), y: 2.3, mode: 'back', face: 'SE' }; }
+return { x: 4.0, y: 2.3, mode: 'sit', face: 'SW' };
+};
+const L = lp(u), lx = L.x, ly = L.y, mode = L.mode;
+agentLight(['librarian'], st);
+const po = { shirt: '#e8a0b8', kind: 'librarian', face: L.face };
+if (mode === 'walk' || mode === 'back') po.ph = n % 2;
+if (mode === 'sit') Object.assign(po, { seated: true, zoff: 0.5 }); if (mode === 'back' || mode === 'walk') po.carry = 'book';
+Pe(lx, ly, po); hitPerson('agent:librarian', 'Librarian', lx, ly, mode === 'sit' ? 0.5 : 0);
+const CH = [5.2, 6.35], cu = u < 14 || u >= 37 ? -1 : u;
+if (cu < 0) { Cat(CH[0], CH[1], { pose: 'sit', zoff: 0.5 }); hitBox('cat', 'The cat', 4.8, 6.0, 0.5, 5.6, 6.7, 1.3, 6); }
+else {
+const t0 = Math.max(14, Math.min(34, cu - 2.5)), T = lp(t0), tp = lp(Math.max(14, t0 - 0.5));
+let cx = T.x + (T.mode === 'stand' ? 0.7 : 0), cy = T.y + (T.mode === 'stand' ? 0.6 : 0), cz = 0;
+const wIn = Math.min(1, (cu - 14) / 3), wOut = cu >= 34 ? Math.min(1, (cu - 34) / 3) : 0;
+if (wIn < 1) { cx = CH[0] + (cx - CH[0]) * wIn; cy = CH[1] + (cy - CH[1]) * wIn; cz = 0.5 * (1 - wIn); }
+if (wOut > 0) { cx += (CH[0] - cx) * wOut; cy += (CH[1] - cy) * wOut; cz = 0.5 * wOut; }
+const mv = T.mode === 'walk' || T.mode === 'back' || wIn < 1 || wOut > 0;
+Cat(cx, cy, mv ? { pose: 'walk', zoff: cz, ph: n % 2, dir: (T.x - tp.x) - (T.y - tp.y) >= 0 ? 1 : -1 } : { pose: 'sit', zoff: 0 });
+hitBox('cat', 'The cat', cx - 0.5, cy - 0.4, cz, cx + 0.5, cy + 0.4, cz + 0.9, 6);
+}
+return { kicker: 'DATA ARCHIVE / LIBRARIAN', title: 'THE DATA ARCHIVE', sub: 'Where the crew memory lives. She never rushes; if she hurries, something is wrong.' };
+}
+function sceneWorkshop(st) {
+setDims(8, 13);
+newScene(RW, RD);
+const wl = walls(RW, RD, GX, '#2f3744', '#8a95a8', '#38414f');
+Fl(0, 0, RW, RD, '#2a2620', '#6a5a3a', 1.5); hall(RW, RD);
+const N = wl.N, Wt = wl.W, uy = (y) => y / RD;
+stripes(3.0, 11.6, 5.0, 12.9);
+N.decals.push(R('S', ux(0.4), ux(3.5), 0.3, 0.93, '#5a4630', '#8a6a3a', 2));
+for (let r = 0; r < 4; r++) for (let k = 0; k < 7; k++) N.decals.push(R('S', ux(0.6 + k * 0.42), ux(0.65 + k * 0.42), 0.34 + r * 0.14, 0.355 + r * 0.14, '#2a2014'));
+const tl = (cx, vb, parts) => parts.forEach((q) => N.decals.push(R('S', ux(cx + q[0]), ux(cx + q[1]), vb + q[2], vb + q[3], q[4], q[5] === undefined ? '#0a0a0a' : q[5], 0.8)));
+const SIL = '#a8aebb', PEG = '#5a4630';
+tl(0.95, 0.6, [[-0.08, 0.08, 0, 0.22, SIL], [-0.2, 0.2, 0.22, 0.31, SIL], [-0.06, 0.06, 0.24, 0.31, PEG]]);
+tl(1.75, 0.6, [[-0.05, 0.05, 0, 0.24, '#8a5a2a'], [-0.22, 0.22, 0.24, 0.31, '#4a5060'], [0.22, 0.31, 0.26, 0.3, '#4a5060'], [-0.3, -0.22, 0.24, 0.31, '#8a90a0']]);
+tl(2.45, 0.6, [[-0.07, 0.07, 0, 0.11, '#d98a2b'], [-0.02, 0.02, 0.11, 0.26, SIL], [-0.035, 0.035, 0.26, 0.285, '#6a7080']]);
+tl(3.05, 0.6, [[-0.13, -0.05, 0, 0.12, '#c0302a'], [0.05, 0.13, 0, 0.12, '#c0302a'], [-0.09, 0.09, 0.12, 0.16, '#8a90a0'], [-0.08, -0.01, 0.16, 0.27, '#8a90a0'], [0.01, 0.08, 0.16, 0.27, '#8a90a0'], [-0.025, 0.025, 0.13, 0.15, '#2a2a2a']]);
+tl(1.55, 0.35, [[-0.85, -0.5, 0.0, 0.13, '#8a5a2a'], [-0.76, -0.6, 0.03, 0.1, PEG], [-0.5, -0.23, 0.03, 0.14, '#cfd3da', 'none'], [-0.23, 0.04, 0.04, 0.135, '#cfd3da', 'none'], [0.04, 0.31, 0.05, 0.13, '#cfd3da', 'none'], [0.31, 0.58, 0.06, 0.125, '#cfd3da', 'none'], [0.58, 0.82, 0.07, 0.115, '#cfd3da', 'none']]);
+for (let i = 0; i < 12; i++) tl(1.55, 0.35, [[-0.45 + i * 0.105, -0.45 + i * 0.105 + 0.05, 0.02 + (i > 5 ? 0.02 + (i - 5) * 0.004 : 0), 0.045 + (i > 5 ? 0.02 + (i - 5) * 0.004 : 0), '#2a2a2a']]);
+tl(3.0, 0.35, [[-0.17, 0.17, 0, 0.17, '#f0c020'], [-0.09, 0.09, 0.04, 0.13, '#2a2a2a'], [0.17, 0.27, 0.02, 0.06, SIL]]);
+N.decals.push(R('S', ux(3.7), ux(5.3), 0.3, 0.93, '#0a1426', '#c9a227', 2));
+FT(N, 'S', ux(4.5), 0.87, 'PI HEALTH', 8, '#ffd166');
+const gv = st.gauge || 0, GC = ['#2fbf71', '#ffd166', '#ff3b3b'], lit = gv !== 2 || st.on;
+const dial = (cx, cz, state, ang, label, val) => {
+const ring = [], face = [], col = state === 2 && !st.on ? '#5a1515' : GC[state];
+for (let i = 0; i < 18; i++) { const t = i / 18 * Math.PI * 2; ring.push([cx + Math.cos(t) * 0.3, cz + Math.sin(t) * 0.3]); face.push([cx + Math.cos(t) * 0.24, cz + Math.sin(t) * 0.24]); }
+const a = ang * Math.PI / 180, nx = Math.cos(a), nz = Math.sin(a), px = -nz * 0.025, pz = nx * 0.025;
+Raw([WP('N', ring, col, '#0a0f1a', 0.8), WP('N', face, '#0e1a30', 'none', 0), WP('N', [[cx + px, cz + pz], [cx + nx * 0.22 + px, cz + nz * 0.22 + pz], [cx + nx * 0.22 - px, cz + nz * 0.22 - pz], [cx - px, cz - pz]], '#f2efe6', '#0a0f1a', 0.5)]);
+FT(N, 'S', ux(cx), (cz - 0.42) / 3.4, label + ' ' + val, 5.5, '#c8d4f0', 600);
+};
+dial(4.15, 2.45, 0, 55, 'CPU', '48C'); dial(4.85, 2.45, 0, 75, 'MEM', '41%'); dial(4.15, 1.65, gv, gv === 0 ? 100 : gv === 1 ? 35 : 10, 'DISK', gv === 0 ? '32%' : gv === 1 ? '86%' : '96%'); dial(4.85, 1.65, 0, 60, 'UP', '12d');
+hitBox('gauges', 'Pi health gauges', 3.7, 0, 1.0, 5.3, 0.1, 3.16, 8);
+Bx(0.6, 0.3, 3.4, 1.2, 0.95, '#8a6a3a', 0, { decals: [R('S', 0, 1, 0.88, 0.97, '#f4a261'), R('S', 0.04, 0.96, 0.1, 0.8, '#7a5a2a', '#4a3418', 1)] });
+Bx(1.0, 0.6, 1.5, 0.9, 0.06, '#2f7a4a', 0.95, { decals: [R('T', 0.1, 0.35, 0.2, 0.5, '#1a1c22'), R('T', 0.5, 0.65, 0.3, 0.6, '#c9a227'), R('T', 0.7, 0.9, 0.2, 0.4, '#1a1c22')] });
+Bx(2.8, 0.6, 0.55, 0.5, 0.28, '#5a6070', 0.95); Bx(2.85, 0.45, 0.45, 0.14, 0.4, '#3a3f4a', 0.95);
+Bx(1.0, 1.15, 0.8, 0.12, 0.05, '#a8aebb', 0.95); Bx(2.0, 1.2, 0.1, 0.1, 0.03, '#d0d0d0', 0.95); Bx(2.3, 1.2, 0.1, 0.1, 0.03, '#d0d0d0', 0.95);
+Cy(2.4, 2.4, 0.3, 0.05, '#2a2f3d', 0); Cy(2.4, 2.4, 0.05, 0.5, '#2a2f3d', 0.05); Cy(2.4, 2.4, 0.3, 0.1, '#6a4326', 0.55, { top: '#8a5a36' });
+const cd = [R('S', 0.05, 0.48, 0.04, 0.96, '#566879', '#1a222c', 1.2), R('S', 0.52, 0.95, 0.04, 0.96, '#566879', '#1a222c', 1.2), R('S', 0.4, 0.44, 0.45, 0.62, '#e0b84a'), R('S', 0.56, 0.6, 0.45, 0.62, '#e0b84a'), R('S', 0.12, 0.42, 0.78, 0.82, '#3a4856'), R('S', 0.12, 0.42, 0.72, 0.76, '#3a4856'), R('S', 0.58, 0.88, 0.78, 0.82, '#3a4856'), R('S', 0.58, 0.88, 0.72, 0.76, '#3a4856')];
+Bx(6.5, 0.15, 1.3, 0.9, 2.4, '#4a5a6a', 0, { decals: cd });
+stripes(6.3, 1.2, 7.9, 2.3);
+const wd = [R('E', uy(1.0), uy(3.6), 0.2, 0.92, '#0a1426', '#f4a261', 2), R('E', uy(1.08), uy(3.52), 0.8, 0.9, '#4a3016')];
+wd.forEach((d) => Wt.decals.push(d));
+const rc = ['#ff3b3b', '#ffd166', '#ffd166', '#2fbf71'];
+for (let i = 0; i < 4; i++) { const v = 0.64 - i * 0.14; Wt.decals.push(R('E', uy(1.2), uy(1.35), v, v + 0.06, rc[i])); }
+FT(Wt, 'E', uy(2.3), 0.85, 'WEAK SPOTS', 9, '#f4a261');
+['backup: no check', 'hub-oled: no restart', 'key file: readable', 'unused service'].forEach((t, i) => FT(Wt, 'E', uy(2.5), 0.67 - i * 0.14, t, 7, '#e8eeff', 600));
+hitBox('weak', 'Weak spots board', 0, 1.0, 0.68, 0.1, 3.6, 3.13, 8);
+trophyW('trophy:mechanic', 'MECHANIC SHELF', 4.0, 2.2, [2, 1, 0]);
+Wt.decals.push(R('E', uy(6.8), uy(9.8), 0.2, 0.92, '#0a1426', '#8a95a8', 2));
+FT(Wt, 'E', uy(8.3), 0.85, 'SERVICES', 9, '#7be0ff');
+[['Voice', 0], ['Home Assistant', 0], ['Pi-hole', 0]].forEach((sv, i) => { const v = 0.66 - i * 0.2; Wt.decals.push(R('E', uy(7.0), uy(7.2), v, v + 0.09, GC[sv[1]], '#0a0f1a', 0.6)); FT(Wt, 'E', uy(8.05), v + 0.045, sv[0], 7, '#e8eeff', 600); Wt.decals.push(R('E', uy(9.0), uy(9.6), v, v + 0.09, '#2a2f3a', '#8a95a8', 1)); Wt.decals.push(R('E', uy(9.05), uy(9.2), v + 0.01, v + 0.08, '#c8d4f0')); });
+hitBox('services', 'Services rack', 0, 6.8, 0.68, 0.1, 9.8, 3.13, 8);
+Bx(2.4, 6.2, 3.2, 1.6, 0.85, '#6b5a3a', 0, { decals: [R('T', 0.03, 0.97, 0.06, 0.94, '#1a3a6a', '#5ce1ff', 1.5), R('T', 0.1, 0.9, 0.3, 0.33, '#3a6acc'), R('T', 0.1, 0.9, 0.62, 0.65, '#3a6acc'), R('T', 0.3, 0.33, 0.1, 0.9, '#3a6acc'), R('T', 0.62, 0.65, 0.1, 0.9, '#3a6acc')] });
+hitBox('blueprint', 'Blueprint table', 2.4, 6.2, 0, 5.6, 7.8, 1.0, 12);
+Bx(6.4, 3.4, 1.0, 0.7, 0.7, '#c0302a', 0.18, { decals: [R('S', 0.05, 0.95, 0.08, 0.45, '#a82424', '#6a1010', 1), R('S', 0.05, 0.95, 0.55, 0.92, '#a82424', '#6a1010', 1), R('S', 0.4, 0.6, 0.18, 0.24, '#d8d8d8'), R('S', 0.4, 0.6, 0.65, 0.71, '#d8d8d8')] });
+Bx(6.35, 3.35, 1.1, 0.8, 0.1, '#8a1f1a', 0.88); Bx(6.7, 3.65, 0.4, 0.06, 0.12, '#2a2a2a', 0.98);
+[[6.5, 3.5], [7.2, 3.5], [6.5, 3.95], [7.2, 3.95]].forEach((w) => Cy(w[0], w[1], 0.1, 0.18, '#1a1a1a', 0));
+hitBox('toolbox', 'Rolling toolbox', 6.35, 3.35, 0, 7.45, 4.15, 1.0, 6);
+agentLight(['mechanic'], st);
+Pe(2.4, 2.4, { shirt: '#3d6296', kind: 'engineer', seated: true, face: 'NE', zoff: 0.62 }); hitPerson('agent:mechanic', 'Mechanic', 2.4, 2.4, 0.62);
+return { kicker: 'MECHANIC / WORKSHOP', title: 'THE WORKSHOP', sub: 'He hunts weak spots, fixes things and builds what the crew needs.' };
+}
+const INIT_PENDING = [
+{ what: 'Lock the voice ports to this Pi only', from: 'Security', risk: 'Low', signed: 'Mechanic, Captain', time: '9:40 am' },
+{ what: 'Empty the old-files trash folder (312 MB)', from: 'Librarian', risk: 'Low', signed: 'Captain', time: '10:05 am' },
+{ what: 'Restart Pi-hole nightly at 4 am', from: 'Mechanic', risk: 'Medium', signed: 'Security, Captain', time: '11:20 am' },
+{ what: 'Retrain the wake word with new voice samples', from: 'Trainer', risk: 'Low', signed: 'Captain', time: '12:10 pm' }
+];
+const INIT_LOG = [
+{ t: '8:02 am', who: 'Captain', what: 'Restarted hub-oled after a freeze', res: 'Done' },
+{ t: '8:40 am', who: 'Captain', what: 'Held off the 4 am reboot until morning', res: 'Done' },
+{ t: '9:15 am', who: 'Kylar', what: 'Approved: add Pi-hole to the health checks', res: 'Approved' }
+];
+function riskEdge(r) { return r === 'Low' ? '#2fbf71' : r === 'Medium' ? '#ffd166' : '#ff3b3b'; }
+const KS = 0.48;
+const ROOMS = [
+{ n: 'Conference Room', x: 0, y: 0, w: 10, d: 17, door: 'E', gy: 15, built: 'conference' },
+{ n: "Captain's Office", x: 14.2, y: 0, w: 8, d: 13, door: 'S', built: 'captain' },
+{ n: 'Security Office', x: 26.4, y: 0, w: 8, d: 13, door: 'S', built: 'watch' },
+{ n: 'Training Room', x: 38.6, y: 0, w: 8, d: 13, door: 'S', built: 'trainer' },
+{ n: 'Workshop', x: 50.8, y: 0, w: 8, d: 13, door: 'S', built: 'workshop' },
+{ n: 'Data Archive', x: 63.0, y: 0, w: 8, d: 13, door: 'S', built: 'archive' },
+{ n: 'Sleeping Quarters', x: 75.2, y: 0, w: 10, d: 17, door: 'W', gy: 15, built: 'sleeping' }
+];
+const BW = 85, BD = 17, WC = '#2f3a4e', TRIM = '#8a9ab5', LOWC2 = '#394559';
+function shellRoom(r) {
+WH = 3.4; OX = r.x; OY = r.y;
+const W = r.w, D = r.d, gx = W / 2, gy = r.gy || D / 2;
+WOP = r.low ? 0.5 : 1;
+if (r.door === 'S') walls(W, D, gx, WC, TRIM, LOWC2);
+else {
+const t = { wall: true, op: WOP, decals: [R('S', 0, 1, 0, 0.05, TRIM), R('S', 0, 1, 0.94, 1, TRIM)] }, t2 = { wall: true, op: WOP, decals: [R('E', 0, 1, 0, 0.05, TRIM), R('E', 0, 1, 0.94, 1, TRIM)] };
+if (r.door === 'N') { Bx(0, -0.2, gx - 0.9, 0.2, WH, WC, 0, t); Bx(gx + 0.9, -0.2, W - gx - 0.9, 0.2, WH, WC, 0, t); Bx(gx - 0.9, -0.2, 1.8, 0.2, 0.7, WC, 2.7, t); Bx(gx - 1.05, -0.2, 0.2, 0.3, 2.7, TRIM); Bx(gx + 0.85, -0.2, 0.2, 0.3, 2.7, TRIM); }
+else Bx(0, -0.2, W, 0.2, WH, WC, 0, t);
+if (r.door === 'W') { Bx(-0.2, 0, 0.2, gy - 0.9, WH, shade(WC, -0.1), 0, t2); Bx(-0.075, gy + 0.9, 0.15, D - gy - 0.9, 1.0, LOWC2); Bx(-0.2, gy - 0.9, 0.2, 1.8, 0.7, shade(WC, -0.1), 2.7, t2); Bx(-0.15, gy - 1.05, 0.3, 0.2, 2.7, TRIM); Bx(-0.15, gy + 0.85, 0.3, 0.2, 2.7, TRIM); }
+else Bx(-0.2, 0, 0.2, D, WH, shade(WC, -0.1), 0, t2);
+if (r.door === 'E') { Bx(W - 0.075, 0, 0.15, gy - 0.9, 1.0, LOWC2); Bx(W - 0.075, gy + 0.9, 0.15, D - gy - 0.9, 1.0, LOWC2); Bx(W - 0.15, gy - 1.05, 0.3, 0.2, 2.3, TRIM); Bx(W - 0.15, gy + 0.85, 0.3, 0.2, 2.3, TRIM); Bx(W - 0.15, gy - 1.05, 0.3, 2.1, 0.18, TRIM, 2.3); }
+else Bx(W - 0.075, 0, 0.15, D, 1.0, LOWC2);
+Bx(0, D - 0.075, W, 0.15, 1.0, LOWC2);
+}
+Fl(0, 0, W, D, '#1c2434', '#4a5a78', 1.2);
+if (r.door === 'E') Fl(W - 0.25, gy - 0.9, W + 0.35, gy + 0.9, '#4a5870', '#8a9ab5', 1); if (r.door === 'W') Fl(-0.35, gy - 0.9, 0.25, gy + 0.9, '#4a5870', '#8a9ab5', 1); if (r.door === 'S') Fl(gx - 0.9, D - 0.25, gx + 0.9, D + 0.35, '#4a5870', '#8a9ab5', 1);
+WOP = 1; WH = 3.4;
+}
+function mat(r, built) {
+OX = 0; OY = 0;
+const fill = built ? '#8a6a1a' : '#33415c', st = built ? '#ffd166' : '#6a7a98', col = built ? '#fff0b0' : '#7a8ab8';
+if (r.door === 'S') { const gx = r.x + r.w / 2; Fl(gx - 1.0, r.y + r.d + 0.25, gx + 1.0, r.y + r.d + 1.15, fill, st, 1);  }
+else if (r.door === 'N') { const gx = r.x + r.w / 2; Fl(gx - 1.0, r.y - 1.15, gx + 1.0, r.y - 0.25, fill, st, 1);  }
+else if (r.door === 'E') { Fl(r.x + r.w + 0.25, r.y + r.gy - 1.0, r.x + r.w + 1.15, r.y + r.gy + 1.0, fill, st, 1);  }
+else { Fl(r.x - 1.15, r.y + r.gy - 1.0, r.x - 0.25, r.y + r.gy + 1.0, fill, st, 1);  }
+}
+function pt(route, d) {
+let tot = 0; const seg = [];
+for (let i = 1; i < route.length; i++) { const l = Math.hypot(route[i][0] - route[i - 1][0], route[i][1] - route[i - 1][1]); seg.push(l); tot += l; }
+const cyc = tot * 2; let u = ((d % cyc) + cyc) % cyc, back = false;
+if (u > tot) { u = cyc - u; back = true; }
+for (let i = 0; i < seg.length; i++) { if (u <= seg[i]) { const f = seg[i] ? u / seg[i] : 0; return [route[i][0] + (route[i + 1][0] - route[i][0]) * f, route[i][1] + (route[i + 1][1] - route[i][1]) * f]; } u -= seg[i]; }
+return route[route.length - 1];
+}
+function bubble(x, y, kind, z, dy) {
+const f = P(x, y, z || 0), X = f[0], Y = f[1] + (dy || 0) - 57 * 2 * KS - 14;
+const w = 13, h = 9;
+S.top.push({ pts: [[X - w, Y - h], [X + w, Y - h], [X + w, Y + h], [X - w, Y + h]].map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), fill: '#f6f8ff', stroke: '#0a0f24', sw: 1, op: 1 });
+S.top.push({ pts: [[X - 4, Y + h], [X + 4, Y + h], [X - 1, Y + h + 6]].map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), fill: '#f6f8ff', stroke: '#0a0f24', sw: 1, op: 1 });
+if (kind === 'mag') {
+const ring = []; for (let i = 0; i < 12; i++) { const t = i / 12 * Math.PI * 2; ring.push([X - 2 + Math.cos(t) * 4.5, Y - 2 + Math.sin(t) * 4.5]); }
+S.top.push({ pts: ring.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), fill: 'none', stroke: '#1a2a5a', sw: 1.6, op: 1 });
+S.top.push({ pts: (X + 1.5) + ',' + (Y + 1.5) + ' ' + (X + 7) + ',' + (Y + 7), fill: 'none', stroke: '#1a2a5a', sw: 2, op: 1 });
+} else S.texts.push({ x: X.toFixed(1), y: (Y - 0.5).toFixed(1), text: kind === 'q' ? '?' : kind === 'zz' ? 'Zz' : '...', size: 11, weight: 800, fill: '#1a2a5a', tf: 'translate(-50%, -50%)', sh: 'none' });
+}
+function sign(r) {
+OX = 0; OY = 0;
+const on = !!r.built, bg = on ? '#4a3a12' : '#232c3c', ed = on ? '#ffd166' : '#6a7a98', tc = on ? '#ffe9a8' : '#9fb0cc';
+if (r.door === 'S') { const x0 = r.x + r.w / 2 + 1.15, w = r.w / 2 - 1.5; const b = Bx(x0, r.y + r.d - 0.2, w, 0.12, 0.55, bg, 1.05, { decals: [R('S', 0, 1, 0, 0.1, ed), R('S', 0, 1, 0.9, 1, ed)] }); FT(b, 'S', 0.5, 0.5, r.n, 15, tc, 700); }
+else if (r.door === 'E') { const y1 = r.gy - 1.25, y0 = y1 - 3.8; const b = Bx(r.x + r.w - 0.06, r.y + y0, 0.12, 3.8, 0.55, bg, 1.05, { decals: [R('E', 0, 1, 0, 0.1, ed), R('E', 0, 1, 0.9, 1, ed)] }); FT(b, 'E', 0.5, 0.5, r.n, 15, tc, 700); }
+else { const x0 = r.x + 0.8; const b = Bx(x0, r.y + r.d - 0.2, 3.6, 0.12, 0.55, bg, 1.05, { decals: [R('S', 0, 1, 0, 0.1, ed), R('S', 0, 1, 0.9, 1, ed)] }); FT(b, 'S', 0.5, 0.5, r.n, 15, tc, 700); }
+}
+function corridor() {
+OX = 0; OY = 0;
+Fl(10, 13, 75.2, 17, '#2b3342', '#5a6a85', 1.5);
+for (let x = 14; x < 74; x += 4) S.floor.push({ pts: pts([[x, 13, 0], [x + 0.08, 13, 0], [x + 0.08, 17, 0], [x, 17, 0]]), fill: '#3a4660', stroke: 'none', sw: 0, op: 0.9 });
+const lw = Bx(10, 17, 65.2, 0.15, 0.35, '#3a4458', 0, { decals: [R('S', 0, 1, 0, 0.12, '#8a9ab5'), R('S', 0, 1, 0.88, 1, '#8a9ab5')] });
+for (let x = 12.5; x < 75; x += 2.4) S.floor.push({ pts: pts([[x, 14.97, 0], [x + 1.1, 14.97, 0], [x + 1.1, 15.03, 0], [x, 15.03, 0]]), fill: '#5a6a85', stroke: 'none', sw: 0, op: 0.7 });
+ROOMS.forEach((r) => { if (r.door === 'S') { const gx = r.x + r.w / 2; Fl(gx - 1.6, 13.05, gx + 1.6, 14.9, '#34405a', '#5a6a85', 0.8); } });
+for (let x = 14; x < 75; x += 8) { Bx(x, 17.02, 0.35, 0.11, 0.3, '#2a2f3d', 0.35); Bx(x + 0.05, 17.04, 0.25, 0.07, 0.14, '#dff0ff', 0.65); }
+}
+let OUTCTL = null;
+const REAL = { seen: false, ok: false, data: null, lastTime: 0, lastChange: 0, bad: 0, good: 0 };
+function realApply(d) {
+const sv = d.services || {}, badSv = Object.keys(sv).filter((k) => sv[k] !== 'running'), ct = d.containers || {}, downCt = Object.keys(ct).filter((k) => !ct[k]);
+const pi = d.pi || {}, bk = d.backups || {}, dv = d.devices || {}, ph = d.pihole || {}, wf = d.wifi || {};
+const sec = agent('security'), mech = agent('mechanic'), lib = agent('librarian'), cap = agent('captain');
+const secBad = badSv.length > 0 || downCt.length > 0 || ph.dns_answers === false || wf.internet === false || wf.router === false;
+sec.light = (wf.router === false || wf.internet === false) ? 'r' : (secBad ? 'y' : 'g');
+sec.doing = 'Watching ' + Object.keys(sv).length + ' services, ' + (dv.online === null || dv.online === undefined ? '?' : dv.online) + ' of ' + (dv.known === null || dv.known === undefined ? '?' : dv.known) + ' devices online';
+sec.stuck = secBad ? ((badSv.concat(downCt)).join(', ') || (wf.internet === false ? 'No internet' : 'Check Pi-hole DNS')) : 'Nothing';
+const hot = (pi.temp_c !== null && pi.temp_c > 75) || (pi.mem_pct !== null && pi.mem_pct > 90) || (pi.disk_pct !== null && pi.disk_pct > 85);
+mech.light = hot ? 'y' : 'g';
+mech.doing = 'Pi ' + (pi.temp_c === null ? '?' : pi.temp_c) + ' C, memory ' + pi.mem_pct + '%, disk ' + pi.disk_pct + '%';
+mech.stuck = hot ? 'Pi running hot or full' : 'Nothing';
+const old = bk.newest_age_hours === null || bk.newest_age_hours === undefined || bk.newest_age_hours > 192;
+lib.light = old ? 'y' : 'g';
+lib.doing = bk.newest_age_hours === null || bk.newest_age_hours === undefined ? 'No backup found' : 'Newest backup ' + Math.round(bk.newest_age_hours) + ' hours old, ' + bk.count + ' kept';
+lib.stuck = old ? 'Backups are over 8 days old' : 'Nothing';
+cap.light = (sec.light !== 'g' || mech.light !== 'g' || lib.light !== 'g') ? 'y' : 'g';
+}
+function liveStep(n) {
+const R = REAL; if (!R.seen) return;
+const wf = R.ok && R.data && R.data.wifi, bad = !R.ok || (wf && (wf.router === false || wf.internet === false));
+if (bad) { R.bad++; R.good = 0; } else { R.good++; R.bad = 0; }
+if (R.bad >= 2 && !OUTCTL) OUTCTL = { t0: n + 60, t1: null, req: null };
+else if (R.good >= 2 && OUTCTL && OUTCTL.t1 === null && OUTCTL.req === null) OUTCTL.req = n + 60;
+}
+const RM = { conf: ROOMS[0], cap: ROOMS[1], sec: ROOMS[2], trn: ROOMS[3], wrk: ROOMS[4], arc: ROOMS[5], slp: ROOMS[6] };
+const LN = { captain: 14.4, librarian: 14.9, security: 15.4, mechanic: 15.9, trainer: 16.2, cat: 16.55 };
+const AGK = ['captain', 'librarian', 'security', 'mechanic', 'trainer'];
+function entryPt(r) { return r.door === 'S' ? [r.x + r.w / 2, 13.5] : r.door === 'E' ? [r.x + r.w + 0.9, r.y + r.gy] : [r.x - 0.9, r.y + r.gy]; }
+function absPts(sp) { if (!sp.room) return [[sp.x, sp.y]]; const r = sp.room; return [[r.x + sp.x, r.y + sp.y]].concat(sp.via.map((v) => [r.x + v[0], r.y + v[1]])); }
+function ddp(a) { const o = []; a.forEach((p) => { const q = o[o.length - 1]; if (!q || Math.abs(q[0] - p[0]) > 1e-6 || Math.abs(q[1] - p[1]) > 1e-6) o.push(p); }); return o; }
+function plen(a) { let t = 0; for (let i = 1; i < a.length; i++) t += Math.hypot(a[i][0] - a[i - 1][0], a[i][1] - a[i - 1][1]); return t; }
+function along(a, d) { for (let i = 1; i < a.length; i++) { const l = Math.hypot(a[i][0] - a[i - 1][0], a[i][1] - a[i - 1][1]); if (d <= l || i === a.length - 1) { const f = l ? Math.min(1, d / l) : 0; return [a[i - 1][0] + (a[i][0] - a[i - 1][0]) * f, a[i - 1][1] + (a[i][1] - a[i - 1][1]) * f, i]; } d -= l; } return [a[a.length - 1][0], a[a.length - 1][1], a.length - 1]; }
+function route(a, b, lane) {
+const A = absPts(a), B = absPts(b);
+if (a.room && a.room === b.room) { let i = A.length - 1, j = B.length - 1; while (i > 0 && j > 0 && Math.abs(A[i][0] - B[j][0]) < 1e-6 && Math.abs(A[i][1] - B[j][1]) < 1e-6) { i--; j--; } return ddp(A.slice(0, i + 2).concat(B.slice(0, j + 1).reverse())); }
+const PA = a.room ? A.concat([entryPt(a.room)]) : A, PB = b.room ? B.concat([entryPt(b.room)]) : B;
+const pa = PA[PA.length - 1], pb = PB[PB.length - 1];
+return ddp(PA.concat([[pa[0], lane], [pb[0], lane]]).concat(PB.slice().reverse()));
+}
+function rnd01(a, b) { let h = (Math.imul(a + 1013, 374761393) + Math.imul(b + 77, 668265263)) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+const sp = (room, x, y, via, o) => Object.assign({ room: room, x: x, y: y, via: via, pose: 'stand' }, o || {});
+const generic = (room, y) => sp(room, 4.0, y || 7.0, [[4.0, 12.3]]);
+const SIT = (zo, face) => ({ pose: 'sit', zoff: zo, face: face });
+const HOME = {
+captain: sp(RM.cap, 4.0, 3.9, [[6.7, 3.9], [6.7, 11.9], [4.0, 12.3]]),
+security: sp(RM.sec, 4.0, 3.1, [[4.0, 12.3]], SIT(0.52, 'NE')),
+trainer: sp(RM.trn, 4.0, 2.5, [[6.9, 2.5], [6.9, 11.8], [4.0, 12.3]]),
+librarian: RM.arc.built ? sp(RM.arc, 4.0, 2.3, [[1.4, 2.3], [1.4, 8.6], [4.0, 8.6], [4.0, 12.3]], SIT(0.5, 'SW')) : generic(RM.arc),
+mechanic: RM.wrk.built ? sp(RM.wrk, 2.4, 2.4, [[1.6, 2.4], [1.6, 10.5], [4.0, 11.0], [4.0, 12.3]], SIT(0.62, 'NE')) : generic(RM.wrk)
+};
+const VISIT = {
+captain: { stand: sp(RM.cap, 6.6, 5.3, [[6.7, 11.9], [4.0, 12.3]]), sits: [sp(RM.cap, 3.1, 7.15, [[3.1, 9.0], [4.0, 12.3]], SIT(0.5, 'NE')), sp(RM.cap, 4.9, 7.15, [[4.9, 9.0], [4.0, 12.3]], SIT(0.5, 'NE'))] },
+security: { stand: sp(RM.sec, 4.0, 5.2, [[4.0, 12.3]]), sits: [] },
+trainer: { stand: sp(RM.trn, 4.0, 5.3, [[4.0, 12.3]]), sits: [sp(RM.trn, 2.6, 6.35, [[2.6, 8.5], [4.0, 12.3]], SIT(0.5, 'NE')), sp(RM.trn, 5.4, 6.35, [[5.4, 8.5], [4.0, 12.3]], SIT(0.5, 'NE'))] },
+librarian: RM.arc.built ? { stand: sp(RM.arc, 3.75, 5.6, [[3.75, 8.6], [4.0, 8.6], [4.0, 12.3]]), sits: [sp(RM.arc, 2.6, 6.35, [[2.6, 8.6], [4.0, 8.6], [4.0, 12.3]], SIT(0.5, 'NE')), sp(RM.arc, 5.2, 6.35, [[5.2, 8.6], [4.0, 8.6], [4.0, 12.3]], SIT(0.5, 'NE'))] } : { stand: generic(RM.arc, 8.0), sits: [] },
+mechanic: RM.wrk.built ? { stand: sp(RM.wrk, 4.0, 5.0, [[1.6, 5.0], [1.6, 10.5], [4.0, 11.0], [4.0, 12.3]]), sits: [] } : { stand: generic(RM.wrk, 8.0), sits: [] }
+};
+const CONF = {
+captain: sp(RM.conf, 5.05, 12.2, [[3.8, 12.2], [3.8, 13.6], [9.4, 15]], SIT(0.45, 'NE')),
+librarian: sp(RM.conf, 2.9, 6.4, [[1.9, 6.4], [1.9, 13.6], [9.4, 15]], SIT(0.45, 'SE')),
+security: sp(RM.conf, 2.9, 9.6, [[1.9, 9.6], [1.9, 13.6], [9.4, 15]], SIT(0.45, 'SE')),
+mechanic: sp(RM.conf, 7.1, 6.4, [[7.1, 8.0], [9.4, 8.0], [9.4, 15]], SIT(0.45, 'NW')),
+trainer: sp(RM.conf, 7.1, 9.6, [[7.1, 11.0], [9.4, 11.0], [9.4, 15]], SIT(0.45, 'NW'))
+};
+const TL = 280, BRISK = 1.9, STROLL = 1.25;
+const AG = {
+captain: { kind: 'captain', shirt: '#1f2f5a', hair: '#2a2220' },
+librarian: { kind: 'librarian', shirt: '#e8a0b8', hair: '#e8c872' },
+security: { kind: 'police', shirt: '#4a5a7a', hair: '#141414' },
+mechanic: { kind: 'engineer', shirt: '#3d6296', hair: '#5a3a22' },
+trainer: { kind: 'plain', shirt: '#eeeae0', hair: '#6a4a2a', clip: true }
+};
+const PLANS = {};
+function doorX(k) { const r = HOME[k].room; return r.door === 'S' ? r.x + r.w / 2 : r.x + r.w + 0.9; }
+function mkLegs(k, dest, depart, spd, leaveAt, talk) {
+const home = HOME[k], p1 = route(home, dest, LN[k]), len = plen(p1), arrive = depart + len / spd, lv = leaveAt === null ? arrive + talk : leaveAt;
+const p2 = route(dest, home, LN[k]), back = lv + len / spd;
+return { segs: [{ t0: 0, t1: depart, spot: home }, { t0: depart, t1: arrive, path: p1, len: len, spot: null }, { t0: arrive, t1: lv, spot: dest }, { t0: lv, t1: back, path: p2, len: len, spot: null }, { t0: back, t1: 1e9, spot: home }], arrive: arrive, end: back };
+}
+function arrivalOf(k, dest, depart, spd) { return depart + plen(route(HOME[k], dest, LN[k])) / spd; }
+function buildPlan(slot) {
+const pl = { slot: slot, type: 'quiet', segs: {}, talk: null, who: [], end: 0 };
+AGK.forEach((k) => { pl.segs[k] = [{ t0: 0, t1: 1e9, spot: HOME[k] }]; });
+const r = rnd01(slot, 1), t0 = Math.floor(rnd01(slot, 6) * 30), spd = rnd01(slot, 5) < 0.55 ? BRISK : STROLL, talk = 40 + Math.floor(rnd01(slot, 7) * 30);
+const ai = Math.floor(rnd01(slot, 2) * 5), bi = (ai + 1 + Math.floor(rnd01(slot, 3) * 4)) % 5, a = AGK[ai], b = AGK[bi];
+if (r < 0.16) return pl;
+if (r < 0.5) {
+const V = VISIT[b], useSit = V.sits.length && rnd01(slot, 4) < 0.45, dest = useSit ? V.sits[rnd01(slot, 8) < 0.5 ? 0 : 1] : V.stand;
+const L = mkLegs(a, dest, t0, spd, null, talk); pl.segs[a] = L.segs; pl.type = 'visit'; pl.who = [a, b]; pl.talk = [L.arrive, L.arrive + talk]; pl.end = L.end;
+return pl;
+}
+if (r < 0.78) {
+const xa = doorX(a), xb = doorX(b), m = Math.max(16, Math.min(66, (xa + xb) / 2 + (rnd01(slot, 9) - 0.5) * 8)), left = xa <= xb;
+const sa = sp(null, left ? m - 0.8 : m + 0.8, 15.15, []), sb = sp(null, left ? m + 0.8 : m - 0.8, 15.15, []);
+const ar = Math.max(arrivalOf(a, sa, t0, spd), arrivalOf(b, sb, t0 + 2, spd)), lv = ar + talk;
+const La = mkLegs(a, sa, t0, spd, lv, talk), Lb = mkLegs(b, sb, t0 + 2, spd, lv, talk);
+pl.segs[a] = La.segs; pl.segs[b] = Lb.segs; pl.type = 'hall'; pl.who = [a, b]; pl.talk = [ar, lv]; pl.end = Math.max(La.end, Lb.end);
+return pl;
+}
+const cnt = 3 + Math.floor(rnd01(slot, 10) * 3), order = AGK.slice(1).sort((p, q) => rnd01(slot, 20 + AGK.indexOf(p)) - rnd01(slot, 20 + AGK.indexOf(q))), who = ['captain'].concat(order).slice(0, cnt);
+let ar = 0; who.forEach((k, i) => { ar = Math.max(ar, arrivalOf(k, CONF[k], t0 + i * 5, spd)); });
+const lv = ar + talk; let end = 0;
+who.forEach((k, i) => { const L = mkLegs(k, CONF[k], t0 + i * 5, spd, lv, talk); pl.segs[k] = L.segs; end = Math.max(end, L.end); });
+pl.type = 'meeting'; pl.who = who; pl.talk = [ar, lv]; pl.end = end;
+return pl;
+}
+function planOf(slot) { if (!PLANS[slot]) { PLANS[slot] = buildPlan(slot); if (Object.keys(PLANS).length > 500) { Object.keys(PLANS).forEach((q) => { delete PLANS[q]; }); PLANS[slot] = buildPlan(slot); } } return PLANS[slot]; }
+function evalSegs(segs, u) {
+for (let i = 0; i < segs.length; i++) { const g = segs[i]; if (u >= g.t0 && u < g.t1) { if (g.path) { const q = along(g.path, (u - g.t0) / (g.t1 - g.t0) * g.len), q2 = along(g.path, Math.min(g.len, (u - g.t0 + 1) / (g.t1 - g.t0) * g.len)); const dd = (u - g.t0) / (g.t1 - g.t0) * g.len, qa = along(g.path, Math.max(0, dd - 0.8)), qb = along(g.path, Math.min(g.len, dd + 0.8)); return { x: q[0], y: q[1], spot: null, moving: true, fdx: qb[0] - qa[0], fdy: qb[1] - qa[1], ddx: (q2[0] - q[0]) - (q2[1] - q[1]), ds: dd, de: g.len - dd }; } const q = absPts(g.spot)[0]; return { x: q[0], y: q[1], spot: g.spot, moving: false, ddx: 0 }; } }
+const g = segs[segs.length - 1], q = absPts(g.spot)[0]; return { x: q[0], y: q[1], spot: g.spot, moving: false, ddx: 0 };
+}
+function agentAt(k, tick) { const slot = Math.floor(tick / TL), u = tick - slot * TL, pl = planOf(slot); return Object.assign({ pl: pl, u: u }, evalSegs(pl.segs[k], u)); }
+const CATSPOTS = [
+sp(RM.slp, 8.5, 15.1, [[2.0, 15.0]], { sleep: true }), sp(RM.slp, 8.5, 15.1, [[2.0, 15.0]], { sleep: true }),
+RM.arc.built ? sp(RM.arc, 1.5, 10.0, [[2.0, 10.0], [4.0, 12.3]], { sleep: true }) : generic(RM.arc, 9.0),
+sp(RM.conf, 5.0, 14.0, [[9.4, 15]]), sp(RM.cap, 5.2, 9.6, [[4.0, 12.3]]), sp(RM.sec, 5.0, 8.4, [[4.0, 12.3]]), sp(RM.trn, 4.4, 8.6, [[4.0, 12.3]]),
+RM.wrk.built ? sp(RM.wrk, 4.4, 9.4, [[4.0, 12.3]]) : generic(RM.wrk, 9.0), generic(RM.arc, 7.0),
+sp(null, 20, 16.55, []), sp(null, 34, 16.55, []), sp(null, 48, 16.55, []), sp(null, 60, 16.55, [])
+];
+const TC = 150;
+function catSpot(slot) { return CATSPOTS[Math.floor(rnd01(slot, 31) * CATSPOTS.length)]; }
+function catAt(tick) {
+const slot = Math.floor(tick / TC), u = tick - slot * TC, cur = catSpot(slot), prev = catSpot(slot - 1);
+if (cur === prev) { const q = absPts(cur)[0]; return { x: q[0], y: q[1], spot: cur, moving: false, ddx: 1 }; }
+const path = route(prev, cur, LN.cat), len = plen(path), dep = Math.floor(rnd01(slot, 32) * 20), spd = 1.6, arr = dep + len / spd;
+if (u < dep) { const q = absPts(prev)[0]; return { x: q[0], y: q[1], spot: prev, moving: false, ddx: 1 }; }
+if (u < arr) { const d = (u - dep) * spd, q = along(path, d), q2 = along(path, d + 1.5); return { x: q[0], y: q[1], spot: null, moving: true, ddx: (q2[0] - q[0]) - (q2[1] - q[1]), ds: d, de: len - d }; }
+const q = absPts(cur)[0]; return { x: q[0], y: q[1], spot: cur, moving: false, ddx: 1 };
+}
+const BSTAND = {}, BLIE = {};
+(function () {
+const via = (y) => [[3.95, y], [3.95, 15], [1.0, 15]];
+const defs = { captain: [3.7, 1.2, 'W', 0.5], librarian: [3.7, 3.25, 'W', 2.55], security: [4.9, 3.75, 'N', 4.2], mechanic: [6.9, 3.75, 'N', 6.2], trainer: [8.9, 3.75, 'N', 8.2] };
+Object.keys(defs).forEach((k) => { const d = defs[k]; BSTAND[k] = sp(RM.slp, d[0], d[1], via(d[1])); BLIE[k] = sp(RM.slp, d[0], d[1], via(d[1]), { bunk: true, bed: d[2], b0: d[3] }); });
+})();
+function outBuild(c) {
+c.down = {}; c.downEnd = 0;
+AGK.forEach((k, i) => {
+const a = agentAt(k, c.t0), start = a.spot || HOME[k], d = i * 4, p1 = route(start, BSTAND[k], LN[k]), len = plen(p1), spd = 1.6, arr = d + len / spd;
+c.down[k] = [{ t0: 0, t1: d, spot: start }, { t0: d, t1: arr, path: p1, len: len, spot: null }, { t0: arr, t1: arr + 3, spot: BSTAND[k] }, { t0: arr + 3, t1: 1e9, spot: BLIE[k] }];
+c.downEnd = Math.max(c.downEnd, arr + 3);
+});
+}
+function outWake(c) {
+c.up = {}; c.pass = {}; c.upEnd = 0; let others = 0;
+AGK.forEach((k, i) => {
+const w = i * 6, p2 = route(BSTAND[k], HOME[k], LN[k]), len = plen(p2), spd = BRISK, arr = w + 3 + len / spd, ck = 14 + i * 3;
+c.up[k] = [{ t0: 0, t1: w, spot: BLIE[k] }, { t0: w, t1: w + 3, spot: BSTAND[k] }, { t0: w + 3, t1: arr, path: p2, len: len, spot: null }, { t0: arr, t1: 1e9, spot: HOME[k] }];
+c.pass[k] = arr + ck; if (k !== 'captain') others = Math.max(others, c.pass[k]);
+});
+c.pass.captain = Math.max(c.pass.captain, others + 6); c.upEnd = c.pass.captain + 8;
+c.quietUntil = (Math.floor((c.t1 + c.upEnd) / TL) + 1) * TL;
+}
+function outTick(tick) {
+const c = OUTCTL; if (!c || tick < c.t0) return null;
+if (!c.down) outBuild(c);
+if (c.t1 === null && c.req !== null && tick >= c.req && tick >= c.t0 + c.downEnd + 8) { c.t1 = tick; outWake(c); }
+if (c.t1 !== null && tick >= c.quietUntil) { OUTCTL = null; return null; }
+return c;
+}
+function agentNow(k, tick) {
+const c = OUTCTL && tick >= OUTCTL.t0 ? OUTCTL : null;
+if (c && c.down) {
+if (c.t1 === null) return Object.assign({ pl: null, u: 0 }, evalSegs(c.down[k], tick - c.t0));
+const r = tick - c.t1;
+if (r < c.upEnd) return Object.assign({ pl: null, u: 0 }, evalSegs(c.up[k], r));
+if (tick < c.quietUntil) return Object.assign({ pl: null, u: 0 }, evalSegs([{ t0: 0, t1: 1e9, spot: HOME[k] }], 0));
+}
+return agentAt(k, tick);
+}
+function lieFig(k, o) {
+const b = o.b0, west = o.bed === 'W', ax = RM.slp.x, ay = RM.slp.y, d = AG[k], SK = '#f0c8a0', BL2 = '#34508f';
+OX = 0; OY = 0;
+const Q = (u, v, du, dv, h, col, z) => west ? Bx(ax + u, ay + b + v, du, dv, h, col, z) : Bx(ax + b + v, ay + u, dv, du, h, col, z);
+Q(0.94, 0.28, 0.28, 0.84, 0.2, d.shirt, 0.46);
+Q(1.2, 0.3, 1.75, 0.8, 0.14, BL2, 0.58);
+Q(0.44, 0.47, 0.46, 0.46, 0.22, SK, 0.56);
+if (d.kind === 'captain') Q(0.72, 0.5, 0.18, 0.4, 0.05, '#efefef', 0.78);
+else { const hc = d.hair; Q(0.44, 0.47, 0.2, 0.46, 0.06, hc, 0.78); if (d.kind === 'librarian') Q(0.3, 0.52, 0.18, 0.36, 0.2, hc, 0.56); if (d.kind === 'engineer') Q(0.74, 0.5, 0.16, 0.4, 0.04, hc, 0.78); }
+Q(0.6, 0.55, 0.06, 0.1, 0.02, '#2a2018', 0.78); Q(0.6, 0.77, 0.06, 0.1, 0.02, '#2a2018', 0.78);
+}
+const MAST = [18, 20.6];
+function mast(tick, oc) {
+OX = 0; OY = 0; const x = MAST[0], y = MAST[1], down = oc && oc.t1 === null, slowOn = Math.floor(tick / 6) % 2 === 1;
+const base = Bx(x - 0.9, y - 0.9, 1.8, 1.8, 0.55, '#2b3342', 0, { decals: [R('S', 0, 1, 0, 0.1, '#8a9ab5'), R('S', 0, 1, 0.9, 1, '#8a9ab5')] });
+FT(base, 'S', 0.5, 0.5, 'WI-FI', 10, '#5ce1ff', 700);
+Cy(x, y, 0.16, 3.6, '#8a9ab5', 0.55); Bx(x - 0.7, y - 0.05, 1.4, 0.1, 0.1, '#8a9ab5', 2.0); Bx(x - 0.45, y - 0.05, 0.9, 0.1, 0.1, '#8a9ab5', 2.8);
+Cy(x, y, 0.55, 0.12, '#c7d2e6', 3.4, { top: '#e8eefc' });
+const col = down ? '#ff3b3b' : (oc ? '#ffd166' : '#2fbf71'); Cy(x, y, 0.2, 0.3, (down && !slowOn) ? shade(col, -0.75) : col, 4.15);
+}
+function mastHit() { const x = MAST[0], y = MAST[1], pp = [P(x - 0.9, y - 0.9, 0), P(x + 0.9, y - 0.9, 0), P(x + 0.9, y + 0.9, 0), P(x - 0.9, y + 0.9, 0), P(x - 0.7, y, 4.5), P(x + 0.7, y, 4.5)]; const xs = pp.map((p) => p[0]), ys = pp.map((p) => p[1]), x0 = Math.min.apply(null, xs) - 12, x1 = Math.max.apply(null, xs) + 12, y0 = Math.min.apply(null, ys) - 12, y1 = Math.max.apply(null, ys) + 12; return { id: 'wifi', label: 'Wi-Fi mast: test an outage', pts: [[x0, y0], [x1, y0], [x1, y1], [x0, y1]].map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') }; }
+function buildStation(tick) {
+COMP = true; TS = KS; PS = KS; A = 44 * KS; B = 22 * KS; C = 44 * KS; SW = 2440; SH = 1400;
+S = { W: BW, D: BD, ox: 440, oy: 230, items: [], floor: [], circles: [], texts: [], hits: [], top: [], bg: [] }; seed = 5; OX = 0; OY = 0;
+
+
+ROOMS.forEach((r) => { if (!r.built) shellRoom(r); });
+const T = tick + 60, oc = outTick(T);
+let dim = 0, lights = null, slow = false;
+if (oc) {
+dim = oc.t1 === null ? Math.min(1, (T - oc.t0) / 24) : Math.max(0, 1 - (T - oc.t1) / 8);
+lights = {}; slow = oc.t1 === null;
+AGK.forEach((k) => { lights[k] = oc.t1 === null ? 'r' : (T - oc.t1 >= oc.pass[k] ? 'g' : 'y'); });
+}
+LIGHT_OV = lights;
+const st = { health: 'green', on: slow ? (Math.floor(tick / 6) % 2 === 1) : !!(tick % 2), busy: false, gold: 14, pending: INIT_PENDING, log: INIT_LOG, meeting: true, stale: 'ok', gv: 0, mood: 'calm', alert: false };
+const FN = { captain: sceneCaptain, conference: sceneConference, watch: sceneWatch, trainer: sceneTrainer, archive: sceneArchive, workshop: sceneWorkshop, sleeping: sceneSleeping };
+SKIPPE = true;
+ROOMS.forEach((r) => { if (r.built) { OX = r.x; OY = r.y; WOP = 1; FN[r.built](st); } });
+SKIPPE = false; S.texts = S.texts.filter((t) => t.text !== '?');
+OX = 0; OY = 0;
+
+ROOMS.forEach((r) => mat(r, !!r.built)); ROOMS.forEach((r) => sign(r)); corridor();
+LIGHT_OV = null;
+OX = 0; OY = 0;
+const TK = tick + 60, st2 = [];
+const DIRS = ['S', 'SE', 'E', 'NE', 'N', 'NW', 'W', 'SW'], faceOf = (dx, dy) => { const a = Math.atan2(dx - dy, dx + dy) * 180 / Math.PI; return DIRS[((Math.round(a / 45) % 8) + 8) % 8]; };
+const quiet = !!(OUTCTL && TK >= OUTCTL.t0);
+const plT = planOf(Math.floor(TK / TL)), uT = TK - Math.floor(TK / TL) * TL, talking = !quiet && plT.talk && uT >= plT.talk[0] && uT < plT.talk[1];
+const info = {};
+AGK.forEach((k) => { info[k] = agentNow(k, TK); });
+AGK.forEach((k) => {
+const ps = info[k], sp0 = ps.spot, o = Object.assign({}, AG[k]);
+if (sp0 && sp0.bunk) { lieFig(k, sp0); st2.push({ k: k, ps: ps, o: o, lie: true }); return; }
+if (sp0 && sp0.pose === 'sit') Object.assign(o, { seated: true, zoff: sp0.zoff, face: sp0.face, kadd: 0.3 });
+else if (ps.moving) { o.zoff = (tick % 2) ? 0.04 : 0; o.ph = tick % 2; o.face = faceOf(ps.fdx || 0, ps.fdy || 0); }
+else {
+o.face = 'S';
+if (talking && plT.who.indexOf(k) >= 0) { const others = plT.who.filter((q) => q !== k).map((q) => info[q]).sort((a, b) => Math.hypot(a.x - ps.x, a.y - ps.y) - Math.hypot(b.x - ps.x, b.y - ps.y)); if (others.length && Math.hypot(others[0].x - ps.x, others[0].y - ps.y) > 0.3) o.face = faceOf(others[0].x - ps.x, others[0].y - ps.y); }
+}
+if (k === 'librarian' && !o.seated && sp0 !== HOME.librarian) o.carry = 'book';
+st2.push({ k: k, ps: ps, o: o });
+Pe(ps.x, ps.y, o);
+});
+{
+const lp = agentNow('librarian', TK - 7), lh = absPts(HOME.librarian)[0], chair = RM.arc.built ? [RM.arc.x + 5.2, RM.arc.y + 6.35] : [lh[0] + 0.9, lh[1] + 0.6], onC = RM.arc.built ? 0.5 : 0;
+if (lp.spot && lp.spot.bunk) Cat(RM.slp.x + 8.5, RM.slp.y + 15.1, { pose: 'sleep', zoff: 0.2, z0: 0.3, dir: 1 });
+else if (lp.moving) {
+let cx = lp.x, cy = lp.y, cz = 0; const wi = Math.min(1, lp.ds / 3), wo = Math.min(1, lp.de / 3), w = Math.min(wi, wo);
+if (w < 1) { cx = chair[0] + (cx - chair[0]) * w; cy = chair[1] + (cy - chair[1]) * w; cz = onC * (1 - w); }
+Cat(cx, cy, { pose: 'walk', zoff: cz, ph: Math.floor(tick) % 2, dir: (lp.fdx || 0) - (lp.fdy || 0) >= 0 ? 1 : -1 });
+} else if (lp.spot === HOME.librarian) Cat(chair[0], chair[1], { pose: 'sit', zoff: onC });
+else Cat(lp.x + 0.9, lp.y + 0.7, { pose: 'sit', zoff: 0 });
+}
+const pl0 = planOf(Math.floor(TK / TL)), uu = TK - Math.floor(TK / TL) * TL;
+if (quiet) {
+const c2 = OUTCTL;
+st2.forEach((q) => { if (q.lie) { const sb = q.ps.spot, hx = sb.bed === 'W' ? RM.slp.x + 0.67 : RM.slp.x + sb.b0 + 0.7, hy = sb.bed === 'W' ? RM.slp.y + sb.b0 + 0.7 : RM.slp.y + 0.67; bubble(hx, hy, 'zz', 0.8, 40); } else if (c2 && c2.t1 !== null && !q.ps.moving && q.ps.spot === HOME[q.k] && (TK - c2.t1) < c2.pass[q.k]) bubble(q.ps.x, q.ps.y, 'mag', q.o.seated ? q.o.zoff : 0, 0); });
+} else if (pl0.talk && uu >= pl0.talk[0] && uu < pl0.talk[1]) {
+const who = pl0.who.map((k) => st2.filter((q) => q.k === k)[0]), n = who.length, ph = Math.floor(tick / 5) % n;
+who.forEach((q, i) => { const zz = q.o.seated ? q.o.zoff : 0, dy = 0; if (n <= 2 || i === ph || i === (ph + 1) % n) bubble(q.ps.x, q.ps.y, i === ph ? 'dots' : (Math.floor(tick / 10) % 2 ? 'q' : 'mag'), zz, dy); });
+}
+const hr = new Date(), h = hr.getHours() + hr.getMinutes() / 60, day = h >= 6 && h < 18, fr = day ? (h - 6) / 12 : (((h - 18) + 24) % 24) / 12;
+const sx = 1250 + fr * 1250, sy = 300 - 260 * Math.sin(Math.PI * fr), fade = Math.min(1, fr / 0.1, (1 - fr) / 0.1);
+if (day) { S.bg.push({ x: sx.toFixed(1), y: sy.toFixed(1), r: 44, fill: '#ffd166', op: 0.12 * fade }); S.bg.push({ x: sx.toFixed(1), y: sy.toFixed(1), r: 18, fill: '#ffd166', op: fade }); }
+else { S.bg.push({ x: sx.toFixed(1), y: sy.toFixed(1), r: 70, fill: '#dfe8ff', op: 0.07 * fade }); S.bg.push({ x: sx.toFixed(1), y: sy.toFixed(1), r: 40, fill: '#e8eefc', op: fade }); S.bg.push({ x: (sx - 12).toFixed(1), y: (sy - 8).toFixed(1), r: 7, fill: '#c3cde6', op: fade }); S.bg.push({ x: (sx + 14).toFixed(1), y: (sy + 10).toFixed(1), r: 9, fill: '#c3cde6', op: fade }); S.bg.push({ x: (sx + 6).toFixed(1), y: (sy - 16).toFixed(1), r: 4, fill: '#c3cde6', op: fade }); }
+if (dim > 0) S.top.unshift({ pts: '0,0 2440,0 2440,1400 0,1400', fill: '#030816', stroke: 'none', sw: 0, op: (0.5 * dim).toFixed(3) });
+const r = finish();
+if (dim > 0) r.circles = r.circles.map((c) => Object.assign({}, c, { op: c.op * (1 - dim) }));
+r.kicker = 'CONTROL ROOM / STATION MAP'; r.title = 'STARSHIP LOVELADY: THE WHOLE STATION'; r.sub = !oc ? (REAL.ok ? 'Live from the Pi, updated ' + Math.max(0, Math.round((Date.now() - REAL.lastChange) / 1000)) + ' seconds ago. Tap a room to step inside.' : 'All seven rooms are finished. Tap a room to step inside.') : oc.t1 === null ? 'Wi-Fi is down. The crew is resting with the lights low.' : 'Wi-Fi is back. The crew is walking to their offices to run checks.';
+r.labels = r.texts;
+const hull = (pp) => { pp = pp.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); const lo = [], up = []; pp.forEach((p) => { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }); pp.slice().reverse().forEach((p) => { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }); return lo.slice(0, -1).concat(up.slice(0, -1)); };
+r.roomHitsData = ROOMS.map((q) => { const w3 = 3.4, pp = [P(q.x, q.y, 0), P(q.x + q.w, q.y, 0), P(q.x + q.w, q.y + q.d, 0), P(q.x, q.y + q.d, 0), P(q.x, q.y, w3), P(q.x + q.w, q.y, w3), P(q.x, q.y + q.d, w3)]; return { id: q.built, label: q.n, pts: hull(pp).map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') }; });
+return r;
+}
+
+const SCENES = [['captain', 'Captain', sceneCaptain], ['conference', 'Conference', sceneConference], ['watch', 'Security Office', sceneWatch], ['trainer', 'Training Room', sceneTrainer], ['archive', 'Data Archive', sceneArchive], ['sleeping', 'Sleeping Quarters', sceneSleeping], ['workshop', 'Workshop', sceneWorkshop]];
+function buildScene(id, st) {
+COMP = false; TS = 1; PS = 1; OX = 0; OY = 0; WOP = 1; SW = 1280; SH = 900; SKIPPE = false;
+const f = SCENES.filter((q) => q[0] === id)[0] || SCENES[0];
+const meta = f[2](st);
+const r = finish();
+r.kicker = meta.kicker; r.title = meta.title; r.sub = meta.sub;
+return r;
+}
+
+const EMPTY_ROOM = { stars: [], polys: [], circles: [], labels: [], hits: [], previews: [], kicker: '', title: '', sub: '', hintsLabel: '', toggleHints: () => {}, ov: { on: false, title: '', sub: '', rows: [], cards: [], actions: [], back: () => {}, backLabel: '', note: '' } };
+class Component extends DCLogic {
+componentDidMount() { this._n = 0; this._t = setInterval(() => { this._n += 1; this.setState({ tick: this._n }); }, 250); this.gestures(); if (typeof location !== 'undefined' && location.hash === '#outage' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 280 }; this.pull(); this._p = setInterval(() => this.pull(), 15000); }
+componentWillUnmount() { clearInterval(this._t); clearInterval(this._p); (this._off || []).forEach((f) => f()); }
+pull() { try { fetch('status.json?t=' + Date.now(), { cache: 'no-store' }).then((r) => { if (!r.ok) throw new Error('http'); return r.json(); }).then((d) => { REAL.seen = true; if (d.time !== REAL.lastTime) { REAL.lastTime = d.time; REAL.lastChange = Date.now(); } REAL.ok = (Date.now() - REAL.lastChange) < 240000; if (REAL.ok) { REAL.data = d; realApply(d); } liveStep(this._n || 0); }).catch(() => { REAL.ok = false; liveStep(this._n || 0); }); } catch (e) { REAL.ok = false; } }
+zz() { if (!this._z) this._z = { station: { k: 1, x: 0, y: 0 }, room: { k: 1, x: 0, y: 0 } }; return this._z; }
+tf(v) { const z = this.zz()[v]; return v === 'room' ? 'translate(' + (260 + z.x).toFixed(1) + 'px, ' + (25 + z.y).toFixed(1) + 'px) scale(' + (1.5 * z.k).toFixed(4) + ')' : 'translate(' + z.x.toFixed(1) + 'px, ' + z.y.toFixed(1) + 'px) scale(' + z.k.toFixed(4) + ')'; }
+view() { return (this.state && this.state.room) ? 'room' : 'station'; }
+apply() {
+['station', 'room'].forEach((v) => { const el = document.getElementById('zoom-' + v); if (el) el.style.transform = this.tf(v); });
+const root = document.getElementById('zoom-root'); if (root) root.style.touchAction = this.zz()[this.view()].k !== 1 ? 'none' : 'pan-x pan-y';
+}
+gestures() {
+const root = document.getElementById('zoom-root'); if (!root) return;
+const self = this, offs = []; this._off = offs;
+const local = (cx, cy) => { const r = root.getBoundingClientRect(); return [(cx - r.left) * 2440 / r.width, (cy - r.top) * 1400 / r.height]; };
+const base = () => (self.view() === 'room' ? [260, 25] : [0, 0]);
+const blocked = () => !!(self.state && self.state.room && self.state.open);
+const clamp = (k) => Math.max(0.5, Math.min(5, k));
+const zoomAt = (m, k0, t0, k1) => { const b = base(), z = self.zz()[self.view()], f = k1 / k0; z.k = k1; z.x = m[0] - b[0] - f * (m[0] - b[0] - t0[0]); z.y = m[1] - b[1] - f * (m[1] - b[1] - t0[1]); self.apply(); };
+const on = (el, ev, fn, opt) => { el.addEventListener(ev, fn, opt); offs.push(() => el.removeEventListener(ev, fn, opt)); };
+let g = null, supp = 0, lastTap = 0;
+const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+on(root, 'touchstart', (e) => {
+if (blocked()) return;
+const z = self.zz()[self.view()];
+if (e.touches.length === 2) { const a = e.touches[0], b = e.touches[1]; g = { type: 'pinch', d0: dist(a, b), k0: z.k, t0: [z.x, z.y], m0: local((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2) }; supp = Date.now() + 400; e.preventDefault(); }
+else if (e.touches.length === 1) { const t = e.touches[0]; g = { type: 'pan', last: local(t.clientX, t.clientY), moved: 0, start: [t.clientX, t.clientY] }; }
+}, { passive: false });
+on(root, 'touchmove', (e) => {
+if (!g || blocked()) return;
+const z = self.zz()[self.view()];
+if (g.type === 'pinch' && e.touches.length === 2) { const a = e.touches[0], b = e.touches[1], m = local((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2), k1 = clamp(g.k0 * dist(a, b) / g.d0), bs = base(), f = k1 / g.k0; z.k = k1; z.x = m[0] - bs[0] - f * (g.m0[0] - bs[0] - g.t0[0]); z.y = m[1] - bs[1] - f * (g.m0[1] - bs[1] - g.t0[1]); self.apply(); supp = Date.now() + 400; e.preventDefault(); }
+else if (g.type === 'pan' && e.touches.length === 1 && z.k !== 1) { const t = e.touches[0], p = local(t.clientX, t.clientY); z.x += p[0] - g.last[0]; z.y += p[1] - g.last[1]; g.last = p; g.moved += 1; if (Math.hypot(t.clientX - g.start[0], t.clientY - g.start[1]) > 8) supp = Date.now() + 400; self.apply(); e.preventDefault(); }
+}, { passive: false });
+on(root, 'touchend', (e) => {
+if (blocked()) { g = null; return; }
+if (g && g.type === 'pan' && e.touches.length === 0 && g.moved === 0) { const now = Date.now(); if (now - lastTap < 320) { const z = self.zz()[self.view()]; z.k = 1; z.x = 0; z.y = 0; self.apply(); supp = now + 400; lastTap = 0; } else lastTap = now; }
+if (e.touches.length === 0) g = null;
+});
+on(root, 'wheel', (e) => { if (blocked()) return; e.preventDefault(); const z = self.zz()[self.view()], k1 = clamp(z.k * Math.exp(-e.deltaY * 0.0015)); zoomAt(local(e.clientX, e.clientY), z.k, [z.x, z.y], k1); }, { passive: false });
+let md = null;
+on(root, 'mousedown', (e) => { if (blocked()) return; md = { last: local(e.clientX, e.clientY), start: [e.clientX, e.clientY], moved: false }; });
+on(window, 'mousemove', (e) => { if (!md) return; const z = self.zz()[self.view()]; if (z.k === 1 && !md.moved) return; const p = local(e.clientX, e.clientY); if (Math.hypot(e.clientX - md.start[0], e.clientY - md.start[1]) > 6) md.moved = true; if (md.moved && z.k !== 1) { z.x += p[0] - md.last[0]; z.y += p[1] - md.last[1]; self.apply(); } md.last = p; });
+on(window, 'mouseup', () => { if (md && md.moved) supp = Date.now() + 250; md = null; });
+on(root, 'dblclick', (e) => { if (blocked()) return; const z = self.zz()[self.view()]; z.k = 1; z.x = 0; z.y = 0; self.apply(); });
+on(document, 'click', (e) => { if (Date.now() < supp) { e.stopPropagation(); e.preventDefault(); } }, true);
+self.apply();
+}
+renderVals() {
+const st0 = this.state || {}, set = (o) => this.setState(o);
+let base;
+if (st0.room && this._last) base = this._last; else { base = buildStation(st0.tick || 0); this._last = base; }
+const out = Object.assign({}, base);
+out.roomHits = (base.roomHitsData || []).map((h) => ({ pts: h.pts, label: h.label, go: () => { if (h.id === 'wifi') { const n = this._n || 0; if (OUTCTL && OUTCTL.t1 === null) OUTCTL.req = n + 60; else if (!OUTCTL) OUTCTL = { t0: n + 60, t1: null, req: n + 220 }; return; } this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: h.id, open: null, hints: false }); } }));
+out.zStation = this.tf('station'); out.zRoom = this.tf('room');
+out.roomOn = !!st0.room;
+out.closeRoom = () => { this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: null, open: null }); };
+out.room = st0.room ? this.roomView(st0, set) : EMPTY_ROOM;
+return out;
+}
+roomView(st0, set) {
+const k = Math.floor((st0.tick || 0) / 2), st = Object.assign({}, st0, { on: k % 2 === 1, n: k });
+const sc = st.room, health = st.health || 'green', gold = st.gold === undefined ? 14 : st.gold;
+const pending = st.pending || INIT_PENDING, log = st.log || INIT_LOG;
+const ss = { gauge: st.gauge || 0, health: health, on: !!st.on, busy: !!st.busy, gold: gold, pending: pending, log: log, meeting: st.meeting !== false, stale: st.stale || 'ok', gv: st.gv || 0, mood: 'calm', alert: !!st.alert, n: st.n || 0 };
+const r = buildScene(sc, ss);
+const hints = !!st.hints;
+r.hits = r.hits.map((h) => Object.assign({}, h, { bd: hints ? '2px dashed #ffd166' : '0px solid transparent', go: () => set({ open: h.id }) }));
+r.labels = r.texts;
+r.hintsLabel = hints ? 'Hide clickable' : 'Show clickable';
+r.toggleHints = () => set({ hints: !hints });
+const mk = (label, active, go) => ({ label: label, bg: active ? '#2a2358' : '#14204a', edge: active ? '#ffd166' : '#2a3a6b', go: go });
+let pv = [];
+if (sc === 'captain') pv = [mk('Siren: green', health === 'green', () => set({ health: 'green' })), mk('Siren: yellow', health === 'yellow', () => set({ health: 'yellow' })), mk('Siren: red', health === 'red', () => set({ health: 'red' })), mk(st.busy ? 'Door: BUSY' : 'Door: open', !!st.busy, () => set({ busy: !st.busy })), mk('Spend $2', false, () => set({ gold: Math.max(0, gold - 2) })), mk('Refill gold', false, () => set({ gold: 20 }))];
+if (sc === 'conference') pv = [mk(ss.meeting ? 'Meeting: on' : 'Meeting: off', ss.meeting, () => set({ meeting: !ss.meeting })), mk('Debate: ' + (ss.stale === 'ok' ? 'going fine' : ss.stale === 'slow' ? 'dragging' : 'stalemate'), false, () => set({ stale: ss.stale === 'ok' ? 'slow' : ss.stale === 'slow' ? 'stuck' : 'ok' })), mk('Gavel', false, () => { set({ gv: 1 }); setTimeout(() => set({ gv: 2 }), 700); setTimeout(() => set({ gv: 0 }), 2200); })];
+if (sc === 'workshop') pv = [mk('Disk gauge: ' + ['green', 'yellow', 'red'][st.gauge || 0], false, () => set({ gauge: ((st.gauge || 0) + 1) % 3 }))];
+if (sc === 'watch') pv = [mk(st.alert ? 'Backup problem: on' : 'Backup problem: off', !!st.alert, () => set({ alert: !st.alert }))];
+r.previews = pv;
+const open = st.open || null;
+r.ov = this.overlay(open, st, pending, log, set);
+r.hits = r.hits;
+return r;
+}
+overlay(open, st, pending, log, set) {
+const none = { on: false, title: '', sub: '', rows: [], cards: [], actions: [], back: () => {}, backLabel: 'Back', note: '' };
+if (!open) return none;
+const row = (k, v, e) => ({ k: k, v: v, edge: e || '#3a5a8a' });
+const close = () => set({ open: null });
+const o = { on: true, title: '', sub: '', rows: [], cards: [], actions: [], back: close, backLabel: 'Back to the room', note: 'Sample information. Later this screen shows real data from the Pi.' };
+const ag = (id) => { const a = agent(id); const lt = { g: 'Green: fine (normal work counts)', y: 'Yellow: something is off, not urgent', r: 'Red: stuck or needs Kylar' }[a.light]; return [row('Role', a.role), row('Light', lt, LIGHT[a.light]), row('Right now', a.doing), row('Stuck on', a.stuck, a.stuck === 'Nothing' ? '#2fbf71' : '#ff3b3b'), row('Level', 'Level ' + a.level)]; };
+const hist = (a) => [row('History (last 7 days)', 'Older entries drop off on their own. Decisions you made stay in the Decision Log. Rules, minutes and known devices stay with the Librarian.', '#3a5a8a'), row('Today 9:40 am', 'Walked to Security: asked about an unknown device. Solved together.', '#7be0a0'), row('Today 8:15 am', a.doing, '#6ab7ff'), row('Yesterday 4:10 pm', 'Called a meeting with 3 agents about the 4 am restart.', '#ffd166'), row('2 days ago', 'Handed a finished case to the Librarian to file.', '#b388eb')];
+if (open === 'crewboard') {
+o.title = 'Crew board'; o.sub = 'Tap an agent for more.'; o.cards = ROSTER.map((a) => ({ name: a.name, role: a.role, bg: a.color, edge: '#0a0f24', dot: LIGHT[a.light], go: () => set({ open: 'agent:' + a.k }) }));
+o.note = 'Green = fine (normal work counts), yellow = something is off but not urgent, red = stuck or needs Kylar. Only red blinks.';
+} else if (open.indexOf('agent:') === 0) {
+const a = agent(open.slice(6)); o.title = a.name; o.sub = a.role; o.rows = ag(a.k);
+if (a.k === 'security') o.rows.push(row('Threat view', 'New or unknown devices: 0. Blocked by Pi-hole today: 214. Open ports: 4 (voice). Failed logins: 0.'));
+if (a.also) o.rows.push(row('Also covers', a.also, '#3a5a8a'));
+o.rows = o.rows.concat(hist(a));
+o.backLabel = 'Back'; o.back = () => set({ open: st.prev || null });
+o.actions = [{ label: 'Talk to ' + a.name + ' (later)', bg: '#14204a', edge: '#2a3a6b', go: () => {} }];
+} else if (open.indexOf('ask:') === 0) {
+const a = agent(open.slice(4)); o.title = a.name + ' is waiting for the Captain'; o.sub = 'In line outside his door';
+o.rows = [row('Needs', a.k === 'librarian' ? 'A ruling on how long to keep old minutes' : a.k === 'trainer' ? 'Approval to retrain the wake word' : 'A call on the 4 am Pi-hole restart', '#ff3b3b'), row('Why it is stuck', 'It changes something on the Pi, so only the Captain or Kylar can approve it.'), row('Waiting for', '12 minutes')];
+} else if (open === 'tray') {
+o.title = 'Paper tray: waiting on you'; o.sub = pending.length + ' waiting';
+pending.forEach((p, i) => { o.rows.push(row(p.what, 'From ' + p.from + ' at ' + p.time + '. Risk: ' + p.risk + '. Signed off by: ' + p.signed + '.', riskEdge(p.risk))); o.actions.push({ label: 'Approve #' + (i + 1), bg: '#14532d', edge: '#2fbf71', go: () => set({ pending: pending.filter((x, j) => j !== i), log: [{ t: 'now', who: 'Kylar', what: 'Approved: ' + p.what, res: 'Approved' }].concat(log) }) }); o.actions.push({ label: 'Not now #' + (i + 1), bg: '#14204a', edge: '#2a3a6b', go: () => {} }); });
+if (!pending.length) o.rows.push(row('Tray is empty', 'Nothing is waiting on you.', '#2fbf71'));
+o.note = 'Approving moves the item into the Decision Log.';
+} else if (open === 'declog') {
+o.title = "Decision log (today)"; o.sub = "The Captain's logbook"; log.forEach((l) => o.rows.push(row(l.t + '  ' + l.who, l.what + '  [' + l.res + ']', l.res === 'Denied' ? '#ff8a6a' : '#7be0a0')));
+} else if (open === 'safe') {
+const g = st.gold === undefined ? 14 : st.gold; o.title = 'The safe: crew budget'; o.sub = 'Monthly budget $20';
+o.rows = [row('Left this month', '$' + g + ' of $20', '#ffd166'), row('Spent so far', '$' + (20 - g)), row('Biggest cost', 'Voice assistant (OpenAI), about half'), row('Forecast', 'On track to finish with about $4 left')];
+} else if (open === 'siren') {
+o.title = 'System status light'; o.sub = 'About the Pi and the crew, not the Captain'; o.rows = [row('Now', st.health === 'red' ? 'Danger' : st.health === 'yellow' ? 'Warning' : 'All clear', st.health === 'red' ? '#ff3b3b' : st.health === 'yellow' ? '#ffd166' : '#2fbf71'), row('Reads', "Security's health checks, the same ones that send your phone alerts"), row('Also yellow when', 'An approval waits too long, or the budget is nearly used')];
+} else if (open === 'mission') {
+o.title = 'Mission'; o.sub = 'Main mission (only Kylar can change it): Keep the house running';
+o.rows = [row('Check Pi-hole after restart', 'Done. Security', '#2fbf71'), row('Review voice-ports plan', 'Working. Security and Mechanic', '#ffd166'), row('Approve the old-files trash list', 'Waiting on Kylar', '#ff3b3b'), row('Test the wake word', 'Working. Trainer', '#ffd166')];
+} else if (open === 'captain') {
+o.title = 'The Captain'; o.sub = 'Leader'; o.rows = [row('Health', 'Calm. 2 meetings today, line outside is short', '#2fbf71'), row('Decisions today', String(log.length)), row('Waiting on him', '3 agents')]; o.actions = [{ label: 'Talk to the Captain (later)', bg: '#14204a', edge: '#2a3a6b', go: () => {} }];
+} else if (open.indexOf('trophy:') === 0) {
+const k = open.slice(7), a = k === 'captain' ? null : agent(k); o.title = a ? a.name + ' trophies' : 'Crew achievements'; o.sub = a ? 'Personal shelf' : 'Crew-wide milestones';
+o.rows = a ? [row('Earned', 'Problem caught early. Idea approved. Clean streak (7 days).', '#ffd166'), row('Locked', 'Survive a tough incident. 30-day clean streak.', '#5a5a7a'), row('Level', 'Level ' + a.level)] : [row('Earned (7 of 15)', '7 days without a red alert. First approved change. First meeting settled.', '#ffd166'), row('Locked', '30 days without a red alert. Budget under $10 for a month.', '#5a5a7a')];
+} else if (open === 'live') {
+o.title = 'Live meeting'; o.sub = 'Topic: Lock the voice ports to this Pi only';
+o.rows = [row('Round', '2 of 3'), row('Where it stands', 'Split. Leaning yes.'), row('Security', 'Close them now, only the Pi needs them.', '#ff3b3b'), row('Mechanic', 'Agree, but test the voice assistant after. Can apply it tonight with a backup.', '#2fbf71'), row('Librarian', 'Will file the result as a rule.', '#2fbf71'), row('Trainer', 'Listening. No opinion yet.', '#ffd166')];
+o.actions = [{ label: 'Let it ride', bg: '#14204a', edge: '#2a3a6b', go: () => {} }, { label: 'Step in and decide', bg: '#14532d', edge: '#2fbf71', go: () => {} }, { label: 'Give more time', bg: '#14204a', edge: '#2a3a6b', go: () => {} }];
+o.note = 'The corner light: green going fine, yellow dragging, red blinking means stalemate and the Captain takes it to your paper tray.';
+} else if (open === 'history') {
+o.title = 'Filing cabinet: past meetings'; o.sub = 'Short list. Full minutes are with the Librarian.'; o.rows = [row('Pi-hole restart time', 'Mechanic vs Security. Decided: 4 am. Ended: Captain decided.', '#6ab7ff'), row('Trash folder rule', 'Librarian vs Mechanic. Decided: keep 30 days. Ended: agreed.', '#7be0a0'), row('Open voice ports', 'Security vs Mechanic. Decided: lock them. Ended: Kylar decided.', '#ffd166')]; o.actions = [{ label: 'Full minutes (Librarian)', bg: '#14204a', edge: '#b388eb', go: () => {} }];
+} else if (open === 'followups') {
+o.title = 'Follow-ups'; o.sub = 'Things the last meetings said someone must do'; o.rows = [row('Lock the voice ports', 'Owner: Mechanic. Due tonight, with a backup first.', '#ffd166'), row('File the minutes', 'Owner: Librarian. Due today.', '#7be0a0'), row('Retest the wake word', 'Owner: Trainer. Waiting on the Captain.', '#ff8a6a')]; o.note = 'Red means overdue or blocked. Later these come from real meeting minutes.';
+} else if (open === 'votes') {
+o.title = 'Vote history'; o.sub = 'How past votes went (last 30 days)'; o.rows = [row('Approved', '5 votes', '#2fbf71'), row('Denied', '2 votes', '#ff3b3b'), row('Sent to Kylar', '1 vote', '#ffd166'), row('Latest', 'Lock the voice ports: leaning yes (live now)')];
+} else if (open === 'agenda') {
+o.title = 'Next meeting'; o.sub = 'Planned for 4:00 am'; o.rows = [row('Topic', 'Pi-hole nightly restart'), row('Who is called', 'Mechanic, Security, Librarian'), row('Called by', 'Mechanic', '#6ab7ff'), row('Captain', 'Joins at the end to decide')];
+} else if (open === 'monitors') {
+o.title = 'Monitor wall'; o.sub = 'Live health checks'; o.rows = [row('Pi health', 'OK. 48 C, memory 41%, disk 32%', '#2fbf71'), row('Wi-Fi and internet', 'OK', '#2fbf71'), row('Devices', '14 connected, 0 unknown', '#2fbf71'), row('Pi-hole', 'Answering. 214 blocked today', '#2fbf71'), row('Backups', 'Last backup yesterday', '#2fbf71'), row('Alerts', 'None today', '#2fbf71')];
+} else if (open === 'bookshelf') {
+o.title = 'Rule book and minutes'; o.sub = 'Search box at the top (later)'; o.rows = [row('Rule book', 'Crew rules, then each role rules'), row('Latest minutes', 'Voice ports meeting, 11:40 am'), row('Search', 'Type to find anything')];
+} else if (open.indexOf('bunk:') === 0) {
+const a = agent(open.slice(5)); o.title = a.name + ' bunk'; o.sub = 'Rest log (sample)'; o.rows = [row('Last outage', 'Slept here 14 min during the Wi-Fi drop on Tuesday', '#ffd166'), row('Woke up', 'Walked back to the office and ran the department check', '#7be0a0'), row('Check result', 'All clear', '#2fbf71')]; o.backLabel = 'Back to the room'; o.back = close;
+} else if (open === 'gauges') {
+o.title = 'Pi health gauges'; o.sub = 'The Mechanic watches these'; const gs = st.gauge || 0; o.rows = [row('CPU heat', '48 C. Fine under 70 C', '#2fbf71'), row('Memory', '41% used', '#2fbf71'), row('Disk', gs === 0 ? '32% used' : gs === 1 ? '86% used. Getting full' : '96% used. Almost full', ['#2fbf71', '#ffd166', '#ff3b3b'][gs]), row('Uptime', '12 days since last restart', '#2fbf71')]; o.note = 'Yellow means something is off but not urgent. Only red blinks. The dials show sample numbers for now.';
+} else if (open === 'services') {
+o.title = 'Services rack'; o.sub = 'One light and one switch per hub service'; o.rows = [row('Voice assistant', 'Running. Plain restart allowed without asking.', '#2fbf71'), row('Home Assistant', 'Running. Plain restart allowed without asking.', '#2fbf71'), row('Pi-hole', 'Running. Plain restart allowed without asking.', '#2fbf71')]; o.note = 'A plain restart is the only thing that runs automatically. Anything else needs your approval.';
+} else if (open === 'toolbox') {
+o.title = 'Rolling toolbox'; o.sub = 'Just the Mechanic tools'; o.rows = [row('Contents', 'Wrenches, pliers, screwdrivers, a tape measure')];
+} else if (open === 'filing') {
+o.title = 'Filing cabinets'; o.sub = 'Saved conversations, voice logs and device lists'; o.rows = [row('Top drawer: conversations', 'Last 7 days kept. Older ones are sorted into keep, trash or for-Kylar.'), row('Middle drawer: voice logs', 'What the hub heard and answered. Nothing is deleted for good without Kylar.'), row('Bottom drawer: devices', '14 known devices, 0 unknown. New ones wait for your OK.', '#2fbf71')];
+} else if (open === 'cat') {
+o.title = 'The cat'; o.sub = 'Orange, still unnamed'; o.rows = [row('Purr', 'Purrrr... (heart)', '#ff8a6a'), row('Right now', 'Napping in the bed in the Data Archive'), row('Favorite spots', 'The Archive bed and the bunk room bed'), row('Job', 'None. Just the cat.', '#7be0a0')];
+} else if (open === 'bin') {
+o.title = 'Trash folder'; o.sub = 'Nothing is deleted for good without Kylar'; o.rows = [row('Waiting', '312 MB in 41 files'), row('Next empty', 'After you approve it'), row('For Kylar', '3 files he is not sure about')];
+} else if (open === 'weak') {
+o.title = 'Weak spots board'; o.sub = 'Mechanic'; o.rows = [row('Backup script: no error check', 'Risk: high. Fix proposed.', '#ff3b3b'), row('hub-oled: no restart rule', 'Risk: medium. Fix proposed.', '#ffd166'), row('Old key file readable', 'Risk: medium. Waiting on the Captain.', '#ffd166'), row('Unused service', 'Risk: low.', '#2fbf71')];
+} else if (open === 'lockerx') {
+o.title = 'Security locker'; o.sub = 'Security'; o.rows = [row('Contents', 'Spare radio, flashlight, incident log binder, spare badge'), row('Last opened', 'Yesterday 11:40 pm: logged an unknown device check', '#3a5a8a'), row('Locked', 'Yes. Only Security and the Captain have the key.', '#2fbf71')];
+} else if (open === 'trainboard') {
+o.title = 'Training board'; o.sub = 'Trainer'; o.rows = [row('Today', 'Wake word practice: Hey Jarvis'), row('Accuracy', 'Hey Jarvis 92%. Needs more quiet-room samples.', '#ffd166'), row('Next', 'Penelope wake word later, once Hey Jarvis is steady.', '#3a5a8a')];
+} else if (open === 'blueprint') {
+o.title = 'Weak spots found'; o.sub = 'Mechanic'; o.rows = [row('Backup script: no error check', 'Risk: high. Fix proposed.', '#ff3b3b'), row('hub-oled: no restart rule', 'Risk: medium. Fix proposed.', '#ffd166'), row('Old key file readable', 'Risk: medium. Waiting on the Captain.', '#ffd166'), row('Unused service', 'Risk: low.', '#2fbf71')];
+} else { o.title = 'Details'; o.sub = open; }
+if (open.indexOf('agent:') === 0 || open.indexOf('ask:') === 0) { o.back = () => set({ open: open.indexOf('agent:') === 0 && st.scene === 'captain' ? 'crewboard' : null }); o.backLabel = open.indexOf('agent:') === 0 && st.scene === 'captain' ? 'Back to the crew board' : 'Back to the room'; }
+return o;
+}
+
+}
+</script>
+</body>
+</html>
