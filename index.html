@@ -1153,7 +1153,7 @@ c.quietUntil = (Math.floor((c.t1 + c.upEnd) / TL) + 1) * TL;
 }
 function outTick(tick) {
 const c = OUTCTL; if (!c || tick < c.t0) return null;
-if (!c.down) outBuild(c);
+if (!c.down) { outBuild(c); if (c.intro) { AGK.forEach((k) => { c.down[k] = [{ t0: 0, t1: 1e9, spot: BLIE[k] }]; }); c.downEnd = 0; } }
 if (c.t1 === null && c.req !== null && tick >= c.req && tick >= c.t0 + c.downEnd + 8) { c.t1 = tick; outWake(c); }
 if (c.t1 !== null && tick >= c.quietUntil) { OUTCTL = null; return null; }
 return c;
@@ -1198,9 +1198,9 @@ ROOMS.forEach((r) => { if (!r.built) shellRoom(r); });
 const T = tick + 60, oc = outTick(T);
 let dim = 0, lights = null, slow = false;
 if (oc) {
-dim = oc.t1 === null ? Math.min(1, (T - oc.t0) / 24) : Math.max(0, 1 - (T - oc.t1) / 8);
-lights = {}; slow = oc.t1 === null;
-AGK.forEach((k) => { lights[k] = oc.t1 === null ? 'r' : (T - oc.t1 >= oc.pass[k] ? 'g' : 'y'); });
+dim = oc.t1 === null ? (oc.intro ? 1 : Math.min(1, (T - oc.t0) / 24)) : Math.max(0, 1 - (T - oc.t1) / 8);
+lights = {}; slow = oc.t1 === null && !oc.intro;
+if (oc.intro) lights = null; else AGK.forEach((k) => { lights[k] = oc.t1 === null ? 'r' : (T - oc.t1 >= oc.pass[k] ? 'g' : 'y'); });
 }
 LIGHT_OV = lights;
 const st = { health: 'green', on: slow ? (Math.floor(tick / 6) % 2 === 1) : !!(tick % 2), busy: false, gold: 14, pending: INIT_PENDING, log: INIT_LOG, meeting: true, stale: 'ok', gv: 0, mood: 'calm', alert: false };
@@ -1257,7 +1257,7 @@ else { S.bg.push({ x: sx.toFixed(1), y: sy.toFixed(1), r: 70, fill: '#dfe8ff', o
 if (dim > 0) S.top.unshift({ pts: '0,0 2440,0 2440,1400 0,1400', fill: '#030816', stroke: 'none', sw: 0, op: (0.5 * dim).toFixed(3) });
 const r = finish();
 if (dim > 0) r.circles = r.circles.map((c) => Object.assign({}, c, { op: c.op * (1 - dim) }));
-r.kicker = 'CONTROL ROOM / STATION MAP'; r.title = 'STARSHIP LOVELADY: THE WHOLE STATION'; r.sub = !oc ? (REAL.ok ? 'Live from the Pi, updated ' + Math.max(0, Math.round((Date.now() - REAL.lastChange) / 1000)) + ' seconds ago. Tap a room to step inside.' : 'All seven rooms are finished. Tap a room to step inside.') : oc.t1 === null ? 'Wi-Fi is down. The crew is resting with the lights low.' : 'Wi-Fi is back. The crew is walking to their offices to run checks.';
+r.kicker = 'CONTROL ROOM / STATION MAP'; r.title = 'STARSHIP LOVELADY: THE WHOLE STATION'; r.sub = !oc ? (REAL.ok ? 'Live from the Pi, updated ' + Math.max(0, Math.round((Date.now() - REAL.lastChange) / 1000)) + ' seconds ago. Tap a room to step inside.' : 'All seven rooms are finished. Tap a room to step inside.') : oc.t1 === null ? (oc.intro ? 'The crew is asleep. They wake up in a moment.' : 'Wi-Fi is down. The crew is resting with the lights low.') : (oc.intro ? 'Good morning. The crew is heading to their offices.' : 'Wi-Fi is back. The crew is walking to their offices to run checks.');
 r.labels = r.texts;
 const hull = (pp) => { pp = pp.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); const lo = [], up = []; pp.forEach((p) => { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }); pp.slice().reverse().forEach((p) => { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }); return lo.slice(0, -1).concat(up.slice(0, -1)); };
 r.roomHitsData = ROOMS.map((q) => { const w3 = 3.4, pp = [P(q.x, q.y, 0), P(q.x + q.w, q.y, 0), P(q.x + q.w, q.y + q.d, 0), P(q.x, q.y + q.d, 0), P(q.x, q.y, w3), P(q.x + q.w, q.y, w3), P(q.x, q.y + q.d, w3)]; return { id: q.built, label: q.n, pts: hull(pp).map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') }; });
@@ -1276,7 +1276,7 @@ return r;
 
 const EMPTY_ROOM = { stars: [], polys: [], circles: [], labels: [], hits: [], previews: [], kicker: '', title: '', sub: '', hintsLabel: '', toggleHints: () => {}, ov: { on: false, title: '', sub: '', rows: [], cards: [], actions: [], back: () => {}, backLabel: '', note: '' } };
 class Component extends DCLogic {
-componentDidMount() { this._n = 0; this._t = setInterval(() => { this._n += 1; this.setState({ tick: this._n }); }, 250); this.gestures(); this.fit(); if (typeof location !== 'undefined' && location.hash === '#outage' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 280 }; this.pull(); this._p = setInterval(() => this.pull(), 15000); }
+componentDidMount() { this._n = 0; this._t = setInterval(() => { this._n += 1; this.setState({ tick: this._n }); }, 250); this.gestures(); this.fit(); if (typeof location !== 'undefined' && location.hash === '#outage' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 280 }; if (typeof location !== 'undefined' && location.protocol !== 'file:' && location.hash !== '#outage' && location.hash !== '#nointro' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 80, intro: true }; this.pull(); this._p = setInterval(() => this.pull(), 15000); }
 componentWillUnmount() { clearInterval(this._t); clearInterval(this._p); (this._off || []).forEach((f) => f()); }
 fit() { try { if (typeof location === 'undefined' || location.protocol !== 'http:') return; const de = document.documentElement, bd = document.body; de.style.overflow = 'hidden'; bd.style.overflow = 'hidden'; bd.style.margin = '0'; bd.style.background = '#050a1c'; const go = () => { const root = document.getElementById('zoom-root'); if (!root) return; const w = window.innerWidth, h = window.innerHeight; if (!w || !h) return; const k = Math.min(w / 2440, h / 1400); try { window.parent.postMessage({ dbg: 'page ' + w + 'x' + h + ' k2=' + k.toFixed(3) + ' dpr=' + window.devicePixelRatio }, '*'); } catch (e) {} root.style.transformOrigin = '0 0'; root.style.transform = 'translate(' + ((w - 2440 * k) / 2).toFixed(1) + 'px, ' + ((h - 1400 * k) / 2).toFixed(1) + 'px) scale(' + k.toFixed(5) + ')'; }; go(); window.addEventListener('resize', go); this._fit = go; } catch (e) {} }
 pull() { try { fetch('status.json?t=' + Date.now(), { cache: 'no-store' }).then((r) => { if (!r.ok) throw new Error('http'); return r.json(); }).then((d) => { REAL.seen = true; if (d.time !== REAL.lastTime) { REAL.lastTime = d.time; REAL.lastChange = Date.now(); } REAL.ok = (Date.now() - REAL.lastChange) < 240000; if (REAL.ok) { REAL.data = d; realApply(d); } liveStep(this._n || 0); }).catch(() => { REAL.ok = false; liveStep(this._n || 0); }); } catch (e) { REAL.ok = false; } }
