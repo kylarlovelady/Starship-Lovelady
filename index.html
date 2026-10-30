@@ -35,6 +35,13 @@ button{font-family:inherit}
 <sc-for list="{{roomHits}}" as="h" hint-placeholder-count="7">
 <polygon class="roomhit" points="{{h.pts}}" onClick="{{h.go}}" aria-label="{{h.label}}"></polygon>
 </sc-for>
+<g style="opacity: {{menuOp}}">
+<ellipse cx="150" cy="1290" rx="92" ry="24" transform="rotate(-18 150 1290)" fill="none" stroke="#7fe3c6" stroke-opacity="0.55" stroke-width="5"></ellipse>
+<circle cx="150" cy="1290" r="46" fill="#1f6f68"></circle>
+<circle cx="136" cy="1276" r="30" fill="#2fa597" fill-opacity="0.55"></circle>
+<text x="150" y="1372" text-anchor="middle" font-size="24" letter-spacing="5" fill="#9fb0d6" fill-opacity="0.8" font-family="Chakra Petch, sans-serif">TABS</text>
+<circle cx="150" cy="1300" r="120" fill="#ffffff" fill-opacity="0" onClick="{{menu}}" style="cursor: pointer; pointer-events: {{menuPe}}"></circle>
+</g>
 </svg>
 <sc-for list="{{labels}}" as="t" hint-placeholder-count="60">
 <div style="position: absolute; left: {{t.x}}px; top: {{t.y}}px; width: 0; height: 0; pointer-events: none">
@@ -1279,7 +1286,7 @@ let base;
 if (st0.room && this._last) base = this._last; else { base = buildStation(st0.tick || 0); this._last = base; }
 const out = Object.assign({}, base);
 out.roomHits = (base.roomHitsData || []).map((h) => ({ pts: h.pts, label: h.label, go: () => { if (h.id === 'wifi') { const n = this._n || 0; if (OUTCTL && OUTCTL.t1 === null) OUTCTL.req = n + 60; else if (!OUTCTL) OUTCTL = { t0: n + 60, t1: null, req: n + 220 }; return; } this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: h.id, open: null, hints: false }); } }));
-out.zStation = this.tf('station'); out.zRoom = this.tf('room');
+const inHub = typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:'; out.menuOp = inHub ? 1 : 0; out.menuPe = inHub ? 'all' : 'none'; out.menu = () => { try { window.parent.postMessage({ crew: 'tabs' }, '*'); } catch (e) {} }; out.zStation = this.tf('station'); out.zRoom = this.tf('room');
 out.roomOn = !!st0.room;
 out.closeRoom = () => { this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: null, open: null }); };
 out.room = st0.room ? this.roomView(st0, set) : EMPTY_ROOM;
