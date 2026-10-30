@@ -15,6 +15,21 @@ body{margin:0;background:#050a1c}
 button{font-family:inherit}
 .roomhit{fill:rgba(255,209,102,0);cursor:pointer;transition:fill .15s}
 .roomhit:hover{fill:rgba(255,209,102,0.10)}
+.sheet{position:fixed;left:0;top:0;right:0;bottom:0;z-index:50;background:rgba(5,10,28,.98);overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box;padding:18px 18px 28px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#e8eeff}
+@media (orientation:landscape){.sheet{padding:14px 28px 24px 76px}}
+.sheetin{max-width:760px;margin:0 auto}
+.sbtn{min-height:44px;padding:0 18px;border-radius:10px;border:2px solid #5ce1ff;background:#10223e;color:#e8f6ff;font-size:15px;font-weight:600}
+.stitle{font-family:'Chakra Petch',sans-serif;font-size:26px;font-weight:700;margin-top:12px;color:#ffd166}
+.ssub{font-size:14px;color:#9fb0d6;margin-bottom:12px}
+.srow{display:flex;flex-wrap:wrap;gap:4px 12px;padding:10px 12px;margin-bottom:7px;border-radius:9px;background:#0f1a36;font-size:15px;line-height:1.35}
+.sk{width:150px;flex-shrink:0;color:#9fb0d6;font-weight:600}
+.sv{flex:1 1 200px}
+.scard{display:inline-flex;flex-direction:column;justify-content:space-between;width:150px;height:84px;margin:0 8px 8px 0;padding:8px 10px;box-sizing:border-box;text-align:left;border-radius:11px;color:#0a0f24;vertical-align:top}
+.cn{font-family:'Chakra Petch',sans-serif;font-size:16px;font-weight:700}
+.cr{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600}
+.cd{width:18px;height:18px;border-radius:9px;border:2px solid #0a0f24}
+.sact{min-height:48px;padding:0 16px;margin:0 8px 8px 0;border-radius:10px;color:#f1f5ff;font-size:15px;font-weight:600}
+.snote{font-size:12px;color:#6f7fa8;margin-top:10px}
 </style>
 </helmet>
 <div id="zoom-root" style="position: relative; width: 2440px; height: 1400px; background: #050a1c; overflow: hidden; touch-action: pan-x pan-y; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #e8eeff">
@@ -98,7 +113,7 @@ button{font-family:inherit}
 </sc-for>
 </div>
 </div>
-<sc-if value="{{room.ov.on}}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{room.ov.onOld}}" hint-placeholder-val="{{ false }}">
 <div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(5, 10, 28, 0.96); overflow-y: auto; padding: 24px 40px; box-sizing: border-box">
 <div style="max-width: 1000px; margin: 0 auto">
 <button onClick="{{room.ov.back}}" style="min-height: 48px; padding: 0 22px; border-radius: 10px; border: 2px solid #5ce1ff; background: #10223e; color: #e8f6ff; font-size: 16px; font-weight: 600; cursor: pointer">{{room.ov.backLabel}}</button>
@@ -129,6 +144,27 @@ button{font-family:inherit}
 </div>
 </sc-if>
 </div>
+<sc-if value="{{sheetOn}}" hint-placeholder-val="{{ false }}">
+<div class="sheet">
+<div class="sheetin">
+<button class="sbtn" onClick="{{sheet.back}}">{{sheet.backLabel}}</button>
+<div class="stitle">{{sheet.title}}</div>
+<div class="ssub">{{sheet.sub}}</div>
+<sc-for list="{{sheet.cards}}" as="c" hint-placeholder-count="0">
+<button class="scard" onClick="{{c.go}}" style="border: 3px solid {{c.edge}}; background: {{c.bg}}"><span class="cn">{{c.name}}</span><span class="cr"><span>{{c.role}}</span><span class="cd" style="background: {{c.dot}}"></span></span></button>
+</sc-for>
+<sc-for list="{{sheet.rows}}" as="r" hint-placeholder-count="0">
+<div class="srow" style="border-left: 5px solid {{r.edge}}"><div class="sk">{{r.k}}</div><div class="sv">{{r.v}}</div></div>
+</sc-for>
+<div>
+<sc-for list="{{sheet.actions}}" as="a" hint-placeholder-count="0">
+<button class="sact" onClick="{{a.go}}" style="border: 2px solid {{a.edge}}; background: {{a.bg}}">{{a.label}}</button>
+</sc-for>
+</div>
+<div class="snote">{{sheet.note}}</div>
+</div>
+</div>
+</sc-if>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2440,"height":1400}}'>
 let A = 44, B = 22, C = 44;
@@ -1296,7 +1332,7 @@ out.roomHits = (base.roomHitsData || []).map((h) => ({ pts: h.pts, label: h.labe
 const inHub = typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:'; out.menuOp = inHub ? 1 : 0; out.menuPe = inHub ? 'all' : 'none'; out.menu = () => { try { window.parent.postMessage({ crew: 'tabs' }, '*'); } catch (e) {} }; out.zStation = this.tf('station'); out.zRoom = this.tf('room');
 out.roomOn = !!st0.room;
 out.closeRoom = () => { this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: null, open: null }); };
-out.room = st0.room ? this.roomView(st0, set) : EMPTY_ROOM;
+out.room = st0.room ? this.roomView(st0, set) : EMPTY_ROOM; { const inS = typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:'; const ovn = out.room.ov || {}; out.room = Object.assign({}, out.room, { ov: Object.assign({}, ovn, { onOld: !!ovn.on && !inS }) }); out.sheet = ovn; out.sheetOn = inS && !!ovn.on; if (inS) { const key = (out.sheetOn ? 's' : '') + (st0.room ? 'r' : ''); if (this._view !== key) { this._view = key; try { window.parent.postMessage({ crew: 'view', sheet: out.sheetOn, room: !!st0.room }, '*'); } catch (e) {} } } }
 return out;
 }
 roomView(st0, set) {
