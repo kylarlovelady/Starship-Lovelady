@@ -1426,8 +1426,23 @@ o.title = 'Services rack'; o.sub = 'One light and one switch per hub service'; o
 o.title = 'Rolling toolbox'; o.sub = 'Just the Mechanic tools'; o.rows = [row('Contents', 'Wrenches, pliers, screwdrivers, a tape measure')];
 } else if (open === 'filing') {
 o.title = 'Filing cabinets'; if (typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:') o.actions = [{ label: 'Open the Memory (view and undo)', bg: '#14204a', edge: '#5ce1ff', go: () => { try { window.parent.postMessage({ crew: 'open', pane: 'memory' }, '*'); } catch (e) {} } }]; o.sub = 'Saved conversations, voice logs and device lists'; o.rows = [row('Top drawer: conversations', 'Last 7 days kept. Older ones are sorted into keep, trash or for-Kylar.'), row('Middle drawer: voice logs', 'What the hub heard and answered. Nothing is deleted for good without Kylar.'), row('Bottom drawer: devices', '14 known devices, 0 unknown. New ones wait for your OK.', '#2fbf71')];
+} else if (open === 'legend') {
+o.title = 'What can I tap?'; o.sub = 'Every clickable thing on the ship, by room. Use the buttons to jump straight to a room.';
+const lr = (k, v, e) => row(k, v, e || '#c9a227');
+o.rows = [
+lr("Captain's Office", 'Decision log (what the Captain decided). Crew board (all agents, tap one). Mission board. Safe (crew budget). Siren light (system health). Paper tray (approvals waiting on you). Achievements case.'),
+lr('Conference Room', 'Live meeting screen. Next meeting. Filing cabinet (past meetings). Follow-ups board. Vote history.'),
+lr('Security Office', 'Monitor wall (health checks, and a button to open the device list). Security locker. Security shelf.'),
+lr('Training Room', 'Training board (wake word practice). Training notes. Trainer shelf.'),
+lr('Workshop', 'Pi health gauges. Weak spots board. Services rack. Blueprint table. Rolling toolbox. Mechanic shelf.'),
+lr('Data Archive', 'Bookshelf wall (rule book and minutes). Filing cabinets (a button opens Memory). Librarian shelf.'),
+lr('Sleeping Quarters', "Each agent's bunk. The cat sleeps here sometimes."),
+lr('Everywhere', 'Tap any agent to see their role, light, what they are doing now and their history. Tap the cat any time. Inside a room, Show clickable outlines everything you can tap there.', '#5ce1ff')
+];
+o.actions = [['captain', "Captain's Office"], ['conference', 'Conference Room'], ['watch', 'Security Office'], ['trainer', 'Training Room'], ['workshop', 'Workshop'], ['archive', 'Data Archive'], ['sleeping', 'Sleeping Quarters']].map((q) => ({ label: 'Go to ' + q[1], bg: '#14204a', edge: '#2a3a6b', go: () => set({ room: q[0], open: null, hints: false }) }));
+o.backLabel = 'Back to the cat'; o.back = () => set({ open: 'cat' }); o.note = 'Tip: a room that has a button inside a screen (Monitor wall, Filing cabinets) opens the matching Hub page.';
 } else if (open === 'cat') {
-o.title = 'The cat'; o.sub = 'Orange, still unnamed'; o.rows = [row('Purr', 'Purrrr... (heart)', '#ff8a6a'), row('Right now', 'Napping in the bed in the Data Archive'), row('Favorite spots', 'The Archive bed and the bunk room bed'), row('Job', 'None. Just the cat.', '#7be0a0')];
+o.title = 'The cat'; o.actions = [{ label: 'Legend: what can I tap?', bg: '#14204a', edge: '#5ce1ff', go: () => set({ open: 'legend' }) }]; o.sub = 'Orange, still unnamed'; o.rows = [row('Purr', 'Purrrr... (heart)', '#ff8a6a'), row('Right now', 'Napping in the bed in the Data Archive'), row('Favorite spots', 'The Archive bed and the bunk room bed'), row('Job', 'None. Just the cat.', '#7be0a0')];
 } else if (open === 'bin') {
 o.title = 'Trash folder'; if (typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:') o.actions = [{ label: 'Open the Janitor (review, restore, empty)', bg: '#14204a', edge: '#5ce1ff', go: () => { try { window.parent.postMessage({ crew: 'open', pane: 'janitor' }, '*'); } catch (e) {} } }]; o.sub = 'Nothing is deleted for good without Kylar'; o.rows = [row('Waiting', '312 MB in 41 files'), row('Next empty', 'After you approve it'), row('For Kylar', '3 files he is not sure about')];
 } else if (open === 'weak') {
