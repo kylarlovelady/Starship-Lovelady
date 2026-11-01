@@ -171,6 +171,18 @@ def get_kalshi():
     return {"ticker": m.get("ticker"), "yes_pct": yes, "close_time": m.get("close_time")}
 
 
+def paper_pnl(o):
+    """Paper profit per 1-dollar contract if we had bought the called side at Kalshi's price
+    when the call was locked, after Kalshi's taker fee 0.07*p*(1-p). None if no call or no price."""
+    y = o.get("kalshi_yes")
+    if o["call"] not in ("UP", "DOWN") or y is None or o["outcome"] not in ("UP", "DOWN"):
+        return None
+    y = y / 100.0
+    cost = y if o["call"] == "UP" else 1 - y
+    fee = 0.07 * y * (1 - y)
+    return round((1.0 if o["call"] == o["outcome"] else 0.0) - cost - fee, 4)
+
+
 # ---------- state ----------
 def load(path, default):
     try:
@@ -211,8 +223,10 @@ def read_calls():
 def tally(calls):
     scored = [c for c in calls if c["call"] in ("UP", "DOWN") and c["outcome"] in ("UP", "DOWN")]
     right = sum(1 for c in scored if c["call"] == c["outcome"])
+    pn = [c["pnl"] for c in calls if c.get("pnl") is not None]
     return {"calls": len(calls), "scored": len(scored), "right": right,
-            "pct": round(100 * right / len(scored), 1) if scored else None}
+            "pct": round(100 * right / len(scored), 1) if scored else None,
+            "pnl": round(sum(pn), 2) if pn else None, "pnl_n": len(pn)}
 
 
 def scorecard(calls, now):
@@ -292,15 +306,23 @@ def run_cycle(now, S):
             if now - (o["start"] + WINDOW) <= 120:
                 o["price1"] = price
                 o["outcome"] = "UP" if price > o["price0"] else "DOWN" if price < o["price0"] else "FLAT"
+                o["pnl"] = paper_pnl(o)
                 with open(os.path.join(DIR, "calls.jsonl"), "a") as f:
                     f.write(json.dumps(o) + "\n")
     if not any(o["start"] == win for o in S.setdefault("open", [])) and win not in S.get("skipped", []) \
             and now - win <= 90 and win != S.get("last_win"):
         S["open"].append({"start": win, "price0": price, "score": score, "call": lean, "conf": conf,
-                          "signals": {k: v["score"] for k, v in avail.items()}, "locked_at": now})
+                          "signals": {k: v["score"] for k, v in avail.items()}, "locked_at": now,
+                          "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct")})
         S["last_win"] = win
     cur = next((o for o in S["open"] if o["start"] == win), None)
 
+    if now - S.get("snap_t", 0) >= 60:
+        S["snap_t"] = now
+        with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
+            f.write(json.dumps({"t": now, "price": price, "score": score, "conf": conf,
+                                "sig": {k: v["score"] for k, v in avail.items()},
+                                "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct")}) + "\n")
     calls = read_calls()
     sc = scorecard(calls, now)
     recent = [{"start": c["start"], "call": c["call"], "outcome": c["outcome"], "price0": c["price0"],

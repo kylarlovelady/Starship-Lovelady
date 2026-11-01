@@ -82,7 +82,7 @@ function render(d){
   var v=g.score,col=v>=0?'var(--grn)':'var(--red)',w=Math.abs(v)*50;
   return '<div class="sig"><div class="row"><b>'+esc(g.label)+'</b><span class="small" style="color:'+col+'">'+(v>0?'+':'')+Math.round(v*100)+'</span></div><div class="bar"><i style="background:'+col+';width:'+w+'%;'+(v>=0?'left:50%':'right:50%')+'"></i></div><div class="small mut">'+esc(g.detail)+'</div></div>'}).join('');
  $('hls').innerHTML=(d.headlines&&d.headlines.length?d.headlines.map(function(h){var col=h.mood==='bull'?'var(--grn)':h.mood==='bear'?'var(--red)':'var(--mut)';return '<div class="hl"><span class="dot" style="background:'+col+'"></span>'+esc(h.title)+'<div class="small mut">'+esc(h.src)+' · '+Math.max(0,h.age_min)+' min ago</div></div>'}).join(''):'<div class="small mut">No recent stories.</div>');
- var sc=d.scorecard,box=function(n,x){return '<div><span class="small mut">'+n+'</span><b>'+(x.pct==null?'-':x.pct+'%')+'</b><span class="small mut">'+x.right+' of '+x.scored+'</span></div>'};
+ var sc=d.scorecard,box=function(n,x){return '<div><span class="small mut">'+n+'</span><b>'+(x.pct==null?'-':x.pct+'%')+'</b><span class="small mut">'+x.right+' of '+x.scored+'</span>'+(x.pnl==null?'':'<span class="small" style="display:block;color:'+(x.pnl>=0?'var(--grn)':'var(--red)')+'">'+(x.pnl>=0?'+':'')+'$'+x.pnl.toFixed(2)+' paper</span>')+'</div>'};
  $('sc').innerHTML=box('Today',sc.today)+box('7 days',sc.week)+box('All time',sc.all);
  $('scnote').textContent=sc.all.scored<100?'Only '+sc.all.scored+' scored calls so far. It takes 100 or more before a win rate means much. Kalshi fees mean it must beat 50% by a clear margin.':'Compare this with 50% (a coin flip) plus Kalshi fees.';
  var by=sc.by_signal,keys=Object.keys(by);
