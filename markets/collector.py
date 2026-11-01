@@ -16,7 +16,7 @@ THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
 WEIGHTS = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
           "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
-EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 60}
+EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 60, "recent": 300}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
 BULL = ["surge", "rally", "soar", "jump", "record high", "all-time high", "approve", "approval",
@@ -183,6 +183,50 @@ def paper_pnl(o):
     return round((1.0 if o["call"] == o["outcome"] else 0.0) - cost - fee, 4)
 
 
+def get_recent_markets():
+    """Results of the last 10 finished Kalshi 15-minute markets, newest first (UP or DOWN)."""
+    d = fetch_json("https://api.elections.kalshi.com/trade-api/v2/markets?series_ticker=KXBTC15M&status=settled&limit=10")
+    ms = sorted(d.get("markets", []), key=lambda m: m.get("close_time", ""), reverse=True)
+    out = ["UP" if m.get("result") == "yes" else "DOWN" for m in ms if m.get("result") in ("yes", "no")]
+    if not out:
+        raise ValueError("no settled markets")
+    return out
+
+
+def review(o):
+    """Plain-English post-mortem of one finished call."""
+    out, call, p0 = o["outcome"], o["call"], o["price0"]
+    if out not in ("UP", "DOWN"):
+        return None
+    fin = (o["price1"] / p0 - 1) * 100
+    hi, lo = (o.get("hi", p0) / p0 - 1) * 100, (o.get("lo", p0) / p0 - 1) * 100
+    sig = o.get("signals") or {}
+    agree = [LABELS[k] for k, v in sig.items() if abs(v) >= 0.1 and (v > 0) == (out == "UP")]
+    against = [LABELS[k] for k, v in sig.items() if abs(v) >= 0.1 and (v > 0) != (out == "UP")]
+    if call not in ("UP", "DOWN"):
+        txt = "No lean. BTC went %s %+.2f%%. Signals that had it right: %s." % (out, fin, ", ".join(agree) or "none")
+        return {"start": o["start"], "call": call, "outcome": out, "won": None, "text": txt}
+    won = call == out
+    fav = hi if call == "UP" else -lo               # best move our way during the window
+    ours = fin if call == "UP" else -fin             # where it finished, our way
+    if won:
+        txt = "Won. Backed by: %s." % (", ".join(agree) or "none")
+        if against:
+            txt += " Pointed the other way: %s." % ", ".join(against)
+        if fav - ours > 0.1:
+            txt += " Price went %+.2f%% our way at the best point but finished at %+.2f%%, so selling earlier would have won more." % (fav, ours)
+        else:
+            txt += " It finished near its best point, so holding was right."
+    else:
+        txt = "Lost. Signals that had it right but were outvoted: %s." % (", ".join(agree) or "none")
+        txt += " Signals that misled it: %s." % (", ".join(against) or "none")
+        if not agree:
+            txt += " Every signal leaned the wrong way, so either bad luck or an input is missing."
+        if fav > 0.1:
+            txt += " Price first went %+.2f%% our way, so an earlier exit would have cut the loss." % fav
+    return {"start": o["start"], "call": call, "outcome": out, "won": won, "text": txt}
+
+
 # ---------- state ----------
 def load(path, default):
     try:
@@ -204,6 +248,20 @@ def weights():
     w = dict(WEIGHTS)
     w.update(load(os.path.join(DIR, "weights.json"), {}))
     return w
+
+
+def read_tail(name, n):
+    out = []
+    try:
+        with open(os.path.join(DIR, name)) as f:
+            for line in f.readlines()[-n:]:
+                try:
+                    out.append(json.loads(line))
+                except Exception:
+                    pass
+    except FileNotFoundError:
+        pass
+    return out
 
 
 def read_calls():
@@ -281,6 +339,12 @@ def run_cycle(now, S):
     run("fng", sig_fng, True)
     run("funding", sig_funding, True)
     cache["last"] = {k: v for k, v in sigs.items() if k in EVERY}
+    if due("recent"):
+        try:
+            cache["recent_markets"] = get_recent_markets()
+        except Exception:
+            cache["recent_markets"] = None
+        cache["recent_t"] = now
     if due("kalshi"):
         try:
             cache["kalshi"] = get_kalshi()
@@ -297,6 +361,10 @@ def run_cycle(now, S):
     if conf < 0.4:
         lean = "NONE"  # too little data to lean on
 
+    for o in S.get("open", []):
+        o["hi"] = max(o.get("hi", o["price0"]), price)
+        o["lo"] = min(o.get("lo", o["price0"]), price)
+
     # ---- 15-minute windows ----
     win = now // WINDOW * WINDOW
     done = S.setdefault("done", [])
@@ -307,6 +375,10 @@ def run_cycle(now, S):
                 o["price1"] = price
                 o["outcome"] = "UP" if price > o["price0"] else "DOWN" if price < o["price0"] else "FLAT"
                 o["pnl"] = paper_pnl(o)
+                rv = review(o)
+                if rv:
+                    with open(os.path.join(DIR, "reviews.jsonl"), "a") as f:
+                        f.write(json.dumps(rv) + "\n")
                 with open(os.path.join(DIR, "calls.jsonl"), "a") as f:
                     f.write(json.dumps(o) + "\n")
     if not any(o["start"] == win for o in S.setdefault("open", [])) and win not in S.get("skipped", []) \
@@ -324,7 +396,8 @@ def run_cycle(now, S):
                                 "sig": {k: v["score"] for k, v in avail.items()},
                                 "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct"),
                                 "yes_bid": (cache.get("kalshi") or {}).get("yes_bid"),
-                                "yes_ask": (cache.get("kalshi") or {}).get("yes_ask")}) + "\n")
+                                "yes_ask": (cache.get("kalshi") or {}).get("yes_ask"),
+                                "recent_up": (cache.get("recent_markets") or []).count("UP") if cache.get("recent_markets") else None}) + "\n")
     calls = read_calls()
     sc = scorecard(calls, now)
     recent = [{"start": c["start"], "call": c["call"], "outcome": c["outcome"], "price0": c["price0"],
@@ -339,6 +412,8 @@ def run_cycle(now, S):
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
         "kalshi": cache.get("kalshi"), "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
+        "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
+        "recent_markets": cache.get("recent_markets"), "weights": w,
         "note": "Paper mode: no real money. Information only, not financial advice.",
     }
 
@@ -355,6 +430,12 @@ def main():
         try:
             save_atomic(OUT, run_cycle(now, S))
             save_atomic(spath, S)
+            lt = time.localtime(now)
+            if lt.tm_hour == 4 and S.get("learn_day") != lt.tm_yday:   # nightly at 4 AM local time
+                S["learn_day"] = lt.tm_yday
+                sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                import learner
+                learner.learn(DIR, weights(), now)
         except Exception as e:
             print("cycle failed:", e, flush=True)
         time.sleep(CYCLE)

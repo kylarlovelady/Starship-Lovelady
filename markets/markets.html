@@ -55,6 +55,7 @@ h1{font-size:19px;margin:0;letter-spacing:.2px}
 <div class="card"><h2>News vibe</h2><div id="hls"></div></div>
 <div class="card"><h2>Paper scorecard</h2><div class="sc" id="sc"></div><div class="small mut" id="scnote" style="margin-top:10px"></div><div id="bysig" style="margin-top:8px"></div></div>
 <div class="card"><h2>Recent calls</h2><div id="rec"></div></div>
+<div class="card"><h2>What it has learned</h2><div id="learn"></div></div>
 <div class="small mut" id="note" style="text-align:center"></div>
 </div></div>
 <script>
@@ -88,6 +89,14 @@ function render(d){
  var by=sc.by_signal,keys=Object.keys(by);
  $('bysig').innerHTML=keys.length?'<div class="small mut" style="margin-bottom:4px">Signal hit rates</div>'+keys.map(function(k){var l=(d.signals.filter(function(g){return g.key===k})[0]||{}).label||k;return '<div class="row small"><span>'+esc(l)+'</span><span class="mut">'+by[k].pct+'% of '+by[k].n+'</span></div>'}).join(''):'';
  $('rec').innerHTML=d.recent.length?d.recent.map(function(r){var ok=r.call==='NONE'||r.outcome==='FLAT'?'<span class="mut">-</span>':(r.call===r.outcome?'<span class="ok">✓</span>':'<span class="no">✗</span>');return '<div class="rec"><span class="mut">'+tm(r.start)+'</span><span>Call: '+(r.call==='NONE'?'none':r.call)+'</span><span>Went: '+r.outcome+'</span>'+ok+'</div>'}).join(''):'<div class="small mut">No finished calls yet.</div>';
+ var lh='',rm=d.recent_markets;
+ if(rm&&rm.length){lh+='<div class="small mut">Kalshi last '+rm.length+' finished markets (newest first)</div><div style="display:flex;gap:4px;margin:6px 0 10px">'+rm.map(function(x){return '<span style="flex:1;height:10px;border-radius:3px;background:'+(x==='UP'?'var(--grn)':'var(--red)')+'"></span>'}).join('')+'</div>'}
+ var L=d.learning;
+ if(L){lh+='<div class="small" style="margin-bottom:6px">'+esc((L.notes||[]).join(' '))+'</div>';
+  var ks=Object.keys(L.signals||{});lh+=ks.map(function(k){var g=L.signals[k],lab=(d.signals.filter(function(x){return x.key===k})[0]||{}).label||k;return '<div class="row small"><span>'+esc(lab)+'</span><span class="mut">'+(g.pct==null?'-':g.pct+'% of '+g.n)+' \u00b7 '+esc(g.verdict)+'</span></div>'}).join('')}
+ else{lh+='<div class="small mut">It reviews itself at 4 AM each night. Nothing to report until it has 200 scored calls.</div>'}
+ if(d.lessons&&d.lessons.length){lh+='<div class="small mut" style="margin:12px 0 4px">After each call it writes its own review</div>'+d.lessons.map(function(x){return '<div class="hl"><b style="color:'+(x.won===true?'var(--grn)':x.won===false?'var(--red)':'var(--mut)')+'">'+tm(x.start)+'</b> '+esc(x.text)+'</div>'}).join('')}
+ $('learn').innerHTML=lh;
  $('note').textContent=d.note||'';tick();
 }
 function tick(){
