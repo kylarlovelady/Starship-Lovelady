@@ -4,7 +4,9 @@ call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
 Kalshi accounts or keys. Standard library only."""
 import json, math, os, re, sys, time, urllib.request
+import threading
 import xml.etree.ElementTree as ET
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from email.utils import parsedate_to_datetime
 
 HOME = os.path.expanduser("~")
@@ -16,7 +18,7 @@ THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
 WEIGHTS = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
           "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
-EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 60, "recent": 300}
+EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 20, "recent": 300}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
 BULL = ["surge", "rally", "soar", "jump", "record high", "all-time high", "approve", "approval",
@@ -412,6 +414,13 @@ def run_cycle(now, S):
 
     k = cache.get("kalshi") or {}
     pm = p_up_model(price, k.get("strike"), win + WINDOW - now, hist, now)
+    simout = None
+    try:
+        import sim as _sim
+        simout = _sim.step(S, now, win, WINDOW, price, k.get("strike"), pm, cache.get("kalshi"), sigs, score,
+                           load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR)
+    except Exception as e:
+        simout = {"error": str(e)[:100]}
     if now - S.get("snap_t", 0) >= 60:
         S["snap_t"] = now
         with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
@@ -434,12 +443,49 @@ def run_cycle(now, S):
                   "price0": cur["price0"], "locked_at": cur["locked_at"]} if cur else None),
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
-        "kalshi": cache.get("kalshi"), "p_model": pm, "headlines": cache.get("headlines", []),
+        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
         "recent_markets": cache.get("recent_markets"), "weights": w,
         "note": "Paper mode: no real money. Information only, not financial advice.",
     }
+
+
+class Control(BaseHTTPRequestHandler):
+    """Tiny on/off switch for the simulator, reachable only on the Tailscale address."""
+    def _send(self, obj, code=200):
+        b = json.dumps(obj).encode()
+        self.send_response(code)
+        for h, v in (("Content-Type", "application/json"), ("Access-Control-Allow-Origin", "*"),
+                     ("Access-Control-Allow-Headers", "content-type"), ("Content-Length", str(len(b)))):
+            self.send_header(h, v)
+        self.end_headers(); self.wfile.write(b)
+
+    def do_OPTIONS(self):
+        self._send({})
+
+    def do_GET(self):
+        self._send(load(os.path.join(DIR, "control.json"), {"on": True}))
+
+    def do_POST(self):
+        try:
+            n = int(self.headers.get("Content-Length", 0))
+            on = bool(json.loads(self.rfile.read(n) or b"{}").get("on"))
+            save_atomic(os.path.join(DIR, "control.json"), {"on": on, "changed": int(time.time())})
+            self._send({"on": on})
+        except Exception:
+            self._send({"error": "bad request"}, 400)
+
+    def log_message(self, *a):
+        pass
+
+
+def start_control():
+    try:
+        srv = HTTPServer((os.environ.get("MARKET_BIND", "127.0.0.1"), int(os.environ.get("MARKET_PORT", "8097"))), Control)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+    except Exception as e:
+        print("control server not started:", e, flush=True)
 
 
 def main():
@@ -448,6 +494,7 @@ def main():
     S = load(spath, {})
     me = os.path.abspath(__file__)
     mtime = os.path.getmtime(me)
+    start_control()
     print("market agent started (paper mode)", flush=True)
     while True:
         now = int(time.time())
