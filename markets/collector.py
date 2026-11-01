@@ -168,7 +168,7 @@ def get_kalshi():
     m = ms[0]
     bid, ask = m.get("yes_bid"), m.get("yes_ask")
     yes = (bid + ask) / 2 if bid is not None and ask is not None else m.get("last_price")
-    return {"ticker": m.get("ticker"), "yes_pct": yes, "close_time": m.get("close_time")}
+    return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time")}
 
 
 def paper_pnl(o):
@@ -322,7 +322,9 @@ def run_cycle(now, S):
         with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
             f.write(json.dumps({"t": now, "price": price, "score": score, "conf": conf,
                                 "sig": {k: v["score"] for k, v in avail.items()},
-                                "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct")}) + "\n")
+                                "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct"),
+                                "yes_bid": (cache.get("kalshi") or {}).get("yes_bid"),
+                                "yes_ask": (cache.get("kalshi") or {}).get("yes_ask")}) + "\n")
     calls = read_calls()
     sc = scorecard(calls, now)
     recent = [{"start": c["start"], "call": c["call"], "outcome": c["outcome"], "price0": c["price0"],
