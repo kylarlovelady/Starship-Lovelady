@@ -168,7 +168,28 @@ def get_kalshi():
     m = ms[0]
     bid, ask = m.get("yes_bid"), m.get("yes_ask")
     yes = (bid + ask) / 2 if bid is not None and ask is not None else m.get("last_price")
-    return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time")}
+    return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time"),
+            "strike": m.get("floor_strike") if m.get("floor_strike") is not None else m.get("cap_strike")}
+
+
+def p_up_model(price, strike, secs_left, history, now):
+    """Chance BTC finishes above the strike, from how far it is now, time left and recent choppiness
+    (normal-distribution model). Near the start this is about 50 percent; late in the window it is
+    close to 0 or 100, which is what Kalshi's own price shows too."""
+    if not strike or secs_left <= 0:
+        return None
+    pts = [h for h in history if h[0] > now - 1800]
+    rs = []
+    for (t0, a), (t1, b) in zip(pts, pts[1:]):
+        if t1 > t0:
+            rs.append((math.log(b / a)) ** 2 / (t1 - t0))
+    if len(rs) < 10:
+        return None
+    sig = math.sqrt(sum(rs) / len(rs)) * math.sqrt(secs_left)     # expected size of the move left
+    if sig <= 0:
+        return None
+    z = math.log(price / float(strike)) / sig
+    return round(0.5 * (1 + math.erf(z / math.sqrt(2))), 4)
 
 
 def paper_pnl(o):
@@ -385,10 +406,12 @@ def run_cycle(now, S):
             and now - win <= 90 and win != S.get("last_win"):
         S["open"].append({"start": win, "price0": price, "score": score, "call": lean, "conf": conf,
                           "signals": {k: v["score"] for k, v in avail.items()}, "locked_at": now,
-                          "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct")})
+                          "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct"), "strike": (cache.get("kalshi") or {}).get("strike")})
         S["last_win"] = win
     cur = next((o for o in S["open"] if o["start"] == win), None)
 
+    k = cache.get("kalshi") or {}
+    pm = p_up_model(price, k.get("strike"), win + WINDOW - now, hist, now)
     if now - S.get("snap_t", 0) >= 60:
         S["snap_t"] = now
         with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
@@ -397,6 +420,7 @@ def run_cycle(now, S):
                                 "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct"),
                                 "yes_bid": (cache.get("kalshi") or {}).get("yes_bid"),
                                 "yes_ask": (cache.get("kalshi") or {}).get("yes_ask"),
+                                "strike": k.get("strike"), "p_model": pm, "secs_left": win + WINDOW - now,
                                 "recent_up": (cache.get("recent_markets") or []).count("UP") if cache.get("recent_markets") else None}) + "\n")
     calls = read_calls()
     sc = scorecard(calls, now)
@@ -410,7 +434,7 @@ def run_cycle(now, S):
                   "price0": cur["price0"], "locked_at": cur["locked_at"]} if cur else None),
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
-        "kalshi": cache.get("kalshi"), "headlines": cache.get("headlines", []),
+        "kalshi": cache.get("kalshi"), "p_model": pm, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
         "recent_markets": cache.get("recent_markets"), "weights": w,
