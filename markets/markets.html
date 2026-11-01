@@ -39,19 +39,12 @@ h1{font-size:19px;margin:0;letter-spacing:.2px}
 <div id="msg">Waiting for the market agent. If you just set this up, give it a minute.</div>
 <div id="app" style="display:none">
 <div class="card"><div class="row"><div class="price" id="price">-</div><div class="small mut" id="cd">-</div></div>
-<svg id="gauge" viewBox="0 0 300 190" aria-label="Bearish to bullish gauge">
-<path d="M18.0 150.0 A132 132 0 0 1 30.5 94.0 L73.9 114.3 A84 84 0 0 0 66.0 150.0 Z" fill="#e8201c"/>
-<path d="M31.7 91.5 A132 132 0 0 1 66.6 47.7 L96.9 84.9 A84 84 0 0 0 74.7 112.8 Z" fill="#ff4d0a"/>
-<path d="M68.8 45.9 A132 132 0 0 1 119.3 21.6 L130.5 68.3 A84 84 0 0 0 98.3 83.8 Z" fill="#fb9a1c"/>
-<path d="M122.0 21.0 A132 132 0 0 1 178.0 21.0 L167.8 67.9 A84 84 0 0 0 132.2 67.9 Z" fill="#ffc905"/>
-<path d="M180.7 21.6 A132 132 0 0 1 231.2 45.9 L201.7 83.8 A84 84 0 0 0 169.5 68.3 Z" fill="#f4ef0a"/>
-<path d="M233.4 47.7 A132 132 0 0 1 268.3 91.5 L225.3 112.8 A84 84 0 0 0 203.1 84.9 Z" fill="#8fe03f"/>
-<path d="M269.5 94.0 A132 132 0 0 1 282.0 150.0 L234.0 150.0 A84 84 0 0 0 226.1 114.3 Z" fill="#2db14b"/>
-<g transform="translate(12,0)"><g fill="#b3261e"><ellipse cx="96" cy="124" rx="19" ry="11"/><circle cx="76" cy="115" r="8.5"/><circle cx="70" cy="108" r="3.2"/><circle cx="80" cy="107" r="3.2"/><rect x="82" y="128" width="6" height="14" rx="2.5"/><rect x="104" y="128" width="6" height="14" rx="2.5"/><rect x="93" y="130" width="6" height="12" rx="2.5"/><rect x="111" y="130" width="6" height="12" rx="2.5"/></g><circle cx="72" cy="114" r="1.3" fill="#080d1a"/></g>
-<g transform="translate(-12,0)"><g fill="#3c9a50"><ellipse cx="206" cy="122" rx="21" ry="12"/><path d="M186 113 Q190 100 204 106 L206 118Z"/><ellipse cx="226" cy="118" rx="8.5" ry="7" transform="rotate(-18 226 118)"/><path d="M222 111 Q216 100 224 98 Q222 106 227 110Z"/><path d="M232 111 Q242 102 240 97 Q237 106 229 109Z"/><rect x="190" y="128" width="6" height="14" rx="2.5"/><rect x="214" y="128" width="6" height="14" rx="2.5"/><rect x="200" y="130" width="6" height="12" rx="2.5"/><rect x="222" y="130" width="6" height="12" rx="2.5"/><path d="M184 122 Q176 126 177 136 Q182 130 186 128Z"/></g></g>
+<svg id="gauge" viewBox="0 0 300 190" aria-label="Bear to bull gauge">
+<defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="18" y1="0" x2="282" y2="0"><stop offset="0" stop-color="#e5232a"/><stop offset=".5" stop-color="#7b8499"/><stop offset="1" stop-color="#22b455"/></linearGradient></defs>
+<path d="M42 150 A108 108 0 0 1 258 150" fill="none" stroke="url(#g)" stroke-width="48"/>
 <g id="needle" style="transform-origin:150px 150px;transition:transform .8s cubic-bezier(.2,.8,.2,1)"><path d="M146 150 L150 38 L154 150 Z" fill="#f3f6ff" stroke="#080d1a" stroke-width="1.5" stroke-linejoin="round"/></g>
 <circle cx="150" cy="150" r="11" fill="#080d1a" stroke="#f3f6ff" stroke-width="4"/>
-<text x="38" y="176" fill="#e8edf8" font-size="11" font-weight="700" letter-spacing="3" text-anchor="middle">BEARISH</text><text x="262" y="176" fill="#e8edf8" font-size="11" font-weight="700" letter-spacing="3" text-anchor="middle">BULLISH</text></svg>
+<text x="42" y="176" fill="#e8edf8" font-size="13" font-weight="700" letter-spacing="3" text-anchor="middle">BEAR</text><text x="258" y="176" fill="#e8edf8" font-size="13" font-weight="700" letter-spacing="3" text-anchor="middle">BULL</text></svg>
 <div class="lean" id="lean">-</div><div class="small mut" style="text-align:center" id="leansub">-</div></div>
 
 <div class="card"><h2>Call for this 15 minutes</h2><div class="call"><div class="badge" id="badge">-</div><div><div id="win" style="font-weight:600">-</div><div class="small mut" id="callsub">-</div></div></div>
