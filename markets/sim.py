@@ -9,6 +9,7 @@ START, MIN_BET, CAP, SLICE = 1000.0, 1.0, 100.0, 0.10    # fake dollars; bet lim
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
 MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
 SIM_VERSION = 2
+_EV, _CUR, _T = [], "", 0
 _SZ = (None, None)      # contracts available at the best ask and best bid right now
 EDGE_MIN = 0.03         # must beat price + fee by 3 cents per dollar before acting
 STRATS = {
@@ -67,7 +68,7 @@ def new_acc():
             "busts": 0, "pos": None, "w": None}
 
 
-def buy(a, side, dollars, ask_up, bid_up):
+def buy(a, side, dollars, ask_up, bid_up, why=""):
     px = ask_up if side == "UP" else 1 - bid_up
     px = min(0.99, max(0.01, px))
     used = a["pos"]["cost"] if a["pos"] else 0.0
@@ -93,18 +94,21 @@ def buy(a, side, dollars, ask_up, bid_up):
     if w["first"] is None:
         w["first"] = {"side": side, "c": c, "cost": dollars + f}
     a["trades"] += 1
+    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "why": why})
     return True
 
 
-def sell(a, ask_up, bid_up):
+def sell(a, ask_up, bid_up, why=""):
     p = a["pos"]
     px = bid_up if p["side"] == "UP" else 1 - ask_up
     px = min(0.99, max(0.01, px))
     got = p["c"] * px - fee(px) * p["c"]
     a["bal"] += got
     a["w"]["cash"] += got; a["w"]["trades"] += 1
+    side = p["side"]
     a["pos"] = None
     a["trades"] += 1
+    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "why": why})
 
 
 def size(edge, bal, pos_cost):
@@ -130,6 +134,9 @@ def settle(sim, up_won, DIR, hour, synthetic):
         a["pnl"] += pnl; a["windows"] += 1; a["wins"] += 1 if pnl > 0 else 0
         if hold is not None:
             a["mgmt"] += pnl - hold
+        a.setdefault("hist", []).append({"t": w["start"], "pnl": round(pnl, 2), "outcome": "UP" if up_won else "DOWN",
+                                         "hold": None if hold is None else round(hold, 2), "trades": w["trades"]})
+        a["hist"] = a["hist"][-12:]
         if a["bal"] < MIN_BET:                   # fake account ran dry: refill and count it
             a["bal"] = START; a["busts"] += 1
         h = sim["hours"].setdefault(str(hour), {"n": 0, "pnl": 0.0})
@@ -143,11 +150,12 @@ def settle(sim, up_won, DIR, hour, synthetic):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None):
-    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ
+    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T
     if C:
         MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
     _SZ = ((kal or {}).get("yes_ask_size"), (kal or {}).get("yes_bid_size"))
+
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
     if sim.get("ver") != SIM_VERSION:                 # rules changed: start the fake accounts fresh, keep the old log
         try:
@@ -157,6 +165,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         sim.update({"ver": SIM_VERSION, "acc": {}, "win": None, "hours": {}, "joined": False})
     for n in STRATS:
         sim["acc"].setdefault(n, new_acc())
+    sim.setdefault("events", [])
+    _EV, _T = sim["events"], now
     g = lambda k: (sigs.get(k) or {}).get("score") or 0.0
     sim["mood"] = 0.9 * sim["mood"] + 0.1 * (0.7 * g("news") + 0.3 * g("fng"))   # slow mood
     bid, ask, synth = prices(kal, pm)
@@ -176,43 +186,64 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         w = a["w"]
         if not w:
             continue
+        _CUR = name
         p = prob_up(name, pm, sigs, score, sim["mood"])
         if not enabled:                                   # switched off: close out safely, then idle
             if a["pos"]:
-                sell(a, ask, bid)
+                sell(a, ask, bid, "Switched off: closing the open bet")
             continue
         if left <= 5:
             continue
         side_p = lambda s: p if s == "UP" else 1 - p
         ask_s = lambda s: ask if s == "UP" else 1 - bid
         bid_s = lambda s: bid if s == "UP" else 1 - ask
+        eU = side_p("UP") - ask_s("UP") - fee(ask_s("UP"))
+        eD = side_p("DOWN") - ask_s("DOWN") - fee(ask_s("DOWN"))
+        c_ = lambda x: "%d" % round(x * 100)
+        act = "waiting"
+        why = "It thinks Up is %s%%. Kalshi sells Up at %s\u00a2 and Down at %s\u00a2. Edge after fees: Up %+d\u00a2, Down %+d\u00a2 (needs +%d\u00a2 to trade)." % (
+            c_(p), c_(ask_s("UP")), c_(ask_s("DOWN")), round(eU * 100), round(eD * 100), round(EDGE_MIN * 100))
         if w["first"] is None and w["trades"] == 0:       # bet every round, smallest size unless the edge is big
             s = "UP" if p >= 0.5 else "DOWN"
             e = side_p(s) - ask_s(s) - fee(ask_s(s))
-            buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else MIN_BET, ask, bid)
-            continue
-        if name == "hold" or w["trades"] >= MAX_TRADES:
-            continue
-        pos = a["pos"]
-        if pos:
-            s = pos["side"]
-            sell_now = bid_s(s) - fee(bid_s(s))
-            if sell_now > side_p(s) + 0.01:               # selling beats holding by our own odds
-                sell(a, ask, bid)
-                continue
-        for s in ("UP", "DOWN"):
-            if a["pos"] and a["pos"]["side"] != s:
-                continue
-            e = side_p(s) - ask_s(s) - fee(ask_s(s))
-            if e > EDGE_MIN:
-                buy(a, s, size(e, a["bal"], a["pos"]["cost"] if a["pos"] else 0.0), ask, bid)
-                break
+            buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else MIN_BET, ask, bid,
+                "Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." % (s, c_(p)))
+            act = "opened"
+        elif name == "hold":
+            act = "holding to the end"
+        elif w["trades"] >= MAX_TRADES:
+            act = "trade limit reached"
+        else:
+            pos = a["pos"]
+            sold = False
+            if pos:
+                s = pos["side"]
+                sell_now = bid_s(s) - fee(bid_s(s))
+                if sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
+                    sell(a, ask, bid, "Selling %s: it can sell at %s\u00a2 but by its own odds holding is worth only %s\u00a2 per contract." % (s, c_(sell_now), c_(side_p(s))))
+                    sold = True; act = "sold"
+            if not sold:
+                for s, e in (("UP", eU), ("DOWN", eD)):
+                    if a["pos"] and a["pos"]["side"] != s:
+                        continue
+                    if e > EDGE_MIN:
+                        buy(a, s, size(e, a["bal"], a["pos"]["cost"] if a["pos"] else 0.0), ask, bid,
+                            "Edge: it thinks %s is %s%% likely but Kalshi asks %s\u00a2 (+%d\u00a2 after fees)." % (s, c_(side_p(s)), c_(ask_s(s)), round(e * 100)))
+                        act = "bought"
+                        break
+                else:
+                    act = "holding" if a["pos"] else "waiting"
+        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why}
     ranked = []
     for name, a in sim["acc"].items():
         ranked.append({"key": name, "label": STRATS[name], "bal": round(a["bal"], 2), "pnl": round(a["pnl"], 2),
                        "windows": a["windows"], "win_pct": round(100 * a["wins"] / a["windows"], 1) if a["windows"] else None,
                        "trades": a["trades"], "mgmt": round(a["mgmt"], 2), "busts": a["busts"],
-                       "open": (a["pos"]["side"] if a["pos"] else None)})
+                       "open": (a["pos"]["side"] if a["pos"] else None), "now": a.get("now"), "hist": a.get("hist", [])[-8:],
+                       "pos": ({"side": a["pos"]["side"], "c": round(a["pos"]["c"], 1), "cost": round(a["pos"]["cost"], 2),
+                                "value": round(a["pos"]["c"] * (bid if a["pos"]["side"] == "UP" else 1 - ask), 2)} if a["pos"] else None)})
     ranked.sort(key=lambda r: -r["pnl"])
-    return {"on": enabled, "synthetic": sim["synth"], "start": START, "min_bet": MIN_BET, "cap": CAP,
+    sim["events"] = sim["events"][-120:]
+    return {"events": sim["events"][-60:], "strike": sim["strike"], "win": sim["win"], "yes": [round(bid, 3), round(ask, 3)],
+            "on": enabled, "synthetic": sim["synth"], "start": START, "min_bet": MIN_BET, "cap": CAP,
             "strategies": ranked, "hours": sim["hours"]}

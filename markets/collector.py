@@ -13,12 +13,12 @@ HOME = os.path.expanduser("~")
 DIR = os.environ.get("MARKET_DIR", os.path.join(HOME, "market-data"))
 OUT = os.environ.get("MARKET_OUT", os.path.join(HOME, "crew-web", "market.json"))
 WINDOW = 900            # 15 minutes
-CYCLE = 20              # seconds between looks
+CYCLE = 10              # seconds between looks
 THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
 WEIGHTS = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
           "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
-EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 20, "recent": 300}
+EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 10, "recent": 300}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
 BULL = ["surge", "rally", "soar", "jump", "record high", "all-time high", "approve", "approval",
@@ -479,6 +479,13 @@ def run_cycle(now, S):
 
     k = cache.get("kalshi") or {}
     pm = p_up_model(price, k.get("strike"), win + WINDOW - now, hist, now)
+    P = S.setdefault("path", {"win": None, "pts": [], "ky": []})
+    if P["win"] != win:
+        P.update({"win": win, "pts": [], "ky": []})
+    P["pts"].append([now, round(price, 2)])
+    kk = cache.get("kalshi") or {}
+    if kk.get("yes_pct") is not None:
+        P["ky"].append([now, round(kk["yes_pct"], 1)])
     simout = None
     try:
         import sim as _sim
@@ -508,7 +515,7 @@ def run_cycle(now, S):
                   "price0": cur["price0"], "locked_at": cur["locked_at"]} if cur else None),
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
-        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
+        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": P["pts"][-100:], "ky": P["ky"][-100:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
         "recent_markets": cache.get("recent_markets"), "weights": w,

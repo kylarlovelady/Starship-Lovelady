@@ -9,8 +9,10 @@ touch ~/market-data/env && chmod 600 ~/market-data/env
 TS=$(tailscale ip -4 2>/dev/null | head -1)
 grep -q MARKET_BIND ~/market-data/env || echo "MARKET_BIND=${TS:-127.0.0.1}" >> ~/market-data/env
 cp markets/markets.html ~/crew-web/markets.html
+cp markets/live.html ~/crew-web/live.html
 # keep the page current with the same 3-minute auto-update
 grep -q "markets.html" ~/crew-update.sh || echo 'cp ~/starship/markets/markets.html ~/crew-web/markets.html' >> ~/crew-update.sh
+grep -q "live.html" ~/crew-update.sh || echo 'cp ~/starship/markets/live.html ~/crew-web/live.html' >> ~/crew-update.sh
 sudo tee /etc/systemd/system/market-agent.service >/dev/null <<UNIT
 [Unit]
 Description=BTC 15-minute market agent (paper mode)
