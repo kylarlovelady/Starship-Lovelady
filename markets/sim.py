@@ -5,7 +5,9 @@ and the buy/sell price gap counted on every trade. A plain hold-to-the-end contr
 so we can measure whether the active trading really adds anything."""
 import json, math, os, time
 
-START, MIN_BET, CAP, SLICE = 1000.0, 1.0, 100.0, 0.10    # fake dollars; bet limits
+START, MIN_BET, CAP, SLICE = 1000.0, 0.0, 100.0, 0.10    # fake dollars; bet limits (MIN_BET 0 = may skip a round)
+KELLY = 1.85            # how hard it leans into an edge; set by the aggression dial
+FLOOR = 1.0             # smallest real bet: one contract is never more than $1
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
 MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
 SIM_VERSION = 3
@@ -154,7 +156,7 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     px = min(0.99, max(0.01, px))
     used = a["pos"]["cost"] if a["pos"] else 0.0
     if not (MIN_PRICE <= px <= MAX_PRICE):
-        dollars = min(dollars, MIN_BET)              # no big bets on long shots or near-sure things
+        dollars = min(dollars, max(MIN_BET, FLOOR))   # no big bets on long shots or near-sure things
     dollars = min(dollars, a["bal"] / (1 + fee(px) / px), (CAP - used) / (1 + fee(px) / px))   # cap counts fees
     avail = _SZ[0] if side == "UP" else _SZ[1]       # cannot buy more than Kalshi has on offer at that price
     if avail is not None:
@@ -196,8 +198,8 @@ def sell(a, ask_up, bid_up, why=""):
 
 
 def size(edge, bal, pos_cost):
-    d = MIN_BET + 400 * max(0.0, edge - EDGE_MIN)
-    return max(MIN_BET, min(d, CAP - pos_cost, SLICE * bal if bal * SLICE > MIN_BET else MIN_BET))
+    frac = min(SLICE, KELLY * max(0.0, edge))          # share of the wallet: bigger edge and bolder dial = bigger bet
+    return max(FLOOR, min(frac * bal, CAP - pos_cost))
 
 
 def settle_one(sim, name, a, w, pos, up_won, DIR, hour, src):
@@ -216,7 +218,7 @@ def settle_one(sim, name, a, w, pos, up_won, DIR, hour, src):
     a.setdefault("hist", []).append({"t": w["start"], "pnl": round(pnl, 2), "outcome": "UP" if up_won else "DOWN",
                                      "hold": None if hold is None else round(hold, 2), "trades": w["trades"]})
     a["hist"] = a["hist"][-12:]
-    if a["bal"] < MIN_BET:                   # fake account ran dry: refill and count it
+    if a["bal"] < max(MIN_BET, FLOOR):       # fake account ran dry: refill and count it
         a["bal"] = START; a["busts"] += 1
     h = sim["hours"].setdefault(str(hour), {"n": 0, "pnl": 0.0})
     h["n"] += 1; h["pnl"] = round(h["pnl"] + pnl, 3)
@@ -333,7 +335,7 @@ def settle_run(sim, r, up_won, price, strike, hour, DIR, src):
             fh.write(json.dumps(dict(rd, run=run["id"], strat=run["strategy"], hour=hour)) + "\n")
     except OSError:
         pass
-    if run["status"] == "running" and a["bal"] < MIN_BET and not a["pos"]:
+    if run["status"] == "running" and a["bal"] < max(MIN_BET, FLOOR) and not a["pos"]:
         run["status"] = "broke"; run["stopped"] = time.time()
 
 
@@ -343,9 +345,14 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
-        MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
+        MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
+        CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
+        ag = min(1.0, max(0.0, float(C.get("aggression", 30)) / 100.0))
+        SLICE = 0.04 + 0.96 * ag * ag                          # most of the wallet one bet may use
+        EDGE_MIN = 0.06 - 0.05 * ag                            # how thin an edge it will act on
+        KELLY = 0.5 + 4.5 * ag                                 # how hard it leans into an edge
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
@@ -449,14 +456,18 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         act = "waiting"
         why = "It thinks Up is %s%%. Kalshi sells Up at %s\u00a2 and Down at %s\u00a2. Edge after fees: Up %+d\u00a2, Down %+d\u00a2 (needs +%d\u00a2 to trade)." % (
             c_(p), c_(ask_s("UP")), c_(ask_s("DOWN")), round(eU * 100), round(eD * 100), round(EDGE_MIN * 100))
-        if w["first"] is None and w["trades"] == 0:       # bet every round, smallest size unless the edge is big
+        if w["first"] is None and w["trades"] == 0 and (MIN_BET > 0 or max(eU, eD) > EDGE_MIN):   # min bet above 0 = must bet every round
             s = "UP" if p >= 0.5 else "DOWN"
             e = side_p(s) - ask_s(s) - fee(ask_s(s))
-            buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else MIN_BET, ask, bid,
-                "Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." % (s, c_(p)))
+            if MIN_BET <= 0:
+                s = "UP" if eU >= eD else "DOWN"; e = max(eU, eD)
+            buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else max(MIN_BET, FLOOR), ask, bid,
+                ("Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." if MIN_BET > 0 else "Opening bet: it sees a real edge on %s (it thinks %s%% up).") % (s, c_(p)))
             act = "opened"
             if w.get("mix") is None:
                 w["mix"] = _MIX; w["p_open"] = round(p, 3)
+        elif w["first"] is None and w["trades"] == 0 and not a["pos"]:
+            act = "waiting"; why += " Smallest bet is $0, so it sits out until it sees a real edge."
         elif pname == "hold":
             act = "holding to the end"
         elif w["trades"] >= MAX_TRADES:
@@ -516,5 +527,5 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                            "value": round(a_["pos"]["c"] * (bid if a_["pos"]["side"] == "UP" else 1 - ask), 2)} if a_["pos"] else None)}
     sim["events"] = sim["events"][-120:]
     return {"events": sim["events"][-60:], "strike": sim["strike"], "win": sim["win"], "yes": [round(bid, 3), round(ask, 3)],
-            "on": enabled, "synthetic": False, "live": bool(kal and sim.get("ready")), "start": START, "min_bet": MIN_BET, "cap": CAP,
+            "on": enabled, "synthetic": False, "live": bool(kal and sim.get("ready")), "start": START, "min_bet": MIN_BET, "cap": (CAP if CAP < 1e8 else 0),
             "strategies": ranked, "hours": sim["hours"], "run": runout}

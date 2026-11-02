@@ -383,8 +383,8 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
-DEFAULTS = {"threshold": THRESHOLD, "min_bet": 1.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92}
-LIMITS = {"threshold": (0, 50), "min_bet": (1, 100), "cap": (1, 1000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99)}
+DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92}
+LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99)}
 
 
 def clean_cfg(raw):
@@ -412,7 +412,8 @@ def cfg():
     c = dict(DEFAULTS)
     c.update({k: v for k, v in clean_cfg(load(os.path.join(DIR, "config.json"), {})).items() if k != "weights"})
     c["max_trades"] = int(c["max_trades"])
-    c["cap"] = max(c["cap"], c["min_bet"])
+    if c["cap"] > 0:                       # 0 means no limit
+        c["cap"] = max(c["cap"], c["min_bet"], 1.0)
     c["weights"] = weights()
     return c
 
