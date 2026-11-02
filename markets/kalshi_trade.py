@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Kalshi trading client. The private key and the key id stay on the Pi (~/market-data), never in chat, notes or GitHub.
 Environment is chosen in ~/market-data/env:  KALSHI_ENV=demo (fake funds) or prod (real money)."""
-import base64, json, os, time, urllib.request, urllib.error, uuid
+import base64, json, math, os, time, urllib.request, urllib.error, uuid
 
 HOME = os.path.expanduser("~")
 DIR = os.environ.get("MARKET_DIR", os.path.join(HOME, "market-data"))
@@ -127,7 +127,9 @@ class Broker:
         n = int(count)
         if n < 1 or not ticker:
             return 0
-        pr = min(0.99, max(0.01, round(pr, 2)))
+        # Kalshi prices can be fractions of a cent. Round in the direction that still crosses the book: a bid up, an ask down.
+        pr = math.ceil(pr * 100 - 1e-9) / 100.0 if ks == "bid" else math.floor(pr * 100 + 1e-9) / 100.0
+        pr = min(0.99, max(0.01, pr))
         rec = {"t": int(time.time()), "action": action, "side": side, "ticker": ticker, "book_side": ks, "count": n, "price": pr}
         try:
             st, resp = self.c.order(ticker, ks, n, pr, tif="immediate_or_cancel")
