@@ -7,6 +7,9 @@ import json, math, os, time
 
 START, MIN_BET, CAP, SLICE = 1000.0, 1.0, 100.0, 0.10    # fake dollars; bet limits
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
+MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
+SIM_VERSION = 2
+_SZ = (None, None)      # contracts available at the best ask and best bid right now
 EDGE_MIN = 0.03         # must beat price + fee by 3 cents per dollar before acting
 STRATS = {
     "distance": "Distance to target only",
@@ -68,7 +71,12 @@ def buy(a, side, dollars, ask_up, bid_up):
     px = ask_up if side == "UP" else 1 - bid_up
     px = min(0.99, max(0.01, px))
     used = a["pos"]["cost"] if a["pos"] else 0.0
+    if not (MIN_PRICE <= px <= MAX_PRICE):
+        dollars = min(dollars, MIN_BET)              # no big bets on long shots or near-sure things
     dollars = min(dollars, a["bal"] / (1 + fee(px) / px), (CAP - used) / (1 + fee(px) / px))   # cap counts fees
+    avail = _SZ[0] if side == "UP" else _SZ[1]       # cannot buy more than Kalshi has on offer at that price
+    if avail is not None:
+        dollars = min(dollars, avail * px)
     if dollars < 0.5:
         return False
     c = dollars / px
@@ -135,10 +143,18 @@ def settle(sim, up_won, DIR, hour, synthetic):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None):
-    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN
+    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ
     if C:
         MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
+        MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
+    _SZ = ((kal or {}).get("yes_ask_size"), (kal or {}).get("yes_bid_size"))
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
+    if sim.get("ver") != SIM_VERSION:                 # rules changed: start the fake accounts fresh, keep the old log
+        try:
+            os.replace(os.path.join(DIR, "sim_windows.jsonl"), os.path.join(DIR, "sim_windows.v%s.jsonl" % sim.get("ver", 1)))
+        except OSError:
+            pass
+        sim.update({"ver": SIM_VERSION, "acc": {}, "win": None, "hours": {}, "joined": False})
     for n in STRATS:
         sim["acc"].setdefault(n, new_acc())
     g = lambda k: (sigs.get(k) or {}).get("score") or 0.0

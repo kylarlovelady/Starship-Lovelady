@@ -162,6 +162,13 @@ def sig_funding():
     return clamp(-math.tanh(r / 0.0003) * 0.5), "funding rate %+.4f%% (crowded longs lean bearish)" % (r * 100)
 
 
+def _num(v):
+    try:
+        return float(v)
+    except Exception:
+        return None
+
+
 def to_cents(m, *names):
     """Read a Kalshi price that may be whole cents (56), or dollars as text ("0.5600") or number."""
     for n in names:
@@ -191,6 +198,8 @@ def get_kalshi():
     last = to_cents(m, "last_price", "last_price_dollars")
     yes = (bid + ask) / 2 if bid is not None and ask is not None else last
     return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time"),
+            "yes_ask_size": to_cents(m, "yes_ask_size_fp") if False else _num(m.get("yes_ask_size_fp")),
+            "yes_bid_size": _num(m.get("yes_bid_size_fp")),
             "strike": m.get("floor_strike") if m.get("floor_strike") is not None else m.get("cap_strike")}
 
 
@@ -287,8 +296,8 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
-DEFAULTS = {"threshold": THRESHOLD, "min_bet": 1.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10}
-LIMITS = {"threshold": (0, 50), "min_bet": (1, 100), "cap": (1, 1000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5)}
+DEFAULTS = {"threshold": THRESHOLD, "min_bet": 1.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92}
+LIMITS = {"threshold": (0, 50), "min_bet": (1, 100), "cap": (1, 1000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99)}
 
 
 def clean_cfg(raw):

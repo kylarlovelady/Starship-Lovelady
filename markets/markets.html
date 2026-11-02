@@ -127,7 +127,7 @@ function load(){
  fetch(f+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(render).catch(function(){if(!D){$('msg').style.display='block'}else{D.updated=D.updated}})
 }
 var SWURL=location.protocol+'//'+location.hostname+':8097/';
-var CF=[['threshold','Score needed to lean',1,'points of 100'],['min_bet','Smallest bet',1,'dollars'],['cap','Biggest bet',1,'dollars'],['edge_min','Edge needed to trade',100,'cents per dollar'],['max_trades','Most trades per round',1,'trades'],['slice','Largest share of balance per bet',100,'percent']];
+var CF=[['threshold','Score needed to lean',1,'points of 100'],['min_bet','Smallest bet',1,'dollars'],['cap','Biggest bet',1,'dollars'],['edge_min','Edge needed to trade',100,'cents per dollar'],['max_trades','Most trades per round',1,'trades'],['slice','Largest share of balance per bet',100,'percent'],['min_price','Cheapest price for a big bet',100,'cents'],['max_price','Dearest price for a big bet',100,'cents']];
 var cfgDirty=false;
 function fillCfg(c){
  if(!c||cfgDirty)return;var C=c.now;$('cfgcard').style.display='block';
