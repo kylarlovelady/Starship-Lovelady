@@ -6,6 +6,7 @@ so we can measure whether the active trading really adds anything."""
 import json, math, os, time
 
 START, MIN_BET, CAP, SLICE = 1000.0, 0.0, 100.0, 0.10    # fake dollars; bet limits (MIN_BET 0 = may skip a round)
+ROUND_FRAC = 0.14      # most of the wallet one round may have at stake in total (set by the aggression dial)
 KELLY = 1.85            # how hard it leans into an edge; set by the aggression dial
 BROKER = None          # set by the collector while a live (real money) run exists
 _LIVE = False
@@ -227,7 +228,10 @@ def sell(a, ask_up, bid_up, why=""):
 
 def size(edge, bal, pos_cost):
     frac = min(SLICE, KELLY * max(0.0, edge))          # share of the wallet: bigger edge and bolder dial = bigger bet
-    return max(FLOOR, min(frac * bal, CAP - pos_cost))
+    room = ROUND_FRAC * (bal + pos_cost) - pos_cost    # adds in one round cannot stack past this share of the wallet
+    if room < FLOOR:
+        return 0.0
+    return max(FLOOR, min(frac * bal, CAP - pos_cost, room))
 
 
 def settle_one(sim, name, a, w, pos, up_won, DIR, hour, src):
@@ -391,13 +395,14 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global BROKER, _LIVE, _SIM, _TK, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
         ag = min(1.0, max(0.0, float(C.get("aggression", 30)) / 100.0))
         SLICE = 0.04 + 0.96 * ag * ag                          # most of the wallet one bet may use
         EDGE_MIN = 0.06 - 0.05 * ag                            # how thin an edge it will act on
+        ROUND_FRAC = 0.05 + 0.95 * ag * ag                    # total stake in one round, as a share of the wallet
         KELLY = 0.5 + 4.5 * ag                                 # how hard it leans into an edge
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
         if isinstance(C.get("weights"), dict):
