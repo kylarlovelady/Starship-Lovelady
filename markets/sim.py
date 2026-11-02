@@ -495,13 +495,20 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     if run:
         a_ = run["acc"]
         eq = run_equity(a_, bid, ask)
+        infl = 0.0                                        # last round's bet still waiting for Kalshi's official result
+        for pd_ in sim.get("pending", []):
+            rp = pd_.get("run")
+            if rp and rp.get("pos"):
+                ly = (pd_.get("last_yes") if pd_.get("last_yes") is not None else 50.0) / 100.0
+                infl += rp["pos"]["c"] * (ly if rp["pos"]["side"] == "UP" else 1 - ly)
+        eq += infl
         if run["status"] == "running":
             c_ = run["curve"]
             if not c_ or now - c_[-1][0] >= 10:
                 c_.append([int(now), round(eq, 2)])
             run["curve"] = c_[-500:]
         runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
-                  "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "pnl": round(eq - run["start"], 2),
+                  "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run["start"], 2),
                   "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
                   "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,
                   "now": a_.get("now"), "rounds": run["rounds"][-15:], "events": [e for e in sim["events"] if e["s"] == "run"][-40:], "curve": run["curve"][-300:],
