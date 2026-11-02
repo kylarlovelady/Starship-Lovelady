@@ -463,7 +463,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     run = sim.get("run")
     if rc.get("active") and (not run or run["id"] != rc.get("id")):
         st = rc.get("strategy") if rc.get("strategy") in STRATS else "signals"
-        acc = new_acc(); acc["bal"] = float(rc.get("start", 100))
+        acc = new_acc(); acc["bal"] = float(rc.get("start", 1000))
         run = sim["run"] = {"id": rc.get("id"), "strategy": st, "start": acc["bal"], "acc": acc, "rounds": [],
                             "curve": [], "started": now, "stopped": None, "status": "running", "live": bool(rc.get("live"))}
         sim["k_ok"] = now; sim["unconf"] = False

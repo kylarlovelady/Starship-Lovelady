@@ -542,8 +542,8 @@ def do_reset(S, now):
         S.pop(k, None)
     S["score_ver"] = 2
     rp = os.path.join(DIR, "run.json")
-    if old.get("status") == "running":                    # a run was going: begin a fresh $100 one right away
-        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "signals"), "start": 100.0})
+    if old.get("status") == "running":                    # a run was going: begin a fresh $1,000 one right away
+        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "signals"), "start": 1000.0})
     else:
         save_atomic(rp, {"active": False})
     print("reset done, old data archived in", arch, flush=True)
@@ -901,7 +901,7 @@ class Control(BaseHTTPRequestHandler):
                     st = str(body.get("strategy") or "signals")
                     if st not in ("distance", "signals", "trend", "flow", "mood", "hold", "auto"):
                         st = "signals"
-                    amt = min(1000.0, max(10.0, float(body.get("amount") or 100)))
+                    amt = min(1000.0, max(10.0, float(body.get("amount") or 1000)))
                     cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}
                 else:
                     if cur.get("live") and cur.get("active"):
