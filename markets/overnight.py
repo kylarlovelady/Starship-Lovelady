@@ -16,15 +16,23 @@ def rows_of(path):
     return out
 
 
-cands = [p for p in glob.glob(D + "/run_log*.jsonl") if os.path.getsize(p) > 0]
-if not cands:
-    print("No wallet run found. Press Start on the Live View first."); sys.exit()
-cands.sort(key=os.path.getmtime)
-path = cands[-1] if len(cands) == 1 else sorted(cands, key=lambda p: rows_of(p)[-1]["t"])[-1]
-rows = rows_of(path)
-rid = rows[-1]["run"]
-rows = [r for r in rows if r["run"] == rid]
-t0 = rows[0]["t"]
+cands = [p for p in glob.glob(D + "/run_log*.jsonl") + glob.glob(D + "/archive/*/run_log*.jsonl") if os.path.getsize(p) > 0]
+rows = []
+if cands:
+    path = sorted(cands, key=lambda p: rows_of(p)[-1]["t"])[-1]
+    rows = rows_of(path)
+    rid = rows[-1]["run"]
+    rows = [r for r in rows if r["run"] == rid]
+sw = []
+for p in glob.glob(D + "/sim_windows*.jsonl") + glob.glob(D + "/archive/*/sim_windows*.jsonl"):
+    sw += rows_of(p)
+cl = []
+for p in glob.glob(D + "/calls*.jsonl") + glob.glob(D + "/archive/*/calls*.jsonl"):
+    cl += [c for c in rows_of(p) if c.get("outcome") in ("UP", "DOWN")]
+tmin = [x for x in ([rows[0]["t"]] if rows else []) + [min([r["t"] for r in sw] or [0]) or 1e12, min([c["start"] for c in cl] or [0]) or 1e12]]
+t0 = int(min(tmin)) if tmin else 0
+if not rows and not sw and not cl:
+    print("Nothing recorded yet."); sys.exit()
 res = {}
 try:
     url = "https://api.elections.kalshi.com/trade-api/v2/markets?series_ticker=KXBTC15M&status=settled&limit=1000&min_close_ts=%d" % (t0 - 1800)
@@ -50,14 +58,17 @@ def replay(r, true):
     return cash
 
 
+if not rows:
+    print("No wallet run was started overnight, so there is no wallet to report. Here is what the bot did on its own:\n")
 n = len(rows); wins = sum(1 for r in rows if r["pnl"] > 0)
-logged = sum(r["pnl"] for r in rows)
+logged = sum(r["pnl"] for r in rows) if rows else 0
 chk = [r for r in rows if r["t"] in res]
 mism = [r for r in chk if res[r["t"]][0] != r["outcome"]]
 true_pnl = sum(replay(r, res[r["t"]][0]) for r in chk if r.get("moves"))
 true_wins = sum(1 for r in chk if r.get("moves") and replay(r, res[r["t"]][0]) > 0)
-print("OVERNIGHT REPORT  (%s to %s)" % (time.strftime("%a %-I:%M %p", time.localtime(t0)), time.strftime("%a %-I:%M %p", time.localtime(rows[-1]["t"] + 900))))
-print("Wallet: $%.2f to $%.2f. The bot's own count: %d rounds, %d won, %+.2f." % (rows[0]["bal"] - rows[0]["pnl"], rows[-1]["bal"], n, wins, logged))
+print("OVERNIGHT REPORT  (from %s)" % time.strftime("%a %-I:%M %p", time.localtime(t0)))
+if rows:
+    print("Wallet: $%.2f to $%.2f. The bot's own count: %d rounds, %d won, %+.2f." % (rows[0]["bal"] - rows[0]["pnl"], rows[-1]["bal"], n, wins, logged))
 if chk:
     print("\nACCURACY CHECK against Kalshi's real results (%d rounds matched):" % len(chk))
     print("  Our outcome matched Kalshi's in %d of %d rounds. %d did not match." % (len(chk) - len(mism), len(chk), len(mism)))
@@ -67,22 +78,42 @@ if chk:
         print("  First mismatches (our result vs Kalshi's):")
         for r in mism[:5]:
             print("   ", time.strftime("%-I:%M %p", time.localtime(r["t"])), r["outcome"], "vs", res[r["t"]][0])
-print("\nSignals it leaned on at the opening bet, average share of the decision:")
-tot, cnt = {}, 0
-for r in rows:
-    if r.get("mix"):
-        cnt += 1
-        for lab, pc, sg in r["mix"]:
-            tot[lab] = tot.get(lab, 0) + pc
-for k, v in sorted(tot.items(), key=lambda x: -x[1]):
-    print("  %-34s %d%%" % (k, round(v / cnt)))
-fr = [r for r in chk if r.get("first")]
-if fr:
-    ok = sum(1 for r in fr if r["first"] == res[r["t"]][0])
-    print("\nIts first read matched Kalshi's real result in %d of %d rounds (%d%%). A coin flip is about 50%%." % (ok, len(fr), round(100 * ok / len(fr))))
-print("\nWorst 3 rounds:")
-for r in sorted(rows, key=lambda r: r["pnl"])[:3]:
-    print(" ", time.strftime("%-I:%M %p", time.localtime(r["t"])), "%+.2f" % r["pnl"], "-", r["why"][:200])
-print("\nBest 3 rounds:")
-for r in sorted(rows, key=lambda r: -r["pnl"])[:3]:
-    print(" ", time.strftime("%-I:%M %p", time.localtime(r["t"])), "%+.2f" % r["pnl"], "-", r["why"][:200])
+if rows:
+    print("\nSignals it leaned on at the opening bet, average share of the decision:")
+    tot, cnt = {}, 0
+    for r in rows:
+        if r.get("mix"):
+            cnt += 1
+            for lab, pc, sg in r["mix"]:
+                tot[lab] = tot.get(lab, 0) + pc
+    for k, v in sorted(tot.items(), key=lambda x: -x[1]):
+        print("  %-34s %d%%" % (k, round(v / cnt)))
+    fr = [r for r in chk if r.get("first")]
+    if fr:
+        ok = sum(1 for r in fr if r["first"] == res[r["t"]][0])
+        print("\nIts first read matched Kalshi's real result in %d of %d rounds (%d%%). A coin flip is about 50%%." % (ok, len(fr), round(100 * ok / len(fr))))
+    print("\nWorst 3 rounds:")
+    for r in sorted(rows, key=lambda r: r["pnl"])[:3]:
+        print(" ", time.strftime("%-I:%M %p", time.localtime(r["t"])), "%+.2f" % r["pnl"], "-", r["why"][:200])
+    print("\nBest 3 rounds:")
+    for r in sorted(rows, key=lambda r: -r["pnl"])[:3]:
+        print(" ", time.strftime("%-I:%M %p", time.localtime(r["t"])), "%+.2f" % r["pnl"], "-", r["why"][:200])
+
+# ---- the six practice strategies and the scorecard, checked against Kalshi ----
+if sw:
+    print("\nSIX PRACTICE STRATEGIES (fake $1,000 each), as the bot recorded them:")
+    by = {}
+    for r in sw:
+        e = by.setdefault(r["strat"], {"n": 0, "pnl": 0.0, "wins": 0, "bad": 0, "chk": 0})
+        e["n"] += 1; e["pnl"] += r["pnl"]; e["wins"] += 1 if r["pnl"] > 0 else 0
+        if r["t"] in res:
+            e["chk"] += 1; e["bad"] += 1 if res[r["t"]][0] != r["outcome"] else 0
+    for k, e in sorted(by.items(), key=lambda x: -x[1]["pnl"]):
+        print("  %-9s %+9.2f over %3d rounds, won %2d%%   | its round result disagreed with Kalshi's in %d of %d rounds" % (k, e["pnl"], e["n"], round(100 * e["wins"] / max(1, e["n"])), e["bad"], e["chk"]))
+    print("  (Because the target and the scoring were wrong, treat these profits as unreliable.)")
+if cl:
+    sc = [c for c in cl if c.get("call") in ("UP", "DOWN")]
+    ch = [c for c in sc if c["start"] in res]
+    if ch:
+        ok_true = sum(1 for c in ch if c["call"] == res[c["start"]][0]); ok_rec = sum(1 for c in ch if c["call"] == c["outcome"])
+        print("\nTHE 15-MINUTE CALLS: %d calls matched to Kalshi. Recorded accuracy %d%%; against Kalshi's real result %d%%. (50%% is a coin flip.)" % (len(ch), round(100 * ok_rec / len(ch)), round(100 * ok_true / len(ch))))
