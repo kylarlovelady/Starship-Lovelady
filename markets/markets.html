@@ -135,12 +135,12 @@ function fillCfg(c){
  $('wrows').innerHTML=Object.keys(C.weights).map(function(k){var lab=(D&&D.signals.filter(function(g){return g.key===k})[0]||{}).label||k;return '<div class="row" style="padding:6px 0;align-items:center"><div>'+esc(lab)+'</div><input class="num" inputmode="decimal" data-w="'+k+'" value="'+Math.round(C.weights[k]*100)+'"></div>'}).join('');
  Array.prototype.forEach.call(document.querySelectorAll('#cfgcard input'),function(i){i.oninput=function(){cfgDirty=true}})}
 function cfgPost(body,msg){$('cfgmsg').textContent='Sending...';
- fetch(SWURL+'config',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(j.error)throw 0;cfgDirty=false;$('cfgmsg').textContent=msg;fillCfg({now:j,defaults:{},limits:{}})}).catch(function(){$('cfgmsg').textContent='Could not reach the bot. Try again in a minute.'})}
+ fetch(SWURL+'config',{method:'POST',headers:{'content-type':'application/json','X-Crew':'1'},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(j.error)throw 0;cfgDirty=false;$('cfgmsg').textContent=msg;fillCfg({now:j,defaults:{},limits:{}})}).catch(function(){$('cfgmsg').textContent='Could not reach the bot. Try again in a minute.'})}
 $('cfgsave').onclick=function(){var b={weights:{}};Array.prototype.forEach.call(document.querySelectorAll('#cfgcard input'),function(i){var v=parseFloat(i.value);if(isNaN(v))return;if(i.dataset.k)b[i.dataset.k]=v/parseFloat(i.dataset.m);else b.weights[i.dataset.w]=v/100});cfgPost(b,'Saved. The bot uses these on its next look.')};
 $('cfgreset').onclick=function(){cfgPost({reset:true},'Back to the default settings.')};
 
 $('sw').onclick=function(){var on=D&&D.sim?!D.sim.on:true;$('swmsg').textContent='Sending...';
- fetch(SWURL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({on:on})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw 0;$('swmsg').textContent=j.on?'Turned on. It joins the next 15-minute round.':'Turned off. Open bets are being closed and it stops trading.';if(D&&D.sim)D.sim.on=j.on;$('sw').textContent=j.on?'ON':'OFF'}).catch(function(){$('swmsg').textContent='Could not reach the switch. The agent may be restarting.'})};
+ fetch(SWURL,{method:'POST',headers:{'content-type':'application/json','X-Crew':'1'},body:JSON.stringify({on:on})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw 0;$('swmsg').textContent=j.on?'Turned on. It joins the next 15-minute round.':'Turned off. Open bets are being closed and it stops trading.';if(D&&D.sim)D.sim.on=j.on;$('sw').textContent=j.on?'ON':'OFF'}).catch(function(){$('swmsg').textContent='Could not reach the switch. The agent may be restarting.'})};
 load();
 setInterval(load,15000);setInterval(tick,1000);
 </script></body></html>

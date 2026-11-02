@@ -412,6 +412,28 @@ def scorecard(calls, now):
             "all": tally(calls), "by_signal": by}
 
 
+# ---------- reset ----------
+def do_reset(S, now):
+    """Start over: archive everything it learned or earned (nothing is deleted), clear the wallet, the six
+    practice accounts, the scorecard and the learner's weights. Your Settings and the price history stay."""
+    import glob, shutil
+    arch = os.path.join(DIR, "archive", time.strftime("%Y%m%d-%H%M%S", time.localtime(now)))
+    os.makedirs(arch, exist_ok=True)
+    for p in glob.glob(os.path.join(DIR, "*.jsonl")) + [os.path.join(DIR, n) for n in ("learn_report.json", "weights.json")]:
+        if os.path.exists(p):
+            shutil.move(p, os.path.join(arch, os.path.basename(p)))
+    old = (S.get("sim") or {}).get("run") or {}
+    for k in ("sim", "open", "done", "last_win", "skipped", "audit", "tg", "path", "learn_day", "report_t"):
+        S.pop(k, None)
+    S["score_ver"] = 2
+    rp = os.path.join(DIR, "run.json")
+    if old.get("status") == "running":                    # a run was going: begin a fresh $100 one right away
+        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "signals"), "start": 100.0})
+    else:
+        save_atomic(rp, {"active": False})
+    print("reset done, old data archived in", arch, flush=True)
+
+
 # ---------- self-check against Kalshi ----------
 def avg60(hist, t_end):
     """Average of our price over the 60 seconds before t_end (Kalshi settles on a 60-second average)."""
@@ -474,6 +496,10 @@ def run_cycle(now, S):
     """S = persistent state dict. Returns the market.json dict."""
     os.makedirs(DIR, exist_ok=True)
     cache = S.setdefault("cache", {})
+    rs = load(os.path.join(DIR, "reset.json"), {})
+    if rs.get("id") and rs["id"] != S.get("reset_id"):
+        S["reset_id"] = rs["id"]
+        do_reset(S, now)
     price = get_price()
     S.setdefault("history", []).append([now, price])
     S["history"] = [h for h in S["history"] if h[0] > now - 3900]
@@ -627,11 +653,25 @@ def run_cycle(now, S):
 
 class Control(BaseHTTPRequestHandler):
     """Tiny on/off switch for the simulator, reachable only on the Tailscale address."""
+    def _origin_ok(self):
+        """Only pages served from this same Pi may change anything (blocks other websites on your phone)."""
+        o = self.headers.get("Origin")
+        if not o:
+            return True
+        try:
+            from urllib.parse import urlparse
+            return urlparse(o).hostname == (self.headers.get("Host", "").split(":")[0] or None)
+        except Exception:
+            return False
+
     def _send(self, obj, code=200):
         b = json.dumps(obj).encode()
         self.send_response(code)
-        for h, v in (("Content-Type", "application/json"), ("Access-Control-Allow-Origin", "*"),
-                     ("Access-Control-Allow-Headers", "content-type"), ("Content-Length", str(len(b)))):
+        hs = [("Content-Type", "application/json"), ("Access-Control-Allow-Headers", "content-type, x-crew"),
+              ("Content-Length", str(len(b)))]
+        if self.headers.get("Origin") and self._origin_ok():
+            hs.append(("Access-Control-Allow-Origin", self.headers["Origin"]))
+        for h, v in hs:
             self.send_header(h, v)
         self.end_headers(); self.wfile.write(b)
 
@@ -647,8 +687,15 @@ class Control(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
+            if not self._origin_ok() or self.headers.get("X-Crew") != "1":
+                return self._send({"error": "not allowed"}, 403)
             n = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(n) or b"{}")
+            if self.path.startswith("/reset"):
+                if body.get("confirm") is not True:
+                    return self._send({"error": "needs confirm"}, 400)
+                save_atomic(os.path.join(DIR, "reset.json"), {"id": int(time.time() * 1000)})
+                return self._send({"ok": True})
             if self.path.startswith("/run"):
                 rp = os.path.join(DIR, "run.json")
                 cur = load(rp, {})

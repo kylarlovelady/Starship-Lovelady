@@ -26,6 +26,11 @@ def fee(p):
     return 0.07 * p * (1 - p)
 
 
+def fee_total(c, p):
+    """Kalshi's fee on one order: 7% of contracts x price x (1 - price), rounded UP to the next cent."""
+    return math.ceil(0.07 * c * p * (1 - p) * 100 - 1e-9) / 100.0
+
+
 def logit(p):
     p = min(0.999, max(0.001, p))
     return math.log(p / (1 - p))
@@ -109,10 +114,13 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     avail = _SZ[0] if side == "UP" else _SZ[1]       # cannot buy more than Kalshi has on offer at that price
     if avail is not None:
         dollars = min(dollars, avail * px)
-    if dollars < 0.5:
+    c = math.floor(dollars / px + 1e-9)                # Kalshi sells whole contracts only
+    while c >= 1 and (c * px + fee_total(c, px) > a["bal"] + 1e-9 or c * px + fee_total(c, px) > (CAP - used) + 1e-9):
+        c -= 1
+    if c < 1:
         return False
-    c = dollars / px
-    f = fee(px) * c
+    dollars = c * px
+    f = fee_total(c, px)
     a["bal"] -= dollars + f
     p = a["pos"]
     if p and p["side"] == side:
@@ -133,7 +141,7 @@ def sell(a, ask_up, bid_up, why=""):
     p = a["pos"]
     px = bid_up if p["side"] == "UP" else 1 - ask_up
     px = min(0.99, max(0.01, px))
-    got = p["c"] * px - fee(px) * p["c"]
+    got = p["c"] * px - fee_total(p["c"], px)
     a["bal"] += got
     a["w"]["cash"] += got; a["w"]["trades"] += 1
     side = p["side"]
