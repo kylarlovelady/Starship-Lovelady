@@ -76,5 +76,6 @@ class Kalshi:
             "ticker": ticker, "side": side, "count": "%.2f" % count, "price": "%.4f" % price,
             "time_in_force": tif, "self_trade_prevention_type": "taker_at_cross", "client_order_id": str(uuid.uuid4())})
 
-    def cancel(self, order_id):
-        return self.call("DELETE", "/portfolio/events/orders/" + order_id)
+    def cancel(self, order_id, ticker):
+        """Kalshi needs the market ticker to route the cancel to the right engine."""
+        return self.call("DELETE", "/portfolio/events/orders/" + order_id + "?market_ticker=" + ticker)
