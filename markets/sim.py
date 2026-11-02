@@ -7,6 +7,9 @@ import json, math, os, time
 
 START, MIN_BET, CAP, SLICE = 1000.0, 0.0, 100.0, 0.10    # fake dollars; bet limits (MIN_BET 0 = may skip a round)
 KELLY = 1.85            # how hard it leans into an edge; set by the aggression dial
+BROKER = None          # set by the collector while a live (real money) run exists
+_LIVE = False
+_TK = None
 FLOOR = 1.0             # smallest real bet: one contract is never more than $1
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
 MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
@@ -166,9 +169,17 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         c -= 1
     if c < 1:
         return False
+    if _LIVE:                                          # real money: the order has to actually fill
+        c = BROKER.trade("buy", _TK, side, c, ask_up, bid_up)
+        if c < 1:
+            return False
     dollars = c * px
     f = fee_total(c, px)
     a["bal"] -= dollars + f
+    if _LIVE:
+        b_ = BROKER.balance(0)
+        if b_ is not None:
+            a["bal"] = b_
     p = a["pos"]
     if p and p["side"] == side:
         p["c"] += c; p["cost"] += dollars + f
@@ -188,13 +199,27 @@ def sell(a, ask_up, bid_up, why=""):
     p = a["pos"]
     px = bid_up if p["side"] == "UP" else 1 - ask_up
     px = min(0.99, max(0.01, px))
-    got = p["c"] * px - fee_total(p["c"], px)
+    n = p["c"]
+    if _LIVE:
+        n = min(p["c"], BROKER.trade("sell", _TK, p["side"], p["c"], ask_up, bid_up))
+        if n < 1:
+            return False
+    got = n * px - fee_total(n, px)
     a["bal"] += got
     a["w"]["cash"] += got; a["w"]["trades"] += 1
     side = p["side"]
-    a["pos"] = None
+    if n < p["c"]:                                     # only part filled: keep the rest, try again next look
+        p["cost"] *= (p["c"] - n) / p["c"]; p["c"] -= n
+        why += " (only %d filled, the rest stays open)" % n
+    else:
+        a["pos"] = None
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
+    if _LIVE:
+        b_ = BROKER.balance(0)
+        if b_ is not None:
+            a["bal"] = b_
+    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(n, 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
+    return True
 
 
 def size(edge, bal, pos_cost):
@@ -315,7 +340,9 @@ def settle_run(sim, r, up_won, price, strike, hour, DIR, src):
     a = run["acc"]; w = r["w"]; pos = r.get("pos")
     if pos:
         pay = pos["c"] if (pos["side"] == "UP") == up_won else 0.0
-        a["bal"] += pay; w["cash"] += pay
+        if not run.get("live"):
+            a["bal"] += pay
+        w["cash"] += pay
         w["side_end"] = pos["side"]
     hold = None
     if w["first"]:
@@ -339,13 +366,24 @@ def settle_run(sim, r, up_won, price, strike, hour, DIR, src):
         run["status"] = "broke"; run["stopped"] = time.time()
 
 
+def save_run_off(DIR, reason, detail=""):
+    """Turn the wallet run off (the normal stop path then closes any open bet)."""
+    try:
+        tmp = os.path.join(DIR, "run.json.tmp")
+        with open(tmp, "w") as f:
+            json.dump({"active": False, "live": True, "halted": reason, "detail": detail, "t": int(time.time())}, f)
+        os.replace(tmp, os.path.join(DIR, "run.json"))
+    except OSError:
+        pass
+
+
 def run_equity(a, bid, ask):
     p = a["pos"]
     return a["bal"] + (p["c"] * (bid if p["side"] == "UP" else 1 - ask) if p else 0.0)
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global BROKER, _LIVE, _TK, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -413,15 +451,17 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         st = rc.get("strategy") if rc.get("strategy") in STRATS else "signals"
         acc = new_acc(); acc["bal"] = float(rc.get("start", 100))
         run = sim["run"] = {"id": rc.get("id"), "strategy": st, "start": acc["bal"], "acc": acc, "rounds": [],
-                            "curve": [], "started": now, "stopped": None, "status": "running"}
+                            "curve": [], "started": now, "stopped": None, "status": "running", "live": bool(rc.get("live"))}
         if left > 45 and sim.get("ready"):
             acc["w"] = newwin(win, sigs)
     elif run and run["status"] == "running" and not rc.get("active"):
         a_ = run["acc"]
-        _CUR = "run"
+        _CUR = "run"; _LIVE = bool(run.get("live") and BROKER); _TK = sim.get("ticker")
         if a_["pos"]:
             a_["w"]["side_end"] = None
             sell(a_, ask, bid, "You pressed Stop: closing the open bet at today's price")
+            if a_["pos"] and _LIVE:
+                run["warn"] = "Could not close the open bet. Close it in the Kalshi app."
         w_ = a_["w"]
         if w_ and w_["trades"]:
             a_["pnl"] += round(w_["cash"], 4); a_["windows"] += 1
@@ -438,6 +478,17 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         if not w or not kal or not sim.get("ready"):
             continue                                       # never trade without Kalshi's live price for this round
         _CUR = name
+        _LIVE = bool(name == "run" and run and run.get("live") and BROKER)
+        _TK = sim.get("ticker")
+        if _LIVE:
+            if BROKER.halt:                                # too many rejected orders: stop and say why
+                save_run_off(DIR, "live_error", BROKER.halt)
+                continue
+            if not a["pos"] and now - sim.get("lb_t", 0) >= 10:     # real cash balance from Kalshi
+                sim["lb_t"] = now
+                b_ = BROKER.balance(0)
+                if b_ is not None:
+                    a["bal"] = b_
         p = prob_up(pname, pm, sigs, score, sim["mood"])
         _MIX = mix(pname, pm, sigs, score, sim["mood"])
         if not enabled:                                   # switched off: close out safely, then idle
@@ -505,6 +556,11 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     runout = None
     if run:
         a_ = run["acc"]
+        if run.get("live") and BROKER and not a_["pos"] and now - sim.get("lb_t", 0) >= 10:   # keep the shown balance equal to Kalshi's
+            sim["lb_t"] = now
+            b_ = BROKER.balance(0)
+            if b_ is not None:
+                a_["bal"] = b_
         eq = run_equity(a_, bid, ask)
         infl = 0.0                                        # last round's bet still waiting for Kalshi's official result
         for pd_ in sim.get("pending", []):
@@ -513,13 +569,17 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                 ly = (pd_.get("last_yes") if pd_.get("last_yes") is not None else 50.0) / 100.0
                 infl += rp["pos"]["c"] * (ly if rp["pos"]["side"] == "UP" else 1 - ly)
         eq += infl
+        fl = float((C or {}).get("floor") or 0)
+        if run.get("live") and run["status"] == "running" and fl > 0 and eq < fl and rc.get("active"):
+            save_run_off(DIR, "floor", "Account value $%.2f fell below your floor of $%.2f" % (eq, fl))
+            run["halt"] = "Your loss floor of $%.2f was hit (account value $%.2f). It is closing the open bet and stopping." % (fl, eq)
         if run["status"] == "running":
             c_ = run["curve"]
             if not c_ or now - c_[-1][0] >= 10:
                 c_.append([int(now), round(eq, 2)])
             run["curve"] = c_[-500:]
         runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
-                  "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run["start"], 2),
+                  "live": bool(run.get("live")), "warn": run.get("warn"), "halt": run.get("halt") or (rc.get("detail") if rc.get("halted") else None), "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run["start"], 2),
                   "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
                   "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,
                   "now": a_.get("now"), "rounds": run["rounds"][-15:], "events": [e for e in sim["events"] if e["s"] == "run"][-40:], "curve": run["curve"][-300:],

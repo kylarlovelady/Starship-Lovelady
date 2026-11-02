@@ -383,8 +383,8 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
-DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92}
-LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99)}
+DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92}
+LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99)}
 
 
 def clean_cfg(raw):
@@ -479,6 +479,44 @@ def scorecard(calls, now):
     return {"today": tally([c for c in calls if c["start"] >= day0]),
             "week": tally([c for c in calls if c["start"] >= now - 7 * 86400]),
             "all": tally(calls), "by_signal": by}
+
+
+# ---------- live (real money) ----------
+_BROKER = {"obj": None, "err": None}
+
+
+def get_broker():
+    """One shared broker for the real Kalshi account. None if the key or settings are missing."""
+    if _BROKER["obj"] is None:
+        try:
+            import kalshi_trade as kt
+            _BROKER["obj"] = kt.Broker(kt.Kalshi(), DIR)
+            _BROKER["err"] = None
+        except BaseException as e:                      # SystemExit from a missing key, or any import problem
+            _BROKER["err"] = str(e)[:120]
+            return None
+    return _BROKER["obj"]
+
+
+def live_tick(sim_mod):
+    """Called every cycle: connect the wallet to the real broker while a live run exists, and honour the kill switch."""
+    rc = load(os.path.join(DIR, "run.json"), {})
+    kp = os.path.join(DIR, "kill.json")
+    if os.path.exists(kp):
+        b = get_broker()
+        if b:
+            print("KILL: cancelling every resting order:", b.cancel_all(), flush=True)
+        try:
+            os.remove(kp)
+        except OSError:
+            pass
+    if rc.get("live"):
+        b = get_broker()
+        if b is None and rc.get("active"):
+            sim_mod.save_run_off(DIR, "live_error", "Could not connect to Kalshi: %s" % _BROKER["err"])
+        sim_mod.BROKER = b
+    else:
+        sim_mod.BROKER = None
 
 
 # ---------- reset ----------
@@ -729,6 +767,7 @@ def run_cycle(now, S):
     simout = None
     try:
         import sim as _sim
+        live_tick(_sim)
         simout = _sim.step(S, now, win, WINDOW, price_k, k.get("strike"), pm, (cache.get("kalshi") if sync else None), sigs, score,
                            load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR, C,
                            load(os.path.join(DIR, "run.json"), {}), get_result)
@@ -798,6 +837,12 @@ class Control(BaseHTTPRequestHandler):
             return self._send(load(os.path.join(DIR, "run.json"), {}))
         if self.path.startswith("/config"):
             return self._send(cfg())
+        if self.path.startswith("/live"):
+            b = get_broker()
+            if not b:
+                return self._send({"ready": False, "why": _BROKER["err"] or "no key"})
+            bal = b.balance(20)
+            return self._send({"ready": bal is not None, "env": b.c.mode, "balance": bal})
         self._send(load(os.path.join(DIR, "control.json"), {"on": True}))
 
     def do_POST(self):
@@ -809,8 +854,31 @@ class Control(BaseHTTPRequestHandler):
             if self.path.startswith("/reset"):
                 if body.get("confirm") is not True:
                     return self._send({"error": "needs confirm"}, 400)
+                rc_ = load(os.path.join(DIR, "run.json"), {})
+                if rc_.get("live") and rc_.get("active"):
+                    return self._send({"error": "end the live session first"}, 400)
                 save_atomic(os.path.join(DIR, "reset.json"), {"id": int(time.time() * 1000)})
                 return self._send({"ok": True})
+            if self.path.startswith("/kill"):
+                if body.get("confirm") is not True:
+                    return self._send({"error": "needs confirm"}, 400)
+                save_atomic(os.path.join(DIR, "run.json"), {"active": False, "halted": "kill", "detail": "Kill switch pressed", "live": True, "t": int(time.time())})
+                save_atomic(os.path.join(DIR, "kill.json"), {"t": int(time.time())})
+                return self._send({"ok": True})
+            if self.path.startswith("/live"):
+                if body.get("confirm") is not True:
+                    return self._send({"error": "needs confirm"}, 400)
+                b = get_broker()
+                bal = b.balance(0) if b else None
+                if bal is None or bal < 1:
+                    return self._send({"error": "could not read your Kalshi balance"}, 400)
+                st = str(body.get("strategy") or "auto")
+                if st not in ("distance", "signals", "trend", "flow", "mood", "hold", "auto"):
+                    st = "auto"
+                b.halt = None; b.fails = 0
+                run = {"active": True, "live": True, "id": int(time.time()), "strategy": st, "start": round(bal, 2)}
+                save_atomic(os.path.join(DIR, "run.json"), run)
+                return self._send(run)
             if self.path.startswith("/run"):
                 rp = os.path.join(DIR, "run.json")
                 cur = load(rp, {})

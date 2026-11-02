@@ -79,3 +79,76 @@ class Kalshi:
     def cancel(self, order_id, ticker):
         """Kalshi needs the market ticker to route the cancel to the right engine."""
         return self.call("DELETE", "/portfolio/events/orders/" + order_id + "?market_ticker=" + ticker)
+
+
+class Broker:
+    """Turns the wallet's buy and sell decisions into real Kalshi orders and reports what actually filled.
+    Every order and reply is written to live_orders.jsonl so nothing is hidden."""
+
+    def __init__(self, client, folder=None):
+        self.c = client
+        self.dir = folder or DIR
+        self.fails = 0
+        self.halt = None
+        self._bal = None
+        self._bt = 0.0
+
+    def _log(self, rec):
+        try:
+            with open(os.path.join(self.dir, "live_orders.jsonl"), "a") as f:
+                f.write(json.dumps(rec) + "\n")
+        except OSError:
+            pass
+
+    def balance(self, max_age=8.0):
+        if self._bal is not None and time.time() - self._bt < max_age:
+            return self._bal
+        try:
+            st, b = self.c.balance()
+            if st == 200:
+                v = b.get("balance_dollars")
+                self._bal = float(v) if v is not None else float(b.get("balance", 0)) / 100.0
+                self._bt = time.time()
+                return self._bal
+        except Exception:
+            pass
+        return None
+
+    def forget_balance(self):
+        self._bt = 0.0
+
+    def trade(self, action, ticker, side, count, ask_up, bid_up):
+        """action buy or sell, side UP or DOWN. Returns whole contracts filled. Orders are immediate-or-cancel, priced at the
+        side of the book we are crossing, so nothing is left resting. Up is the Yes book. Down is the other side of the same book."""
+        if action == "buy":
+            ks, pr = ("bid", ask_up) if side == "UP" else ("ask", bid_up)
+        else:
+            ks, pr = ("ask", bid_up) if side == "UP" else ("bid", ask_up)
+        n = int(count)
+        if n < 1 or not ticker:
+            return 0
+        pr = min(0.99, max(0.01, round(pr, 2)))
+        rec = {"t": int(time.time()), "action": action, "side": side, "ticker": ticker, "book_side": ks, "count": n, "price": pr}
+        try:
+            st, resp = self.c.order(ticker, ks, n, pr, tif="immediate_or_cancel")
+        except Exception as e:
+            st, resp = 0, {"error": str(e)[:120]}
+        rec.update({"status": st, "reply": resp})
+        self._log(rec)
+        if st not in (200, 201):
+            self.fails += 1
+            if self.fails >= 3:
+                self.halt = "Kalshi rejected %d orders in a row (%s)" % (self.fails, json.dumps(resp)[:120])
+            return 0
+        self.fails = 0
+        self.forget_balance()
+        try:
+            return int(float(resp.get("fill_count") or 0) + 1e-9)
+        except Exception:
+            return 0
+
+    def cancel_all(self):
+        try:
+            return self.c.call("DELETE", "/portfolio/events/orders")
+        except Exception as e:
+            return 0, {"error": str(e)[:100]}
