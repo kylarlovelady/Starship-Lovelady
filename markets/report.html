@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Morning Report</title>
+<style>
+:root{color-scheme:dark;--bg:#080d1a;--card:#101830;--line:#1f2a4a;--tx:#e8edf8;--mut:#8a97b8;--red:#ff4d57;--grn:#0fd68f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding:max(12px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 30px max(14px,env(safe-area-inset-left))}
+.wrap{max-width:560px;margin:0 auto}
+.top{display:flex;justify-content:space-between;margin-bottom:8px}a{color:var(--mut);text-decoration:none;font-size:14px}
+h1{font-size:24px;margin:6px 0 10px;letter-spacing:-.3px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 15px;margin-bottom:10px}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin:0 0 9px;font-weight:600}
+.mut{color:var(--mut)}.small{font-size:13px}.row{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.up{color:var(--grn)}.dn{color:var(--red)}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}.stats div{background:#0b1226;border-radius:12px;padding:9px;text-align:center}.stats b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.stats small{color:var(--mut);font-size:12px}
+.bar{height:9px;border-radius:5px;background:#18213f;margin:4px 0 8px;overflow:hidden}.bar i{display:block;height:100%;border-radius:5px;background:#3b5bd6}
+.why{background:#0b1226;border-radius:10px;padding:9px 11px;margin:6px 0;font-size:14px;line-height:1.45}
+details{border-top:1px solid var(--line);padding:9px 0}details:first-of-type{border-top:0}summary{cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#1b2340;color:#cfd8f5;margin-right:4px}
+table{width:100%;border-collapse:collapse;font-size:14px}td{padding:5px 0;border-top:1px solid var(--line)}td:last-child{text-align:right}
+svg{display:block;width:100%}
+</style></head><body><div class="wrap">
+<div class="top"><a href="live.html">&#8249; Live view</a><a href="markets.html">Dashboard</a></div>
+<h1>Morning report</h1>
+<div id="msg" class="card mut">Loading.</div>
+<div id="app" style="display:none">
+<div class="card"><h2>The short version</h2><div id="head"></div><div class="stats" id="stats"></div><div id="curve"></div></div>
+<div class="card"><h2>What it was looking at</h2><div class="small mut" style="margin-bottom:8px">Average share of each opening decision, counting only the information it actually used. Distance means how far BTC was from the target with the time left.</div><div id="stake"></div></div>
+<div class="card"><h2>How it won and lost</h2><div id="tags"></div></div>
+<div class="card"><h2>Best and worst round</h2><div id="bw"></div></div>
+<div class="card"><h2>Did each signal point the right way?</h2><div class="small mut" style="margin-bottom:6px">Only counted when the signal was clearly leaning. Around 50% means no better than a coin flip.</div><div id="sigs"></div></div>
+<div class="card"><h2>Strategies side by side</h2><div class="small mut" style="margin-bottom:6px">Same rounds, each with its own fake $1,000. Shows which way of thinking did best.</div><div id="strat"></div></div>
+<div class="card"><h2>By hour of the night</h2><div id="hours"></div></div>
+<div class="card"><h2>What it changed and what it will change</h2><div id="chg"></div></div>
+<div class="card"><h2>Every round</h2><div id="list"></div></div>
+<div class="small mut" style="text-align:center">Fake money. Information only, not financial advice.</div>
+</div></div>
+<script>
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function mo(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function sg(n){return (n>=0?'+':'-')+mo(Math.abs(n))}
+function cl(n){return n>=0?'up':'dn'}
+function tm(t){return new Date(t*1000).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})}
+function hr(h){h=+h;return (h%12||12)+(h<12?' AM':' PM')}
+function MX(m){if(!m||!m.length)return '';return m.map(function(x){return esc(x[0])+' <b style="color:var(--tx)">'+x[1]+'%</b>'}).join(' · ')}
+function render(d){
+ $('msg').style.display='none';$('app').style.display='block';var R=d.run;
+ if(!R){$('app').style.display='none';$('msg').style.display='block';$('msg').textContent=d.headline;return}
+ $('head').innerHTML='<div style="font-size:17px">'+esc(d.headline)+'</div>';
+ $('stats').innerHTML='<div><b class="'+cl(R.pnl)+'">'+sg(R.pnl)+'</b><small>wallet change</small></div><div><b>'+R.wins+' / '+R.rounds+'</b><small>rounds won</small></div><div><b>'+(R.first_right_pct==null?'-':R.first_right_pct+'%')+'</b><small>first read right</small></div>';
+ var L=R.list,pts=[[R.started,R.start]].concat(L.map(function(r){return [r.t+900,r.bal]})),W=320,H=90,mn=Math.min.apply(null,pts.map(function(p){return p[1]})),mx=Math.max.apply(null,pts.map(function(p){return p[1]})),pd=Math.max((mx-mn)*.15,1);mn-=pd;mx+=pd;
+ var X=function(i){return 3+i/Math.max(1,pts.length-1)*(W-6)},Y=function(v){return 4+(mx-v)/(mx-mn)*(H-8)};
+ $('curve').innerHTML='<svg viewBox="0 0 '+W+' '+H+'"><line x1="0" x2="'+W+'" y1="'+Y(R.start)+'" y2="'+Y(R.start)+'" stroke="#3a4672" stroke-dasharray="4 4"/><path d="'+pts.map(function(p,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(p[1]).toFixed(1)}).join('')+'" fill="none" stroke="'+(R.pnl>=0?'#0fd68f':'#ff4d57')+'" stroke-width="2"/></svg><div class="small mut">Wallet after each round. Dashed line is where it started.</div>';
+ var st=Object.keys(R.stake).sort(function(a,b){return R.stake[b]-R.stake[a]});
+ $('stake').innerHTML=st.length?st.map(function(k){return '<div class="row small"><span>'+esc(k)+'</span><b>'+R.stake[k]+'%</b></div><div class="bar"><i style="width:'+R.stake[k]+'%"></i></div>'}).join(''):'<div class="mut small">No data yet.</div>';
+ $('tags').innerHTML=Object.keys(R.tags).sort(function(a,b){return R.tags[b].n-R.tags[a].n}).map(function(k){var t=R.tags[k];return '<div class="row" style="padding:5px 0"><span class="small">'+esc(k)+'</span><span><b>'+t.n+'</b> <span class="'+cl(t.pnl)+' small">'+sg(t.pnl)+'</span></span></div>'}).join('');
+ $('bw').innerHTML='<div class="small"><b class="up">Best: '+sg(R.best.pnl)+'</b> <span class="mut">'+tm(R.best.t)+'</span></div><div class="why">'+esc(R.best.why)+'</div><div class="small"><b class="dn">Worst: '+sg(R.worst.pnl)+'</b> <span class="mut">'+tm(R.worst.t)+'</span></div><div class="why">'+esc(R.worst.why)+'</div><div class="small mut">Longest losing streak: '+R.worst_streak+' rounds.</div>';
+ var sk=Object.keys(R.signals);$('sigs').innerHTML=sk.length?sk.map(function(k){var s=R.signals[k];return '<div class="row small" style="padding:3px 0"><span>'+esc(k)+'</span><span><b class="'+(s.pct>=55?'up':s.pct<=45?'dn':'')+'">'+s.pct+'%</b> <span class="mut">of '+s.n+'</span></span></div>'}).join(''):'<div class="mut small">No clear leans recorded yet.</div>';
+ var ss=Object.keys(R.strategies).sort(function(a,b){return R.strategies[b].pnl-R.strategies[a].pnl});
+ var NM={distance:'Distance only',signals:'Distance plus all signals',trend:'Price trend',flow:'Order book and whales',mood:'News and mood',hold:'Hold the first bet'};
+ $('strat').innerHTML='<table>'+ss.map(function(k){var s=R.strategies[k];return '<tr><td>'+(NM[k]||k)+'</td><td class="'+cl(s.pnl)+'">'+sg(s.pnl)+'</td><td class="mut">'+s.wins+'/'+s.n+' won</td></tr>'}).join('')+'</table>';
+ var hs=Object.keys(R.hours).sort(function(a,b){return a-b});
+ $('hours').innerHTML='<table>'+hs.map(function(k){var s=R.hours[k];return '<tr><td>'+hr(k)+'</td><td class="'+cl(s.pnl)+'">'+sg(s.pnl)+'</td><td class="mut">'+s.wins+'/'+s.n+' won</td></tr>'}).join('')+'</table>';
+ var c=d.changes||[],w=d.weights;
+ $('chg').innerHTML=(c.length?c.slice().reverse().map(function(x){return '<div class="why"><b>'+tm(x.t)+'</b> · '+(x.adopted?'<span class="up">changed its weights</span>':'no change')+'<br>'+esc((x.notes||[]).join(' '))+'</div>'}).join(''):'<div class="why">No reviews yet. It reviews itself at 4 AM each night and only changes anything after 200 scored calls, about two days of data. A change must beat the old settings on rounds it has never seen.</div>')+(w?'<div class="small mut">Current signal weights set by the learner: '+Object.keys(w).map(function(k){return esc(k)+' '+Math.round(w[k]*100)+'%'}).join(' · ')+'</div>':'<div class="small mut">Using the starting weights. Next review: 4 AM.</div>');
+ $('list').innerHTML=L.slice().reverse().map(function(r){return '<details><summary><div class="row"><span>'+tm(r.t)+' · went <b>'+r.outcome+'</b></span><b class="'+cl(r.pnl)+'">'+sg(r.pnl)+'</b></div><div class="small mut">Wallet '+mo(r.bal)+' · '+esc(r.tag)+'</div></summary><div class="why">'+esc(r.why)+'</div>'+(r.mix?'<div class="small mut">Opening decision: '+MX(r.mix)+'</div>':'')+(r.moves&&r.moves.length?'<div class="small mut" style="margin-top:6px">'+r.moves.map(function(m){return m.a+' '+m.side+' '+mo(m.d)+' @ '+Math.round(m.px*100)+'¢ → wallet '+mo(m.bal)+'<br><span style="opacity:.8">'+esc(m.why)+'</span>'}).join('<br>')+'</div>':'')+'</details>'}).join('')}
+function load(){fetch((location.hash==='#sample'?'report.sample.json':'report.json')+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(render).catch(function(){$('msg').textContent='No report yet. It appears a couple of minutes after the agent restarts.'})}
+load();setInterval(load,30000);
+</script></body></html>

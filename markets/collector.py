@@ -605,6 +605,14 @@ def main():
         try:
             save_atomic(OUT, run_cycle(now, S))
             save_atomic(spath, S)
+            if now - S.get("report_t", 0) >= 120:          # morning-report data, refreshed every 2 minutes
+                S["report_t"] = now
+                try:
+                    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                    import report
+                    save_atomic(os.path.join(os.path.dirname(OUT), "report.json"), report.build(DIR, now))
+                except Exception as e:
+                    print("report failed:", e, flush=True)
             lt = time.localtime(now)
             if lt.tm_hour == 4 and S.get("learn_day") != lt.tm_yday:   # nightly at 4 AM local time
                 S["learn_day"] = lt.tm_yday

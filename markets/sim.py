@@ -51,6 +51,37 @@ def prob_up(name, pm, sigs, score, mood):
     return sigm(base + shift)
 
 
+DEFW = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
+_W = dict(DEFW)
+_MIX = []
+
+
+def mix(name, pm, sigs, score, mood):
+    """How much each piece of information pushed the odds, as percent of the total push (sign shows direction)."""
+    g = lambda k: (sigs.get(k) or {}).get("score") or 0.0
+    terms = [("Distance to target and time left", logit(pm) if pm is not None else 0.0)]
+    if name in ("signals", "hold"):
+        shift = 1.2 * score / 100.0
+        parts = {k: _W.get(k, 0.0) * g(k) for k in DEFW}
+        tot = sum(parts.values())
+        for k, v in parts.items():
+            if tot and abs(v) > 1e-9:
+                terms.append((SIGLAB[k], shift * v / tot))
+    elif name == "trend":
+        terms.append((SIGLAB["momentum"], 1.5 * g("momentum")))
+    elif name == "flow":
+        terms += [(SIGLAB["book"], 0.6 * g("book")), (SIGLAB["whales"], 0.4 * g("whales"))]
+    elif name == "mood":
+        a, b = 0.7 * g("news"), 0.3 * g("fng")
+        tot = abs(a) + abs(b)
+        if tot:
+            terms += [(SIGLAB["news"], mood * a / tot), (SIGLAB["fng"], mood * b / tot)]
+    tot = sum(abs(v) for _, v in terms) or 1.0
+    out = [[l, round(100 * abs(v) / tot), 1 if v >= 0 else -1] for l, v in terms if abs(v) / tot >= 0.02]
+    out.sort(key=lambda x: -x[1])
+    return out
+
+
 def prices(kal, pm):
     """Return (bid, ask, synthetic) for the YES (up) side, as dollars."""
     if kal and kal.get("yes_pct") is not None:
@@ -94,7 +125,7 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     if w["first"] is None:
         w["first"] = {"side": side, "c": c, "cost": dollars + f}
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why})
+    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX})
     return True
 
 
@@ -108,7 +139,7 @@ def sell(a, ask_up, bid_up, why=""):
     side = p["side"]
     a["pos"] = None
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why})
+    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX})
 
 
 def size(edge, bal, pos_cost):
@@ -214,9 +245,11 @@ def settle_run(sim, up_won, price, strike, hour, DIR):
         hold = (f["c"] if (f["side"] == "UP") == up_won else 0.0) - f["cost"]
     pnl = round(w["cash"], 4)
     a["pnl"] += pnl; a["windows"] += 1; a["wins"] += 1 if pnl > 0 else 0
-    moves = [{k: e[k] for k in ("t", "a", "side", "d", "px", "bal", "why")} for e in sim["events"] if e["s"] == "run" and e["t"] >= w["start"]][-12:]
+    moves = [{k: e[k] for k in ("t", "a", "side", "d", "px", "bal", "why", "mix")} for e in sim["events"] if e["s"] == "run" and e["t"] >= w["start"]][-12:]
     rd = {"t": w["start"], "pnl": round(pnl, 2), "outcome": "UP" if up_won else "DOWN", "bal": round(a["bal"], 2),
           "hold": None if hold is None else round(hold, 2), "trades": w["trades"], "moves": moves,
+          "first": f["side"] if w["first"] else None, "end": w.get("side_end"), "mix": w.get("mix"), "sigs": w.get("sigs"),
+          "p_open": w.get("p_open"), "staked": round(w["staked"], 2),
           "why": explain(run, w, up_won, price, strike, pnl, hold)}
     run["rounds"].append(rd); run["rounds"] = run["rounds"][-30:]
     try:
@@ -235,10 +268,12 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None):
-    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T
+    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX
     if C:
         MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
+        if isinstance(C.get("weights"), dict):
+            _W = dict(DEFW, **C["weights"])
     _SZ = ((kal or {}).get("yes_ask_size"), (kal or {}).get("yes_bid_size"))
 
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
@@ -304,6 +339,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             continue
         _CUR = name
         p = prob_up(pname, pm, sigs, score, sim["mood"])
+        _MIX = mix(pname, pm, sigs, score, sim["mood"])
         if not enabled:                                   # switched off: close out safely, then idle
             if a["pos"]:
                 sell(a, ask, bid, "Switched off: closing the open bet")
@@ -325,6 +361,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else MIN_BET, ask, bid,
                 "Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." % (s, c_(p)))
             act = "opened"
+            if w.get("mix") is None:
+                w["mix"] = _MIX; w["p_open"] = round(p, 3)
         elif pname == "hold":
             act = "holding to the end"
         elif w["trades"] >= MAX_TRADES:
@@ -349,7 +387,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                         break
                 else:
                     act = "holding" if a["pos"] else "waiting"
-        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why}
+        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why, "mix": _MIX}
     ranked = []
     for name, a in sim["acc"].items():
         ranked.append({"key": name, "label": STRATS[name], "bal": round(a["bal"], 2), "pnl": round(a["pnl"], 2),
