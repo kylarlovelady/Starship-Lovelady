@@ -32,6 +32,7 @@ h1{font-size:19px;margin:0;letter-spacing:.2px}
 .sc b{display:block;font-size:22px}.sc div{background:#0c1328;border-radius:12px;padding:9px 4px}
 .rec{display:grid;grid-template-columns:62px 1fr 1fr 24px;gap:6px;padding:6px 0;border-top:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
 .ok{color:var(--grn)}.no{color:var(--red)}
+input.num{width:92px;background:#0c1328;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;text-align:right}
 #msg{display:none;text-align:center;padding:30px 10px;color:var(--mut)}
 @media(min-width:700px){.wrap{max-width:640px}}
 </style></head><body><div class="wrap">
@@ -58,6 +59,12 @@ h1{font-size:19px;margin:0;letter-spacing:.2px}
 <div class="card"><h2>Paper scorecard</h2><div class="sc" id="sc"></div><div class="small mut" id="scnote" style="margin-top:10px"></div><div id="bysig" style="margin-top:8px"></div></div>
 <div class="card"><h2>Recent calls</h2><div id="rec"></div></div>
 <div class="card"><h2>What it has learned</h2><div id="learn"></div></div>
+<div class="card" id="cfgcard" style="display:none"><h2>Settings</h2>
+<div class="small mut" style="margin-bottom:10px">Change how the bot behaves. Takes effect within about 20 seconds. Fake money only for now.</div>
+<div id="cfgrows"></div>
+<div class="small mut" style="margin:12px 0 4px">How much each signal counts (0 to 100)</div><div id="wrows"></div>
+<div class="row" style="margin-top:14px;gap:10px"><button id="cfgsave" class="btn" style="flex:2;margin:0;border:0;font-size:16px">Save</button><button id="cfgreset" class="btn" style="flex:1;margin:0;background:#2a3358;border:0;font-size:16px">Defaults</button></div>
+<div class="small mut" id="cfgmsg" style="margin-top:8px"></div></div>
 <div class="small mut" id="note" style="text-align:center"></div>
 </div></div>
 <script>
@@ -104,6 +111,7 @@ function render(d){
   $('sw').textContent=SM.on?'ON':'OFF';$('sw').style.color=SM.on?'var(--grn)':'var(--red)';$('sw').style.borderColor=SM.on?'var(--grn)':'var(--red)';
   $('simnote').textContent='Pretend $'+SM.start.toLocaleString()+' per strategy on Kalshi\u2019s live prices. Bets run $'+SM.min_bet+' to $'+SM.cap+', fees and buy/sell gaps counted.'+(SM.synthetic?' Using estimated prices until Kalshi data is reachable.':'');
   $('simrows').innerHTML=SM.strategies.map(function(r,i){var c=r.pnl>=0?'var(--grn)':'var(--red)';return '<div class="sig"'+(i?'':' style="border-top:0"')+'><div class="row"><b>'+esc(r.label)+'</b><span class="small" style="color:'+c+'">'+(r.pnl>=0?'+$':'-$')+Math.abs(r.pnl).toFixed(2)+'</span></div><div class="small mut">$'+r.bal.toFixed(2)+' now \u00b7 '+r.windows+' rounds, '+(r.win_pct==null?'no rounds yet':'won '+r.win_pct+'%')+' \u00b7 '+r.trades+' trades'+(r.key==='hold'?'':' \u00b7 trading beyond the opening bet '+(r.mgmt>=0?'added +$':'cost $')+Math.abs(r.mgmt).toFixed(2))+(r.open?' \u00b7 holding '+r.open:'')+'</div></div>'}).join('')}
+ fillCfg(d.config);
  $('note').textContent=d.note||'';tick();
 }
 function tick(){
@@ -119,6 +127,18 @@ function load(){
  fetch(f+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(render).catch(function(){if(!D){$('msg').style.display='block'}else{D.updated=D.updated}})
 }
 var SWURL=location.protocol+'//'+location.hostname+':8097/';
+var CF=[['threshold','Score needed to lean',1,'points of 100'],['min_bet','Smallest bet',1,'dollars'],['cap','Biggest bet',1,'dollars'],['edge_min','Edge needed to trade',100,'cents per dollar'],['max_trades','Most trades per round',1,'trades'],['slice','Largest share of balance per bet',100,'percent']];
+var cfgDirty=false;
+function fillCfg(c){
+ if(!c||cfgDirty)return;var C=c.now;$('cfgcard').style.display='block';
+ $('cfgrows').innerHTML=CF.map(function(r){var v=Math.round(C[r[0]]*r[2]*100)/100;return '<div class="row" style="padding:6px 0;align-items:center"><div><div>'+r[1]+'</div><div class="small mut">'+r[3]+'</div></div><input class="num" inputmode="decimal" data-k="'+r[0]+'" data-m="'+r[2]+'" value="'+v+'"></div>'}).join('');
+ $('wrows').innerHTML=Object.keys(C.weights).map(function(k){var lab=(D&&D.signals.filter(function(g){return g.key===k})[0]||{}).label||k;return '<div class="row" style="padding:6px 0;align-items:center"><div>'+esc(lab)+'</div><input class="num" inputmode="decimal" data-w="'+k+'" value="'+Math.round(C.weights[k]*100)+'"></div>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#cfgcard input'),function(i){i.oninput=function(){cfgDirty=true}})}
+function cfgPost(body,msg){$('cfgmsg').textContent='Sending...';
+ fetch(SWURL+'config',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(j.error)throw 0;cfgDirty=false;$('cfgmsg').textContent=msg;fillCfg({now:j,defaults:{},limits:{}})}).catch(function(){$('cfgmsg').textContent='Could not reach the bot. Try again in a minute.'})}
+$('cfgsave').onclick=function(){var b={weights:{}};Array.prototype.forEach.call(document.querySelectorAll('#cfgcard input'),function(i){var v=parseFloat(i.value);if(isNaN(v))return;if(i.dataset.k)b[i.dataset.k]=v/parseFloat(i.dataset.m);else b.weights[i.dataset.w]=v/100});cfgPost(b,'Saved. The bot uses these on its next look.')};
+$('cfgreset').onclick=function(){cfgPost({reset:true},'Back to the default settings.')};
+
 $('sw').onclick=function(){var on=D&&D.sim?!D.sim.on:true;$('swmsg').textContent='Sending...';
  fetch(SWURL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({on:on})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw 0;$('swmsg').textContent=j.on?'Turned on. It joins the next 15-minute round.':'Turned off. Open bets are being closed and it stops trading.';if(D&&D.sim)D.sim.on=j.on;$('sw').textContent=j.on?'ON':'OFF'}).catch(function(){$('swmsg').textContent='Could not reach the switch. The agent may be restarting.'})};
 load();

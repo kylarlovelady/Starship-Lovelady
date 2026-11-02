@@ -287,9 +287,44 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
+DEFAULTS = {"threshold": THRESHOLD, "min_bet": 1.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10}
+LIMITS = {"threshold": (0, 50), "min_bet": (1, 100), "cap": (1, 1000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5)}
+
+
+def clean_cfg(raw):
+    """Keep only known settings, as numbers, inside safe ranges."""
+    out = {}
+    for k, (lo, hi) in LIMITS.items():
+        if k in raw:
+            try:
+                out[k] = min(hi, max(lo, float(raw[k])))
+            except Exception:
+                pass
+    if isinstance(raw.get("weights"), dict):
+        w = {}
+        for k in WEIGHTS:
+            try:
+                if k in raw["weights"]:
+                    w[k] = min(1.0, max(0.0, float(raw["weights"][k])))
+            except Exception:
+                pass
+        out["weights"] = w
+    return out
+
+
+def cfg():
+    c = dict(DEFAULTS)
+    c.update({k: v for k, v in clean_cfg(load(os.path.join(DIR, "config.json"), {})).items() if k != "weights"})
+    c["max_trades"] = int(c["max_trades"])
+    c["cap"] = max(c["cap"], c["min_bet"])
+    c["weights"] = weights()
+    return c
+
+
 def weights():
     w = dict(WEIGHTS)
-    w.update(load(os.path.join(DIR, "weights.json"), {}))
+    w.update(load(os.path.join(DIR, "weights.json"), {}))                       # what the nightly learner chose
+    w.update(clean_cfg(load(os.path.join(DIR, "config.json"), {})).get("weights", {}))   # Kylar's edits win
     return w
 
 
@@ -395,12 +430,13 @@ def run_cycle(now, S):
             cache["kalshi"] = None
         cache["kalshi_t"] = now
 
-    w = weights()
+    C = cfg()
+    w = C["weights"]
     avail = {k: v for k, v in sigs.items() if v["ok"]}
     tw = sum(w[k] for k in avail)
     score = round(100 * sum(w[k] * v["score"] for k, v in avail.items()) / tw, 1) if tw else 0.0
     conf = round(tw / sum(w.values()), 2)
-    lean = "UP" if score >= THRESHOLD else "DOWN" if score <= -THRESHOLD else "NONE"
+    lean = "UP" if score >= C["threshold"] else "DOWN" if score <= -C["threshold"] else "NONE"
     if conf < 0.4:
         lean = "NONE"  # too little data to lean on
 
@@ -438,7 +474,7 @@ def run_cycle(now, S):
     try:
         import sim as _sim
         simout = _sim.step(S, now, win, WINDOW, price, k.get("strike"), pm, cache.get("kalshi"), sigs, score,
-                           load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR)
+                           load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR, C)
     except Exception as e:
         simout = {"error": str(e)[:100]}
     if now - S.get("snap_t", 0) >= 60:
@@ -463,7 +499,7 @@ def run_cycle(now, S):
                   "price0": cur["price0"], "locked_at": cur["locked_at"]} if cur else None),
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
-        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "headlines": cache.get("headlines", []),
+        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
         "recent_markets": cache.get("recent_markets"), "weights": w,
@@ -485,12 +521,28 @@ class Control(BaseHTTPRequestHandler):
         self._send({})
 
     def do_GET(self):
+        if self.path.startswith("/config"):
+            return self._send(cfg())
         self._send(load(os.path.join(DIR, "control.json"), {"on": True}))
 
     def do_POST(self):
         try:
             n = int(self.headers.get("Content-Length", 0))
-            on = bool(json.loads(self.rfile.read(n) or b"{}").get("on"))
+            body = json.loads(self.rfile.read(n) or b"{}")
+            if self.path.startswith("/config"):
+                path = os.path.join(DIR, "config.json")
+                if body.get("reset"):
+                    if os.path.exists(path):
+                        os.remove(path)
+                else:
+                    cur = load(path, {})
+                    new = clean_cfg(body)
+                    if "weights" in new:
+                        cur["weights"] = dict(cur.get("weights", {}), **new.pop("weights"))
+                    cur.update(new)
+                    save_atomic(path, cur)
+                return self._send(cfg())
+            on = bool(body.get("on"))
             save_atomic(os.path.join(DIR, "control.json"), {"on": on, "changed": int(time.time())})
             self._send({"on": on})
         except Exception:

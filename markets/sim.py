@@ -134,7 +134,10 @@ def settle(sim, up_won, DIR, hour, synthetic):
         a["w"] = None
 
 
-def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR):
+def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None):
+    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN
+    if C:
+        MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
     for n in STRATS:
         sim["acc"].setdefault(n, new_acc())
