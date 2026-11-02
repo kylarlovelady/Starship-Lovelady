@@ -10,7 +10,8 @@ import urllib.request
 m = json.loads(urllib.request.urlopen("https://api.elections.kalshi.com/trade-api/v2/markets?series_ticker=KXBTC15M&status=open", timeout=10).read())["markets"]
 print("open BTC 15m markets:", [x["ticker"] for x in m][:3])
 if c.mode != "demo":
-    if input("REAL account. Place a 1 contract bid at 1 cent and cancel it right away? Type yes: ").strip().lower() != "yes":
+    print("REAL account. Place a 1 contract bid at 1 cent and cancel it right away? Type yes: ", end="", flush=True)
+    if open("/dev/tty").readline().strip().lower() != "yes":
         raise SystemExit("Skipped the order test. Balance check was fine.")
 t = m[0]["ticker"]
 s, o = c.order(t, "bid", 1, 0.01); print("order ->", s, json.dumps(o)[:500])
