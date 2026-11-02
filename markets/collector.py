@@ -13,12 +13,12 @@ HOME = os.path.expanduser("~")
 DIR = os.environ.get("MARKET_DIR", os.path.join(HOME, "market-data"))
 OUT = os.environ.get("MARKET_OUT", os.path.join(HOME, "crew-web", "market.json"))
 WINDOW = 900            # 15 minutes
-CYCLE = 10              # seconds between looks
+CYCLE = 5               # seconds between looks (numbers move fast)
 THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
 WEIGHTS = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
           "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
-EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 10, "recent": 300}
+EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 5, "recent": 300, "xcheck": 30}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
 BULL = ["surge", "rally", "soar", "jump", "record high", "all-time high", "approve", "approval",
@@ -479,6 +479,37 @@ def audit(S, now, win, sync, kal, hist):
             del S["tg"][kx]
 
 
+def xcheck(S, cache, now, price):
+    """Cross-check our price against a second exchange. If they disagree a lot, do not trade on it."""
+    if now - cache.get("xcheck_t", 0) < EVERY["xcheck"]:
+        return
+    cache["xcheck_t"] = now
+    try:
+        d = fetch_json("https://api.kraken.com/0/public/Ticker?pair=XBTUSD")["result"]
+        other = float(list(d.values())[0]["c"][0])
+        diff = (price / other - 1) * 100
+        cache["xc"] = {"t": now, "diff_pct": round(diff, 3), "other": round(other, 2), "ok": abs(diff) < 0.3}
+    except Exception:
+        cache["xc"] = {"t": now, "diff_pct": None, "ok": True, "note": "second exchange unreachable"}
+
+
+def data_checks(S, cache, now, sync, k, price):
+    xc = cache.get("xc") or {}
+    out = []
+    out.append({"name": "Kalshi data is for this exact round", "ok": bool(sync),
+                "note": "target and close time match" if sync else "waiting for Kalshi's market for this round"})
+    spread = None
+    if k and k.get("yes_bid") is not None and k.get("yes_ask") is not None:
+        spread = k["yes_ask"] - k["yes_bid"]
+    out.append({"name": "Kalshi prices make sense", "ok": spread is None or (0 <= spread <= 20),
+                "note": "buy-sell gap %s cents" % ("%.0f" % spread if spread is not None else "unknown")})
+    out.append({"name": "Our price agrees with a second exchange", "ok": bool(xc.get("ok", True)),
+                "note": ("differs by %.2f%%" % xc["diff_pct"]) if xc.get("diff_pct") is not None else "not checked yet"})
+    age = now - cache.get("kalshi_t", 0)
+    out.append({"name": "Kalshi looked at in the last 15 seconds", "ok": age <= 15, "note": "%d seconds ago" % age})
+    return out
+
+
 def audit_out(S):
     A = S.get("audit") or {}
     L = A.get("list", [])
@@ -501,6 +532,7 @@ def run_cycle(now, S):
         S["reset_id"] = rs["id"]
         do_reset(S, now)
     price = get_price()
+    xcheck(S, cache, now, price)
     S.setdefault("history", []).append([now, price])
     S["history"] = [h for h in S["history"] if h[0] > now - 3900]
     hist = S["history"]
@@ -542,6 +574,11 @@ def run_cycle(now, S):
         cache["kalshi_t"] = now
 
     C = cfg()
+    try:
+        lr = load(os.path.join(DIR, "learn_report.json"), None) or {}
+        C["trust"] = {k: v.get("verdict") for k, v in (lr.get("signals") or {}).items()}
+    except Exception:
+        C["trust"] = {}
     w = C["weights"]
     avail = {k: v for k, v in sigs.items() if v["ok"]}
     tw = sum(w[k] for k in avail)
@@ -558,7 +595,8 @@ def run_cycle(now, S):
     # ---- 15-minute windows ----
     win = now // WINDOW * WINDOW
     kk_ = cache.get("kalshi") or {}
-    sync = bool(kk_ and kk_.get("close_ep") and abs(kk_["close_ep"] - (win + WINDOW)) <= 5 and now - cache.get("kalshi_t", 0) <= 40)
+    sync = bool(kk_ and kk_.get("close_ep") and abs(kk_["close_ep"] - (win + WINDOW)) <= 5 and now - cache.get("kalshi_t", 0) <= 40
+                and (cache.get("xc") or {}).get("ok", True))
     if S.get("score_ver") != 2:                      # older calls were scored against our own price, not Kalshi's result
         for nm in ("calls", "reviews"):
             try:
@@ -592,6 +630,13 @@ def run_cycle(now, S):
                     f.write(json.dumps(rv) + "\n")
             with open(os.path.join(DIR, "calls.jsonl"), "a") as f:
                 f.write(json.dumps(o) + "\n")
+            if src == "kalshi":                           # learn from this round right away
+                try:
+                    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                    import learner
+                    learner.online(DIR, dict(WEIGHTS), now)
+                except Exception as e:
+                    print("online learning failed:", e, flush=True)
     if sync and not any(o["start"] == win for o in S.setdefault("open", [])) and win not in S.get("skipped", []) \
             and now - win <= 90 and win != S.get("last_win"):
         S["open"].append({"start": win, "price0": price, "score": score, "call": lean, "conf": conf,
@@ -636,14 +681,14 @@ def run_cycle(now, S):
     order = ["book", "momentum", "whales", "news", "fng", "funding"]
     return {
         "updated": now, "sample": False, "price": price_k, "price_raw": price,
-        "hist": [[t, round(p + off, 2)] for t, p in hist[-390:]], "tg": [[int(w), v] for w, v in sorted((S.get("tg") or {}).items())],
-        "audit": audit_out(S),
+        "hist": [[t, round(p + off, 2)] for t, p in hist[-800:]], "tg": [[int(w), v] for w, v in sorted((S.get("tg") or {}).items())],
+        "audit": dict(audit_out(S), checks=data_checks(S, cache, now, sync, k, price)),
         "live": {"score": score, "lean": lean, "confidence": conf},
         "call": ({"start": cur["start"], "end": cur["start"] + WINDOW, "call": cur["call"], "score": cur["score"],
                   "price0": cur["price0"], "locked_at": cur["locked_at"]} if cur else None),
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
-        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-100:]], "ky": P["ky"][-100:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
+        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-200:]], "ky": P["ky"][-200:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
         "recent_markets": cache.get("recent_markets"), "weights": w,
@@ -701,7 +746,7 @@ class Control(BaseHTTPRequestHandler):
                 cur = load(rp, {})
                 if body.get("start"):
                     st = str(body.get("strategy") or "signals")
-                    if st not in ("distance", "signals", "trend", "flow", "mood", "hold"):
+                    if st not in ("distance", "signals", "trend", "flow", "mood", "hold", "auto"):
                         st = "signals"
                     amt = min(1000.0, max(10.0, float(body.get("amount") or 100)))
                     cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}

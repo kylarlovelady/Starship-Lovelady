@@ -59,6 +59,8 @@ def prob_up(name, pm, sigs, score, mood):
 DEFW = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
 _W = dict(DEFW)
 _MIX = []
+_TRACE = []
+_TRUST = {}
 
 
 def mix(name, pm, sigs, score, mood):
@@ -85,6 +87,49 @@ def mix(name, pm, sigs, score, mood):
     out = [[l, round(100 * abs(v) / tot), 1 if v >= 0 else -1] for l, v in terms if abs(v) / tot >= 0.02]
     out.sort(key=lambda x: -x[1])
     return out
+
+
+
+def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
+    k_of = {"Order book": "book", "Price momentum": "momentum", "Whale moves": "whales", "News vibe": "news",
+            "Fear & Greed": "fng", "Funding rate": "funding"}
+    L = []
+    if strike:
+        gap = price - strike
+        L.append("BTC is $%s %s the target with %d:%02d left.%s" % (format(abs(gap), ",.0f"), "above" if gap >= 0 else "below", left // 60, left % 60,
+                 (" From that alone the price model says Up %d%%." % round(pm * 100)) if pm is not None else ""))
+    for lab, pc, sg in mix_:
+        if lab.startswith("Distance"):
+            continue
+        k = k_of.get(lab)
+        d = (sigs.get(k) or {}) if k else {}
+        tr = _TRUST.get(k)
+        L.append("%s%s: %s. It pushed the odds toward %s and carried %d%% of this decision.%s" % (
+            lab, (" (%+d)" % round(100 * d["score"])) if d.get("score") is not None else "", d.get("detail", ""),
+            "UP" if sg > 0 else "DOWN", pc, (" Learner's view: %s." % tr) if tr else ""))
+    missing = [lab for lab, k in k_of.items() if not (sigs.get(k) or {}).get("ok")]
+    if missing:
+        L.append("No data from: %s. It could not use them." % ", ".join(missing))
+    L.append("Putting it together it says Up %d%%. Kalshi sells Up at %d\u00a2 and Down at %d\u00a2." % (round(p * 100), round(ask * 100), round((1 - bid) * 100)))
+    L.append("After fees the edge is Up %+d\u00a2, Down %+d\u00a2. It needs +%d\u00a2 to act." % (round(eU * 100), round(eD * 100), round(EDGE_MIN * 100)))
+    return L
+
+
+def auto_pick(sim):
+    """For the Auto wallet: follow whichever practice strategy has the best proven record (needs 20 rounds first)."""
+    best, bv = "signals", None
+    for n, a in sim["acc"].items():
+        if a["windows"] >= 20:
+            v = a["pnl"] / (a["windows"] + 20.0)
+            if bv is None or v > bv:
+                best, bv = n, v
+    pick = sim.get("auto_pick")
+    if pick != best:
+        sim.setdefault("autolog", []).append({"t": int(time.time()), "from": pick, "to": best,
+            "why": ("Best record so far per round after fees (%d+ rounds each)." % 20) if bv is not None else "Not enough rounds yet, using the default."})
+        sim["autolog"] = sim["autolog"][-20:]
+        sim["auto_pick"] = best
+    return best
 
 
 def prices(kal, pm):
@@ -133,7 +178,7 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     if w["first"] is None:
         w["first"] = {"side": side, "c": c, "cost": dollars + f}
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX})
+    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
     return True
 
 
@@ -147,7 +192,7 @@ def sell(a, ask_up, bid_up, why=""):
     side = p["side"]
     a["pos"] = None
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX})
+    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
 
 
 def size(edge, bal, pos_cost):
@@ -218,7 +263,7 @@ SIGLAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale m
 
 def newwin(win, sigs):
     return {"start": win, "cash": 0.0, "trades": 0, "staked": 0.0, "first": None, "side_end": None,
-            "sigs": {k: round((v or {}).get("score") or 0.0, 2) for k, v in (sigs or {}).items()}}
+            "sigs": {k: round((v or {}).get("score") or 0.0, 2) for k, v in (sigs or {}).items() if (v or {}).get("ok")}}
 
 
 def explain(run, w, up_won, price, strike, pnl, hold, src="kalshi"):
@@ -298,12 +343,13 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX
+    global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
+        _TRUST = C.get("trust") or {}
     _SZ = ((kal or {}).get("yes_ask_size"), (kal or {}).get("yes_bid_size"))
 
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
@@ -379,7 +425,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         run["status"] = "stopped"; run["stopped"] = now
     items = [(n, n, a, enabled) for n, a in sim["acc"].items()]
     if run and run["status"] == "running":
-        items.append(("run", run["strategy"], run["acc"], True))
+        items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
     for name, pname, a, enabled in items:
         w = a["w"]
         if not w or not kal or not sim.get("ready"):
@@ -399,6 +445,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         eU = side_p("UP") - ask_s("UP") - fee(ask_s("UP"))
         eD = side_p("DOWN") - ask_s("DOWN") - fee(ask_s("DOWN"))
         c_ = lambda x: "%d" % round(x * 100)
+        _TRACE = build_trace(pm, p, price, sim.get("strike"), int(max(0, left)), sigs, _MIX, ask, bid, eU, eD)
         act = "waiting"
         why = "It thinks Up is %s%%. Kalshi sells Up at %s\u00a2 and Down at %s\u00a2. Edge after fees: Up %+d\u00a2, Down %+d\u00a2 (needs +%d\u00a2 to trade)." % (
             c_(p), c_(ask_s("UP")), c_(ask_s("DOWN")), round(eU * 100), round(eD * 100), round(EDGE_MIN * 100))
@@ -434,7 +481,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                         break
                 else:
                     act = "holding" if a["pos"] else "waiting"
-        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why, "mix": _MIX}
+        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why, "mix": _MIX, "trace": _TRACE}
     ranked = []
     for name, a in sim["acc"].items():
         ranked.append({"key": name, "label": STRATS[name], "bal": round(a["bal"], 2), "pnl": round(a["pnl"], 2),
@@ -453,7 +500,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             if not c_ or now - c_[-1][0] >= 10:
                 c_.append([int(now), round(eq, 2)])
             run["curve"] = c_[-500:]
-        runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS[run["strategy"]], "status": run["status"],
+        runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
                   "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "pnl": round(eq - run["start"], 2),
                   "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
                   "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,

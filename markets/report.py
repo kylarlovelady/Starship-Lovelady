@@ -1,6 +1,6 @@
 """Builds report.json: the 'what happened while I slept' report for the wallet run.
 Reads the logs the agent already writes. Nothing here trades or changes any setting."""
-import json, os, time
+import json, math, os, time
 
 LAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
        "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
@@ -39,6 +39,55 @@ def _tag(r):
     return "lost: small loss, price went against it late"
 
 
+def _wilson(k, n, z=1.96):
+    if n == 0:
+        return 0.0, 1.0
+    p = k / n; d = 1 + z * z / n
+    c = (p + z * z / (2 * n)) / d
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
+    return max(0.0, c - h), min(1.0, c + h)
+
+
+NAMES = {"distance": "Distance only", "signals": "Distance plus all signals", "trend": "Price trend",
+         "flow": "Order book and whales", "mood": "News and mood", "hold": "Hold the first bet"}
+
+
+def trust_text(lab, g):
+    n, pct, lo, hi = g["n"], g["pct"], g["low"], g["high"]
+    if g["verdict"] == "still learning":
+        return "%s: too early to judge (%d tests so far, it needs 20)." % (lab, n)
+    if g["verdict"] == "trusted":
+        return "We like %s. When it leaned, Kalshi agreed %s%% of %d times (likely %s%% to %s%%). It helps predict the move, so it gets more say." % (lab, pct, n, round(lo), round(hi))
+    if g["verdict"] == "not trusted":
+        return "We can't trust %s. When it leaned, Kalshi agreed only %s%% of %d times (likely %s%% to %s%%). That is worse than a coin flip, so it gets less say." % (lab, pct, n, round(lo), round(hi))
+    return "%s shows no clear edge yet: %s%% of %d (likely %s%% to %s%%). It keeps a normal say, nudged slightly." % (lab, pct, n, round(lo), round(hi))
+
+
+def strategy_verdicts(DIR):
+    by = {}
+    for x in _rows(os.path.join(DIR, "sim_windows.jsonl")):
+        e = by.setdefault(x["strat"], {"n": 0, "pnl": 0.0, "wins": 0})
+        e["n"] += 1; e["pnl"] += x["pnl"]; e["wins"] += 1 if x["pnl"] > 0 else 0
+    out = []
+    for k, e in by.items():
+        lo, hi = _wilson(e["wins"], e["n"])
+        per = e["pnl"] / e["n"]
+        if e["n"] < 20:
+            v, s = "too early", "%s: only %d rounds so far, too early to judge." % (NAMES.get(k, k), e["n"])
+        elif e["pnl"] > 0 and lo > 0.5:
+            v, s = "like", "We like %s: it won %d of %d rounds (likely %d%% to %d%%) and made $%.2f after fees." % (NAMES.get(k, k), e["wins"], e["n"], round(100 * lo), round(100 * hi), e["pnl"])
+        elif e["pnl"] < 0 and hi < 0.5:
+            v, s = "dont trust", "We can't trust %s: it won only %d of %d rounds and lost $%.2f after fees." % (NAMES.get(k, k), e["wins"], e["n"], -e["pnl"])
+        elif e["pnl"] > 0:
+            v, s = "maybe", "%s is ahead $%.2f over %d rounds but that could still be luck (won %d%%, likely %d%% to %d%%)." % (NAMES.get(k, k), e["pnl"], e["n"], round(100 * e["wins"] / e["n"]), round(100 * lo), round(100 * hi))
+        else:
+            v, s = "no edge", "%s is behind $%.2f over %d rounds. No proven edge, fees are eating it." % (NAMES.get(k, k), -e["pnl"], e["n"])
+        out.append({"key": k, "name": NAMES.get(k, k), "n": e["n"], "pnl": round(e["pnl"], 2), "per_round": round(per, 3),
+                    "wins": e["wins"], "verdict": v, "text": s})
+    out.sort(key=lambda z: -z["pnl"])
+    return out
+
+
 def build(DIR, now=None):
     now = now or int(time.time())
     rows = _rows(os.path.join(DIR, "run_log.jsonl"))
@@ -48,6 +97,17 @@ def build(DIR, now=None):
         changes.append({"t": l.get("time"), "adopted": l.get("adopted"), "scored": l.get("scored"),
                         "notes": l.get("notes", []), "holdout": l.get("holdout")})
     rep["changes"] = changes
+    lr = None
+    try:
+        with open(os.path.join(DIR, "learn_report.json")) as f:
+            lr = json.load(f)
+    except Exception:
+        pass
+    LABS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+    rep["trust"] = [dict(key=k, label=LABS.get(k, k), text=trust_text(LABS.get(k, k), g), **g) for k, g in ((lr or {}).get("signals") or {}).items()]
+    rep["learn_notes"] = (lr or {}).get("notes", [])
+    rep["learn_scored"] = (lr or {}).get("scored", 0)
+    rep["strategies_trust"] = strategy_verdicts(DIR)
     try:
         with open(os.path.join(DIR, "weights.json")) as f:
             rep["weights"] = json.load(f)
@@ -99,6 +159,18 @@ def build(DIR, now=None):
         if r.get("t", 0) >= first_t:
             e = strat.setdefault(r["strat"], {"n": 0, "pnl": 0.0, "wins": 0})
             e["n"] += 1; e["pnl"] = round(e["pnl"] + r["pnl"], 2); e["wins"] += 1 if r["pnl"] > 0 else 0
+    dec = {}
+    for r in rs:
+        if r.get("mix") and r.get("first"):
+            top = max(r["mix"], key=lambda m: m[1])[0]
+            e = dec.setdefault(top, {"n": 0, "wins": 0, "pnl": 0.0})
+            e["n"] += 1; e["wins"] += 1 if r["pnl"] > 0 else 0; e["pnl"] = round(e["pnl"] + r["pnl"], 2)
+    dec_text = ["When %s was the biggest push, the bot won %d of %d rounds (%+.2f)." % (k, e["wins"], e["n"], e["pnl"]) for k, e in sorted(dec.items(), key=lambda x: -x[1]["n"])]
+    missing = {}
+    for r in rs:
+        for k, lab in LABS.items():
+            if r.get("sigs") is not None and k not in r["sigs"]:
+                missing[lab] = missing.get(lab, 0) + 1
     first_ok = sum(1 for r in rs if r.get("first") and r["first"] == r["outcome"])
     bet = sum(1 for r in rs if r.get("first"))
     head = "Since %s it played %d rounds and won %d (%d%%). Wallet %s%s: $%.2f to $%.2f." % (
@@ -109,7 +181,7 @@ def build(DIR, now=None):
         "id": rid, "started": first_t, "start": start_bal, "bal": rs[-1]["bal"], "pnl": pnl, "rounds": n, "wins": wins,
         "first_right_pct": round(100 * first_ok / bet) if bet else None, "worst_streak": streak,
         "best": {k: best[k] for k in ("t", "pnl", "outcome", "why")}, "worst": {k: worst[k] for k in ("t", "pnl", "outcome", "why")},
-        "tags": tags, "hours": hours, "stake": stake, "signals": score, "strategies": strat,
+        "tags": tags, "deciders": dec_text, "no_data": missing, "hours": hours, "stake": stake, "signals": score, "strategies": strat,
         "list": [{k: r.get(k) for k in ("t", "pnl", "bal", "outcome", "first", "end", "hold", "trades", "why", "tag", "mix", "moves")} for r in rs[-150:]]}})
     return rep
 
