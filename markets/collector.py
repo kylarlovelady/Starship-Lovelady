@@ -868,6 +868,9 @@ class Control(BaseHTTPRequestHandler):
             if self.path.startswith("/live"):
                 if body.get("confirm") is not True:
                     return self._send({"error": "needs confirm"}, 400)
+                rc_ = load(os.path.join(DIR, "run.json"), {})
+                if rc_.get("live") and rc_.get("active"):
+                    return self._send({"error": "a live session is already running"}, 400)
                 b = get_broker()
                 bal = b.balance(0) if b else None
                 if bal is None or bal < 1:
@@ -883,6 +886,8 @@ class Control(BaseHTTPRequestHandler):
                 rp = os.path.join(DIR, "run.json")
                 cur = load(rp, {})
                 if body.get("start"):
+                    if cur.get("live") and cur.get("active"):
+                        return self._send({"error": "end the live session first"}, 400)
                     st = str(body.get("strategy") or "signals")
                     if st not in ("distance", "signals", "trend", "flow", "mood", "hold", "auto"):
                         st = "signals"
