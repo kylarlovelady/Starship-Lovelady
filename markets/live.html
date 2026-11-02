@@ -37,6 +37,10 @@ a.back{color:var(--mut);text-decoration:none;font-size:14px}
 @keyframes fade{0%{opacity:0;transform:translate(-50%,6px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.tap,.tap:after,.toast{animation-duration:.01s}}
 .past{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:8px 14px;margin:0 0 12px;font-size:15px}.past svg{width:13px;height:11px;display:block}
+.big{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.go{width:100%;border:0;border-radius:99px;padding:15px;font:inherit;font-weight:800;font-size:18px;background:#3b5bd6;color:#fff;margin-top:10px}.go.stop{background:#3d1117;color:var(--red);border:1px solid #6b1d27}
+select{width:100%;background:#0b1226;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:15px;margin-top:6px}
+.why{background:#0b1226;border-radius:10px;padding:9px 11px;margin:6px 0;font-size:14px;line-height:1.45}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 15px;margin-bottom:10px}
 .card h2{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin:0 0 9px;font-weight:600}
 .mut{color:var(--mut)}.small{font-size:13px}
@@ -52,6 +56,7 @@ a.back{color:var(--mut);text-decoration:none;font-size:14px}
 <div class="top"><a class="back" href="markets.html">&#8249; Dashboard</a><span id="chip" class="chip">loading</span></div>
 <div id="msg">Waiting for the market agent.</div>
 <div id="app" style="display:none">
+<div class="card" id="wal"></div>
 <div class="strats" id="strats"></div>
 <div class="hdr"><div class="btc">&#8383;</div><h1>BTC 15 min</h1><div class="cd" id="cd">-</div></div>
 <div class="px"><div><small id="tl">Target</small><b id="target">-</b></div><div><small>Now</small><b id="now">-</b> <span id="diff" class="small"></span></div></div>
@@ -64,7 +69,7 @@ a.back{color:var(--mut);text-decoration:none;font-size:14px}
 <div class="card"><h2>What it is thinking</h2><div id="think"></div></div>
 <div class="card"><h2>What it is going off</h2><div id="sigs"></div></div>
 <div class="card"><h2>Its moves, newest first</h2><div id="feed"></div></div>
-<div class="card"><h2>How recent rounds went</h2><div id="hist"></div></div>
+<div class="card"><h2 id="histh">How recent rounds went</h2><div id="hist"></div></div>
 <div class="small mut" style="text-align:center" id="note">Fake money. Information only, not financial advice.</div>
 </div></div>
 <script>
@@ -76,7 +81,9 @@ function mo(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDig
 function sg(n){return (n>=0?'+':'-')+mo(Math.abs(n))}
 var DESC={distance:'Looks only at how far BTC is from the target and how much time is left.',signals:'Distance to target, adjusted by every signal: order book, trend, whales, news and mood.',trend:'Distance to target, adjusted by the recent price trend.',flow:'Distance to target, adjusted by order book and whale flow.',mood:'Distance to target, adjusted by the slow news and market mood.',hold:'Control. Makes one bet at the start and holds it to the end, no matter what.'};
 var D=null,SEL=null,seen={},primed={},busy=false,queue=[];
-function pick(d){var s=d.sim&&d.sim.strategies||[];if(!SEL){var best=s.filter(function(x){return x.key==='signals'})[0]||s[0];SEL=best&&best.key}return s.filter(function(x){return x.key===SEL})[0]}
+function runS(d){var r=d.sim&&d.sim.run;if(!r)return null;return {key:r.strategy,label:'My run',now:r.now,pos:r.pos,hist:[],bal:r.bal,pnl:r.pnl,windows:r.windows,pnl:r.pnl,run:true}}
+function EVS(sim){return SEL==='run'?((sim.run&&sim.run.events)||[]):(sim.events||[]).filter(function(e){return e.s===SEL})}
+function pick(d){var s=d.sim&&d.sim.strategies||[];var r=d.sim&&d.sim.run;if(SEL==='run'&&r)return runS(d);if(SEL==='run')SEL=null;if(!SEL){if(r&&r.status==='running'&&!pick.seenRun){pick.seenRun=r.id;SEL='run';return runS(d)}var best=s.filter(function(x){return x.key==='signals'})[0]||s[0];SEL=best&&best.key}return s.filter(function(x){return x.key===SEL})[0]}
 function chart(d,S){
  var P=d.path,sim=d.sim,W=360,H=190,L=6,R=54,T=10,B=18,w0=sim.win,w1=w0+900;
  var pts=(P&&P.pts||[]).filter(function(p){return p[0]>=w0}),tg=sim.strike;
@@ -89,7 +96,7 @@ function chart(d,S){
  for(var i=0;i<4;i++){var v=mn+(mx-mn)*i/3,y=Y(v);s+='<line x1="'+L+'" x2="'+(W-R+4)+'" y1="'+y+'" y2="'+y+'" stroke="#1f2a4a" stroke-width="1"/><text x="'+(W-2)+'" y="'+(y+4)+'" fill="#8a97b8" font-size="10" text-anchor="end">$'+Math.round(v).toLocaleString()+'</text>'}
  var ty=Y(tg);s+='<line x1="'+L+'" x2="'+(W-R+4)+'" y1="'+ty+'" y2="'+ty+'" stroke="#e8edf8" stroke-width="1.2" stroke-dasharray="5 4"/><text x="'+(L+4)+'" y="'+(ty-5)+'" fill="#e8edf8" font-size="10" font-weight="700">TARGET</text>';
  s+='<path d="'+area+'" fill="url(#ga)"/><path d="'+line+'" fill="none" stroke="#f7931a" stroke-width="2" stroke-linejoin="round"/>';
- var evs=(sim.events||[]).filter(function(e){return e.s===SEL&&e.t>=w0});
+ var evs=EVS(sim).filter(function(e){return e.t>=w0});
  evs.forEach(function(e){var p=pts.reduce(function(a,b){return Math.abs(b[0]-e.t)<Math.abs(a[0]-e.t)?b:a});var x=X(e.t),y=Y(p[1]);
   if(e.a==='SELL')s+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="#fff" stroke="#080d1a" stroke-width="1.5"/>';
   else if(e.side==='UP')s+='<path d="M'+x+' '+(y-7)+'L'+(x+6)+' '+(y+4)+'L'+(x-6)+' '+(y+4)+'Z" fill="#0fd68f" stroke="#080d1a" stroke-width="1.2"/>';
@@ -106,7 +113,7 @@ function run(){if(busy||!queue.length)return;busy=true;var e=queue.shift();var k
 function render(d){
  D=d;var sim=d.sim;if(!sim||!sim.strategies){$('msg').style.display='block';return}
  $('msg').style.display='none';$('app').style.display='block';var S=pick(d),now=Date.now()/1000;
- $('strats').innerHTML=sim.strategies.map(function(x){return '<button class="sb'+(x.key===SEL?' on':'')+'" data-k="'+x.key+'" type="button">'+esc(x.label.replace('Control: open once, hold to the end','Control (hold)'))+' <b style="color:'+(x.pnl>=0?'var(--grn)':'var(--red)')+'">'+(x.pnl>=0?'+':'-')+'$'+Math.abs(x.pnl).toFixed(0)+'</b></button>'}).join('');
+ $('strats').innerHTML=(sim.run?'<button class="sb'+(SEL==='run'?' on':'')+'" data-k="run" type="button">My run <b style="color:'+(sim.run.pnl>=0?'var(--grn)':'var(--red)')+'">'+sg(sim.run.pnl)+'</b></button>':'')+sim.strategies.map(function(x){return '<button class="sb'+(x.key===SEL?' on':'')+'" data-k="'+x.key+'" type="button">'+esc(x.label.replace('Control: open once, hold to the end','Control (hold)'))+' <b style="color:'+(x.pnl>=0?'var(--grn)':'var(--red)')+'">'+(x.pnl>=0?'+':'-')+'$'+Math.abs(x.pnl).toFixed(0)+'</b></button>'}).join('');
  Array.prototype.forEach.call(document.querySelectorAll('.sb'),function(b){b.onclick=function(){SEL=b.dataset.k;queue=[];render(D)}});
  var left=Math.max(0,sim.win+900-now);$('cd').textContent=Math.floor(left/60)+':'+('0'+Math.floor(left%60)).slice(-2);
  $('target').textContent=sim.strike?mo(sim.strike):'-';$('now').textContent=mo(d.price);
@@ -120,17 +127,31 @@ function render(d){
   $('pos').innerHTML=pos?'<div class="row"><b style="font-size:20px;color:'+(pos.side==='UP'?'var(--grn)':'var(--red)')+'">'+pos.side+'</b><span class="small mut">'+pos.c+' contracts</span></div><div class="row" style="margin-top:6px"><span class="mut">Paid</span><b>'+mo(pos.cost)+'</b></div><div class="row"><span class="mut">Worth if sold now</span><b>'+mo(pos.value)+'</b></div><div class="row"><span class="mut">Gain or loss now</span><b style="color:'+(pos.value-pos.cost>=0?'var(--grn)':'var(--red)')+'">'+sg(pos.value-pos.cost)+'</b></div>':'<div class="mut">No open bet right now.</div>';
   var n=S.now;
   $('think').innerHTML='<div class="small mut" style="margin-bottom:8px">'+esc(DESC[S.key]||'')+'</div>'+(n?'<div class="row small"><span>Its chance of Up</span><b>'+Math.round(n.p*100)+'%</b></div><div class="bar2"><i style="width:'+n.p*100+'%;background:#2a4bb8"></i><em style="left:calc('+((n.ask+n.bid)/2*100)+'% - 1px)"></em></div><div class="small mut">White tick is Kalshi’s price ('+Math.round((n.ask+n.bid)/2*100)+'%). A gap between them is what it trades on.</div><div style="margin-top:10px"><span class="tag s">'+esc(n.act)+'</span> <span class="small">'+esc(n.why)+'</span></div>':'<div class="mut">Joins at the start of the next round.</div>')+'<div class="small mut" style="margin-top:8px">Balance '+mo(S.bal)+' · total '+sg(S.pnl)+' · '+S.windows+' rounds</div>';
-  var ev=(sim.events||[]).filter(function(e){return e.s===SEL}).slice(-12).reverse();
-  $('feed').innerHTML=ev.length?ev.map(function(e){return '<div class="ev"><div><span class="tag '+(e.a==='SELL'?'s':e.side==='UP'?'bu':'bd')+'">'+e.a+' '+e.side+'</span><b>'+mo(e.d)+'</b> <span class="mut small">at '+Math.round(e.px*100)+'¢ · '+tm(e.t)+'</span></div><div class="small mut" style="margin-top:3px">'+esc(e.why)+'</div></div>'}).join(''):'<div class="mut small">No moves yet.</div>';
+  var ev=EVS(sim).slice(-12).reverse();
+  $('feed').innerHTML=ev.length?ev.map(function(e){return '<div class="ev"><div><span class="tag '+(e.a==='SELL'?'s':e.side==='UP'?'bu':'bd')+'">'+e.a+' '+e.side+'</span><b>'+mo(e.d)+'</b> <span class="mut small">at '+Math.round(e.px*100)+'¢ · '+tm(e.t)+'</span>'+(S.run&&e.bal!=null?'<span class="small" style="float:right">Wallet '+mo(e.bal)+'</span>':'')+'</div><div class="small mut" style="margin-top:3px">'+esc(e.why)+'</div></div>'}).join(''):'<div class="mut small">No moves yet.</div>';
+  $('histh').textContent=S.run?'Round by round: how it won or lost':'How recent rounds went';
+  if(S.run){var rr=sim.run.rounds.slice().reverse();$('hist').innerHTML=rr.length?rr.map(function(h){return '<div class="ev"><div class="row"><span>'+tm2(h.t)+' \u00b7 went <b>'+h.outcome+'</b></span><b style="color:'+(h.pnl>=0?'var(--grn)':'var(--red)')+'">'+sg(h.pnl)+'</b></div><div class="small mut">Wallet after this round: <b style="color:var(--tx)">'+mo(h.bal)+'</b></div><div class="why">'+esc(h.why)+'</div>'+(h.moves&&h.moves.length?'<div class="small mut">'+h.moves.map(function(m){return m.a+' '+m.side+' '+mo(m.d)+' @ '+Math.round(m.px*100)+'\u00a2 \u2192 wallet '+mo(m.bal)}).join('<br>')+'</div>':'')+'</div>'}).join(''):'<div class="mut small">No finished rounds yet. The first one ends at the next :00, :15, :30 or :45.</div>'}else
   $('hist').innerHTML=S.hist&&S.hist.length?S.hist.slice().reverse().map(function(h){var diff=h.hold==null?null:h.pnl-h.hold;return '<div class="ev"><div class="row"><span>'+tm2(h.t)+' · went <b>'+h.outcome+'</b></span><b style="color:'+(h.pnl>=0?'var(--grn)':'var(--red)')+'">'+sg(h.pnl)+'</b></div>'+(S.key==='hold'||diff==null?'':'<div class="small mut">'+(Math.abs(diff)<0.005?'Same as holding the first bet.':diff>0?'Moving around beat holding the first bet by '+mo(diff)+'.':'Holding the first bet would have done '+mo(-diff)+' better.')+'</div>')+'</div>'}).join(''):'<div class="mut small">No finished rounds yet.</div>';
   // taps for new moves of the chosen strategy
-  var mine=(sim.events||[]).filter(function(e){return e.s===SEL});
+  var mine=EVS(sim);
   if(!primed[SEL]){primed[SEL]=true;seen[SEL]=mine.length?mine[mine.length-1].t:0}
   else{mine.filter(function(e){return e.t>seen[SEL]}).forEach(function(e){queue.push(e);seen[SEL]=Math.max(seen[SEL],e.t)});run()}
  }
  $('sigs').innerHTML=d.signals.map(function(g){if(!g.ok)return '<div class="sig mut small">'+esc(g.label)+': no data</div>';var v=g.score,col=v>=0?'var(--grn)':'var(--red)';return '<div class="sig"><div class="row small"><b>'+esc(g.label)+'</b><span style="color:'+col+'">'+(v>0?'+':'')+Math.round(v*100)+'</span></div><div class="bar"><i style="background:'+col+';width:'+Math.abs(v)*50+'%;'+(v>=0?'left:50%':'right:50%')+'"></i></div><div class="small mut">'+esc(g.detail)+'</div></div>'}).join('')+'<div class="small mut" style="margin-top:6px">Overall mood score '+(d.live.score>0?'+':'')+d.live.score+' of 100.</div>';
- var chip=$('chip');if(d.sample){chip.textContent='sample data';chip.className='chip sample'}else if(now-d.updated>60){chip.textContent='stale';chip.className='chip stale'}else{chip.textContent='live';chip.className='chip live'}
+ wallet(sim.run);var chip=$('chip');if(d.sample){chip.textContent='sample data';chip.className='chip sample'}else if(now-d.updated>60){chip.textContent='stale';chip.className='chip stale'}else{chip.textContent='live';chip.className='chip live'}
 }
+var SW=location.protocol+'//'+location.hostname+':8097/',picked='signals',pending=0;
+function post(b){return fetch(SW+'run',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json()})}
+function curve(c,start){if(!c||c.length<2)return '';var W=320,H=70,mn=Math.min.apply(null,c.map(function(p){return p[1]}).concat([start])),mx=Math.max.apply(null,c.map(function(p){return p[1]}).concat([start])),pd=Math.max((mx-mn)*.15,.5);mn-=pd;mx+=pd;var t0=c[0][0],t1=c[c.length-1][0]||t0+1,X=function(t){return 2+(t-t0)/Math.max(1,t1-t0)*(W-4)},Y=function(v){return 3+(mx-v)/(mx-mn)*(H-6)};var up=c[c.length-1][1]>=start;return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block;margin-top:8px"><line x1="0" x2="'+W+'" y1="'+Y(start)+'" y2="'+Y(start)+'" stroke="#3a4672" stroke-dasharray="4 4"/><path d="'+c.map(function(p,i){return (i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)}).join('')+'" fill="none" stroke="'+(up?'#0fd68f':'#ff4d57')+'" stroke-width="2"/></svg>'}
+function wallet(r){var el=$('wal'),on=r&&r.status==='running';
+ if(on){pending=0;var pc=r.pnl/r.start*100;
+  el.innerHTML='<h2>My wallet \u00b7 pretend money</h2><div class="big">'+mo(r.equity)+'</div><div class="small" style="color:'+(r.pnl>=0?'var(--grn)':'var(--red)')+'">'+sg(r.pnl)+' ('+(pc>=0?'+':'')+pc.toFixed(1)+'%) since you started with '+mo(r.start)+'</div>'+curve(r.curve,r.start)+'<div class="small mut" style="margin-top:8px">Strategy: '+esc(r.label)+' \u00b7 '+r.windows+' rounds done, '+r.wins+' won \u00b7 '+(r.in_round?'this round so far: '+sg((r.round_cash||0)+(r.pos?r.pos.value:0)):'waiting for the next round')+'</div><button class="go stop" id="gs" type="button">Stop and cash out</button><div class="small mut" id="wm" style="margin-top:6px"></div>';
+  $('gs').onclick=function(){$('gs').disabled=true;post({stop:true}).then(function(){$('wm').textContent='Stopping. It closes any open bet first.'}).catch(function(){$('wm').textContent='Could not reach the bot. Try again.';$('gs').disabled=false})}}
+ else{var last=r?'<div class="why">Last run ('+(r.status==='broke'?'ran out of money':'stopped')+'): '+mo(r.start)+' \u2192 <b>'+mo(r.equity)+'</b> over '+r.windows+' rounds ('+sg(r.pnl)+'). Its rounds are still listed below under "My run".</div>':'';
+  var opts=D&&D.sim?D.sim.strategies.map(function(s){return '<option value="'+s.key+'"'+(s.key===picked?' selected':'')+'>'+esc(s.label)+'</option>'}).join(''):'';
+  el.innerHTML='<h2>My wallet \u00b7 pretend money</h2>'+last+'<div class="small mut">Starts with $100 of fake money. From the moment you press Start, every buy, sell and round shows up below with the reason, and your wallet moves with it.</div><select id="ws" aria-label="Strategy">'+opts+'</select><button class="go" id="gg" type="button">'+(pending?'Starting...':'Start with $100')+'</button><div class="small mut" id="wm" style="margin-top:6px"></div>';
+  $('ws').onchange=function(){picked=$('ws').value};
+  $('gg').onclick=function(){$('gg').disabled=true;$('gg').textContent='Starting...';post({start:true,strategy:picked,amount:100}).then(function(j){if(j.error)throw 0;pending=1;SEL='run';$('wm').textContent='Started. It joins the current round within a few seconds.'}).catch(function(){$('wm').textContent='Could not reach the bot. Try again in a minute.';$('gg').disabled=false;$('gg').textContent='Start with $100'})}}}
 function load(){fetch((location.hash==='#sample'?'market.sample.json':'market.json')+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(render).catch(function(){if(!D)$('msg').style.display='block'})}
 load();setInterval(load,3000);setInterval(function(){if(D&&D.sim){var left=Math.max(0,D.sim.win+900-Date.now()/1000);$('cd').textContent=Math.floor(left/60)+':'+('0'+Math.floor(left%60)).slice(-2)}},1000);
 </script></body></html>

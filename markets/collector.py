@@ -490,9 +490,10 @@ def run_cycle(now, S):
     try:
         import sim as _sim
         simout = _sim.step(S, now, win, WINDOW, price, k.get("strike"), pm, cache.get("kalshi"), sigs, score,
-                           load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR, C)
+                           load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR, C,
+                           load(os.path.join(DIR, "run.json"), {}))
     except Exception as e:
-        simout = {"error": str(e)[:100]}
+        import traceback; traceback.print_exc(); simout = {"error": str(e)[:100]}
     if now - S.get("snap_t", 0) >= 60:
         S["snap_t"] = now
         with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
@@ -537,6 +538,8 @@ class Control(BaseHTTPRequestHandler):
         self._send({})
 
     def do_GET(self):
+        if self.path.startswith("/run"):
+            return self._send(load(os.path.join(DIR, "run.json"), {}))
         if self.path.startswith("/config"):
             return self._send(cfg())
         self._send(load(os.path.join(DIR, "control.json"), {"on": True}))
@@ -545,6 +548,19 @@ class Control(BaseHTTPRequestHandler):
         try:
             n = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(n) or b"{}")
+            if self.path.startswith("/run"):
+                rp = os.path.join(DIR, "run.json")
+                cur = load(rp, {})
+                if body.get("start"):
+                    st = str(body.get("strategy") or "signals")
+                    if st not in ("distance", "signals", "trend", "flow", "mood", "hold"):
+                        st = "signals"
+                    amt = min(1000.0, max(10.0, float(body.get("amount") or 100)))
+                    cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}
+                else:
+                    cur["active"] = False
+                save_atomic(rp, cur)
+                return self._send(cur)
             if self.path.startswith("/config"):
                 path = os.path.join(DIR, "config.json")
                 if body.get("reset"):

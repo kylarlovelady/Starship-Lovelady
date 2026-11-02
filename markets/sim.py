@@ -94,7 +94,7 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     if w["first"] is None:
         w["first"] = {"side": side, "c": c, "cost": dollars + f}
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "why": why})
+    _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why})
     return True
 
 
@@ -108,7 +108,7 @@ def sell(a, ask_up, bid_up, why=""):
     side = p["side"]
     a["pos"] = None
     a["trades"] += 1
-    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "why": why})
+    _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(p["c"], 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why})
 
 
 def size(edge, bal, pos_cost):
@@ -149,7 +149,92 @@ def settle(sim, up_won, DIR, hour, synthetic):
         a["w"] = None
 
 
-def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None):
+SIGLAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
+          "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+
+
+def newwin(win, sigs):
+    return {"start": win, "cash": 0.0, "trades": 0, "staked": 0.0, "first": None, "side_end": None,
+            "sigs": {k: round((v or {}).get("score") or 0.0, 2) for k, v in (sigs or {}).items()}}
+
+
+def explain(run, w, up_won, price, strike, pnl, hold):
+    """Plain-English account of one finished round of the user's wallet run."""
+    out = "UP" if up_won else "DOWN"
+    gap = abs(price - strike)
+    parts = ["BTC finished $%s %s the target, so %s won." % (format(gap, ",.2f"), "above" if up_won else "below", out)]
+    f = w.get("first")
+    end = w.get("side_end")
+    if not f:
+        parts.append("It never got a bet in this round, so nothing changed.")
+        return " ".join(parts)
+    if end:
+        parts.append("It was holding %s at the end, so that bet %s." % (end, "paid out" if end == out else "lost"))
+    else:
+        parts.append("It had already sold everything before the round ended, so the result was locked in by its sells.")
+    if f["side"] != out and (not end or end != out) and w["trades"] > 0:
+        parts.append("Its first read (%s) was wrong." % f["side"])
+    elif f["side"] != out and end == out:
+        parts.append("Its first read (%s) was wrong, but it switched sides in time." % f["side"])
+    agree, against = [], []
+    for k, v in (w.get("sigs") or {}).items():
+        if abs(v) >= 0.1:
+            (agree if (v > 0) == up_won else against).append("%s (%+d)" % (SIGLAB.get(k, k), round(v * 100)))
+    if agree:
+        parts.append("Signals that pointed the right way: %s." % ", ".join(agree))
+    if against:
+        parts.append("Signals that pointed the wrong way: %s." % ", ".join(against))
+    if hold is not None and w["trades"] > 1:
+        d = pnl - hold
+        if abs(d) < 0.005:
+            parts.append("Same result as holding the first bet.")
+        elif d > 0:
+            parts.append("Moving around beat holding the first bet by $%.2f." % d)
+        else:
+            parts.append("Holding the first bet would have done $%.2f better; the extra trades and fees cost it." % -d)
+    return " ".join(parts)
+
+
+def settle_run(sim, up_won, price, strike, hour, DIR):
+    run = sim.get("run")
+    if not run or run["status"] != "running":
+        return
+    a = run["acc"]; w = a["w"]
+    if not w:
+        return
+    pos = a["pos"]
+    if pos:
+        pay = pos["c"] if (pos["side"] == "UP") == up_won else 0.0
+        a["bal"] += pay; w["cash"] += pay
+        w["side_end"] = pos["side"]
+        a["pos"] = None
+    hold = None
+    if w["first"]:
+        f = w["first"]
+        hold = (f["c"] if (f["side"] == "UP") == up_won else 0.0) - f["cost"]
+    pnl = round(w["cash"], 4)
+    a["pnl"] += pnl; a["windows"] += 1; a["wins"] += 1 if pnl > 0 else 0
+    moves = [{k: e[k] for k in ("t", "a", "side", "d", "px", "bal", "why")} for e in sim["events"] if e["s"] == "run" and e["t"] >= w["start"]][-12:]
+    rd = {"t": w["start"], "pnl": round(pnl, 2), "outcome": "UP" if up_won else "DOWN", "bal": round(a["bal"], 2),
+          "hold": None if hold is None else round(hold, 2), "trades": w["trades"], "moves": moves,
+          "why": explain(run, w, up_won, price, strike, pnl, hold)}
+    run["rounds"].append(rd); run["rounds"] = run["rounds"][-30:]
+    try:
+        with open(os.path.join(DIR, "run_log.jsonl"), "a") as fh:
+            fh.write(json.dumps(dict(rd, run=run["id"], strat=run["strategy"], hour=hour)) + "\n")
+    except OSError:
+        pass
+    a["w"] = None
+    if a["bal"] < MIN_BET:
+        run["status"] = "broke"; run["stopped"] = time.time()
+
+
+def run_equity(a, bid, ask):
+    p = a["pos"]
+    return a["bal"] + (p["c"] * (bid if p["side"] == "UP" else 1 - ask) if p else 0.0)
+
+
+def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None):
     global MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T
     if C:
         MIN_BET, CAP, SLICE, EDGE_MIN, MAX_TRADES = C["min_bet"], C["cap"], C["slice"], C["edge_min"], int(C["max_trades"])
@@ -174,20 +259,51 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         if sim["win"] is not None and sim["strike"]:
             hour = time.localtime(sim["win"]).tm_hour
             settle(sim, price > sim["strike"], DIR, hour, sim["synth"])
+            settle_run(sim, price > sim["strike"], price, sim["strike"], hour, DIR)
         sim["win"] = win
         k = float(strike) if strike and abs(float(strike) / price - 1) < 0.02 else price
         sim["strike"] = k
         sim["synth"] = synth
         sim["joined"] = now - win <= 90                  # only join a window near its start
         for a in sim["acc"].values():
-            a["w"] = {"start": win, "cash": 0.0, "trades": 0, "staked": 0.0, "first": None} if sim["joined"] else None
+            a["w"] = newwin(win, sigs) if sim["joined"] else None
+        r_ = sim.get("run")
+        if r_ and r_["status"] == "running":
+            r_["acc"]["w"] = newwin(win, sigs)
     left = win + window_len - now
-    for name, a in sim["acc"].items():
+    # the user's own wallet run (Start / Stop on the Live View)
+    rc = run_cfg or {}
+    run = sim.get("run")
+    if rc.get("active") and (not run or run["id"] != rc.get("id")):
+        st = rc.get("strategy") if rc.get("strategy") in STRATS else "signals"
+        acc = new_acc(); acc["bal"] = float(rc.get("start", 100))
+        run = sim["run"] = {"id": rc.get("id"), "strategy": st, "start": acc["bal"], "acc": acc, "rounds": [],
+                            "curve": [], "started": now, "stopped": None, "status": "running"}
+        if left > 45:
+            acc["w"] = newwin(win, sigs)
+    elif run and run["status"] == "running" and not rc.get("active"):
+        a_ = run["acc"]
+        _CUR = "run"
+        if a_["pos"]:
+            a_["w"]["side_end"] = None
+            sell(a_, ask, bid, "You pressed Stop: closing the open bet at today's price")
+        w_ = a_["w"]
+        if w_ and w_["trades"]:
+            a_["pnl"] += round(w_["cash"], 4); a_["windows"] += 1
+            run["rounds"].append({"t": w_["start"], "pnl": round(w_["cash"], 2), "outcome": "STOPPED", "bal": round(a_["bal"], 2),
+                                  "hold": None, "trades": w_["trades"], "moves": [],
+                                  "why": "You stopped it mid-round, so this round was cut short and settled at the sell price."})
+        a_["w"] = None
+        run["status"] = "stopped"; run["stopped"] = now
+    items = [(n, n, a, enabled) for n, a in sim["acc"].items()]
+    if run and run["status"] == "running":
+        items.append(("run", run["strategy"], run["acc"], True))
+    for name, pname, a, enabled in items:
         w = a["w"]
         if not w:
             continue
         _CUR = name
-        p = prob_up(name, pm, sigs, score, sim["mood"])
+        p = prob_up(pname, pm, sigs, score, sim["mood"])
         if not enabled:                                   # switched off: close out safely, then idle
             if a["pos"]:
                 sell(a, ask, bid, "Switched off: closing the open bet")
@@ -209,7 +325,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else MIN_BET, ask, bid,
                 "Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." % (s, c_(p)))
             act = "opened"
-        elif name == "hold":
+        elif pname == "hold":
             act = "holding to the end"
         elif w["trades"] >= MAX_TRADES:
             act = "trade limit reached"
@@ -243,7 +359,23 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                        "pos": ({"side": a["pos"]["side"], "c": round(a["pos"]["c"], 1), "cost": round(a["pos"]["cost"], 2),
                                 "value": round(a["pos"]["c"] * (bid if a["pos"]["side"] == "UP" else 1 - ask), 2)} if a["pos"] else None)})
     ranked.sort(key=lambda r: -r["pnl"])
+    runout = None
+    if run:
+        a_ = run["acc"]
+        eq = run_equity(a_, bid, ask)
+        if run["status"] == "running":
+            c_ = run["curve"]
+            if not c_ or now - c_[-1][0] >= 10:
+                c_.append([int(now), round(eq, 2)])
+            run["curve"] = c_[-500:]
+        runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS[run["strategy"]], "status": run["status"],
+                  "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "pnl": round(eq - run["start"], 2),
+                  "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
+                  "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,
+                  "now": a_.get("now"), "rounds": run["rounds"][-15:], "events": [e for e in sim["events"] if e["s"] == "run"][-40:], "curve": run["curve"][-300:],
+                  "pos": ({"side": a_["pos"]["side"], "c": round(a_["pos"]["c"], 1), "cost": round(a_["pos"]["cost"], 2),
+                           "value": round(a_["pos"]["c"] * (bid if a_["pos"]["side"] == "UP" else 1 - ask), 2)} if a_["pos"] else None)}
     sim["events"] = sim["events"][-120:]
     return {"events": sim["events"][-60:], "strike": sim["strike"], "win": sim["win"], "yes": [round(bid, 3), round(ask, 3)],
             "on": enabled, "synthetic": sim["synth"], "start": START, "min_bet": MIN_BET, "cap": CAP,
-            "strategies": ranked, "hours": sim["hours"]}
+            "strategies": ranked, "hours": sim["hours"], "run": runout}
