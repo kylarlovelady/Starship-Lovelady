@@ -162,14 +162,34 @@ def sig_funding():
     return clamp(-math.tanh(r / 0.0003) * 0.5), "funding rate %+.4f%% (crowded longs lean bearish)" % (r * 100)
 
 
+def to_cents(m, *names):
+    """Read a Kalshi price that may be whole cents (56), or dollars as text ("0.5600") or number."""
+    for n in names:
+        v = m.get(n)
+        if v is None or v == "":
+            continue
+        try:
+            x = float(v)
+        except Exception:
+            continue
+        return x * 100 if ("dollars" in n or isinstance(v, str) and "." in v and x <= 1.0) else x
+    return None
+
+
 def get_kalshi():
     d = fetch_json("https://api.elections.kalshi.com/trade-api/v2/markets?series_ticker=KXBTC15M&status=open&limit=5")
     ms = sorted(d.get("markets", []), key=lambda m: m.get("close_time", ""))
     if not ms:
         raise ValueError("no open market")
     m = ms[0]
-    bid, ask = m.get("yes_bid"), m.get("yes_ask")
-    yes = (bid + ask) / 2 if bid is not None and ask is not None else m.get("last_price")
+    try:                                   # keep one raw market so field names can be checked
+        save_atomic(os.path.join(DIR, "kalshi_raw.json"), m)
+    except Exception:
+        pass
+    bid = to_cents(m, "yes_bid", "yes_bid_dollars")
+    ask = to_cents(m, "yes_ask", "yes_ask_dollars")
+    last = to_cents(m, "last_price", "last_price_dollars")
+    yes = (bid + ask) / 2 if bid is not None and ask is not None else last
     return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time"),
             "strike": m.get("floor_strike") if m.get("floor_strike") is not None else m.get("cap_strike")}
 

@@ -12,6 +12,11 @@ print("price: $%s  score %s  lean %s" % (d["price"], d["live"]["score"], d["live
 for s in d["signals"]:
     print("  %-16s %s  %s" % (s["label"], "ok " if s["ok"] else "NO ", s["detail"]))
 print("kalshi:", d.get("kalshi") or "NOT REACHED")
+try:
+    raw = json.load(open(os.path.expanduser("~/market-data/kalshi_raw.json")))
+    print("kalshi price fields:", {k: v for k, v in raw.items() if any(w in k for w in ("bid", "ask", "price", "last", "yes", "no_", "strike"))})
+except Exception:
+    pass
 print("kalshi last 10:", d.get("recent_markets") or "not reached")
 print("news stories:", len(d.get("headlines") or []))
 print("model chance up:", d.get("p_model"))
