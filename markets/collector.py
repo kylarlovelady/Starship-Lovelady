@@ -485,6 +485,14 @@ def scorecard(calls, now):
 _BROKER = {"obj": None, "err": None}
 
 
+def alert(msg, title="Market agent"):
+    try:
+        import alerts
+        alerts.send(msg, title)
+    except Exception:
+        pass
+
+
 def get_broker():
     """One shared broker for the real Kalshi account. None if the key or settings are missing."""
     if _BROKER["obj"] is None:
@@ -864,6 +872,7 @@ class Control(BaseHTTPRequestHandler):
                     return self._send({"error": "needs confirm"}, 400)
                 save_atomic(os.path.join(DIR, "run.json"), {"active": False, "halted": "kill", "detail": "Kill switch pressed", "live": True, "t": int(time.time())})
                 save_atomic(os.path.join(DIR, "kill.json"), {"t": int(time.time())})
+                alert("KILL SWITCH pressed. Closing the open bet and cancelling resting orders.", "Market agent: kill switch")
                 return self._send({"ok": True})
             if self.path.startswith("/live"):
                 if body.get("confirm") is not True:
@@ -881,6 +890,7 @@ class Control(BaseHTTPRequestHandler):
                 b.halt = None; b.fails = 0
                 run = {"active": True, "live": True, "id": int(time.time()), "strategy": st, "start": round(bal, 2)}
                 save_atomic(os.path.join(DIR, "run.json"), run)
+                alert("LIVE session started on your Kalshi account. Balance $%.2f, strategy %s." % (bal, st), "Market agent: live started")
                 return self._send(run)
             if self.path.startswith("/run"):
                 rp = os.path.join(DIR, "run.json")
@@ -894,6 +904,8 @@ class Control(BaseHTTPRequestHandler):
                     amt = min(1000.0, max(10.0, float(body.get("amount") or 100)))
                     cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}
                 else:
+                    if cur.get("live") and cur.get("active"):
+                        alert("LIVE session ended by you. Closing the open bet.", "Market agent: live ended")
                     cur["active"] = False
                 save_atomic(rp, cur)
                 return self._send(cur)

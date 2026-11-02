@@ -9,6 +9,7 @@ START, MIN_BET, CAP, SLICE = 1000.0, 0.0, 100.0, 0.10    # fake dollars; bet lim
 KELLY = 1.85            # how hard it leans into an edge; set by the aggression dial
 BROKER = None          # set by the collector while a live (real money) run exists
 _LIVE = False
+_SIM = None
 _TK = None
 FLOOR = 1.0             # smallest real bet: one contract is never more than $1
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
@@ -173,6 +174,7 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         c = BROKER.trade("buy", _TK, side, c, ask_up, bid_up)
         if c < 1:
             return False
+        _SIM["lt_t"] = _T; _SIM["unconf"] = True
     dollars = c * px
     f = fee_total(c, px)
     a["bal"] -= dollars + f
@@ -204,6 +206,7 @@ def sell(a, ask_up, bid_up, why=""):
         n = min(p["c"], BROKER.trade("sell", _TK, p["side"], p["c"], ask_up, bid_up))
         if n < 1:
             return False
+        _SIM["lt_t"] = _T; _SIM["unconf"] = True
     got = n * px - fee_total(n, px)
     a["bal"] += got
     a["w"]["cash"] += got; a["w"]["trades"] += 1
@@ -369,6 +372,11 @@ def settle_run(sim, r, up_won, price, strike, hour, DIR, src):
 def save_run_off(DIR, reason, detail=""):
     """Turn the wallet run off (the normal stop path then closes any open bet)."""
     try:
+        import alerts
+        alerts.send("LIVE STOPPED (%s): %s" % (reason, detail or "see the Live view"), "Market agent: live stopped")
+    except Exception:
+        pass
+    try:
         tmp = os.path.join(DIR, "run.json.tmp")
         with open(tmp, "w") as f:
             json.dump({"active": False, "live": True, "halted": reason, "detail": detail, "t": int(time.time())}, f)
@@ -383,7 +391,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global BROKER, _LIVE, _TK, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global BROKER, _LIVE, _SIM, _TK, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -408,6 +416,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         except OSError:
             pass
         sim.update({"ver": SIM_VERSION, "acc": {}, "win": None, "hours": {}, "joined": False, "run": None, "pending": [], "events": []})
+    _SIM = sim
     for n in STRATS:
         sim["acc"].setdefault(n, new_acc())
     sim.setdefault("events", [])
@@ -452,6 +461,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         acc = new_acc(); acc["bal"] = float(rc.get("start", 100))
         run = sim["run"] = {"id": rc.get("id"), "strategy": st, "start": acc["bal"], "acc": acc, "rounds": [],
                             "curve": [], "started": now, "stopped": None, "status": "running", "live": bool(rc.get("live"))}
+        sim["k_ok"] = now; sim["unconf"] = False
         if left > 45 and sim.get("ready"):
             acc["w"] = newwin(win, sigs)
     elif run and run["status"] == "running" and not rc.get("active"):
@@ -484,6 +494,35 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             if BROKER.halt:                                # too many rejected orders: stop and say why
                 save_run_off(DIR, "live_error", BROKER.halt)
                 continue
+            if now - sim.get("k_ok", now) > 60:             # watchdog: no clear reading from Kalshi for a minute
+                save_run_off(DIR, "watchdog", "Lost contact with Kalshi for over a minute. Check your Kalshi account for an open bet.")
+                run["warn"] = "Lost contact with Kalshi. Check the Kalshi app for an open bet."
+                continue
+            kp = BROKER.position(_TK) if _TK else {}
+            if kp is None:                                   # never trade blind
+                a["now"] = dict(a.get("now") or {}, act="waiting", why="Could not read your position from Kalshi just now, so it is not trading this second.")
+                continue
+            sim["k_ok"] = now
+            loc = a["pos"]
+            same = (not kp and not loc) or bool(kp and loc and kp["side"] == loc["side"] and abs(kp["c"] - loc["c"]) < 0.5)
+            if same:
+                sim["unconf"] = False
+                if kp and loc:
+                    loc["cost"] = kp["cost"] or loc["cost"]
+            elif sim.get("unconf") and now - sim.get("lt_t", 0) < 10:     # Kalshi's list can lag a second or two behind a fill
+                a["now"] = dict(a.get("now") or {}, act="waiting", why="Waiting for Kalshi to show the fill before it does anything else.")
+                continue
+            elif sim.get("unconf"):
+                save_run_off(DIR, "mismatch", "After its own order, Kalshi's position (%s) still did not match what the agent expected (%s)." % (kp or "none", loc or "none"))
+                run["warn"] = "Positions disagreed with Kalshi after an order. Check the Kalshi app."
+                continue
+            else:                                            # something changed outside the agent (for example a bet placed in the Kalshi app): Kalshi is right
+                a["pos"] = ({"side": kp["side"], "c": kp["c"], "cost": kp["cost"]} if kp else None)
+                try:
+                    import alerts
+                    alerts.send("Position changed outside the agent: Kalshi now shows %s. Agent is following Kalshi." % (kp or "none"))
+                except Exception:
+                    pass
             if not a["pos"] and now - sim.get("lb_t", 0) >= 10:     # real cash balance from Kalshi
                 sim["lb_t"] = now
                 b_ = BROKER.balance(0)
@@ -561,17 +600,6 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             b_ = BROKER.balance(0)
             if b_ is not None:
                 a_["bal"] = b_
-        if run.get("live") and BROKER and run["status"] == "running" and sim.get("ticker") and now - sim.get("ex_t", 0) >= 20:
-            sim["ex_t"] = now                              # double-check our books against Kalshi's own positions
-            ex = BROKER.exposure(sim["ticker"])
-            mine = a_["pos"]["cost"] if a_["pos"] else 0.0
-            if ex is not None:
-                if mine > 1.0 and ex < 0.05:
-                    run["warn"] = "The agent thinks it holds a bet but Kalshi shows none. Check your Kalshi account."
-                elif ex > 1.0 and not a_["pos"]:
-                    run["warn"] = "Kalshi shows an open bet of $%.2f that the agent is not tracking. Check your Kalshi account." % ex
-                else:
-                    run["warn"] = None
         eq = run_equity(a_, bid, ask)
         infl = 0.0                                        # last round's bet still waiting for Kalshi's official result
         for pd_ in sim.get("pending", []):
@@ -590,7 +618,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                 c_.append([int(now), round(eq, 2)])
             run["curve"] = c_[-500:]
         runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
-                  "live": bool(run.get("live")), "warn": run.get("warn"), "halt": run.get("halt") or (rc.get("detail") if rc.get("halted") else None), "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run["start"], 2),
+                  "live": bool(run.get("live")), "slip_avg": (round(sum(BROKER.slips) / len(BROKER.slips), 2) if (BROKER and BROKER.slips) else None), "warn": run.get("warn"), "halt": run.get("halt") or (rc.get("detail") if rc.get("halted") else None), "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run["start"], 2),
                   "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
                   "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,
                   "now": a_.get("now"), "rounds": run["rounds"][-15:], "events": [e for e in sim["events"] if e["s"] == "run"][-40:], "curve": run["curve"][-300:],

@@ -90,6 +90,7 @@ class Broker:
         self.dir = folder or DIR
         self.fails = 0
         self.halt = None
+        self.slips = []
         self._bal = None
         self._bt = 0.0
 
@@ -147,9 +148,31 @@ class Broker:
         self.fails = 0
         self.forget_balance()
         try:
-            return int(float(resp.get("fill_count") or 0) + 1e-9)
+            n_ok = int(float(resp.get("fill_count") or 0) + 1e-9)
+            if n_ok >= 1 and resp.get("average_fill_price") is not None:     # how much worse than the quote the fill was (cents per contract)
+                f = float(resp["average_fill_price"])
+                worse = {("buy", "UP"): f - ask_up, ("sell", "UP"): bid_up - f, ("buy", "DOWN"): bid_up - f, ("sell", "DOWN"): f - ask_up}[(action, side)]
+                self.slips.append(round(worse * 100, 2)); self.slips = self.slips[-200:]
+                self._log({"t": int(time.time()), "slip_cents": round(worse * 100, 2), "ticker": ticker, "action": action, "side": side})
+            return n_ok
         except Exception:
             return 0
+
+    def position(self, ticker):
+        """What Kalshi itself says we hold in this market: {} for nothing, {"side","c","cost"}, or None if it could not be read."""
+        try:
+            st, p = self.c.call("GET", "/portfolio/positions?ticker=%s&count_filter=position" % ticker)
+        except Exception:
+            return None
+        if st != 200:
+            return None
+        for m in p.get("market_positions", []):
+            if m.get("ticker") == ticker:
+                q = float(m.get("position_fp") or 0)
+                if abs(q) < 0.005:
+                    return {}
+                return {"side": "UP" if q > 0 else "DOWN", "c": abs(q), "cost": abs(float(m.get("market_exposure_dollars") or 0))}
+        return {}
 
     def exposure(self, ticker):
         """Dollars Kalshi says are at risk in this market's event, or None if unreadable. Used to double-check our own books."""

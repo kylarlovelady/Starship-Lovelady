@@ -15,6 +15,8 @@ cp markets/report.html ~/crew-web/report.html
 grep -q "markets.html" ~/crew-update.sh || echo 'cp ~/starship/markets/markets.html ~/crew-web/markets.html' >> ~/crew-update.sh
 grep -q "live.html" ~/crew-update.sh || echo 'cp ~/starship/markets/live.html ~/crew-web/live.html' >> ~/crew-update.sh
 grep -q "report.html" ~/crew-update.sh || echo 'cp ~/starship/markets/report.html ~/crew-web/report.html' >> ~/crew-update.sh
+# independent safety net: closes out a live session if the agent freezes (does nothing when not live)
+( crontab -l 2>/dev/null | grep -v market-watchdog; echo "* * * * * /usr/bin/python3 $HOME/starship/markets/watchdog.py >> $HOME/market-data/watchdog.log 2>&1 # market-watchdog" ) | crontab -
 sudo tee /etc/systemd/system/market-agent.service >/dev/null <<UNIT
 [Unit]
 Description=BTC 15-minute market agent (paper mode)
