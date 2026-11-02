@@ -15,10 +15,12 @@ OUT = os.environ.get("MARKET_OUT", os.path.join(HOME, "crew-web", "market.json")
 WINDOW = 900            # 15 minutes
 CYCLE = 5               # seconds between looks (numbers move fast)
 THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
-WEIGHTS = {"book": 0.25, "momentum": 0.20, "whales": 0.20, "bigtrades": 0.15, "news": 0.10, "fng": 0.05, "funding": 0.05}
+WEIGHTS = {"book": 0.20, "momentum": 0.15, "whales": 0.15, "bigtrades": 0.11, "news": 0.08, "fng": 0.04, "funding": 0.03,
+           "trend_h": 0.12, "trend_w": 0.06, "levels": 0.06}
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-          "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
-EVERY = {"whales": 60, "bigtrades": 20, "news": 300, "fng": 3600, "funding": 120, "kalshi": 5, "recent": 300, "xcheck": 30}
+          "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate",
+          "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance"}
+EVERY = {"candles": 120, "whales": 60, "bigtrades": 20, "news": 300, "fng": 3600, "funding": 120, "kalshi": 5, "recent": 300, "xcheck": 30}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
 BULL = ["surge", "rally", "soar", "jump", "record high", "all-time high", "approve", "approval",
@@ -90,6 +92,86 @@ def sig_momentum(history, now):
     else:
         s /= 0.6
     return clamp(s), txt
+
+
+def get_candles():
+    """Hourly (last ~12 days) and daily (last ~90 days) BTC candles, oldest first: [time, low, high, open, close]."""
+    out = {}
+    for name, gran in (("h", 3600), ("d", 86400)):
+        try:
+            rows = fetch_json("https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=%d" % gran)
+        except Exception:
+            rows = fetch_json("https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=%d" % (60 if gran == 3600 else 1440))
+            rows = [[r[0], float(r[3]), float(r[2]), float(r[1]), float(r[4])] for r in list(rows["result"].values())[0]]
+            out[name] = rows[-300:]
+            continue
+        out[name] = sorted([[r[0], float(r[1]), float(r[2]), float(r[3]), float(r[4])] for r in rows])
+    return out
+
+
+def _sd(xs):
+    if len(xs) < 3:
+        return None
+    m = sum(xs) / len(xs)
+    return math.sqrt(sum((x - m) ** 2 for x in xs) / (len(xs) - 1))
+
+
+def _pc(x):
+    return "%+.1f%%" % (100 * x)
+
+
+def trend_signals(cd, price):
+    """Reads the chart the way a trader does: the trend on several time scales, then support and resistance.
+    Returns {name: (score -1..1, plain-English detail)}. The learner decides afterwards which of these actually work."""
+    h, d = cd.get("h") or [], cd.get("d") or []
+    out = {}
+    if len(h) >= 30:
+        cl = [c[4] for c in h]
+        sh = _sd([math.log(b / a) for a, b in zip(cl, cl[1:])][-72:]) or 0.004
+        def ret(n):
+            return price / cl[-1 - n] - 1 if len(cl) > n else None
+        r1, r4, r24 = ret(1), ret(4), ret(24)
+        z = lambda r, hrs: math.tanh((r / (sh * math.sqrt(hrs))) / 1.5)
+        sc = 0.4 * z(r1, 1) + 0.3 * z(r4, 4) + 0.3 * z(r24, 24)
+        sma24 = sum(cl[-24:]) / 24
+        sc = clamp(sc + (0.15 if price > sma24 else -0.15))
+        kind = "up on every time scale" if min(r1, r4, r24) > 0 else "down on every time scale" if max(r1, r4, r24) < 0 else \
+            ("short-term bounce inside a bigger down-move" if r1 > 0 and r24 < 0 else "short-term dip inside a bigger up-move" if r1 < 0 and r24 > 0 else "mixed")
+        out["trend_h"] = (sc, "1 hour %s, 4 hours %s, 24 hours %s, %s its 24-hour average: %s" % (_pc(r1), _pc(r4), _pc(r24), "above" if price > sma24 else "below", kind))
+    if len(d) >= 31 and len(h) >= 168:
+        cl = [c[4] for c in d]
+        sd_ = _sd([math.log(b / a) for a, b in zip(cl, cl[1:])][-60:]) or 0.025
+        r7 = price / cl[-7] - 1
+        r30 = price / cl[-30] - 1
+        hc = [c[4] for c in h]
+        sma7 = sum(hc[-168:]) / 168
+        sc = 0.4 * math.tanh(r7 / (sd_ * math.sqrt(7)) / 1.5) + 0.4 * math.tanh(r30 / (sd_ * math.sqrt(30)) / 1.5) + (0.2 if price > sma7 else -0.2)
+        out["trend_w"] = (clamp(sc), "7 days %s, 30 days %s, %s its 7-day average" % (_pc(r7), _pc(r30), "above" if price > sma7 else "below"))
+    if len(h) >= 48:
+        win_ = h[-72:]
+        atr = sum(c[2] - c[1] for c in win_[-24:]) / 24 or price * 0.003
+        sup, res = [], []
+        for i in range(3, len(win_) - 3):
+            lo, hi = win_[i][1], win_[i][2]
+            if lo == min(c[1] for c in win_[i - 3:i + 4]):
+                sup.append(lo)
+            if hi == max(c[2] for c in win_[i - 3:i + 4]):
+                res.append(hi)
+        below = [x for x in sup if x < price]
+        above = [x for x in res if x > price]
+        s_ = max(below) if below else min(c[1] for c in win_)
+        r_ = min(above) if above else max(c[2] for c in win_)
+        ds, dr = (price - s_) / atr, (r_ - price) / atr
+        sc = (1 - min(ds, 1.5) / 1.5) - (1 - min(dr, 1.5) / 1.5)             # near support pushes up, near resistance pushes down
+        prior = win_[-25:-1]
+        note = ""
+        if price > max(c[2] for c in prior):
+            sc, note = max(sc, 0) + 0.6, " Breakout above the last 24 hours' high."
+        elif price < min(c[1] for c in prior):
+            sc, note = min(sc, 0) - 0.6, " Breakdown below the last 24 hours' low."
+        out["levels"] = (clamp(sc * 0.8), "Support near $%s (%.1f hourly ranges below), resistance near $%s (%.1f above).%s" % (
+            format(s_, ",.0f"), ds, format(r_, ",.0f"), dr, note))
+    return out
 
 
 EXCHANGES = ("binance", "coinbase", "kraken", "bitfinex", "okx", "okex", "bybit", "huobi", "htx", "kucoin", "gemini", "bitstamp",
@@ -422,7 +504,8 @@ def weights():
     w = dict(WEIGHTS)
     w.update(load(os.path.join(DIR, "weights.json"), {}))                       # what the nightly learner chose
     w.update(clean_cfg(load(os.path.join(DIR, "config.json"), {})).get("weights", {}))   # Kylar's edits win
-    return w
+    t = sum(w.values()) or 1.0
+    return {k: v / t for k, v in w.items()}
 
 
 def read_tail(name, n):
@@ -534,7 +617,7 @@ def do_reset(S, now):
     import glob, shutil
     arch = os.path.join(DIR, "archive", time.strftime("%Y%m%d-%H%M%S", time.localtime(now)))
     os.makedirs(arch, exist_ok=True)
-    for p in glob.glob(os.path.join(DIR, "*.jsonl")) + [os.path.join(DIR, n) for n in ("learn_report.json", "weights.json")]:
+    for p in glob.glob(os.path.join(DIR, "*.jsonl")) + [os.path.join(DIR, n) for n in ("learn_report.json", "weights.json", "learn_state.json")]:
         if os.path.exists(p):
             shutil.move(p, os.path.join(arch, os.path.basename(p)))
     old = (S.get("sim") or {}).get("run") or {}
@@ -675,6 +758,22 @@ def run_cycle(now, S):
     run("news", lambda: sig_news(now, cache), True)
     run("fng", sig_fng, True)
     run("funding", sig_funding, True)
+    if due("candles") or not cache.get("candles"):
+        try:
+            cache["candles"] = get_candles()
+        except Exception as e:
+            print("candles failed:", e, flush=True)
+        cache["candles_t"] = now
+    ts_ = {}
+    try:
+        ts_ = trend_signals(cache.get("candles") or {}, price)
+    except Exception as e:
+        print("trend failed:", e, flush=True)
+    for k_ in ("trend_h", "trend_w", "levels"):
+        if k_ in ts_:
+            sigs[k_] = {"score": round(ts_[k_][0], 3), "detail": ts_[k_][1], "ok": True}
+        else:
+            sigs[k_] = {"score": None, "detail": "needs chart history", "ok": False}
     cache["last"] = {k: v for k, v in sigs.items() if k in EVERY}
     if due("recent"):
         try:
@@ -865,6 +964,11 @@ class Control(BaseHTTPRequestHandler):
                 rc_ = load(os.path.join(DIR, "run.json"), {})
                 if rc_.get("live") and rc_.get("active"):
                     return self._send({"error": "end the live session first"}, 400)
+                if body.get("soft") is True:       # keep everything it learned; old lessons count half; fresh wallet
+                    save_atomic(os.path.join(DIR, "learn_state.json"), {"soft_t": int(time.time())})
+                    old = load(os.path.join(DIR, "run.json"), {})
+                    save_atomic(os.path.join(DIR, "run.json"), {"active": True, "id": int(time.time()), "strategy": old.get("strategy", "signals"), "start": 1000.0})
+                    return self._send({"ok": True, "soft": True})
                 save_atomic(os.path.join(DIR, "reset.json"), {"id": int(time.time() * 1000)})
                 return self._send({"ok": True})
             if self.path.startswith("/kill"):

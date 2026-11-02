@@ -104,11 +104,20 @@ def learn(DIR, base_w, now=None):
 # Every call is locked before the round starts, so each result is a test on data it had never seen.
 # Each information source keeps a live track record of how often its lean matched Kalshi's real result.
 # A source with a proven record gets more say, one with a bad record gets less, in small steps.
-MIN_N = 20      # no changes to a source until it has been tested this many times
-STEP = 0.03     # largest move of any one weight per update
+MIN_N = 8       # fewer effective tests than this = "still learning" (it still moves a little, just with little trust)
+STEP = 0.04     # largest move of any one weight per update
+HALF = 120      # recent rounds count more: a round this many rounds old counts half
+PRIOR = 20      # starts every source at 50 percent trust, worth this many tests, so a lucky streak cannot jump it
+OLD = 0.5       # after a soft reset, rounds from before it count this much
 
 LAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-       "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+       "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate",
+       "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance"}
+
+
+def trust_of(r, n, prior=PRIOR):
+    """Trust meter: share of leans that matched Kalshi, pulled toward 50 percent until there is real evidence."""
+    return (r + 0.5 * prior) / (n + prior)
 
 
 def online(DIR, base_w, now=None):
@@ -131,27 +140,39 @@ def online(DIR, base_w, now=None):
             cur = json.load(f)
     except Exception:
         cur = dict(base_w)
+    try:
+        with open(os.path.join(DIR, "learn_state.json")) as f:
+            soft = json.load(f).get("soft_t", 0)
+    except Exception:
+        soft = 0
+    N = len(calls)
+    wt = [(0.5 ** ((N - 1 - i) / HALF)) * (OLD if (c.get("start") or 0) < soft else 1.0) for i, c in enumerate(calls)]
     rep = {"time": now, "scored": len(calls), "adopted": False, "signals": {}, "notes": []}
     target = {}
     for k in keys:
         n = r = 0
-        for c in calls:
-            s = c["signals"].get(k)
-            if s is not None and abs(s) >= 0.1:
-                n += 1
-                r += (s > 0) == (c["outcome"] == "UP")
-        lo, hi = wilson(r, n)
+        ne = re_ = 0.0
+        for c, w_ in zip(calls, wt):
+            s_ = c["signals"].get(k)
+            if s_ is not None and abs(s_) >= 0.1:
+                ok = (s_ > 0) == (c["outcome"] == "UP")
+                n += 1; r += ok
+                ne += w_; re_ += w_ * ok
+        lo, hi = wilson(re_, ne) if ne > 0 else (0.0, 1.0)
+        tr = trust_of(re_, ne)
         acc = r / n if n else 0.5
-        if n < MIN_N:
-            verdict, mult = "still learning", 1.0
+        if ne < MIN_N:
+            verdict = "still learning"
         elif lo > 0.5:
-            verdict, mult = "trusted", 1 + min(0.5, (acc - 0.5) * 2) * min(1.0, n / 60)
+            verdict = "trusted"
         elif hi < 0.5:
-            verdict, mult = "not trusted", max(0.2, 1 + max(-0.8, (acc - 0.5) * 2) * min(1.0, n / 60))
+            verdict = "not trusted"
         else:
-            verdict, mult = "no clear edge", 1 + (acc - 0.5) * min(1.0, n / 60)     # half-strength nudge
+            verdict = "no clear edge"
+        mult = max(0.2, min(1.6, 1 + (tr - 0.5) * 3))            # smooth: every settled round moves it a little
         rep["signals"][k] = {"n": n, "right": r, "pct": round(100 * acc, 1) if n else None, "low": round(100 * lo, 1),
-                             "high": round(100 * hi, 1), "verdict": verdict, "mult": round(mult, 2)}
+                             "high": round(100 * hi, 1), "verdict": verdict, "mult": round(mult, 2),
+                             "trust": round(100 * tr, 1), "n_eff": round(ne, 1)}
         target[k] = base_w[k] * mult
     tot = sum(target.values()) or 1.0
     target = {k: v / tot for k, v in target.items()}
@@ -162,22 +183,23 @@ def online(DIR, base_w, now=None):
     s = sum(new.values())
     new = {k: round(v / s, 4) for k, v in new.items()}
     moved = [(k, cur.get(k, base_w[k]), new[k]) for k in keys if abs(new[k] - cur.get(k, base_w[k])) >= 0.01]
-    if moved:
+    if any(abs(new[k] - cur.get(k, base_w[k])) >= 0.002 for k in keys):
         with open(os.path.join(DIR, "weights.json"), "w") as f:
             json.dump(new, f)
+    if moved:
         rep["adopted"] = True
         for k, a, b in moved:
             g = rep["signals"][k]
             why = {"trusted": "its leans matched Kalshi's result %s%% of %d times, clearly better than a coin flip" % (g["pct"], g["n"]),
                    "not trusted": "its leans matched Kalshi's result only %s%% of %d times, worse than a coin flip" % (g["pct"], g["n"]),
                    "no clear edge": "no clear edge yet (%s%% of %d)" % (g["pct"], g["n"]),
-                   "still learning": "pulling back toward the starting weight"}[g["verdict"]]
+                   "still learning": "too few tests to trust it yet (trust %s%%)" % g["trust"]}[g["verdict"]]
             rep["notes"].append("%s weight %d%% to %d%%: %s." % (LAB.get(k, k), round(a * 100), round(b * 100), why))
         with open(os.path.join(DIR, "learn_log.jsonl"), "a") as f:
             f.write(json.dumps(rep) + "\n")
     else:
         young = [LAB.get(k, k) for k in keys if rep["signals"][k]["verdict"] == "still learning"]
-        rep["notes"].append("No weight changes this round." + (" Still testing: %s (needs %d tests each)." % (", ".join(young), MIN_N) if young else ""))
+        rep["notes"].append("No weight changes this round." + (" Still testing: %s (trust builds with every round)." % ", ".join(young) if young else ""))
     rep["weights"] = new
     with open(os.path.join(DIR, "learn_report.json"), "w") as f:
         json.dump(rep, f)

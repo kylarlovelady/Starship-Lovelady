@@ -63,7 +63,9 @@ def prob_up(name, pm, sigs, score, mood):
     return sigm(base + shift)
 
 
-DEFW = {"book": 0.25, "momentum": 0.20, "whales": 0.20, "bigtrades": 0.15, "news": 0.10, "fng": 0.05, "funding": 0.05}
+DEFW = {"book": 0.20, "momentum": 0.15, "whales": 0.15, "bigtrades": 0.11, "news": 0.08, "fng": 0.04, "funding": 0.03,
+        "trend_h": 0.12, "trend_w": 0.06, "levels": 0.06}
+REFILL = 100.0         # fake dollars added when a pretend wallet runs dry (logged, and not counted as profit)
 _W = dict(DEFW)
 _MIX = []
 _TRACE = []
@@ -99,7 +101,8 @@ def mix(name, pm, sigs, score, mood):
 
 def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
     k_of = {"Order book": "book", "Price momentum": "momentum", "Whale moves": "whales", "News vibe": "news",
-            "Fear & Greed": "fng", "Funding rate": "funding", "Big exchange trades": "bigtrades"}
+            "Fear & Greed": "fng", "Funding rate": "funding", "Big exchange trades": "bigtrades",
+            "Hourly and daily trend": "trend_h", "Weekly and monthly trend": "trend_w", "Support and resistance": "levels"}
     L = []
     if strike:
         gap = price - strike
@@ -226,8 +229,49 @@ def sell(a, ask_up, bid_up, why=""):
     return True
 
 
-def size(edge, bal, pos_cost):
-    frac = min(SLICE, KELLY * max(0.0, edge))          # share of the wallet: bigger edge and bolder dial = bigger bet
+def conviction(sigs):
+    """How strongly the trusted sources agree. Returns (score 0..1, direction +1 Up / -1 Down / 0, plain-English reason).
+    Strong lean + many trusted sources pointing the same way + the chart confirming it = high conviction."""
+    tw = {"trusted": 1.3, "no clear edge": 0.9, "still learning": 0.8, "not trusted": 0.3}
+    items = []
+    for k, w in _W.items():
+        v = (sigs.get(k) or {})
+        if v.get("ok") and v.get("score") is not None:
+            items.append((k, w * tw.get(_TRUST.get(k), 0.8), v["score"]))
+    tot = sum(w for _, w, _ in items)
+    if not tot:
+        return 0.0, 0, "no data from any source"
+    net = sum(w * s for _, w, s in items) / tot
+    d = 1 if net > 0 else -1 if net < 0 else 0
+    mass = sum(w * abs(s) for _, w, s in items)
+    agree = sum(w * abs(s) for _, w, s in items if s * d > 0) / mass if mass and d else 0.0
+    ch = [s for k, _, s in items if k in ("momentum", "trend_h") and abs(s) >= 0.05]
+    confirm = (sum(1 for s in ch if s * d > 0) / len(ch)) if ch and d else 0.0
+    strength = min(1.0, abs(net) / 0.30)
+    c = 0.5 * strength + 0.3 * agree + 0.2 * confirm if abs(net) >= 0.03 else 0.0
+    why = "conviction %d%% (lean %.0f%% of max, %d%% of the evidence agrees, chart %s)" % (
+        round(100 * c), 100 * strength, round(100 * agree), "confirms" if confirm >= 0.99 else "partly confirms" if confirm > 0 else "does not confirm")
+    return c, d, why
+
+
+def conv_mult(sigs, side, edge):
+    """Bet-size multiplier from conviction: sit out when weak, bet small on mild leans, full size on a hard signal.
+    A big price edge alone (the target is nearly decided) still allows a small bet."""
+    c, d, why = conviction(sigs)
+    want = 1 if side == "UP" else -1
+    m = 0.0 if (d != want and d != 0) or c < 0.25 else 0.4 if c < 0.45 else 0.7 if c < 0.65 else 1.0
+    if m == 0.0 and edge >= 0.15:
+        m = 0.4
+        why += "; a large price edge still allows a small bet"
+    return m, why
+
+
+def size(edge, bal, pos_cost, mult=1.0, ref=None):
+    ref = ref or START
+    mult *= max(0.35, min(1.0, (bal + pos_cost) / ref))     # a shrinking wallet bets smaller, so it lasts more rounds
+    if mult <= 0:
+        return 0.0
+    frac = min(SLICE, KELLY * max(0.0, edge)) * mult   # share of the wallet: bigger edge, bolder dial, higher conviction = bigger bet
     room = ROUND_FRAC * (bal + pos_cost) - pos_cost    # adds in one round cannot stack past this share of the wallet
     if room < FLOOR:
         return 0.0
@@ -250,8 +294,8 @@ def settle_one(sim, name, a, w, pos, up_won, DIR, hour, src):
     a.setdefault("hist", []).append({"t": w["start"], "pnl": round(pnl, 2), "outcome": "UP" if up_won else "DOWN",
                                      "hold": None if hold is None else round(hold, 2), "trades": w["trades"]})
     a["hist"] = a["hist"][-12:]
-    if a["bal"] < max(MIN_BET, FLOOR):       # fake account ran dry: refill and count it
-        a["bal"] = START; a["busts"] += 1
+    if a["bal"] < max(MIN_BET, FLOOR, 5.0):  # fake account ran dry: add $100, count it (profit is judged on results, not the wallet)
+        a["bal"] += REFILL; a["busts"] += 1
     h = sim["hours"].setdefault(str(hour), {"n": 0, "pnl": 0.0})
     h["n"] += 1; h["pnl"] = round(h["pnl"] + pnl, 3)
     with open(os.path.join(DIR, "sim_windows.jsonl"), "a") as f:
@@ -292,7 +336,8 @@ def resolve_pending(sim, now, price, result_fn, DIR):
 
 
 SIGLAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-          "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+          "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate",
+          "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance"}
 
 
 def newwin(win, sigs):
@@ -369,8 +414,12 @@ def settle_run(sim, r, up_won, price, strike, hour, DIR, src):
             fh.write(json.dumps(dict(rd, run=run["id"], strat=run["strategy"], hour=hour)) + "\n")
     except OSError:
         pass
-    if run["status"] == "running" and a["bal"] < max(MIN_BET, FLOOR) and not a["pos"]:
-        run["status"] = "broke"; run["stopped"] = time.time()
+    if run["status"] == "running" and a["bal"] < max(MIN_BET, FLOOR, 5.0) and not a["pos"]:
+        if run.get("live"):
+            run["status"] = "broke"; run["stopped"] = time.time()
+        else:                                                # pretend wallet ran dry: add $100 and log it, never counted as profit
+            a["bal"] += REFILL; run["added"] = run.get("added", 0.0) + REFILL
+            run.setdefault("refills", []).append({"t": int(time.time()), "amt": REFILL, "after": rd["t"]})
 
 
 def save_run_off(DIR, reason, detail=""):
@@ -541,6 +590,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             continue
         if left <= 5:
             continue
+        gate = pname in ("signals", "hold")                   # only the strategies that use the signals are gated by conviction
+        ref = (run["start"] + run.get("added", 0.0)) if name == "run" else START
         side_p = lambda s: p if s == "UP" else 1 - p
         ask_s = lambda s: ask if s == "UP" else 1 - bid
         bid_s = lambda s: bid if s == "UP" else 1 - ask
@@ -556,11 +607,15 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             e = side_p(s) - ask_s(s) - fee(ask_s(s))
             if MIN_BET <= 0:
                 s = "UP" if eU >= eD else "DOWN"; e = max(eU, eD)
-            buy(a, s, size(e, a["bal"], 0.0) if e > EDGE_MIN else max(MIN_BET, FLOOR), ask, bid,
-                ("Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." if MIN_BET > 0 else "Opening bet: it sees a real edge on %s (it thinks %s%% up).") % (s, c_(p)))
-            act = "opened"
-            if w.get("mix") is None:
-                w["mix"] = _MIX; w["p_open"] = round(p, 3)
+            cm, cwhy = conv_mult(sigs, s, e) if gate else (1.0, "")
+            if gate and cm == 0.0 and MIN_BET <= 0:
+                act = "waiting"; why += " Sitting out: not enough agreement between its sources (" + cwhy + ")."
+            else:
+                buy(a, s, size(e, a["bal"], 0.0, max(cm, 0.4) if MIN_BET > 0 else cm, ref) if e > EDGE_MIN else max(MIN_BET, FLOOR), ask, bid,
+                    (("Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." if MIN_BET > 0 else "Opening bet: it sees a real edge on %s (it thinks %s%% up).") % (s, c_(p))) + ((" Bet size set by " + cwhy + ".") if gate else ""))
+                act = "opened"
+                if w.get("mix") is None:
+                    w["mix"] = _MIX; w["p_open"] = round(p, 3)
         elif w["first"] is None and w["trades"] == 0 and not a["pos"]:
             act = "waiting"; why += " Smallest bet is $0, so it sits out until it sees a real edge."
         elif pname == "hold":
@@ -581,18 +636,22 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                     if a["pos"] and a["pos"]["side"] != s:
                         continue
                     if e > EDGE_MIN:
-                        buy(a, s, size(e, a["bal"], a["pos"]["cost"] if a["pos"] else 0.0), ask, bid,
-                            "Edge: it thinks %s is %s%% likely but Kalshi asks %s\u00a2 (+%d\u00a2 after fees)." % (s, c_(side_p(s)), c_(ask_s(s)), round(e * 100)))
+                        cm, cwhy = conv_mult(sigs, s, e) if gate else (1.0, "")
+                        if cm == 0.0:
+                            why += " Not adding: " + cwhy + "."
+                            continue
+                        buy(a, s, size(e, a["bal"], a["pos"]["cost"] if a["pos"] else 0.0, cm, ref), ask, bid,
+                            "Edge: it thinks %s is %s%% likely but Kalshi asks %s\u00a2 (+%d\u00a2 after fees)." % (s, c_(side_p(s)), c_(ask_s(s)), round(e * 100)) + ((" Bet size set by " + cwhy + ".") if gate else ""))
                         act = "bought"
                         break
                 else:
                     act = "holding" if a["pos"] else "waiting"
-        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why, "mix": _MIX, "trace": _TRACE}
+        a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why, "mix": _MIX, "trace": _TRACE, "conv": (round(conviction(sigs)[0], 2) if gate else None)}
     ranked = []
     for name, a in sim["acc"].items():
         ranked.append({"key": name, "label": STRATS[name], "bal": round(a["bal"], 2), "pnl": round(a["pnl"], 2),
                        "windows": a["windows"], "win_pct": round(100 * a["wins"] / a["windows"], 1) if a["windows"] else None,
-                       "trades": a["trades"], "mgmt": round(a["mgmt"], 2), "busts": a["busts"],
+                       "trades": a["trades"], "mgmt": round(a["mgmt"], 2), "busts": a["busts"], "trust": round(100 * (a["wins"] + 5.0) / (a["windows"] + 10.0), 1),
                        "open": (a["pos"]["side"] if a["pos"] else None), "now": a.get("now"), "hist": a.get("hist", [])[-8:],
                        "pos": ({"side": a["pos"]["side"], "c": round(a["pos"]["c"], 1), "cost": round(a["pos"]["cost"], 2),
                                 "value": round(a["pos"]["c"] * (bid if a["pos"]["side"] == "UP" else 1 - ask), 2)} if a["pos"] else None)})
@@ -620,10 +679,10 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         if run["status"] == "running":
             c_ = run["curve"]
             if not c_ or now - c_[-1][0] >= 10:
-                c_.append([int(now), round(eq, 2)])
+                c_.append([int(now), round(eq - run.get("added", 0.0), 2)])
             run["curve"] = c_[-500:]
         runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
-                  "live": bool(run.get("live")), "slip_avg": (round(sum(BROKER.slips) / len(BROKER.slips), 2) if (BROKER and BROKER.slips) else None), "warn": run.get("warn"), "halt": run.get("halt") or (rc.get("detail") if rc.get("halted") else None), "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run["start"], 2),
+                  "live": bool(run.get("live")), "slip_avg": (round(sum(BROKER.slips) / len(BROKER.slips), 2) if (BROKER and BROKER.slips) else None), "warn": run.get("warn"), "halt": run.get("halt") or (rc.get("detail") if rc.get("halted") else None), "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "pnl": round(eq - run.get("added", 0.0) - run["start"], 2), "added": round(run.get("added", 0.0), 2), "refills": len(run.get("refills", [])),
                   "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
                   "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,
                   "now": a_.get("now"), "rounds": run["rounds"][-15:], "events": [e for e in sim["events"] if e["s"] == "run"][-40:], "curve": run["curve"][-300:],
