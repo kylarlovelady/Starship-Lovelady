@@ -3,7 +3,7 @@
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
 Kalshi accounts or keys. Standard library only."""
-import json, math, os, re, sys, time, urllib.request
+import calendar, json, math, os, re, sys, time, urllib.request
 import threading
 import xml.etree.ElementTree as ET
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -197,10 +197,29 @@ def get_kalshi():
     ask = to_cents(m, "yes_ask", "yes_ask_dollars")
     last = to_cents(m, "last_price", "last_price_dollars")
     yes = (bid + ask) / 2 if bid is not None and ask is not None else last
-    return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time"),
+    return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time"), "close_ep": close_epoch(m),
             "yes_ask_size": to_cents(m, "yes_ask_size_fp") if False else _num(m.get("yes_ask_size_fp")),
             "yes_bid_size": _num(m.get("yes_bid_size_fp")),
             "strike": m.get("floor_strike") if m.get("floor_strike") is not None else m.get("cap_strike")}
+
+
+def close_epoch(m):
+    """Kalshi close_time like 2026-11-02T18:45:00Z as epoch seconds."""
+    try:
+        return calendar.timegm(time.strptime((m.get("close_time") or "")[:19], "%Y-%m-%dT%H:%M:%S"))
+    except Exception:
+        return None
+
+
+def get_result(ticker):
+    """Kalshi's official result for a finished market: UP, DOWN, or None if not posted yet."""
+    try:
+        d = fetch_json("https://api.elections.kalshi.com/trade-api/v2/markets/" + ticker)
+        m = d.get("market", d)
+        r = m.get("result")
+        return "UP" if r == "yes" else "DOWN" if r == "no" else None
+    except Exception:
+        return None
 
 
 def p_up_model(price, strike, secs_left, history, now):
@@ -366,7 +385,7 @@ def read_calls():
 
 
 def tally(calls):
-    scored = [c for c in calls if c["call"] in ("UP", "DOWN") and c["outcome"] in ("UP", "DOWN")]
+    scored = [c for c in calls if c["call"] in ("UP", "DOWN") and c["outcome"] in ("UP", "DOWN") and c.get("src") == "kalshi"]
     right = sum(1 for c in scored if c["call"] == c["outcome"])
     pn = [c["pnl"] for c in calls if c.get("pnl") is not None]
     return {"calls": len(calls), "scored": len(scored), "right": right,
@@ -393,6 +412,63 @@ def scorecard(calls, now):
             "all": tally(calls), "by_signal": by}
 
 
+# ---------- self-check against Kalshi ----------
+def avg60(hist, t_end):
+    """Average of our price over the 60 seconds before t_end (Kalshi settles on a 60-second average)."""
+    xs = [p for t, p in hist if t_end - 60 < t <= t_end]
+    return sum(xs) / len(xs) if len(xs) >= 3 else None
+
+
+def audit(S, now, win, sync, kal, hist):
+    """At the start of every round: compare Kalshi's target with our own price average and learn the gap.
+    At the end: compare our estimate of the result with Kalshi's official one. The gap is added to our
+    price so numbers on screen stay close to Kalshi's."""
+    A = S.setdefault("audit", {"offset": 0.0, "n": 0, "cur": None, "wait": [], "list": []})
+    A.setdefault("wait", [])
+    cur = A.get("cur")
+    if cur and now >= cur["win"] + WINDOW:                                # END of a round: make our own call first
+        ref = avg60(hist, cur["win"] + WINDOW)
+        cur["est_final"] = None if ref is None else round(ref + cur["off_used"], 2)
+        A["wait"].append(cur); A["cur"] = cur = None
+    for w in list(A["wait"]):                                             # then compare with Kalshi's official result
+        end = w["win"] + WINDOW
+        res = get_result(w["ticker"]) if w.get("ticker") else None
+        if res is not None or now - end >= 150:
+            est = None if w["est_final"] is None else ("UP" if w["est_final"] > w["strike"] else "DOWN")
+            w.update({"result": res, "est_result": est, "match": (est == res) if (est and res) else None,
+                      "margin": None if w["est_final"] is None else round(w["est_final"] - w["strike"], 2)})
+            A["list"] = (A["list"] + [w])[-60:]
+            A["wait"].remove(w)
+    if sync and kal and kal.get("strike") is not None:
+        if cur is None or cur["win"] != win:                              # START of a round
+            ref = avg60(hist, win)
+            if ref is None:
+                ref = avg60(hist, now)
+            if ref is not None:
+                obs = float(kal["strike"]) - ref
+                used = A["offset"]
+                A["offset"] = round(obs if A["n"] == 0 else 0.7 * A["offset"] + 0.3 * obs, 2)
+                A["n"] += 1
+                A["cur"] = {"win": win, "ticker": kal.get("ticker"), "strike": float(kal["strike"]), "our_ref": round(ref, 2),
+                            "gap": round(obs, 2), "off_used": used,
+                            "target_ok": bool(kal.get("close_ep") and abs(kal["close_ep"] - (win + WINDOW)) <= 5)}
+        S.setdefault("tg", {})[str(win)] = float(kal["strike"])
+        for kx in sorted(S["tg"])[:-8]:
+            del S["tg"][kx]
+
+
+def audit_out(S):
+    A = S.get("audit") or {}
+    L = A.get("list", [])
+    ch = [x for x in L if x.get("match") is not None]
+    cur = A.get("cur")
+    return {"offset": A.get("offset", 0.0), "rounds": A.get("n", 0), "checked": len(ch),
+            "match_pct": round(100 * sum(1 for x in ch if x["match"]) / len(ch)) if ch else None,
+            "avg_gap": round(sum(abs(x["gap"]) for x in L) / len(L), 2) if L else None,
+            "cur": ({k: cur[k] for k in ("win", "ticker", "strike", "our_ref", "gap", "target_ok")} if cur else None),
+            "last": [{k: x.get(k) for k in ("win", "strike", "gap", "est_final", "margin", "est_result", "result", "match")} for x in L[-6:]][::-1]}
+
+
 # ---------- one cycle ----------
 def run_cycle(now, S):
     """S = persistent state dict. Returns the market.json dict."""
@@ -400,7 +476,7 @@ def run_cycle(now, S):
     cache = S.setdefault("cache", {})
     price = get_price()
     S.setdefault("history", []).append([now, price])
-    S["history"] = [h for h in S["history"] if h[0] > now - 2400]
+    S["history"] = [h for h in S["history"] if h[0] > now - 3900]
     hist = S["history"]
 
     def due(name):
@@ -455,43 +531,66 @@ def run_cycle(now, S):
 
     # ---- 15-minute windows ----
     win = now // WINDOW * WINDOW
+    kk_ = cache.get("kalshi") or {}
+    sync = bool(kk_ and kk_.get("close_ep") and abs(kk_["close_ep"] - (win + WINDOW)) <= 5 and now - cache.get("kalshi_t", 0) <= 40)
+    if S.get("score_ver") != 2:                      # older calls were scored against our own price, not Kalshi's result
+        for nm in ("calls", "reviews"):
+            try:
+                os.replace(os.path.join(DIR, nm + ".jsonl"), os.path.join(DIR, nm + ".v1.jsonl"))
+            except OSError:
+                pass
+        S["score_ver"] = 2; S["open"] = []
+    audit(S, now, win, sync, kk_, hist)
     done = S.setdefault("done", [])
     for o in list(S.get("open", [])):
-        if now >= o["start"] + WINDOW:
-            S["open"].remove(o)
-            if now - (o["start"] + WINDOW) <= 120:
-                o["price1"] = price
-                o["outcome"] = "UP" if price > o["price0"] else "DOWN" if price < o["price0"] else "FLAT"
-                o["pnl"] = paper_pnl(o)
-                rv = review(o)
-                if rv:
-                    with open(os.path.join(DIR, "reviews.jsonl"), "a") as f:
-                        f.write(json.dumps(rv) + "\n")
-                with open(os.path.join(DIR, "calls.jsonl"), "a") as f:
-                    f.write(json.dumps(o) + "\n")
-    if not any(o["start"] == win for o in S.setdefault("open", [])) and win not in S.get("skipped", []) \
+        end = o["start"] + WINDOW
+        if now >= end:
+            o.setdefault("price1", price)
+            res = get_result(o["ticker"]) if o.get("ticker") else None
+            src = "kalshi"
+            if res is None:
+                if o.get("ticker") and now - end < 150:
+                    continue                          # Kalshi has not posted the result yet; try again next cycle
+                S["open"].remove(o)
+                if now - end > 600:
+                    continue                          # too old to score fairly
+                tgt = o.get("strike") or o["price0"]
+                res, src = ("UP" if o["price1"] > tgt else "DOWN"), "estimated"
+            else:
+                S["open"].remove(o)
+            o["outcome"] = res; o["src"] = src
+            o["pnl"] = paper_pnl(o)
+            rv = review(o)
+            if rv:
+                with open(os.path.join(DIR, "reviews.jsonl"), "a") as f:
+                    f.write(json.dumps(rv) + "\n")
+            with open(os.path.join(DIR, "calls.jsonl"), "a") as f:
+                f.write(json.dumps(o) + "\n")
+    if sync and not any(o["start"] == win for o in S.setdefault("open", [])) and win not in S.get("skipped", []) \
             and now - win <= 90 and win != S.get("last_win"):
         S["open"].append({"start": win, "price0": price, "score": score, "call": lean, "conf": conf,
                           "signals": {k: v["score"] for k, v in avail.items()}, "locked_at": now,
-                          "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct"), "strike": (cache.get("kalshi") or {}).get("strike")})
+                          "ticker": kk_.get("ticker"), "kalshi_yes": kk_.get("yes_pct"), "strike": kk_.get("strike")})
         S["last_win"] = win
     cur = next((o for o in S["open"] if o["start"] == win), None)
 
-    k = cache.get("kalshi") or {}
-    pm = p_up_model(price, k.get("strike"), win + WINDOW - now, hist, now)
+    k = (cache.get("kalshi") or {}) if sync else {}      # only Kalshi data for THIS round counts
+    off = (S.get("audit") or {}).get("offset", 0.0)
+    price_k = round(price + off, 2)                       # our price nudged to match Kalshi's own reference price
+    pm = p_up_model(price_k, k.get("strike"), win + WINDOW - now, [(t, p + off) for t, p in hist], now)
     P = S.setdefault("path", {"win": None, "pts": [], "ky": []})
     if P["win"] != win:
         P.update({"win": win, "pts": [], "ky": []})
     P["pts"].append([now, round(price, 2)])
-    kk = cache.get("kalshi") or {}
+    kk = k
     if kk.get("yes_pct") is not None:
         P["ky"].append([now, round(kk["yes_pct"], 1)])
     simout = None
     try:
         import sim as _sim
-        simout = _sim.step(S, now, win, WINDOW, price, k.get("strike"), pm, cache.get("kalshi"), sigs, score,
+        simout = _sim.step(S, now, win, WINDOW, price_k, k.get("strike"), pm, (cache.get("kalshi") if sync else None), sigs, score,
                            load(os.path.join(DIR, "control.json"), {"on": True}).get("on", True), DIR, C,
-                           load(os.path.join(DIR, "run.json"), {}))
+                           load(os.path.join(DIR, "run.json"), {}), get_result)
     except Exception as e:
         import traceback; traceback.print_exc(); simout = {"error": str(e)[:100]}
     if now - S.get("snap_t", 0) >= 60:
@@ -499,9 +598,9 @@ def run_cycle(now, S):
         with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
             f.write(json.dumps({"t": now, "price": price, "score": score, "conf": conf,
                                 "sig": {k: v["score"] for k, v in avail.items()},
-                                "kalshi_yes": (cache.get("kalshi") or {}).get("yes_pct"),
-                                "yes_bid": (cache.get("kalshi") or {}).get("yes_bid"),
-                                "yes_ask": (cache.get("kalshi") or {}).get("yes_ask"),
+                                "kalshi_yes": k.get("yes_pct"),
+                                "yes_bid": k.get("yes_bid"),
+                                "yes_ask": k.get("yes_ask"),
                                 "strike": k.get("strike"), "p_model": pm, "secs_left": win + WINDOW - now,
                                 "recent_up": (cache.get("recent_markets") or []).count("UP") if cache.get("recent_markets") else None}) + "\n")
     calls = read_calls()
@@ -510,13 +609,15 @@ def run_cycle(now, S):
                "price1": c["price1"], "score": c["score"]} for c in calls[-12:]][::-1]
     order = ["book", "momentum", "whales", "news", "fng", "funding"]
     return {
-        "updated": now, "sample": False, "price": price,
+        "updated": now, "sample": False, "price": price_k, "price_raw": price,
+        "hist": [[t, round(p + off, 2)] for t, p in hist[-390:]], "tg": [[int(w), v] for w, v in sorted((S.get("tg") or {}).items())],
+        "audit": audit_out(S),
         "live": {"score": score, "lean": lean, "confidence": conf},
         "call": ({"start": cur["start"], "end": cur["start"] + WINDOW, "call": cur["call"], "score": cur["score"],
                   "price0": cur["price0"], "locked_at": cur["locked_at"]} if cur else None),
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
-        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": P["pts"][-100:], "ky": P["ky"][-100:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
+        "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-100:]], "ky": P["ky"][-100:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
         "recent_markets": cache.get("recent_markets"), "weights": w,

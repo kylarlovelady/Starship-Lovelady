@@ -39,7 +39,7 @@ def learn(DIR, base_w, now=None):
                     pass
     except FileNotFoundError:
         pass
-    sc = [c for c in calls if c.get("outcome") in ("UP", "DOWN") and c.get("signals")]
+    sc = [c for c in calls if c.get("outcome") in ("UP", "DOWN") and c.get("signals") and c.get("src") == "kalshi"]   # only rounds Kalshi itself settled
     keys = list(base_w)
     rep = {"time": now, "scored": len(sc), "adopted": False, "signals": {}, "notes": []}
     for k in keys:

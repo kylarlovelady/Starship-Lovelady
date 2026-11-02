@@ -36,7 +36,8 @@ a.back{color:var(--mut);text-decoration:none;font-size:14px}
 .toast{position:absolute;left:50%;transform:translateX(-50%);top:-34px;background:#fff;color:#0a1020;border-radius:10px;padding:5px 11px;font-size:13px;font-weight:700;white-space:nowrap;animation:fade 2.4s ease forwards;z-index:5}
 @keyframes fade{0%{opacity:0;transform:translate(-50%,6px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.tap,.tap:after,.toast{animation-duration:.01s}}
-.past{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:8px 14px;margin:0 0 12px;font-size:15px}.past svg{width:13px;height:11px;display:block}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px}.rng{display:flex;gap:12px;font-weight:800;letter-spacing:1px;font-size:14px}.rng button{background:none;border:0;color:#5f6b8e;font:inherit;padding:6px 2px}.rng button.on{color:#fff}
+.past{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:8px 12px;font-size:15px}.past svg{width:13px;height:11px;display:block}
 .big{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
 .go{width:100%;border:0;border-radius:99px;padding:15px;font:inherit;font-weight:800;font-size:18px;background:#3b5bd6;color:#fff;margin-top:10px}.go.stop{background:#3d1117;color:var(--red);border:1px solid #6b1d27}
 select{width:100%;background:#0b1226;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:15px;margin-top:6px}
@@ -59,12 +60,14 @@ select{width:100%;background:#0b1226;color:var(--tx);border:1px solid var(--line
 <div class="card" id="wal"></div>
 <div class="strats" id="strats"></div>
 <div class="hdr"><div class="btc">&#8383;</div><h1>BTC 15 min</h1><div class="cd" id="cd">-</div></div>
-<div class="px"><div><small id="tl">Target</small><b id="target">-</b></div><div><small>Now</small><b id="now">-</b> <span id="diff" class="small"></span></div></div>
-<div class="chart"><svg id="chart" viewBox="0 0 360 190" aria-label="Live price chart"></svg></div>
-<div class="past" id="past"></div>
+<div class="px"><div><small id="tl">Target</small><b id="target">-</b></div><div><small>Now <span id="diff"></span></small><b id="now">-</b></div></div>
+<div class="chart"><svg id="chart" viewBox="0 0 360 250" aria-label="Live price chart"></svg></div>
+<div class="prow"><div class="past" id="past"></div><div class="rng" id="rng"></div></div>
+<div class="small" id="wait" style="display:none;color:#e0a93b;margin:-4px 0 8px">Waiting for Kalshi’s price for this round. It will not trade until it has it.</div>
 <div class="btns" id="btns"><div class="cell"><button class="bt u" id="bu" type="button">Up &middot; <span id="pu">-</span></button><small class="mut" id="mu"></small></div><div class="cell"><button class="bt d" id="bd" type="button">Down &middot; <span id="pd">-</span></button><small class="mut" id="md"></small></div></div>
 <div class="sellrow"><button class="sell" id="bs" type="button">Sell</button></div>
 
+<div class="card"><h2>Accuracy check against Kalshi</h2><div id="audit"></div></div>
 <div class="card"><h2>Its bet right now</h2><div id="pos"></div></div>
 <div class="card"><h2>What it is thinking</h2><div id="think"></div></div>
 <div class="card"><h2>What it is going off</h2><div id="sigs"></div></div>
@@ -85,26 +88,37 @@ function runS(d){var r=d.sim&&d.sim.run;if(!r)return null;return {key:r.strategy
 function MX(m){if(!m||!m.length)return '';return '<div class="small mut" style="margin-top:3px">Looking at: '+m.map(function(x){return esc(x[0])+' <b style="color:var(--tx)">'+x[1]+'%</b>'+(x[0].indexOf('Distance')===0?'':(x[2]>0?' \u25B2':' \u25BC'))}).join(' \u00b7 ')+'</div>'}
 function EVS(sim){return SEL==='run'?((sim.run&&sim.run.events)||[]):(sim.events||[]).filter(function(e){return e.s===SEL})}
 function pick(d){var s=d.sim&&d.sim.strategies||[];var r=d.sim&&d.sim.run;if(SEL==='run'&&r)return runS(d);if(SEL==='run')SEL=null;if(!SEL){if(r&&r.status==='running'&&!pick.seenRun){pick.seenRun=r.id;SEL='run';return runS(d)}var best=s.filter(function(x){return x.key==='signals'})[0]||s[0];SEL=best&&best.key}return s.filter(function(x){return x.key===SEL})[0]}
+var RK='15m',RB={live:120,'5m':300,'15m':900,'1h':3600},MS={live:30,'5m':60,'15m':160,'1h':300};
+function nice(r,n){var raw=Math.max(r,1)/n,m=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/m;return (f<=1?1:f<=2?2:f<=5?5:10)*m}
 function chart(d,S){
- var P=d.path,sim=d.sim,W=360,H=190,L=6,R=54,T=10,B=18,w0=sim.win,w1=w0+900;
- var pts=(P&&P.pts||[]).filter(function(p){return p[0]>=w0}),tg=sim.strike;
- if(!pts.length||!tg){$('chart').innerHTML='<text x="180" y="95" fill="#8a97b8" text-anchor="middle" font-size="13">Collecting this round...</text>';return}
- var vs=pts.map(function(p){return p[1]}).concat([tg]),mn=Math.min.apply(null,vs),mx=Math.max.apply(null,vs),pad=Math.max((mx-mn)*0.25,8);mn-=pad;mx+=pad;
- var X=function(t){return L+(t-w0)/900*(W-L-R)},Y=function(v){return T+(mx-v)/(mx-mn)*(H-T-B)};
- var line=pts.map(function(p,i){return (i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)}).join('');
- var last=pts[pts.length-1],area=line+'L'+X(last[0]).toFixed(1)+' '+(H-B)+'L'+X(pts[0][0]).toFixed(1)+' '+(H-B)+'Z';
- var s='<defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f7931a" stop-opacity=".35"/><stop offset="1" stop-color="#f7931a" stop-opacity="0"/></linearGradient></defs>';
- for(var i=0;i<4;i++){var v=mn+(mx-mn)*i/3,y=Y(v);s+='<line x1="'+L+'" x2="'+(W-R+4)+'" y1="'+y+'" y2="'+y+'" stroke="#1f2a4a" stroke-width="1"/><text x="'+(W-2)+'" y="'+(y+4)+'" fill="#8a97b8" font-size="10" text-anchor="end">$'+Math.round(v).toLocaleString()+'</text>'}
- var ty=Y(tg);s+='<line x1="'+L+'" x2="'+(W-R+4)+'" y1="'+ty+'" y2="'+ty+'" stroke="#e8edf8" stroke-width="1.2" stroke-dasharray="5 4"/><text x="'+(L+4)+'" y="'+(ty-5)+'" fill="#e8edf8" font-size="10" font-weight="700">TARGET</text>';
- s+='<path d="'+area+'" fill="url(#ga)"/><path d="'+line+'" fill="none" stroke="#f7931a" stroke-width="2" stroke-linejoin="round"/>';
- var evs=EVS(sim).filter(function(e){return e.t>=w0});
- evs.forEach(function(e){var p=pts.reduce(function(a,b){return Math.abs(b[0]-e.t)<Math.abs(a[0]-e.t)?b:a});var x=X(e.t),y=Y(p[1]);
+ var sim=d.sim,W=360,H=250,L=0,R=288,T=12,B=10,now=d.updated,t0=now-RB[RK],tg=sim.strike;
+ var pts=(d.hist||[]).filter(function(p){return p[0]>=t0});
+ if(pts.length<2){$('chart').innerHTML='<text x="180" y="125" fill="#8a97b8" text-anchor="middle" font-size="13">Collecting prices...</text>';return}
+ var vs=pts.map(function(p){return p[1]}),segs=[];
+ if(RK==='1h'){(d.tg||[]).forEach(function(g){if(g[0]+900>t0){segs.push(g);vs.push(g[1])}})}else if(tg){vs.push(tg)}
+ var mn=Math.min.apply(null,vs),mx=Math.max.apply(null,vs),span=mx-mn,pad=Math.max(span*.12,1);mn-=pad;mx+=pad;span=mx-mn;
+ if(span<MS[RK]){var mid=(mn+mx)/2;mn=mid-MS[RK]/2;mx=mid+MS[RK]/2;span=MS[RK]}
+ var step=nice(span,4),X=function(t){return L+(t-t0)/RB[RK]*(R-L)},Y=function(v){return T+(mx-v)/(mx-mn)*(H-T-B)};
+ var s='<defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f7931a" stop-opacity=".38"/><stop offset="1" stop-color="#f7931a" stop-opacity="0"/></linearGradient></defs>';
+ for(var v=Math.ceil(mn/step)*step;v<=mx;v+=step){var y=Y(v);s+='<line x1="0" x2="'+R+'" y1="'+y+'" y2="'+y+'" stroke="#1f2a4a"/><text x="'+(W-6)+'" y="'+(y+4)+'" fill="#8a97b8" font-size="11" text-anchor="end">$'+Math.round(v).toLocaleString()+'</text>'}
+ if(RK==='1h'){for(var b=Math.ceil(t0/900)*900;b<now;b+=900){s+='<line x1="'+X(b)+'" x2="'+X(b)+'" y1="'+T+'" y2="'+(H-B)+'" stroke="#18213f"/>'}
+  segs.forEach(function(g){var xa=X(Math.max(g[0],t0)),xb=X(Math.min(g[0]+900,now)),y=Y(g[1]);s+='<line x1="'+xa+'" x2="'+xb+'" y1="'+y+'" y2="'+y+'" stroke="#e8edf8" stroke-width="1.2" stroke-dasharray="4 3"/>'})}
+ else if(tg){var ty=Y(tg);s+='<line x1="0" x2="124" y1="'+ty+'" y2="'+ty+'" stroke="#8a97b8"/><line x1="170" x2="'+R+'" y1="'+ty+'" y2="'+ty+'" stroke="#8a97b8"/><text x="147" y="'+(ty+4)+'" fill="#8a97b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">TARGET</text>'}
+ var line=pts.map(function(p,i){return (i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)}).join(''),last=pts[pts.length-1];
+ s+='<path d="'+line+'L'+X(last[0]).toFixed(1)+' '+(H-B)+'L'+X(pts[0][0]).toFixed(1)+' '+(H-B)+'Z" fill="url(#ga)"/><path d="'+line+'" fill="none" stroke="#f7931a" stroke-width="2" stroke-linejoin="round"/>';
+ EVS(sim).filter(function(e){return e.t>=t0}).forEach(function(e){var p=pts.reduce(function(a,b){return Math.abs(b[0]-e.t)<Math.abs(a[0]-e.t)?b:a});var x=X(e.t),y=Y(p[1]);
   if(e.a==='SELL')s+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="#fff" stroke="#080d1a" stroke-width="1.5"/>';
   else if(e.side==='UP')s+='<path d="M'+x+' '+(y-7)+'L'+(x+6)+' '+(y+4)+'L'+(x-6)+' '+(y+4)+'Z" fill="#0fd68f" stroke="#080d1a" stroke-width="1.2"/>';
   else s+='<path d="M'+x+' '+(y+7)+'L'+(x+6)+' '+(y-4)+'L'+(x-6)+' '+(y-4)+'Z" fill="#ff4d57" stroke="#080d1a" stroke-width="1.2"/>'});
- s+='<circle cx="'+X(last[0])+'" cy="'+Y(last[1])+'" r="4.5" fill="#f7931a" stroke="#fff" stroke-width="1.5"/>';
- s+='<text x="'+L+'" y="'+(H-4)+'" fill="#8a97b8" font-size="10">'+tm2(w0)+'</text><text x="'+(W-R)+'" y="'+(H-4)+'" fill="#8a97b8" font-size="10" text-anchor="end">'+tm2(w1)+'</text>';
+ s+='<circle cx="'+X(last[0])+'" cy="'+Y(last[1])+'" r="4.5" fill="#f7931a" stroke="#101830" stroke-width="1.5"/>';
  $('chart').innerHTML=s}
+function rngs(){$('rng').innerHTML=[['live','LIVE'],['5m','5M'],['15m','15M'],['1h','1H']].map(function(x){return '<button type="button" data-r="'+x[0]+'" class="'+(RK===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('');Array.prototype.forEach.call($('rng').children,function(b){b.onclick=function(){RK=b.dataset.r;rngs();if(D)chart(D,null)}})}
+function audit(d){var a=d.audit;if(!a){$('audit').innerHTML='<div class="mut small">Starts with the next round.</div>';return}
+ var c=a.cur,row=function(l,v){return '<div class="row small" style="padding:3px 0"><span class="mut">'+l+'</span><b>'+v+'</b></div>'};
+ $('audit').innerHTML='<div class="small mut" style="margin-bottom:6px">At the start of every round it checks its target against Kalshi’s. At the end it makes its own call on the result, then compares with Kalshi’s official one, and corrects its price by the gap it measured.</div>'
+ +(c?row('Round start check',c.target_ok?'<span class="up">target matches Kalshi ✓</span>':'<span class="dn">target off ✗</span>')+row('Kalshi’s target',mo(c.strike))+row('Our own price average at the start',mo(c.our_ref))+row('Gap measured this round',sg(c.gap)):'')
+ +row('Price correction now applied',sg(a.offset))+row('Rounds checked',a.checked+' of '+a.rounds)+row('Our result matched Kalshi’s',a.match_pct==null?'-':a.match_pct+'%')
+ +(a.last&&a.last.length?'<div style="margin-top:6px">'+a.last.map(function(x){return '<div class="row small" style="padding:3px 0"><span class="mut">'+tm2(x.win)+'</span><span>ours '+(x.est_result||'-')+' · Kalshi '+(x.result||'-')+'</span><b class="'+(x.match?'up':x.match===false?'dn':'')+'">'+(x.match?'✓':x.match===false?'✗':'-')+'</b></div>'}).join('')+'</div>':'')}
 function tap(kind,label){var host=kind==='u'?$('bu'):kind==='d'?$('bd'):$('bs');var r=host.getBoundingClientRect(),pr=$('btns').parentNode.getBoundingClientRect();
  var t=document.createElement('div');t.className='tap';t.style.position='fixed';t.style.left=(r.left+r.width/2)+'px';t.style.top=(r.top+r.height/2)+'px';document.body.appendChild(t);
  var a=document.createElement('div');a.className='toast';a.style.position='fixed';a.style.left=(r.left+r.width/2)+'px';a.style.top=(r.top-38)+'px';a.textContent=label;document.body.appendChild(a);
@@ -117,8 +131,8 @@ function render(d){
  $('strats').innerHTML=(sim.run?'<button class="sb'+(SEL==='run'?' on':'')+'" data-k="run" type="button">My run <b style="color:'+(sim.run.pnl>=0?'var(--grn)':'var(--red)')+'">'+sg(sim.run.pnl)+'</b></button>':'')+sim.strategies.map(function(x){return '<button class="sb'+(x.key===SEL?' on':'')+'" data-k="'+x.key+'" type="button">'+esc(x.label.replace('Control: open once, hold to the end','Control (hold)'))+' <b style="color:'+(x.pnl>=0?'var(--grn)':'var(--red)')+'">'+(x.pnl>=0?'+':'-')+'$'+Math.abs(x.pnl).toFixed(0)+'</b></button>'}).join('');
  Array.prototype.forEach.call(document.querySelectorAll('.sb'),function(b){b.onclick=function(){SEL=b.dataset.k;queue=[];render(D)}});
  var left=Math.max(0,sim.win+900-now);$('cd').textContent=Math.floor(left/60)+':'+('0'+Math.floor(left%60)).slice(-2);
- $('target').textContent=sim.strike?mo(sim.strike):'-';$('now').textContent=mo(d.price);
- if(sim.strike){var df=d.price-sim.strike;$('diff').textContent=(df>=0?'▲ ':'▼ ')+mo(Math.abs(df));$('diff').className='small '+(df>=0?'up':'dn')}
+ $('tl').textContent=new Date((sim.win+900)*1000).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'})+' target';$('target').textContent=sim.strike?mo(sim.strike):'-';$('now').textContent=mo(d.price);$('wait').style.display=sim.live?'none':'block';audit(d);
+ if(sim.strike){var df=d.price-sim.strike;$('diff').textContent=(df>=0?'▲ ':'▼ ')+mo(Math.abs(df));$('diff').className=(df>=0?'up':'dn')}
  var ya=sim.yes[1],yb=sim.yes[0],mid=(ya+yb)/2;
  $('pu').textContent=(mid*100).toFixed(1)+'%';$('pd').textContent=((1-mid)*100).toFixed(1)+'%';$('mu').textContent=(1/ya).toFixed(2)+'x if right';$('md').textContent=(1/(1-yb)).toFixed(2)+'x if right';
  chart(d,S);
@@ -154,5 +168,5 @@ function wallet(r){var el=$('wal'),on=r&&r.status==='running';
   $('ws').onchange=function(){picked=$('ws').value};
   $('gg').onclick=function(){$('gg').disabled=true;$('gg').textContent='Starting...';post({start:true,strategy:picked,amount:100}).then(function(j){if(j.error)throw 0;pending=1;SEL='run';$('wm').textContent='Started. It joins the current round within a few seconds.'}).catch(function(){$('wm').textContent='Could not reach the bot. Try again in a minute.';$('gg').disabled=false;$('gg').textContent='Start with $100'})}}}
 function load(){fetch((location.hash==='#sample'?'market.sample.json':'market.json')+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(render).catch(function(){if(!D)$('msg').style.display='block'})}
-load();setInterval(load,3000);setInterval(function(){if(D&&D.sim){var left=Math.max(0,D.sim.win+900-Date.now()/1000);$('cd').textContent=Math.floor(left/60)+':'+('0'+Math.floor(left%60)).slice(-2)}},1000);
+rngs();load();setInterval(load,3000);setInterval(function(){if(D&&D.sim){var left=Math.max(0,D.sim.win+900-Date.now()/1000);$('cd').textContent=Math.floor(left/60)+':'+('0'+Math.floor(left%60)).slice(-2)}},1000);
 </script></body></html>
