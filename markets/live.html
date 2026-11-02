@@ -58,6 +58,7 @@ a.back{color:var(--mut);text-decoration:none;font-size:14px}
 <div class="btns" id="btns"><div class="cell"><button class="bt u" id="bu" type="button">Up &middot; <span id="pu">-</span></button><small class="mut" id="mu"></small></div><div class="cell"><button class="bt d" id="bd" type="button">Down &middot; <span id="pd">-</span></button><small class="mut" id="md"></small></div></div>
 <div class="sellrow"><button class="sell" id="bs" type="button">Sell</button></div>
 
+<div class="card"><h2>Kalshi last 10 results</h2><div id="last10"></div></div>
 <div class="card"><h2>Its bet right now</h2><div id="pos"></div></div>
 <div class="card"><h2>What it is thinking</h2><div id="think"></div></div>
 <div class="card"><h2>What it is going off</h2><div id="sigs"></div></div>
@@ -112,6 +113,7 @@ function render(d){
  var ya=sim.yes[1],yb=sim.yes[0],mid=(ya+yb)/2;
  $('pu').textContent=(mid*100).toFixed(1)+'%';$('pd').textContent=((1-mid)*100).toFixed(1)+'%';$('mu').textContent=(1/ya).toFixed(2)+'x if right';$('md').textContent=(1/(1-yb)).toFixed(2)+'x if right';
  chart(d,S);
+ var rm=d.recent_markets;$('last10').innerHTML=rm&&rm.length?'<div style="display:flex;gap:4px">'+rm.slice().reverse().map(function(x){var u=x==='UP';return '<span style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:12px;font-weight:800;background:'+(u?'#0c3a2c':'#3d1117')+';color:'+(u?'var(--grn)':'var(--red)')+'">'+(u?'\u25B2':'\u25BC')+'</span>'}).join('')+'</div><div class="small mut" style="margin-top:6px">Oldest on the left, newest on the right. Up '+rm.filter(function(x){return x==='UP'}).length+', Down '+rm.filter(function(x){return x!=='UP'}).length+'.</div>':'<div class="mut small">Waiting for Kalshi results.</div>';
  if(S){
   var pos=S.pos;
   $('pos').innerHTML=pos?'<div class="row"><b style="font-size:20px;color:'+(pos.side==='UP'?'var(--grn)':'var(--red)')+'">'+pos.side+'</b><span class="small mut">'+pos.c+' contracts</span></div><div class="row" style="margin-top:6px"><span class="mut">Paid</span><b>'+mo(pos.cost)+'</b></div><div class="row"><span class="mut">Worth if sold now</span><b>'+mo(pos.value)+'</b></div><div class="row"><span class="mut">Gain or loss now</span><b style="color:'+(pos.value-pos.cost>=0?'var(--grn)':'var(--red)')+'">'+sg(pos.value-pos.cost)+'</b></div>':'<div class="mut">No open bet right now.</div>';
