@@ -3,7 +3,7 @@ Reads the logs the agent already writes. Nothing here trades or changes any sett
 import json, math, os, time
 
 LAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-       "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+       "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
 
 
 def _rows(path):
@@ -103,7 +103,7 @@ def build(DIR, now=None):
             lr = json.load(f)
     except Exception:
         pass
-    LABS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+    LABS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves", "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
     rep["trust"] = [dict(key=k, label=LABS.get(k, k), text=trust_text(LABS.get(k, k), g), **g) for k, g in ((lr or {}).get("signals") or {}).items()]
     rep["learn_notes"] = (lr or {}).get("notes", [])
     rep["learn_scored"] = (lr or {}).get("scored", 0)

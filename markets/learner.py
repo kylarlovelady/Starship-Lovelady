@@ -108,7 +108,7 @@ MIN_N = 20      # no changes to a source until it has been tested this many time
 STEP = 0.03     # largest move of any one weight per update
 
 LAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-       "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+       "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
 
 
 def online(DIR, base_w, now=None):

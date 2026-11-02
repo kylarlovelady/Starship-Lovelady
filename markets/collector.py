@@ -15,10 +15,10 @@ OUT = os.environ.get("MARKET_OUT", os.path.join(HOME, "crew-web", "market.json")
 WINDOW = 900            # 15 minutes
 CYCLE = 5               # seconds between looks (numbers move fast)
 THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
-WEIGHTS = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
+WEIGHTS = {"book": 0.25, "momentum": 0.20, "whales": 0.20, "bigtrades": 0.15, "news": 0.10, "fng": 0.05, "funding": 0.05}
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-          "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
-EVERY = {"whales": 60, "news": 300, "fng": 3600, "funding": 120, "kalshi": 5, "recent": 300, "xcheck": 30}
+          "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+EVERY = {"whales": 60, "bigtrades": 20, "news": 300, "fng": 3600, "funding": 120, "kalshi": 5, "recent": 300, "xcheck": 30}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
 BULL = ["surge", "rally", "soar", "jump", "record high", "all-time high", "approve", "approval",
@@ -30,8 +30,11 @@ BEAR = ["crash", "plunge", "drop", "falls", "slump", "hack", "exploit", "ban", "
 
 
 # ---------- fetching (monkeypatched in tests) ----------
-def fetch(url, timeout=10):
-    req = urllib.request.Request(url, headers={"User-Agent": "starship-market-agent/1.0"})
+BROWSER_UA = "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
+
+
+def fetch(url, timeout=10, ua=None):
+    req = urllib.request.Request(url, headers={"User-Agent": ua or "starship-market-agent/1.0"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
 
@@ -89,21 +92,86 @@ def sig_momentum(history, now):
     return clamp(s), txt
 
 
-def sig_whales(now):
-    key = os.environ.get("WHALE_ALERT_KEY")
-    if not key:
-        raise ValueError("no Whale Alert key set")
-    d = fetch_json("https://api.whale-alert.io/v1/transactions?api_key=%s&min_value=10000000&currency=btc&start=%d" % (key, now - 1800))
+EXCHANGES = ("binance", "coinbase", "kraken", "bitfinex", "okx", "okex", "bybit", "huobi", "htx", "kucoin", "gemini", "bitstamp",
+             "crypto.com", "bitget", "gate.io", "mexc", "upbit", "bithumb", "deribit", "robinhood", "bitflyer", "poloniex", "bitmex", "bullish", "bitso")
+
+
+def parse_whale_page(html_text, now, window=2700):
+    """Whale Alert's public Telegram page: big BTC transfers with who sent and who received.
+    Money moving ONTO an exchange leans bearish (about to sell); OFF an exchange leans bullish (being held)."""
+    import html as _h
     inflow = outflow = 0.0
-    for t in d.get("transactions", []):
-        fo, to = (t.get("from") or {}).get("owner_type"), (t.get("to") or {}).get("owner_type")
-        usd = float(t.get("amount_usd", 0))
-        if to == "exchange" and fo != "exchange":
-            inflow += usd
-        elif fo == "exchange" and to != "exchange":
-            outflow += usd
+    n_in = n_out = 0
+    for blk in html_text.split("tgme_widget_message_wrap")[1:]:
+        m = re.search(r'<time[^>]*datetime="([^"]+)"', blk)
+        tx = re.search(r'tgme_widget_message_text[^>]*>(.*?)</div>', blk, re.S)
+        if not m or not tx:
+            continue
+        try:
+            ts = parsedate_iso(m.group(1))
+        except Exception:
+            continue
+        if now - ts > window or ts > now + 60:
+            continue
+        text = _h.unescape(re.sub(r"<[^>]+>", " ", tx.group(1)))
+        text = re.sub(r"\s+", " ", text)
+        mm = re.search(r"([\d,\.]+)\s*[#$]?BTC\s*\(([\d,]+)\s*USD\)\s*transferred from\s+(.+?)\s+to\s+(.+?)\s*(?:Details|$)", text)
+        if not mm:
+            continue
+        usd = float(mm.group(2).replace(",", ""))
+        fo, to = mm.group(3).lower(), mm.group(4).lower()
+        fo_ex = any(x in fo for x in EXCHANGES)
+        to_ex = any(x in to for x in EXCHANGES)
+        if to_ex and not fo_ex:
+            inflow += usd; n_in += 1
+        elif fo_ex and not to_ex:
+            outflow += usd; n_out += 1
+    return inflow, outflow, n_in, n_out
+
+
+def parsedate_iso(s):
+    import calendar
+    s = s.strip()
+    off = 0
+    mo = re.search(r"([+-])(\d\d):(\d\d)$", s)
+    if mo:
+        off = (1 if mo.group(1) == "+" else -1) * (int(mo.group(2)) * 3600 + int(mo.group(3)) * 60)
+        s = s[:mo.start()]
+    s = s.replace("Z", "")[:19]
+    return calendar.timegm(time.strptime(s, "%Y-%m-%dT%H:%M:%S")) - off
+
+
+def sig_whales(now):
+    """Free: Whale Alert's public Telegram page (no key). Confirmed big BTC transfers, shortly after they land."""
+    body = fetch("https://t.me/s/whale_alert_io", 10, BROWSER_UA)
+    inflow, outflow, n_in, n_out = parse_whale_page(body, now)
     net = outflow - inflow
-    return clamp(math.tanh(net / 50e6)), "last 30 min: $%.0fM moved onto exchanges, $%.0fM off" % (inflow / 1e6, outflow / 1e6)
+    detail = "last 45 min: $%.0fM moved onto exchanges (%d), $%.0fM off (%d)" % (inflow / 1e6, n_in, outflow / 1e6, n_out)
+    if n_in + n_out == 0:
+        detail = "no big BTC transfers to or from exchanges in the last 45 min"
+    return clamp(math.tanh(net / 50e6)), detail
+
+
+def sig_bigtrades(now):
+    """Free: Coinlobster's public feed of very large BTC trades on exchanges, with buy or sell on each."""
+    d = json.loads(fetch("https://coinlobster.com/api/public/crypto-whales", 10, BROWSER_UA))
+    buy = sell = 0.0
+    nb = ns = 0
+    for t in d.get("whales", []):
+        if not str(t.get("pair", "")).upper().startswith("BTC/"):
+            continue
+        ts = t.get("timestamp", 0) / 1000.0
+        if now - ts > 300 or ts > now + 60:
+            continue
+        q = float(t.get("quantity_quote") or 0)
+        if t.get("isBuy"):
+            buy += q; nb += 1
+        else:
+            sell += q; ns += 1
+    net = buy - sell
+    if nb + ns == 0:
+        return 0.0, "no giant BTC trades in the last 5 min"
+    return clamp(math.tanh(net / 10e6)), "last 5 min: $%.1fM of giant buys (%d), $%.1fM of giant sells (%d)" % (buy / 1e6, nb, sell / 1e6, ns)
 
 
 def lex(title):
@@ -556,6 +624,7 @@ def run_cycle(now, S):
     run("book", lambda: sig_book(price))
     run("momentum", lambda: sig_momentum([tuple(h) for h in hist], now))
     run("whales", lambda: sig_whales(now), True)
+    run("bigtrades", lambda: sig_bigtrades(now), True)
     run("news", lambda: sig_news(now, cache), True)
     run("fng", sig_fng, True)
     run("funding", sig_funding, True)
@@ -678,7 +747,7 @@ def run_cycle(now, S):
     sc = scorecard(calls, now)
     recent = [{"start": c["start"], "call": c["call"], "outcome": c["outcome"], "price0": c["price0"],
                "price1": c["price1"], "score": c["score"]} for c in calls[-12:]][::-1]
-    order = ["book", "momentum", "whales", "news", "fng", "funding"]
+    order = ["book", "momentum", "whales", "bigtrades", "news", "fng", "funding"]
     return {
         "updated": now, "sample": False, "price": price_k, "price_raw": price,
         "hist": [[t, round(p + off, 2)] for t, p in hist[-800:]], "tg": [[int(w), v] for w, v in sorted((S.get("tg") or {}).items())],

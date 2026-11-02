@@ -50,13 +50,13 @@ def prob_up(name, pm, sigs, score, mood):
     elif name == "trend":
         shift = 1.5 * g("momentum")
     elif name == "flow":
-        shift = 0.6 * g("book") + 0.4 * g("whales")
+        shift = 0.5 * g("book") + 0.25 * g("whales") + 0.25 * g("bigtrades")
     else:
         shift = mood
     return sigm(base + shift)
 
 
-DEFW = {"book": 0.30, "momentum": 0.20, "whales": 0.25, "news": 0.15, "fng": 0.05, "funding": 0.05}
+DEFW = {"book": 0.25, "momentum": 0.20, "whales": 0.20, "bigtrades": 0.15, "news": 0.10, "fng": 0.05, "funding": 0.05}
 _W = dict(DEFW)
 _MIX = []
 _TRACE = []
@@ -77,7 +77,7 @@ def mix(name, pm, sigs, score, mood):
     elif name == "trend":
         terms.append((SIGLAB["momentum"], 1.5 * g("momentum")))
     elif name == "flow":
-        terms += [(SIGLAB["book"], 0.6 * g("book")), (SIGLAB["whales"], 0.4 * g("whales"))]
+        terms += [(SIGLAB["book"], 0.5 * g("book")), (SIGLAB["whales"], 0.25 * g("whales")), (SIGLAB["bigtrades"], 0.25 * g("bigtrades"))]
     elif name == "mood":
         a, b = 0.7 * g("news"), 0.3 * g("fng")
         tot = abs(a) + abs(b)
@@ -92,7 +92,7 @@ def mix(name, pm, sigs, score, mood):
 
 def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
     k_of = {"Order book": "book", "Price momentum": "momentum", "Whale moves": "whales", "News vibe": "news",
-            "Fear & Greed": "fng", "Funding rate": "funding"}
+            "Fear & Greed": "fng", "Funding rate": "funding", "Big exchange trades": "bigtrades"}
     L = []
     if strike:
         gap = price - strike
@@ -258,7 +258,7 @@ def resolve_pending(sim, now, price, result_fn, DIR):
 
 
 SIGLAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
-          "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
+          "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate"}
 
 
 def newwin(win, sigs):
