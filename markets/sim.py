@@ -561,6 +561,17 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             b_ = BROKER.balance(0)
             if b_ is not None:
                 a_["bal"] = b_
+        if run.get("live") and BROKER and run["status"] == "running" and sim.get("ticker") and now - sim.get("ex_t", 0) >= 20:
+            sim["ex_t"] = now                              # double-check our books against Kalshi's own positions
+            ex = BROKER.exposure(sim["ticker"])
+            mine = a_["pos"]["cost"] if a_["pos"] else 0.0
+            if ex is not None:
+                if mine > 1.0 and ex < 0.05:
+                    run["warn"] = "The agent thinks it holds a bet but Kalshi shows none. Check your Kalshi account."
+                elif ex > 1.0 and not a_["pos"]:
+                    run["warn"] = "Kalshi shows an open bet of $%.2f that the agent is not tracking. Check your Kalshi account." % ex
+                else:
+                    run["warn"] = None
         eq = run_equity(a_, bid, ask)
         infl = 0.0                                        # last round's bet still waiting for Kalshi's official result
         for pd_ in sim.get("pending", []):

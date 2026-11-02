@@ -128,7 +128,9 @@ class Broker:
         if n < 1 or not ticker:
             return 0
         # Kalshi prices can be fractions of a cent. Round in the direction that still crosses the book: a bid up, an ask down.
-        pr = math.ceil(pr * 100 - 1e-9) / 100.0 if ks == "bid" else math.floor(pr * 100 + 1e-9) / 100.0
+        # plus 2 cents of slack so a quote a few seconds old still fills. Kalshi fills at the book price, not our limit (the test showed
+        # a 55 cent limit filling at 54), so the slack costs nothing unless the market really moved.
+        pr = (math.ceil(pr * 100 - 1e-9) + 2) / 100.0 if ks == "bid" else (math.floor(pr * 100 + 1e-9) - 2) / 100.0
         pr = min(0.99, max(0.01, pr))
         rec = {"t": int(time.time()), "action": action, "side": side, "ticker": ticker, "book_side": ks, "count": n, "price": pr}
         try:
@@ -148,6 +150,21 @@ class Broker:
             return int(float(resp.get("fill_count") or 0) + 1e-9)
         except Exception:
             return 0
+
+    def exposure(self, ticker):
+        """Dollars Kalshi says are at risk in this market's event, or None if unreadable. Used to double-check our own books."""
+        try:
+            st, p = self.c.positions()
+            if st != 200:
+                return None
+            ev = ticker.rsplit("-", 1)[0]
+            tot = 0.0
+            for e in p.get("event_positions", []):
+                if e.get("event_ticker") == ev:
+                    tot += abs(float(e.get("event_exposure_dollars") or 0))
+            return tot
+        except Exception:
+            return None
 
     def cancel_all(self):
         try:
