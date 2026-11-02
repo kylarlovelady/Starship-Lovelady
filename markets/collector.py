@@ -96,7 +96,7 @@ EXCHANGES = ("binance", "coinbase", "kraken", "bitfinex", "okx", "okex", "bybit"
              "crypto.com", "bitget", "gate.io", "mexc", "upbit", "bithumb", "deribit", "robinhood", "bitflyer", "poloniex", "bitmex", "bullish", "bitso")
 
 
-def parse_whale_page(html_text, now, window=2700):
+def parse_whale_page(html_text, now, window=7200, half=2700):
     """Whale Alert's public Telegram page: big BTC transfers with who sent and who received.
     Money moving ONTO an exchange leans bearish (about to sell); OFF an exchange leans bullish (being held)."""
     import html as _h
@@ -118,7 +118,7 @@ def parse_whale_page(html_text, now, window=2700):
         mm = re.search(r"([\d,\.]+)\s*[#$]?BTC\s*\(([\d,]+)\s*USD\)\s*transferred from\s+(.+?)\s+to\s+(.+?)\s*(?:Details|$)", text)
         if not mm:
             continue
-        usd = float(mm.group(2).replace(",", ""))
+        usd = float(mm.group(2).replace(",", "")) * (0.5 ** ((now - ts) / half))
         fo, to = mm.group(3).lower(), mm.group(4).lower()
         fo_ex = any(x in fo for x in EXCHANGES)
         to_ex = any(x in to for x in EXCHANGES)
@@ -146,9 +146,9 @@ def sig_whales(now):
     body = fetch("https://t.me/s/whale_alert_io", 10, BROWSER_UA)
     inflow, outflow, n_in, n_out = parse_whale_page(body, now)
     net = outflow - inflow
-    detail = "last 45 min: $%.0fM moved onto exchanges (%d), $%.0fM off (%d)" % (inflow / 1e6, n_in, outflow / 1e6, n_out)
+    detail = "last 2 hours (recent counts more): $%.0fM moved onto exchanges (%d), $%.0fM off (%d)" % (inflow / 1e6, n_in, outflow / 1e6, n_out)
     if n_in + n_out == 0:
-        detail = "no big BTC transfers to or from exchanges in the last 45 min"
+        detail = "no big BTC transfers to or from exchanges in the last 2 hours"
     return clamp(math.tanh(net / 50e6)), detail
 
 
@@ -161,17 +161,17 @@ def sig_bigtrades(now):
         if not str(t.get("pair", "")).upper().startswith("BTC/"):
             continue
         ts = t.get("timestamp", 0) / 1000.0
-        if now - ts > 300 or ts > now + 60:
+        if now - ts > 1800 or ts > now + 60:
             continue
-        q = float(t.get("quantity_quote") or 0)
+        q = float(t.get("quantity_quote") or 0) * (0.5 ** ((now - ts) / 600.0))
         if t.get("isBuy"):
             buy += q; nb += 1
         else:
             sell += q; ns += 1
     net = buy - sell
     if nb + ns == 0:
-        return 0.0, "no giant BTC trades in the last 5 min"
-    return clamp(math.tanh(net / 10e6)), "last 5 min: $%.1fM of giant buys (%d), $%.1fM of giant sells (%d)" % (buy / 1e6, nb, sell / 1e6, ns)
+        return 0.0, "no giant BTC trades in the last 30 min"
+    return clamp(math.tanh(net / 15e6)), "last 30 min (recent counts more): $%.1fM of giant buys (%d), $%.1fM of giant sells (%d)" % (buy / 1e6, nb, sell / 1e6, ns)
 
 
 def lex(title):
