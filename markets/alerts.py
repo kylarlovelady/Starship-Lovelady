@@ -71,3 +71,72 @@ def send(msg, title="Market agent", wait=False):
     if wait:
         return _send(title, msg)
     threading.Thread(target=_send, args=(title, msg), daemon=True).start()
+
+
+# ---------- Dynamic Island / Live Activity (real-money session only, your phone only) ----------
+_isl = {"t": 0.0, "sig": None, "tag": None, "ended": False, "hb": 0.0, "t0": 0.0, "warned": False}
+
+
+def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, clear=False):
+    if clear:
+        body = {"message": "clear_notification", "data": {"tag": tag}}
+    else:
+        data = {"tag": tag, "live_update": True, "critical_text": crit, "notification_icon": "mdi:record-circle",
+                "notification_icon_color": color, "progress_bar_color": color}
+        if progress:
+            data["progress"], data["progress_max"] = progress
+        body = {"title": title, "message": msg, "data": data}
+    try:
+        _call("%s/api/services/notify/%s" % (base, dev), token, body)
+        _log("ISLAND %s: %s | %s" % ("cleared" if clear else "updated", title, msg))
+    except Exception as ex:
+        _log("ISLAND NOT SENT (%s)" % str(ex)[:80])
+
+
+def island(run, now=None):
+    """Keep one Live Activity (lock screen + Dynamic Island) in step with the REAL-money session. Sends only to the phone named
+    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates on change, plus a heartbeat about once a minute."""
+    try:
+        now = now or time.time()
+        e = _env(); token = e.get("HA_TOKEN"); dev = e.get("HA_LIVE_DEVICE"); base = (e.get("HA_URL") or "http://127.0.0.1:8123").rstrip("/")
+        live = bool(run and run.get("live"))
+        if not token or not dev:
+            if live and not _isl["warned"]:
+                _isl["warned"] = True; _log("ISLAND skipped: HA_LIVE_DEVICE is not set (run setisland.sh)")
+            return
+        running = live and run.get("status") == "running"
+        if not live or (not running and not run.get("halt")):
+            if _isl["tag"] and not _isl["ended"]:
+                tag = _isl["tag"]; _isl.update({"tag": None, "sig": None, "ended": False})
+                threading.Thread(target=_activity, args=(token, base, dev, tag, "", "", "", "", None, True), daemon=True).start()
+            return
+        rid = run.get("id")
+        if _isl.get("rid") != rid:                                  # a different session: forget the old one
+            if _isl["tag"] and not _isl["ended"]:
+                threading.Thread(target=_activity, args=(token, base, dev, _isl["tag"], "", "", "", "", None, True), daemon=True).start()
+            _isl.update({"rid": rid, "tag": None, "sig": None, "ended": False, "t0": now})
+        n = int((now - _isl["t0"]) // 27000)
+        tag = "kalshi_live_%s_%d" % (rid or "x", n)
+        if _isl["tag"] and _isl["tag"] != tag and not _isl["ended"]:  # Apple ends an activity after about 8 hours: start a fresh one
+            threading.Thread(target=_activity, args=(token, base, dev, _isl["tag"], "", "", "", "", None, True), daemon=True).start()
+        halted = bool(run.get("halt")) or not running
+        eq = run.get("equity") if run.get("equity") is not None else run.get("bal", 0)
+        pos = run.get("pos")
+        sig = (round(eq, 1), run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted)
+        if halted and _isl["ended"] and _isl["tag"] == tag:
+            return                                                  # the HALTED notice was already sent
+        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 60:
+            return
+        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 15 and not halted:
+            return
+        _isl.update({"tag": tag, "sig": sig, "t": now, "hb": now, "ended": halted})
+        pnl = run.get("pnl") or 0.0
+        msg = "%s%.2f this session · %s/%s rounds won" % ("+$" if pnl >= 0 else "-$", abs(pnl), run.get("wins", 0), run.get("windows", 0))
+        if pos:
+            msg += " · open: %s $%.2f" % (pos["side"], pos["cost"])
+        title = ("HALTED · $%.2f" if halted else "LIVE · $%.2f") % eq
+        color = "#8e8e93" if halted else "#ff4d57"
+        rs = int(now % 900)
+        threading.Thread(target=_activity, args=(token, base, dev, tag, title, msg, ("HALT" if halted else "$%d" % round(eq)), color, (rs, 900)), daemon=True).start()
+    except Exception:
+        pass

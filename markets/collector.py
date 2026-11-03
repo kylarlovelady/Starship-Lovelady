@@ -893,6 +893,11 @@ def run_cycle(now, S):
                            load(os.path.join(DIR, "run.json"), {}), get_result)
     except Exception as e:
         import traceback; traceback.print_exc(); simout = {"error": str(e)[:100]}
+    try:
+        import alerts as _al
+        _al.island((simout or {}).get("run") if isinstance(simout, dict) else None, now)
+    except Exception:
+        pass
     if now - S.get("snap_t", 0) >= 60:
         S["snap_t"] = now
         with open(os.path.join(DIR, "snapshots.jsonl"), "a") as f:
