@@ -121,6 +121,28 @@ def f_bybit():
     return float(_get("https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT")["result"]["list"][0]["lastPrice"])
 
 
+def f_ktrades(get_ticker):
+    """Every trade on the open Kalshi market (public tape): price, size and which side was the aggressor. Only trades not seen before are kept.
+    This is what lets us replay a resting order and ask whether it would have filled, and what the price did afterwards."""
+    seen = set()
+    def go():
+        tk = get_ticker()
+        if not tk:
+            raise ValueError("no ticker")
+        d = _get("https://api.elections.kalshi.com/trade-api/v2/markets/trades?ticker=%s&limit=100" % tk, 4)
+        out = []
+        for x in d.get("trades", []):
+            tid = x.get("trade_id")
+            if tid in seen:
+                continue
+            seen.add(tid)
+            out.append({"id": tid, "ts": x.get("created_time"), "yes": x.get("yes_price_dollars") or x.get("yes_price"), "n": x.get("count_fp") or x.get("count"), "side": x.get("taker_side")})
+        if len(seen) > 5000:
+            seen.clear()
+        return out or None
+    return go
+
+
 def f_kalshi(ticker_fn):
     """Best prices and the top of the order book for the market that is open now."""
     def go():
@@ -197,6 +219,8 @@ def build_row(now, feeds, shared):
         row["flow"] = feeds["flow"].val
     if feeds["oi"].val:
         row["oi"] = feeds["oi"].val
+    if feeds["ktrades"].val:
+        row["kt"] = feeds["ktrades"].val
     for n in ("cbbook", "funding", "liq"):
         if feeds[n].val:
             row[n] = feeds[n].val
@@ -221,6 +245,7 @@ def run(d, stop=None):
         "book": Feed("book", 1, None),
         "kraken": Feed("kraken", 5, f_kraken),
         "bybit": Feed("bybit", 5, f_bybit),
+        "ktrades": Feed("ktrades", 2, None),
         "cbbook": Feed("cbbook", 3, f_cbbook),
         "funding": Feed("funding", 60, f_funding),
         "liq": Feed("liq", 5, f_liq),
@@ -229,11 +254,12 @@ def run(d, stop=None):
     }
     feeds["kalshi"].fn = f_kalshi(None)
     feeds["book"].fn = f_book(lambda: holder["ticker"])
+    feeds["ktrades"].fn = f_ktrades(lambda: holder["ticker"])
     tidy_t = 0
     while not (stop and stop.is_set()):
         t0 = time.time()
         # fetch the slow feeds in worker threads so one slow site cannot stall the second
-        ths = [threading.Thread(target=f.poll, args=(t0,), daemon=True) for f in feeds.values() if f.name != "book"]
+        ths = [threading.Thread(target=f.poll, args=(t0,), daemon=True) for f in feeds.values() if f.name not in ("book", "ktrades")]
         for th in ths:
             th.start()
         for th in ths:
@@ -241,6 +267,7 @@ def run(d, stop=None):
         kv = feeds["kalshi"].val or {}
         holder["ticker"] = kv.get("ticker") or SHARED.get("ticker")
         feeds["book"].poll(t0)
+        feeds["ktrades"].poll(t0)
         try:
             row = build_row(t0, feeds, SHARED)
             day = time.strftime("%Y%m%d", time.localtime(t0))
