@@ -22,7 +22,9 @@ STAGE_GAP = 45          # seconds to wait between buys in one round, so a positi
 ENTRY_BLOCK = []       # price ranges (cents) that the agent's own recordings show lose money after fees
 BLACKOUT = None         # name of a big scheduled news event happening now: no new bets
 PATTERN_BAD = []        # (feature, bucket) pairs that lost money in training and in later test rounds
-MIN_HOLD = 30           # seconds: never sell sooner than this after a buy (a quick flip only pays the spread and fees twice)
+MIN_HOLD = 0            # seconds: optional hard timer after a buy (off; the profit rule below replaces it)
+MIN_PROFIT_USD = 3.0    # never sell a winner for less than this much profit AFTER fees (a few cents of profit is eaten by the cost of trading)
+MIN_PROFIT_PCT = 0.02   # ...or this share of the money in the bet, whichever is bigger (so big bets need proportionally more)
 _QSRC = None           # where the current Kalshi quote came from: "book" (live order book) or "list" (lagging market list)
 _FEAT = {}              # what the market looks like right now: seconds into the round, model odds, signal score
 EXIT_ON, EXIT_P, EXIT_D = 1, 8.0, 4.0   # take-profit: once up EXIT_P cents per contract, sell if it falls EXIT_D cents from the best point
@@ -52,7 +54,7 @@ def log_trade(e):
     try:
         if not _DIR:
             return
-        rec = {k: e.get(k) for k in ("t", "s", "a", "side", "c", "px", "d", "bal", "why")}
+        rec = {k: e.get(k) for k in ("t", "s", "a", "side", "c", "px", "d", "bal", "why", "g")}
         rec["ticker"] = _TK; rec["live"] = bool(_LIVE); rec["ask"] = _QUOTE[0]; rec["bid"] = _QUOTE[1]; rec["v"] = SIM_VERSION; rec["q"] = _QSRC
         if _FEAT and e.get("a") == "BUY":
             rec["f"] = {k: (round(v, 4) if isinstance(v, float) else v) for k, v in _FEAT.items() if v is not None}
@@ -300,11 +302,15 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
 def sell(a, ask_up, bid_up, why=""):
     p = a["pos"]
     lb = (a.get("w") or {}).get("last_buy")
-    if lb is not None and _T - lb < MIN_HOLD and _FEAT.get("left", 999) > 45:     # too soon after buying (except in the last 45 s of a round)
+    if MIN_HOLD > 0 and lb is not None and _T - lb < MIN_HOLD and _FEAT.get("left", 999) > 45:     # optional hard timer (off by default)
         return False
     px = bid_up if p["side"] == "UP" else 1 - ask_up
     px = min(0.99, max(0.01, px))
     n = p["c"]
+    gain = n * px - fee_total(n, px) - p["cost"]                       # profit after fees if we sell now (negative = a loss)
+    need = max(MIN_PROFIT_USD, MIN_PROFIT_PCT * p["cost"])
+    if 0 < gain < need and _FEAT.get("left", 999) > 45:                # a few cents of profit does not beat the cost of trading: keep holding
+        return False
     if _LIVE:
         n = min(p["c"], BROKER.trade("sell", _TK, p["side"], p["c"], ask_up, bid_up))
         if n < 1:
@@ -324,7 +330,7 @@ def sell(a, ask_up, bid_up, why=""):
         b_ = BROKER.balance(0)
         if b_ is not None:
             a["bal"] = b_
-    log_trade({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(n, 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why})
+    log_trade({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(n, 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "g": round(gain, 2)})
     _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(n, 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
     return True
 
@@ -727,7 +733,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -746,6 +752,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         BLACKOUT = C.get("blackout")
         PATTERN_BAD = [(r["feature"], r["bucket"]) for r in (C.get("pattern_bad") or [])]
         MIN_HOLD = int(C.get("min_hold_secs", MIN_HOLD))
+        MIN_PROFIT_USD = float(C.get("min_profit_usd", MIN_PROFIT_USD)); MIN_PROFIT_PCT = float(C.get("min_profit_pct", MIN_PROFIT_PCT))
         EXIT_ON, EXIT_P, EXIT_D = int(C.get("exit_on", EXIT_ON)), float(C.get("exit_peak", EXIT_P)), float(C.get("exit_drop", EXIT_D))
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
