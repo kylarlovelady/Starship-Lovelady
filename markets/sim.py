@@ -547,12 +547,18 @@ def _tape_at(tape, t):
     return r
 
 
+SW_OVR = {}             # test overrides (the replay sweep sets these); empty in normal use
+SW_CONFIRM = 2.0        # cents the price must turn back before it buys the other side after a sale
+
+
 def swing_params(ag):
     """How eager the swing strategy is. Low aggression = patient (needs a clear trend, a big move, a clear slowdown);
     high aggression = makes moves on small trends, takes profit on small moves, re-enters fast, more swings per round."""
-    return {"trend": SW_TREND * (1 - 0.9 * ag), "open": SW_OPEN_SECS + 330 * ag, "move": SW_MOVE - 2.5 * ag, "min_v": SW_MIN_V * (1 - 0.5 * ag),
-            "slow": SW_SLOW + 0.25 * ag, "slow_secs": max(5, round(SW_SLOW_SECS - 5 * ag)), "entries": SW_MAX_ENTRIES + int(round(4 * ag)),
-            "min_profit": 0.01 - 0.005 * ag, "hold_edge": SW_HOLD_EDGE - 0.04 * ag, "need_min": 150 - 60 * ag}
+    P = {"trend": SW_TREND * (1 - 0.9 * ag), "open": SW_OPEN_SECS + 330 * ag, "move": max(4.0, SW_MOVE - 2.5 * ag), "min_v": SW_MIN_V * (1 - 0.5 * ag),
+         "slow": SW_SLOW + 0.25 * ag, "slow_secs": max(5, round(SW_SLOW_SECS - 5 * ag)), "entries": SW_MAX_ENTRIES + int(round(4 * ag)),
+         "min_profit": 0.015 - 0.005 * ag, "hold_edge": SW_HOLD_EDGE - 0.04 * ag, "need_min": 150 - 60 * ag, "confirm": max(1.0, SW_CONFIRM - ag)}
+    P.update(SW_OVR)
+    return P
 
 
 def swing_trend(tape, now, thr=None):
@@ -626,8 +632,8 @@ def swing_step(a, w, now, el, left, price, mid, ask, bid, pm, sigs, score, sim, 
                         sim["sw_dur"] = round(0.7 * dur + 0.3 * took, 1)
                     _swing_log({"t": int(now), "ticker": _TK, "side": s, "c": round(c0, 1), "avg_cost": round(avg0, 4), "mid_in": round(sw["mid_in"], 4), "mid_out": round(mid, 4),
                                 "best_cents": round(sw["best"], 1), "pk_v": round(sw["pk_v"], 3), "v": round(fv, 3), "profit_pc": round(prof, 4), "el": int(el), "took": int(took), "live": bool(_LIVE)})
-                    sw.update({"want": ("DOWN" if s == "UP" else "UP"), "best": 0.0, "pk_v": 0.0, "slow_t": None, "mid_in": None, "t_in": None})
-                    return "sold", "Sold %s on the slowdown. Next it buys %s if there is time for it to turn." % (s, sw["want"])
+                    sw.update({"want": ("DOWN" if s == "UP" else "UP"), "best": 0.0, "pk_v": 0.0, "slow_t": None, "mid_in": None, "t_in": None, "ext": mid})
+                    return "sold", "Sold %s on the slowdown. Next it buys %s, but only once the price really turns." % (s, sw["want"])
                 return "waiting", base + "Wanted to sell but the sale did not go through; trying again."
             return "holding", base + "It has slowed but selling now would not clear fees yet, so it waits."
         return "holding", base + ("Slowing, waiting to be sure." if slow else "Still moving, so it keeps riding.")
@@ -637,7 +643,13 @@ def swing_step(a, w, now, el, left, price, mid, ask, bid, pm, sigs, score, sim, 
     room = left >= need
     side, reason = None, None
     if sw.get("want") and sw["entries"] < P["entries"] and room:
-        side, reason = sw["want"], "Swing: it just took profit and there are %ds left (it needs %ds for a swing), so it bets the price turns back the other way." % (left, need)
+        ext = sw.get("ext", mid)
+        ext = min(ext, mid) if sw["want"] == "UP" else max(ext, mid)       # the low (or high) the price has reached since the sale
+        sw["ext"] = ext
+        turned = ((mid - ext) if sw["want"] == "UP" else (ext - mid)) * 100.0
+        if turned < P["confirm"]:
+            return "waiting", "Sold, now waiting for the price to really turn before buying %s: it has come back %.1f\u00a2 off its %s and needs %.1f\u00a2." % (sw["want"], turned, "low" if sw["want"] == "UP" else "high", P["confirm"])
+        side, reason = sw["want"], "Swing: the price has turned %.1f\u00a2 since the sale and there are %ds left (it needs %ds for a swing), so it buys %s." % (turned, left, need, sw["want"])
     elif sw["entries"] == 0 and el <= P["open"] and room:
         t, txt = swing_trend(tape, now, P["trend"])
         if t == 0:
