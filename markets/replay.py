@@ -1,8 +1,8 @@
 """Replays old Kalshi BTC 15-minute rounds (from backfill.py) through the agent's strategies, in a private sandbox, to see what each
 would have made after fees, when the best moments to buy and sell were, and how your own trades compare.
 Nothing here touches the live agent, its wallets or Kalshi. Run it as its own program (never inside the collector).
-Honest limits: the history has one price per MINUTE, so each round is filled in between the minutes (a straight line from one
-minute to the next). Strategies that need the order book, whale moves or news (signals, trend, flow, mood) cannot be replayed:
+Honest limits: the old history has one price per MINUTE and the replay only uses the last minute quote it would have known (no peeking ahead),
+so it is too coarse for swing: swing is tested only on the agent's own second-by-second recordings. Strategies that need the order book, whale moves or news (signals, trend, flow, mood) cannot be replayed:
 that old data does not exist. The replayed strategies are: swing (your strategy, at several aggression levels), distance, hold.
 Usage: python3 replay.py [days=14] [aggression]   |   python3 replay.py --show"""
 import bisect, json, math, os, shutil, sys, tempfile, time
@@ -38,32 +38,67 @@ def load(days):
 
 
 class Series:
+    """A price series where at(t) is the LAST value known at time t (never a value from the future)."""
     def __init__(self, ts, vs):
         self.ts, self.vs = ts, vs
 
     def at(self, t):
         i = bisect.bisect_right(self.ts, t)
-        if i == 0:
-            return self.vs[0] if self.ts and self.ts[0] - t < 120 else None
-        if i >= len(self.ts):
-            return self.vs[-1] if t - self.ts[-1] < 120 else None
-        t0, t1 = self.ts[i - 1], self.ts[i]
-        if t1 - t0 > 180:
+        if i == 0 or t - self.ts[i - 1] > 120:
             return None
-        return self.vs[i - 1] + (self.vs[i] - self.vs[i - 1]) * (t - t0) / (t1 - t0)
+        return self.vs[i - 1]
 
 
 def quote_at(c, t):
-    """Up bid/ask at time t, straight-line between the minute quotes."""
+    """Up bid/ask known at time t: the last quote at or before t. None before the first one."""
     ts = [x[0] for x in c]
     i = bisect.bisect_right(ts, t)
-    if i == 0:
-        return c[0][1], c[0][2]
-    if i >= len(c):
-        return c[-1][1], c[-1][2]
-    a, b = c[i - 1], c[i]
-    f = (t - a[0]) / max(1.0, b[0] - a[0])
-    return a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f
+    if i == 0 or t - c[i - 1][0] > 120:
+        return None
+    return c[i - 1][1], c[i - 1][2]
+
+
+def load_ticks(days):
+    """Rounds the agent recorded second by second (real order-book prices): the exact data, no filling in."""
+    import calendar, glob
+    import exit_learn as X
+    res = X.outcomes(DIR)
+    try:
+        for ln in open(os.path.join(H, "rounds.jsonl")):
+            r = json.loads(ln); res.setdefault(r["ticker"], r["result"])
+    except OSError:
+        pass
+    cut = time.time() - days * 86400
+    rows, meta, px = {}, {}, []
+    for p in sorted(glob.glob(os.path.join(DIR, "ticks-*.jsonl*"))):
+        last_keep = {}
+        for r in X._lines(p):
+            t = r.get("t")
+            if not t or t < cut:
+                continue
+            if r.get("px"):
+                if not px or t - px[-1][0] >= 1.0:
+                    px.append((t, float(r["px"])))
+            k = r.get("k") or {}
+            tk, bk = k.get("ticker"), X._book(r)
+            if not tk or not bk or bk[1] < bk[0]:
+                continue
+            if tk not in meta:
+                try:
+                    cl = calendar.timegm(time.strptime(k["close_time"][:19], "%Y-%m-%dT%H:%M:%S"))
+                    meta[tk] = {"ticker": tk, "open": cl - 900, "close": cl, "strike": float(k["floor_strike"]), "result": res.get(tk)}
+                except Exception:
+                    continue
+            if t - last_keep.get(tk, 0) >= 4.5:
+                last_keep[tk] = t
+                rows.setdefault(tk, []).append([t, bk[0], bk[1]])
+    use, cand = [], {}
+    for tk, m in meta.items():
+        rs = rows.get(tk) or []
+        if m["result"] and len(rs) >= 120 and rs[0][0] <= m["open"] + 120 and rs[-1][0] >= m["close"] - 120:
+            use.append(m); cand[tk] = rs
+    use.sort(key=lambda r: r["open"])
+    return use, cand, Series([x[0] for x in px], [x[1] for x in px])
 
 
 def run_one(label, pname, ag, use, cand, btc, cfg):
@@ -105,7 +140,10 @@ def run_one(label, pname, ag, use, cand, btc, cfg):
                     sig = math.sqrt(var) * math.sqrt(max(1, cl - now))
                     if sig > 0:
                         pm = 0.5 * (1 + math.erf(math.log(price / strike) / sig / math.sqrt(2)))
-                b, a = quote_at(c, now)
+                q = quote_at(c, now)
+                if q is None:
+                    continue
+                b, a = q
                 kal = {"ticker": tk, "yes_pct": (b + a) * 50.0, "yes_bid": b * 100, "yes_ask": a * 100, "close_ep": cl, "strike": strike, "qsrc": "book"}
                 sim.step(S, float(now), o, 900, price, strike, pm, kal, {}, 0.0, True, D, C, {}, rf)
             sim.step(S, float(cl + 5), cl, 900, btc.at(cl) or 0.0, None, None, None, {}, 0.0, True, D, C, {}, rf)
@@ -212,6 +250,12 @@ def show(bt):
     for lab, s in bt["strategies"].items():
         if s.get("n"):
             print("  %-14s %6d %7d %9.2f %10.3f %6.1f %8.1f" % (lab, s["n"], s["traded"], s["pnl"], s["per_round"], s["win_pct"], s["trades_per_round"]))
+    if bt.get("strategies_ticks"):
+        print("  EXACT second-by-second recordings: %d rounds" % bt.get("ticks_rounds", 0))
+        print("  strategy        rounds  traded   total $   per round   win%   trades/round")
+        for lab, s in bt["strategies_ticks"].items():
+            if s.get("n"):
+                print("  %-14s %6d %7d %9.2f %10.3f %6.1f %8.1f" % (lab, s["n"], s["traded"], s["pnl"], s["per_round"], s["win_pct"], s["trades_per_round"]))
     for side, s in (bt.get("spots") or {}).items():
         print("  best %s trade in hindsight: avg +%.0f c per contract after fees; usually buys around minute %.1f at %.0f c and sells around minute %.1f" % (side, 100 * s["avg_best_profit"], s["median_buy_minute"], 100 * s["median_buy_price"], s["median_sell_minute"]))
     y = bt.get("yours")
@@ -240,18 +284,29 @@ def main():
     if len(use) < 10:
         print("Only %d rounds with prices. Run backfill.py first." % len(use)); return
     btc = Series(ts, vs)
-    print("Replaying %d rounds ..." % len(use), flush=True)
-    runs = [("swing@10", "swing", 10), ("swing@30", "swing", 30), ("swing@60", "swing", 60), ("swing@90", "swing", 90),
-            ("distance", "distance", ag), ("hold", "hold", ag)]
+    print("Replaying %d rounds of minute history (distance and hold only: minute prices are too coarse for swing) ..." % len(use), flush=True)
     strategies, per_round = {}, {}
-    for lab, pn, a in runs:
+    for lab, pn, a in (("distance", "distance", ag), ("hold", "hold", ag)):
         t0 = time.time()
         rows = run_one(lab, pn, a, use, cand, btc, cfg)
         strategies[lab] = summarize(rows)
         per_round[lab] = {x["t"]: x["pnl"] for x in rows}
         print("  %-10s done in %.0fs: %d rounds, %+.2f total" % (lab, time.time() - t0, strategies[lab].get("n", 0), strategies[lab].get("pnl", 0)), flush=True)
+    tick_s, tuse = {}, []
+    try:
+        tuse, tcand, tbtc = load_ticks(days)
+    except Exception as e:
+        print("  could not read the second-by-second recordings:", e)
+    if len(tuse) >= 5:
+        print("Replaying %d rounds the agent recorded second by second (exact prices) ..." % len(tuse), flush=True)
+        for lab, pn, a in (("swing@10", "swing", 10), ("swing@30", "swing", 30), ("swing@60", "swing", 60), ("swing@90", "swing", 90), ("distance", "distance", ag), ("hold", "hold", ag)):
+            t0 = time.time()
+            rows = run_one(lab, pn, a, tuse, tcand, tbtc, cfg)
+            tick_s[lab] = summarize(rows)
+            print("  %-10s done in %.0fs: %d rounds, %+.2f total" % (lab, time.time() - t0, tick_s[lab].get("n", 0), tick_s[lab].get("pnl", 0)), flush=True)
     bt = {"made": int(time.time()), "rounds": len(use), "first": use[0]["open"], "last": use[-1]["close"], "days": days,
-          "resolution": "1-minute prices filled in between (straight lines), $20 swing bets, your Settings for cap and minimum", "strategies": strategies,
+          "resolution": "last known 1-minute quote (no peeking ahead), $20 bets, your Settings for cap and minimum", "strategies": strategies,
+          "ticks_rounds": len(tuse), "strategies_ticks": tick_s,
           "spots": spots(use, cand), "yours": yours(use, cand, per_round)}
     json.dump(bt, open(os.path.join(H, "backtest.json"), "w"))
     show(bt)

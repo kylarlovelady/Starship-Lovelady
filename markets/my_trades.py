@@ -122,9 +122,28 @@ if __name__ == "__main__":
             except Exception:
                 cache[tk] = None
         return cache[tk]
-    rows = analyse(fl, result_of)
-    show(rows)
+    agent = []                                          # orders the agent itself sent (live sessions): they are not your trades
     try:
+        for ln in open(os.path.join(K.DIR, "live_orders.jsonl")):
+            o = json.loads(ln)
+            if o.get("kind") == "order" and o.get("ticker"):
+                agent.append((o["ticker"], o["t"]))
+    except (OSError, ValueError):
+        pass
+    def is_agent(r):
+        x = one(r)
+        return any(x["ticker"] == tk and abs(x["t"] - t) <= 12 for tk, t in agent)
+    mine_f = [r for r in fl if not is_agent(r)]
+    agent_f = [r for r in fl if is_agent(r)]
+    print("fills that were YOUR own: %d, fills from the agent's live sessions: %d" % (len(mine_f), len(agent_f)))
+    rows = analyse(mine_f, result_of)
+    show(rows)
+    arows = analyse(agent_f, result_of)
+    if arows:
+        print("THE AGENT'S live rounds (not yours): %d rounds, %+.2f after fees" % (len(arows), sum(r["pnl"] for r in arows)))
+    try:
+        with open(os.path.join(K.DIR, "agent_trades.json"), "w") as fh:
+            json.dump(arows, fh)
         with open(os.path.join(K.DIR, "my_trades.json"), "w") as fh:
             json.dump(rows, fh)
         print("saved to ~/market-data/my_trades.json")
