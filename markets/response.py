@@ -36,7 +36,7 @@ def analyse(trades):
     for name, bk, ak, secs in HZ:
         mv, net = [], []
         for d, side in trades:
-            if d[bk] is None: continue
+            if d[bk] is None or d["el"] + secs > 870: continue         # the round must still be open when we look: after the close the quote is stuck at the settlement
             now_mid = (d["bid"] + d["ask"]) / 2; later_mid = (d[bk] + d[ak]) / 2
             move = (later_mid - now_mid) * (1 if side == "UP" else -1)
             px_in = d["ask"] if side == "UP" else 1 - d["bid"]
