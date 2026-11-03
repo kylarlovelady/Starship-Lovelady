@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# freeze v1: all strategies run (Auto), wallet follows Auto, refills top up to $1,000 (restart marker)
+# v5 start: 30 s min hold, live-book prices only, new data feeds, fresh scoreboard (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
