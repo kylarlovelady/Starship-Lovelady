@@ -95,7 +95,7 @@ def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, cle
 
 def island(run, now=None):
     """Keep one Live Activity (lock screen + Dynamic Island) in step with the REAL-money session. Sends only to the phone named
-    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates within seconds of a change, plus a heartbeat every 20 seconds."""
+    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates only on a real change (value moved about $2.50, round result, position opened or closed, offline), plus a heartbeat every 3 minutes, so the Island does not keep popping open."""
     try:
         now = now or time.time()
         e = _env(); token = e.get("HA_TOKEN"); dev = e.get("HA_LIVE_DEVICE"); base = (e.get("HA_URL") or "http://127.0.0.1:8123").rstrip("/")
@@ -123,12 +123,12 @@ def island(run, now=None):
         offline = (run.get("k_age") or 0) > 15 and not halted       # cannot read the wallet from Kalshi right now
         eq = run.get("equity") if run.get("equity") is not None else run.get("bal", 0)
         pos = run.get("pos")
-        sig = (round(eq, 1), run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted, offline)
+        sig = (round(eq * 0.4) / 0.4, run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted, offline)
         if halted and _isl["ended"] and _isl["tag"] == tag:
             return                                                  # the HALTED notice was already sent
-        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 20:
+        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 180:
             return
-        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 5 and not halted:
+        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 30 and not halted:
             return
         _isl.update({"tag": tag, "sig": sig, "t": now, "hb": now, "ended": halted})
         pnl = run.get("pnl") or 0.0
