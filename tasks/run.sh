@@ -89,3 +89,6 @@ cd ~/starship/markets 2>/dev/null && python3 replay.py --show 2>&1 | head -40
 
 echo; echo "=== SIGNAL SCAN (second-by-second rounds) ==="
 (cd "$(dirname "$0")/../markets" 2>/dev/null && python3 signals.py 2>&1 | tail -40)
+
+echo; echo "=== COACH: where the practice money went ==="
+(cd "$(dirname "$0")/../markets" 2>/dev/null && python3 coach.py 72 2>&1 | tail -40)
