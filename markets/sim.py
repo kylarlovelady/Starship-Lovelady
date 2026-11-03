@@ -18,6 +18,8 @@ MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this pric
 ENTRY_MAX = 0.80        # never pay more than this per contract (80 cents): above it one miss costs several wins
 STAGE_FIRST = 0.40      # the first buy of a round is this share of the intended size; the rest is added later if the edge holds
 STAGE_GAP = 45          # seconds to wait between buys in one round, so a position is built over minutes, not in one go
+ENTRY_BLOCK = []       # price ranges (cents) that the agent's own recordings show lose money after fees
+BLACKOUT = None         # name of a big scheduled news event happening now: no new bets
 SKIPPED = {}            # entries refused by the price cap, for the log
 SIM_VERSION = 3
 _EV, _CUR, _T = [], "", 0
@@ -189,6 +191,19 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
                       "why": "Not buying %s at %d\u00a2: that is above your %d\u00a2 entry cap (one miss would cost several wins)." % (side, round(px * 100), round(ENTRY_MAX * 100)), "mix": _MIX, "trace": _TRACE})
         if a.get("w") is not None:
             a["w"]["capped"] = a["w"].get("capped", 0) + 1
+        return False
+    why_no = None
+    if _CUR != "hold":
+        if BLACKOUT:
+            why_no = "a big US news release is due or just out (%s)" % BLACKOUT
+        else:
+            for lo, hi in ENTRY_BLOCK:
+                if lo <= px * 100 < hi:
+                    why_no = "your own recordings show buying at %d-%d\u00a2 has lost money after fees" % (lo, hi)
+    if why_no:
+        if not any(e.get("a") == "SKIP" and e.get("s") == _CUR and _T - e["t"] < 60 for e in _EV[-6:]):
+            _EV.append({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": "Not buying %s: %s." % (side, why_no), "mix": _MIX, "trace": _TRACE})
+            log_trade({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": why_no})
         return False
     if not (MIN_PRICE <= px <= MAX_PRICE):
         dollars = min(dollars, max(MIN_BET, FLOOR))   # no big bets on long shots or near-sure things
@@ -493,7 +508,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -506,6 +521,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         ENTRY_MAX = C.get("entry_max", ENTRY_MAX)
         STAGE_FIRST = C.get("stage_first", STAGE_FIRST)
         STAGE_GAP = C.get("stage_gap", STAGE_GAP)
+        ENTRY_BLOCK = C.get("entry_block") or []
+        BLACKOUT = C.get("blackout")
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
         _TRUST = C.get("trust") or {}

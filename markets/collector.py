@@ -807,6 +807,13 @@ def run_cycle(now, S):
         C["trust"] = {k: v.get("verdict") for k, v in (lr.get("signals") or {}).items()}
     except Exception:
         C["trust"] = {}
+    try:
+        import evidence as _ev
+        st_ = _ev.update(DIR, now)
+        C["entry_block"] = st_.get("block", [])
+        C["blackout"] = _ev.blackout(_ev.calendar(DIR, now), now)
+    except Exception as e:
+        print("evidence failed:", e, flush=True)
     w = C["weights"]
     avail = {k: v for k, v in sigs.items() if v["ok"]}
     tw = sum(w[k] for k in avail)
@@ -932,7 +939,7 @@ def run_cycle(now, S):
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
         "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-200:]], "ky": P["ky"][-200:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
-        "scorecard": sc, "recent": recent,
+        "scorecard": sc, "recent": recent, "entry_stats": load(os.path.join(DIR, "entry_stats.json"), None), "blackout": C.get("blackout"),
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None), "learn_health": learn_health(cache, now),
         "recent_markets": cache.get("recent_markets"), "weights": w,
         "note": "Paper mode: no real money. Information only, not financial advice.",

@@ -26,6 +26,18 @@ try:
     print("\nconfig.json:", {k: c.get(k) for k in ("min_bet", "cap", "floor", "aggression")})
 except Exception as e:
     print("no config.json (defaults in use)")
+try:
+    es = json.load(open(os.path.join(D, "entry_stats.json")))
+    print("\nENTRY EVIDENCE (buy either side at the price shown, hold to the end, after fees) from %d finished rounds:" % es["rounds"])
+    for k, v in es["price"].items():
+        print("  %-7s c: %5d samples, %3d rounds, win %2d%%, avg %+5.1f c per contract" % (k, v["n"], v["rounds"], round(100 * v["win"]), 100 * v["avg"]))
+    print("  blocked price ranges:", es["block"] or "none yet (needs 25+ rounds per range)")
+    hs = es.get("hours") or {}
+    if hs: print("  by hour of day (local, 35-80c entries):", ", ".join("%sh %+.1fc" % (h, 100 * v["avg"]) for h, v in sorted(hs.items(), key=lambda x: int(x[0]))))
+    cal = json.load(open(os.path.join(D, "calendar.json")))
+    print("  news calendar: %d big US events this week%s" % (len(cal.get("events", [])), (" (fetch failed: %s)" % cal["err"]) if cal.get("err") else ""))
+except Exception as e:
+    print("entry evidence not built yet:", e)
 import glob
 fs = sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*")))
 if fs:
