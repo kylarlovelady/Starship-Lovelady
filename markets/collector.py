@@ -827,6 +827,8 @@ def run_cycle(now, S):
         import exit_learn as _xl
         xr = _xl.current(DIR, now)
         raw_ = load(os.path.join(DIR, "config.json"), {})          # settings you saved yourself win over the learned ones
+        pr_ = load(os.path.join(DIR, "practice.json"), {}).get("mode")
+        C["practice"] = pr_ if isinstance(pr_, str) else "auto"
         C["exit_on"] = int(raw_["exit_on"]) if "exit_on" in raw_ else (1 if xr["on"] else 0)
         C["exit_peak"] = float(raw_["exit_peak"]) if "exit_peak" in raw_ else xr["peak"]
         C["exit_drop"] = float(raw_["exit_drop"]) if "exit_drop" in raw_ else xr["drop"]
@@ -1064,6 +1066,12 @@ class Control(BaseHTTPRequestHandler):
             if self.path.startswith("/run"):
                 rp = os.path.join(DIR, "run.json")
                 cur = load(rp, {})
+                if "practice" in body:                         # which practice strategy trades: one of them, or "auto" (all of them, learning)
+                    pm_ = str(body.get("practice"))
+                    if pm_ != "auto" and pm_ not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold"):
+                        return self._send({"error": "unknown strategy"}, 400)
+                    save_atomic(os.path.join(DIR, "practice.json"), {"mode": pm_, "t": int(time.time())})
+                    return self._send({"ok": True, "practice": pm_})
                 if body.get("start"):
                     if cur.get("live") and cur.get("active"):
                         return self._send({"error": "end the live session first"}, 400)
