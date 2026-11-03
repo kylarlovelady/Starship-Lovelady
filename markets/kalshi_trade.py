@@ -133,12 +133,17 @@ class Broker:
         # a 55 cent limit filling at 54), so the slack costs nothing unless the market really moved.
         pr = (math.ceil(pr * 100 - 1e-9) + 2) / 100.0 if ks == "bid" else (math.floor(pr * 100 + 1e-9) - 2) / 100.0
         pr = min(0.99, max(0.01, pr))
-        rec = {"t": int(time.time()), "action": action, "side": side, "ticker": ticker, "book_side": ks, "count": n, "price": pr}
+        rec = {"t": int(time.time()), "kind": "order", "action": action, "side": side, "ticker": ticker, "book_side": ks, "count": n, "price": pr, "quote_ask": ask_up, "quote_bid": bid_up}
         try:
             st, resp = self.c.order(ticker, ks, n, pr, tif="immediate_or_cancel")
         except Exception as e:
             st, resp = 0, {"error": str(e)[:120]}
         rec.update({"status": st, "reply": resp})
+        try:
+            rec["filled"] = float((resp or {}).get("fill_count") or 0) if isinstance(resp, dict) else 0
+            rec["avg_fill"] = (resp or {}).get("average_fill_price") if isinstance(resp, dict) else None
+        except Exception:
+            pass
         self._log(rec)
         if st not in (200, 201):
             self.fails += 1
@@ -153,7 +158,7 @@ class Broker:
                 f = float(resp["average_fill_price"])
                 worse = {("buy", "UP"): f - ask_up, ("sell", "UP"): bid_up - f, ("buy", "DOWN"): bid_up - f, ("sell", "DOWN"): f - ask_up}[(action, side)]
                 self.slips.append(round(worse * 100, 2)); self.slips = self.slips[-200:]
-                self._log({"t": int(time.time()), "slip_cents": round(worse * 100, 2), "ticker": ticker, "action": action, "side": side})
+                self._log({"t": int(time.time()), "kind": "slip", "slip_cents": round(worse * 100, 2), "ticker": ticker, "action": action, "side": side})
             return n_ok
         except Exception:
             return 0

@@ -15,8 +15,14 @@ _TK = None
 FLOOR = 1.0             # smallest real bet: one contract is never more than $1
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
 MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
+ENTRY_MAX = 0.80        # never pay more than this per contract (80 cents): above it one miss costs several wins
+STAGE_FIRST = 0.40      # the first buy of a round is this share of the intended size; the rest is added later if the edge holds
+STAGE_GAP = 45          # seconds to wait between buys in one round, so a position is built over minutes, not in one go
+SKIPPED = {}            # entries refused by the price cap, for the log
 SIM_VERSION = 3
 _EV, _CUR, _T = [], "", 0
+_DIR = None
+_QUOTE = (None, None)  # (ask, bid) of Up when the trade was decided
 _SZ = (None, None)      # contracts available at the best ask and best bid right now
 EDGE_MIN = 0.03         # must beat price + fee by 3 cents per dollar before acting
 STRATS = {
@@ -27,6 +33,19 @@ STRATS = {
     "mood": "News and market mood",
     "hold": "Control: open once, hold to the end",
 }
+
+
+def log_trade(e):
+    """Append every buy, sell and refused buy to trades.jsonl, with the quote it saw, for later study."""
+    try:
+        if not _DIR:
+            return
+        rec = {k: e.get(k) for k in ("t", "s", "a", "side", "c", "px", "d", "bal", "why")}
+        rec["ticker"] = _TK; rec["live"] = bool(_LIVE); rec["ask"] = _QUOTE[0]; rec["bid"] = _QUOTE[1]
+        with open(os.path.join(_DIR, "trades.jsonl"), "a") as fh:
+            fh.write(json.dumps(rec) + "\n")
+    except Exception:
+        pass
 
 
 def fee(p):
@@ -163,6 +182,14 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     px = ask_up if side == "UP" else 1 - bid_up
     px = min(0.99, max(0.01, px))
     used = a["pos"]["cost"] if a["pos"] else 0.0
+    if px > ENTRY_MAX + 1e-9 and _CUR != "hold":
+        if not any(e.get("a") == "SKIP" and e.get("s") == _CUR and _T - e["t"] < 60 for e in _EV[-6:]):
+          log_trade({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": "entry cap"})
+          _EV.append({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2),
+                      "why": "Not buying %s at %d\u00a2: that is above your %d\u00a2 entry cap (one miss would cost several wins)." % (side, round(px * 100), round(ENTRY_MAX * 100)), "mix": _MIX, "trace": _TRACE})
+        if a.get("w") is not None:
+            a["w"]["capped"] = a["w"].get("capped", 0) + 1
+        return False
     if not (MIN_PRICE <= px <= MAX_PRICE):
         dollars = min(dollars, max(MIN_BET, FLOOR))   # no big bets on long shots or near-sure things
     dollars = min(dollars, a["bal"] / (1 + fee(px) / px), (CAP - used) / (1 + fee(px) / px))   # cap counts fees
@@ -193,10 +220,11 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         a["pos"] = {"side": side, "c": c, "cost": dollars + f}
     w = a["w"]
     w["cash"] -= dollars + f
-    w["trades"] += 1; w["staked"] = max(w["staked"], a["pos"]["cost"])
+    w["trades"] += 1; w["staked"] = max(w["staked"], a["pos"]["cost"]); w["last_buy"] = _T
     if w["first"] is None:
         w["first"] = {"side": side, "c": c, "cost": dollars + f}
     a["trades"] += 1
+    log_trade({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why})
     _EV.append({"t": _T, "s": _CUR, "a": "BUY", "side": side, "c": round(c, 1), "px": round(px, 3), "d": round(dollars, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
     return True
 
@@ -225,6 +253,7 @@ def sell(a, ask_up, bid_up, why=""):
         b_ = BROKER.balance(0)
         if b_ is not None:
             a["bal"] = b_
+    log_trade({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(n, 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why})
     _EV.append({"t": _T, "s": _CUR, "a": "SELL", "side": side, "c": round(n, 1), "px": round(px, 3), "d": round(got, 2), "bal": round(a["bal"], 2), "why": why, "mix": _MIX, "trace": _TRACE})
     return True
 
@@ -276,6 +305,13 @@ def size(edge, bal, pos_cost, mult=1.0, ref=None):
     if room < FLOOR:
         return 0.0
     return max(FLOOR, min(frac * bal, CAP - pos_cost, room))
+
+
+def stage(dollars, pname, first):
+    """Build a position in steps: the first buy of a round is only a share of the intended size."""
+    if first and pname != "hold" and dollars > FLOOR:
+        return max(FLOOR, dollars * STAGE_FIRST)
+    return dollars
 
 
 def settle_one(sim, name, a, w, pos, up_won, DIR, hour, src):
@@ -444,7 +480,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -454,10 +490,14 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         ROUND_FRAC = 0.05 + 0.95 * ag * ag                    # total stake in one round, as a share of the wallet
         KELLY = 0.5 + 4.5 * ag                                 # how hard it leans into an edge
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
+        ENTRY_MAX = C.get("entry_max", ENTRY_MAX)
+        STAGE_FIRST = C.get("stage_first", STAGE_FIRST)
+        STAGE_GAP = C.get("stage_gap", STAGE_GAP)
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
         _TRUST = C.get("trust") or {}
     _SZ = ((kal or {}).get("yes_ask_size"), (kal or {}).get("yes_bid_size"))
+    _DIR = DIR
 
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
     if sim.get("ver") != SIM_VERSION:                 # rules changed: start the fake accounts fresh, keep the old log
@@ -478,6 +518,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     g = lambda k: (sigs.get(k) or {}).get("score") or 0.0
     sim["mood"] = 0.9 * sim["mood"] + 0.1 * (0.7 * g("news") + 0.3 * g("fng"))   # slow mood
     bid, ask, synth = prices(kal, pm)
+    _QUOTE = (round(ask, 3), round(bid, 3))
     resolve_pending(sim, now, price, result_fn, DIR)
     if sim["win"] != win:
         if sim["win"] is not None:                       # park the finished round until Kalshi posts its result
@@ -611,7 +652,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             if gate and cm == 0.0 and MIN_BET <= 0:
                 act = "waiting"; why += " Sitting out: not enough agreement between its sources (" + cwhy + ")."
             else:
-                buy(a, s, size(e, a["bal"], 0.0, max(cm, 0.4) if MIN_BET > 0 else cm, ref) if e > EDGE_MIN else max(MIN_BET, FLOOR), ask, bid,
+                buy(a, s, stage(size(e, a["bal"], 0.0, max(cm, 0.4) if MIN_BET > 0 else cm, ref) if e > EDGE_MIN else max(MIN_BET, FLOOR), pname, True), ask, bid,
                     (("Opening bet: it thinks %s is more likely (%s%% up) and has to bet every round." if MIN_BET > 0 else "Opening bet: it sees a real edge on %s (it thinks %s%% up).") % (s, c_(p))) + ((" Bet size set by " + cwhy + ".") if gate else ""))
                 act = "opened"
                 if w.get("mix") is None:
@@ -640,7 +681,10 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                         if cm == 0.0:
                             why += " Not adding: " + cwhy + "."
                             continue
-                        buy(a, s, size(e, a["bal"], a["pos"]["cost"] if a["pos"] else 0.0, cm, ref), ask, bid,
+                        if pname != "hold" and now - w.get("last_buy", 0) < STAGE_GAP:
+                            why += " Adding slowly: last buy was %ds ago." % int(now - w.get("last_buy", 0))
+                            continue
+                        buy(a, s, stage(size(e, a["bal"], a["pos"]["cost"] if a["pos"] else 0.0, cm, ref), pname, False), ask, bid,
                             "Edge: it thinks %s is %s%% likely but Kalshi asks %s\u00a2 (+%d\u00a2 after fees)." % (s, c_(side_p(s)), c_(ask_s(s)), round(e * 100)) + ((" Bet size set by " + cwhy + ".") if gate else ""))
                         act = "bought"
                         break

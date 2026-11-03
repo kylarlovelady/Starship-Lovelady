@@ -465,8 +465,8 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
-DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92}
-LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99)}
+DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92, "entry_max": 0.80, "stage_first": 0.40, "stage_gap": 45}
+LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99), "entry_max": (0.5, 0.99), "stage_first": (0.1, 1.0), "stage_gap": (0, 300)}
 
 
 def clean_cfg(raw):
@@ -894,6 +894,15 @@ def run_cycle(now, S):
     except Exception as e:
         import traceback; traceback.print_exc(); simout = {"error": str(e)[:100]}
     try:
+        import recorder as _rec
+        ro_ = (simout or {}).get("run") if isinstance(simout, dict) else None
+        _rec.SHARED.update({"sigs": {k: v["score"] for k, v in avail.items()}, "ticker": (cache.get("kalshi") or {}).get("ticker"),
+                            "pos": ((ro_ or {}).get("pos") if ro_ and ro_.get("status") == "running" else None),
+                            "mode": ("live" if ro_ and ro_.get("live") and ro_.get("status") == "running" else "practice"),
+                            "p_model": pm, "score": score})
+    except Exception:
+        pass
+    try:
         import alerts as _al
         _al.island((simout or {}).get("run") if isinstance(simout, dict) else None, now)
     except Exception:
@@ -1069,6 +1078,12 @@ def main():
     me = os.path.abspath(__file__)
     mtime = os.path.getmtime(me)
     start_control()
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import recorder
+        recorder.start(DIR)
+    except Exception as e:
+        print("recorder not started:", e, flush=True)
     print("market agent started (paper mode)", flush=True)
     while True:
         now = int(time.time())
