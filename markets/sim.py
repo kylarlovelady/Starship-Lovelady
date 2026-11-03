@@ -94,7 +94,17 @@ def prob_up(name, pm, sigs, score, mood):
 
 DEFW = {"book": 0.20, "momentum": 0.15, "whales": 0.15, "bigtrades": 0.11, "news": 0.08, "fng": 0.04, "funding": 0.03,
         "trend_h": 0.12, "trend_w": 0.06, "levels": 0.06}
-REFILL = 100.0         # fake dollars added when a pretend wallet runs dry (logged, and not counted as profit)
+REFILL = 100.0         # (old) fixed refill; pretend wallets are now topped back up to their starting amount
+
+
+def log_refill(who, amt, before):
+    """Every top-up of a pretend wallet is written down, and never counted as profit."""
+    try:
+        if _DIR:
+            with open(os.path.join(_DIR, "refills.jsonl"), "a") as fh:
+                fh.write(json.dumps({"t": int(time.time()), "who": who, "added": round(amt, 2), "before": round(before, 2)}) + "\n")
+    except OSError:
+        pass
 _W = dict(DEFW)
 _MIX = []
 _TRACE = []
@@ -156,7 +166,7 @@ def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
 
 def auto_pick(sim):
     """For the Auto wallet: follow whichever practice strategy has the best proven record (needs 20 rounds first)."""
-    best, bv = (next(iter(sim["acc"])) if sim["acc"] else "swing"), None
+    best, bv = ("distance" if "distance" in sim["acc"] else (next(iter(sim["acc"])) if sim["acc"] else "swing")), None
     for n, a in sim["acc"].items():
         if a["windows"] >= 20:
             v = a["pnl"] / (a["windows"] + 20.0)
@@ -380,7 +390,9 @@ def settle_one(sim, name, a, w, pos, up_won, DIR, hour, src):
                                      "hold": None if hold is None else round(hold, 2), "trades": w["trades"]})
     a["hist"] = a["hist"][-12:]
     if a["bal"] < max(MIN_BET, FLOOR, 5.0):  # fake account ran dry: add $100, count it (profit is judged on results, not the wallet)
-        a["bal"] += REFILL; a["busts"] += 1
+        amt = max(0.0, START - a["bal"])                 # top back up to the starting $1,000
+        log_refill(name, amt, a["bal"])
+        a["bal"] += amt; a["busts"] += 1
     h = sim["hours"].setdefault(str(hour), {"n": 0, "pnl": 0.0})
     h["n"] += 1; h["pnl"] = round(h["pnl"] + pnl, 3)
     with open(os.path.join(DIR, "sim_windows.jsonl"), "a") as f:
@@ -503,8 +515,10 @@ def settle_run(sim, r, up_won, price, strike, hour, DIR, src):
         if run.get("live"):
             run["status"] = "broke"; run["stopped"] = time.time()
         else:                                                # pretend wallet ran dry: add $100 and log it, never counted as profit
-            a["bal"] += REFILL; run["added"] = run.get("added", 0.0) + REFILL
-            run.setdefault("refills", []).append({"t": int(time.time()), "amt": REFILL, "after": rd["t"]})
+            amt = max(0.0, run["start"] - a["bal"])          # top back up to the amount it started with
+            log_refill("wallet", amt, a["bal"])
+            a["bal"] += amt; run["added"] = run.get("added", 0.0) + amt
+            run.setdefault("refills", []).append({"t": int(time.time()), "amt": round(amt, 2), "after": rd["t"]})
 
 
 def save_run_off(DIR, reason, detail=""):
@@ -810,6 +824,9 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                                   "why": "You stopped it mid-round, so this round was cut short and settled at the sell price."})
         a_["w"] = None
         run["status"] = "stopped"; run["stopped"] = now
+    if run and run["status"] == "running" and not run.get("live") and rc.get("active") and rc.get("strategy") and rc.get("strategy") != run["strategy"] \
+            and (rc["strategy"] in STRATS or rc["strategy"] in (list(STRATS_OLD) + ["auto"])):
+        run["strategy"] = rc["strategy"]                   # the pretend wallet can be switched without restarting it
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items()]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
@@ -867,7 +884,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         if left <= 5:
             continue
         gate = pname in ("signals", "hold")                   # only the strategies that use the signals are gated by conviction
-        ref = (run["start"] + run.get("added", 0.0)) if name == "run" else START
+        ref = run["start"] if name == "run" else START
         side_p = lambda s: p if s == "UP" else 1 - p
         ask_s = lambda s: ask if s == "UP" else 1 - bid
         bid_s = lambda s: bid if s == "UP" else 1 - ask

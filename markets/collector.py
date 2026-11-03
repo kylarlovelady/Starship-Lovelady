@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# swing v3: cuts a losing swing at 20c, price limit 80c (restart marker)
+# freeze v1: all strategies run (Auto), wallet follows Auto, refills top up to $1,000 (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -656,7 +656,7 @@ def do_reset(S, now):
     S["score_ver"] = 2
     rp = os.path.join(DIR, "run.json")
     if old.get("status") == "running":                    # a run was going: begin a fresh $1,000 one right away
-        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "swing"), "start": 1000.0})
+        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "auto"), "start": 1000.0})
     else:
         save_atomic(rp, {"active": False})
     print("reset done, old data archived in", arch, flush=True)
@@ -1035,7 +1035,7 @@ class Control(BaseHTTPRequestHandler):
                 if body.get("soft") is True:       # keep everything it learned; old lessons count half; fresh wallet
                     save_atomic(os.path.join(DIR, "learn_state.json"), {"soft_t": int(time.time())})
                     old = load(os.path.join(DIR, "run.json"), {})
-                    save_atomic(os.path.join(DIR, "run.json"), {"active": True, "id": int(time.time()), "strategy": old.get("strategy", "swing"), "start": 1000.0})
+                    save_atomic(os.path.join(DIR, "run.json"), {"active": True, "id": int(time.time()), "strategy": old.get("strategy", "auto"), "start": 1000.0})
                     return self._send({"ok": True, "soft": True})
                 save_atomic(os.path.join(DIR, "reset.json"), {"id": int(time.time() * 1000)})
                 return self._send({"ok": True})
@@ -1076,9 +1076,9 @@ class Control(BaseHTTPRequestHandler):
                 if body.get("start"):
                     if cur.get("live") and cur.get("active"):
                         return self._send({"error": "end the live session first"}, 400)
-                    st = str(body.get("strategy") or "swing")
+                    st = str(body.get("strategy") or "auto")
                     if st not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold", "auto"):
-                        st = "swing"
+                        st = "auto"
                     amt = min(1000.0, max(10.0, float(body.get("amount") or 1000)))
                     cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}
                 else:
@@ -1134,6 +1134,12 @@ def main():
     try:
         import exit_learn
         exit_learn.start(DIR)
+        try:                                              # the pretend wallet follows Auto (the best proven strategy); a live session is never touched
+            rp_ = os.path.join(DIR, "run.json"); r_ = load(rp_, {})
+            if r_.get("active") and not r_.get("live") and r_.get("strategy") != "auto":
+                r_["strategy"] = "auto"; save_atomic(rp_, r_)
+        except Exception:
+            pass
     except Exception as e:
         print("exit learning not started:", e, flush=True)
     print("market agent started (paper mode)", flush=True)
