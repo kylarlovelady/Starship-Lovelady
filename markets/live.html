@@ -56,6 +56,8 @@ details.fold{padding:0}details.fold>summary{list-style:none;cursor:pointer;paddi
 h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin:14px 0 6px;font-weight:600}
 input.num{width:96px;background:#0b1226;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:9px;font:inherit;font-size:16px;text-align:right}
 input[type=range]{accent-color:#3b5bd6}
+.tabs{display:flex;gap:6px;margin:4px 0 12px;overflow-x:auto}.tabs button{flex:1;white-space:nowrap;background:var(--card);color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:9px 6px;font:inherit;font-size:13px;font-weight:700}.tabs button.on{background:#3b5bd6;color:#fff;border-color:#3b5bd6}
+.pane[hidden]{display:none}
 #msg{display:none;text-align:center;padding:30px;color:var(--mut)}
 </style></head><body><div class="wrap">
 <div class="top"><a class="back" href="markets.html">&#8249; Dashboard</a><a class="back" href="report.html" style="color:#7aa7ff">Morning report &#8250;</a><span id="chip" class="chip">loading</span></div>
@@ -70,12 +72,22 @@ input[type=range]{accent-color:#3b5bd6}
 <div class="btns" id="btns"><div class="cell"><button class="bt u" id="bu" type="button">Up &middot; <span id="pu">-</span></button><small class="mut" id="mu"></small></div><div class="cell"><button class="bt d" id="bd" type="button">Down &middot; <span id="pd">-</span></button><small class="mut" id="md"></small></div></div>
 <div class="sellrow"><button class="sell" id="bs" type="button">Sell</button></div>
 
-<div class="card" id="wal"></div>
+<div class="tabs" id="tabs" role="tablist"><button type="button" data-t="wal" class="on">Wallet</button><button type="button" data-t="think">Thinking</button><button type="button" data-t="rounds">Rounds</button><button type="button" data-t="learn">Learning</button><button type="button" data-t="set">Settings</button></div>
+<div class="pane" data-p="wal">
+<div class="card" id="wal"></div></div>
+<div class="pane" data-p="think" hidden>
 <div class="card"><h2>Its bet and what it is thinking</h2><div id="pos"></div><div id="think" style="margin-top:10px"></div></div>
 <div class="card"><h2>Its moves, newest first</h2><div id="feed"></div></div>
+</div>
+<div class="pane" data-p="rounds" hidden>
 <div class="card"><h2 id="histh">How recent rounds went</h2><div id="hist"></div></div>
-<details class="card fold" id="f_sigs"><summary>What it is going off</summary><div id="sigs"></div><h3>What it trusts right now</h3><div id="trust"></div><div class="small" style="margin-top:6px"><a href="report.html" style="color:#7aa7ff">Full report with the reasons &#8250;</a></div></details>
+</div>
+<div class="pane" data-p="learn" hidden>
+<div class="card" id="lsum"></div>
+<details class="card fold" id="f_sigs" open><summary>What it is going off</summary><div id="sigs"></div><h3>What it trusts right now</h3><div id="trust"></div><div class="small" style="margin-top:6px"><a href="report.html" style="color:#7aa7ff">Full report with the reasons &#8250;</a></div></details>
 <details class="card fold" id="f_aud"><summary>Accuracy check against Kalshi</summary><div id="audit"></div></details>
+</div>
+<div class="pane" data-p="set" hidden>
 <details class="card fold" id="f_set" open><summary>Settings</summary>
 <div class="small mut" style="margin:2px 0 10px">Only the things that are yours to decide. How much each signal counts, how many trades per round and the price limits are worked out by the agent as it learns.</div>
 <div class="row" style="padding:8px 0;align-items:center"><div><div>Smallest bet</div><div class="small mut">dollars. 0 means it may skip a round when it sees no edge</div></div><input class="num" id="s_min" inputmode="decimal"></div>
@@ -86,6 +98,7 @@ input[type=range]{accent-color:#3b5bd6}
 <button class="go" id="s_save" type="button" style="margin-top:6px">Save settings</button><div class="small mut" id="s_msg" style="margin-top:6px"></div>
 <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div class="small mut">Fresh start, keeps what it learned: the wallet goes back to $1,000 and its old lessons count half as much from here, so it adjusts instead of forgetting. Nothing is deleted.</div><button class="go" id="rss" type="button" style="font-size:15px;padding:12px;margin-top:8px">Fresh wallet (keeps learning)</button><div class="small mut" id="rssm" style="margin-top:6px"></div></div>
 <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div class="small mut">Emergency only: wipe everything it learned too (wallet, six practice strategies, scorecard, lessons). Old data is kept in an archive folder on the Pi, and your settings stay.</div><button class="go" id="rs" type="button" style="background:transparent;border:1px solid #6b1d27;color:var(--red);font-size:15px;padding:12px">Wipe everything and start over</button><div class="small mut" id="rsm" style="margin-top:6px"></div></div></details>
+</div>
 <div class="small mut" style="text-align:center" id="note">Fake money. Information only, not financial advice.</div>
 </div></div>
 <script>
@@ -129,7 +142,11 @@ function chart(d,S){
  s+='<circle cx="'+X(last[0])+'" cy="'+Y(last[1])+'" r="4.5" fill="#f7931a" stroke="#101830" stroke-width="1.5"/>';
  $('chart').innerHTML=s}
 function rngs(){$('rng').innerHTML=[['live','LIVE'],['5m','5M'],['15m','15M'],['1h','1H']].map(function(x){return '<button type="button" data-r="'+x[0]+'" class="'+(RK===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('');Array.prototype.forEach.call($('rng').children,function(b){b.onclick=function(){RK=b.dataset.r;rngs();if(D)chart(D,null)}})}
-function trustc(d){var L=d.learning;if(!L||!L.signals){$('trust').innerHTML='<div class="mut small">Nothing tested yet.</div>';return}var NM={book:'Order book',momentum:'Price momentum',whales:'Whale moves',bigtrades:'Big exchange trades',news:'News vibe',fng:'Fear & Greed',funding:'Funding rate',trend_h:'Hourly and daily trend',trend_w:'Weekly and monthly trend',levels:'Support and resistance'};
+function showTab(t){Array.prototype.forEach.call(document.querySelectorAll('.pane'),function(p){p.hidden=p.getAttribute('data-p')!==t});Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.className=b.getAttribute('data-t')===t?'on':''});try{localStorage.setItem('lvtab',t)}catch(e){}}
+Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){showTab(b.getAttribute('data-t'))}});
+(function(){var t='wal';try{t=localStorage.getItem('lvtab')||'wal'}catch(e){}showTab(t)})();
+function lsum(d){var L=d.learning,el=$('lsum');if(!L||!L.signals){el.innerHTML='<h2>How its learning is going</h2><div class="mut small">Nothing tested yet. It needs a few rounds that Kalshi has settled.</div>';return}var NM={book:'Order book',momentum:'Price momentum',whales:'Whale moves',bigtrades:'Big exchange trades',news:'News vibe',fng:'Fear & Greed',funding:'Funding rate',trend_h:'Hourly and daily trend',trend_w:'Weekly and monthly trend',levels:'Support and resistance'};var ks=Object.keys(L.signals),g=function(v){return ks.filter(function(k){return L.signals[k].verdict===v}).map(function(k){return NM[k]||k})},best=ks.slice().sort(function(a,b){return L.signals[b].trust-L.signals[a].trust})[0];var T=g('trusted'),N=g('not trusted'),E=g('still learning');el.innerHTML='<h2>How its learning is going</h2><div class="big" style="font-size:26px">'+L.scored+' <span class="small mut">rounds checked against Kalshi</span></div><div class="small" style="margin-top:8px">'+(T.length?'<b class="up">Trusted:</b> '+esc(T.join(', '))+'<br>':'<span class="mut">Nothing has earned trust yet.</span><br>')+(N.length?'<b class="dn">Not helping:</b> '+esc(N.join(', '))+'<br>':'')+(E.length?'<span class="mut">Still learning: '+esc(E.length+' of '+ks.length)+' sources</span><br>':'')+(best&&L.signals[best].n?'<span class="mut">Highest trust right now: '+esc(NM[best]||best)+' ('+Math.round(L.signals[best].trust)+'%)</span>':'')+'</div>'}
+function trustc(d){lsum(d);var L=d.learning;if(!L||!L.signals){$('trust').innerHTML='<div class="mut small">Nothing tested yet.</div>';return}var NM={book:'Order book',momentum:'Price momentum',whales:'Whale moves',bigtrades:'Big exchange trades',news:'News vibe',fng:'Fear & Greed',funding:'Funding rate',trend_h:'Hourly and daily trend',trend_w:'Weekly and monthly trend',levels:'Support and resistance'};
  $('trust').innerHTML=Object.keys(L.signals).map(function(k){var g=L.signals[k],col=g.verdict==='trusted'?'up':g.verdict==='not trusted'?'dn':'mut';return '<div class="row small" style="padding:3px 0"><span>'+NM[k]+'</span><span><b class="'+col+'">'+esc(g.verdict)+'</b> <span class="mut">'+(g.pct==null?'no data':'trust '+Math.round(g.trust)+'% \u00b7 right '+g.pct+'% of '+g.n)+'</span></span></div>'}).join('')+'<div class="small mut" style="margin-top:6px">'+esc((L.notes||[]).join(' '))+'</div>'}
 function audit(d){var a=d.audit;if(!a){$('audit').innerHTML='<div class="mut small">Starts with the next round.</div>';return}
  var c=a.cur,row=function(l,v){return '<div class="row small" style="padding:3px 0"><span class="mut">'+l+'</span><b>'+v+'</b></div>'};
