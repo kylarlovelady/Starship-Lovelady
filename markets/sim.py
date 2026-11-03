@@ -561,6 +561,10 @@ def swing_trend(tape, now, thr=None):
     if not tape:
         return 0, "no price history yet"
     a5, a10 = _tape_at(tape, now - 300), _tape_at(tape, now - 600)
+    if a5 and now - 300 - a5[0] > 120:             # the history has a hole (for example after a restart): do not trust it
+        a5 = None
+    if a10 and now - 600 - a10[0] > 120:
+        a10 = None
     cur = tape[-1][1]
     if not a5 or not cur:
         return 0, "not enough price history yet (needs 5 minutes)"

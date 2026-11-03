@@ -13,7 +13,7 @@ def f(x, d=0.0):
         return d
 
 
-def fills(c, max_pages=12):
+def fills(c, max_pages=150):
     out, cur = [], None
     for _ in range(max_pages):
         q = "/portfolio/fills?limit=200" + ("&cursor=" + cur if cur else "")
