@@ -17,15 +17,20 @@ def extras(days):
     import glob, exit_learn as X
     D = os.environ.get("MARKET_DIR", os.path.join(os.path.expanduser("~"), "market-data"))
     cut = time.time() - days * 86400
-    E = {k: ([], []) for k in ("kraken", "flow", "oi", "book", "bybit", "cb", "fund", "liq")}
+    E = {}
     def put(k, t, v):
-        if v is not None and (not E[k][0] or t - E[k][0][-1] >= 2.0):
-            E[k][0].append(t); E[k][1].append(v)
+        a = E.setdefault(k, ([], []))
+        if v is not None and (not a[0] or t - a[0][-1] >= 2.0):
+            a[0].append(t); a[1].append(v)
     sz = lambda arr: sum(float(x[1]) for x in (arr or [])[-3:] if isinstance(x, (list, tuple)) and len(x) > 1)
     for pth in sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*"))):
         for r in X._lines(pth):
             t = r.get("t")
             if not t or t < cut: continue
+            for sk, sv in (r.get("sig") or {}).items():            # the agent's own signal readings: news, whales, trends, big trades, fear and greed...
+                if isinstance(sv, (int, float)): put("sig_" + sk, t, float(sv))
+            if isinstance(r.get("score"), (int, float)): put("sig_SCORE", t, float(r["score"]) / 100.0)
+            if isinstance(r.get("p_model"), (int, float)): put("sig_PMODEL", t, float(r["p_model"]) - 0.5)
             x = r.get("x") or {}
             if x.get("kraken"): put("kraken", t, float(x["kraken"]))
             f = r.get("flow")
@@ -46,12 +51,12 @@ def extras(days):
     return E
 
 def eat(E, k, t, maxage=30):
-    ts, vs = E[k]
+    ts, vs = E.get(k, ([], []))
     i = bisect.bisect_right(ts, t)
     return vs[i - 1] if i and t - ts[i - 1] <= maxage else None
 
 def eavg(E, k, t, span=15):
-    ts, vs = E[k]
+    ts, vs = E.get(k, ([], []))
     i, j = bisect.bisect_right(ts, t), bisect.bisect_right(ts, t - span)
     return sum(vs[j:i]) / (i - j) if i - j >= 2 else None
 
@@ -86,7 +91,15 @@ def build(use, cand, btc, E=None):
                  # slowing: it was moving (prior 90 s) and has now nearly stopped; the score is the direction it WAS moving
                  "bslow": (b30 - b120) / b * 1e4 if v30 < 0.4 * vprev else 0.0,
                  "kslow": 100 * (m(q30) - m(q120)) if abs(m(q) - m(q30)) < 0.4 * abs(m(q30) - m(q120)) / 3 else 0.0}
+            b15, b24, b7 = btc.at(t - 900), btc.at(t - 86400), btc.at(t - 7 * 86400)
+            S["tr15m"] = (b / b15 - 1) * 1e4 if b15 else None
+            S["tr24h"] = (b / b24 - 1) * 1e4 if b24 else None             # the day trend
+            S["tr7d"] = (b / b7 - 1) * 1e4 if b7 else None               # the week trend
             if E:
+                for k_ in E:
+                    if k_.startswith("sig_"):
+                        v_ = eat(E, k_, t, 60)
+                        if v_ is not None: S["a_" + k_[4:]] = v_ * 100.0   # -100..+100, the agent's own reading of that signal
                 kr = eat(E, "kraken", t, 20)
                 if kr: S["xdiv"] = (b - kr) / b * 1e4                    # Coinbase vs Kraken, in basis points: who is ahead
                 fl = eavg(E, "flow", t, 15)
@@ -169,8 +182,24 @@ def scan(use, cand, btc, E=None):
     print("\n%d ideas were tried, so by pure luck about %d would look like winners. A real one should also keep winning as new rounds arrive. Check again tomorrow." % (len(results), exp))
     json.dump({"made": int(time.time()), "rounds": len(opens), "ideas": len(results), "winners": [{"sig": r[0], "pct": r[1], "lo": r[3], "hi": r[4], "dir": r[5], "older": avg(r[6]), "newer": avg(r[7]), "n": [len(r[6]), len(r[7])]} for r in good[:8]]}, open(_out(), "w"))
 
+def with_history(btc):
+    """Per-second prices where we have them, and the 1-minute history (from backfill.py) before that, so a round can look back an hour, a day, a week."""
+    import replay
+    from hypothesis import H
+    pts = {}
+    try:
+        for ln in open(os.path.join(H, "btc1m.jsonl")):
+            for t, c in json.loads(ln)["r"]:
+                pts[t + 60] = c
+    except OSError:
+        pass
+    for t, v in zip(btc.ts, btc.vs):
+        pts[t] = v
+    ts = sorted(pts)
+    return replay.Series(ts, [pts[t] for t in ts])
+
 if __name__ == "__main__":
     days = float(sys.argv[1]) if len(sys.argv) > 1 else 14
     import replay
     use, cand, btc = replay.load_ticks(days)
-    scan(use, cand, btc, extras(days))
+    scan(use, cand, with_history(btc), extras(days))
