@@ -91,7 +91,8 @@ def build(use, cand, btc, E=None):
                  # slowing: it was moving (prior 90 s) and has now nearly stopped; the score is the direction it WAS moving
                  "bslow": (b30 - b120) / b * 1e4 if v30 < 0.4 * vprev else 0.0,
                  "kslow": 100 * (m(q30) - m(q120)) if abs(m(q) - m(q30)) < 0.4 * abs(m(q30) - m(q120)) / 3 else 0.0}
-            b15, b24, b7 = btc.at(t - 900), btc.at(t - 86400), btc.at(t - 7 * 86400)
+            b15, b24, b7, b4 = btc.at(t - 900), btc.at(t - 86400), btc.at(t - 7 * 86400), btc.at(t - 14400)
+            S["tr4h"] = (b / b4 - 1) * 1e4 if b4 else None
             S["tr15m"] = (b / b15 - 1) * 1e4 if b15 else None
             S["tr24h"] = (b / b24 - 1) * 1e4 if b24 else None             # the day trend
             S["tr7d"] = (b / b7 - 1) * 1e4 if b7 else None               # the week trend
