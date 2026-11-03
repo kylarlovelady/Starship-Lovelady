@@ -83,7 +83,7 @@ def build(use, cand, btc, E=None):
             if len(rets) < 10: continue
             vol = math.sqrt(sum(x * x for x in rets) / len(rets)) or 1e-5
             sig = vol * b * math.sqrt(max(cl - t, 30) / 60.0)
-            qe = qat(c, cts, t + 60)
+            qe = qat(c, cts, t + 60); qe2 = qat(c, cts, t + 120); qe5 = qat(c, cts, t + 300)
             v30, vprev = abs(b - b30) / 30.0, abs(b30 - b120) / 90.0
             S = {"bmom60": (b - b60) / b * 1e4, "bmom180": (b - b180) / b * 1e4, "bmom10": (b - b10) / b * 1e4,
                  "kmom30": 100 * (m(q) - m(q30)), "kmom60": 100 * (m(q) - m(q60)),
@@ -118,7 +118,8 @@ def build(use, cand, btc, E=None):
                 bk = eavg(E, "book", t, 10)
                 if bk is not None: S["bookimb"] = bk * 100               # Kalshi book: more size waiting on Up (+) or Down (-)
             out.append({"open": o, "el": el, "S": S, "ask": q[1], "bid": q[0], "res": r["result"],
-                        "bid60": qe[0] if qe else None, "ask60": qe[1] if qe else None})
+                        "bid60": qe[0] if qe else None, "ask60": qe[1] if qe else None,
+                        "bid120": qe2[0] if qe2 else None, "ask120": qe2[1] if qe2 else None, "bid300": qe5[0] if qe5 else None, "ask300": qe5[1] if qe5 else None})
     return out
 
 def evaluate(rows, name, thr, lo, hi, dr):
