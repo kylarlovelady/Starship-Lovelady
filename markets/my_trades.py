@@ -93,6 +93,17 @@ def show(rows):
     print("took profit early (sold before close): %d rounds, avg %+.2f, won %.0f%%" % (len(tp), avg([r["pnl"] for r in tp]), 100 * len([r for r in tp if r["pnl"] > 0]) / max(1, len(tp))))
     print("held to the end: %d rounds, avg %+.2f, won %.0f%%" % (len(hold), avg([r["pnl"] for r in hold]), 100 * len([r for r in hold if r["pnl"] > 0]) / max(1, len(hold))))
     print("avg time of first sale: %.0fs into the round" % avg([r["first_sell_secs"] for r in tp if r["first_sell_secs"] is not None]))
+    print("date range: %s to %s" % (time.strftime("%m-%d %H:%M", time.localtime(rows[0]["start"])), time.strftime("%m-%d %H:%M", time.localtime(rows[-1]["start"]))))
+    sp = [r for r in tp if r["pnl"] > 0]; sl = [r for r in tp if r["pnl"] <= 0]
+    print("sold early at a profit: %d rounds, avg %+.2f   sold early at a loss (cut loser): %d rounds, avg %+.2f" % (len(sp), avg([r["pnl"] for r in sp]), len(sl), avg([r["pnl"] for r in sl])))
+    for lo, hi, nm in ((0, 10, "under $10"), (10, 50, "$10-50"), (50, 150, "$50-150"), (150, 1e9, "over $150")):
+        g = [r for r in rows if lo <= r["staked"] < hi]
+        if g:
+            print("stake %-10s %2d rounds  won %3.0f%%  total %+9.2f" % (nm, len(g), 100 * len([r for r in g if r["pnl"] > 0]) / len(g), sum(r["pnl"] for r in g)))
+    for lo, hi, nm in ((0, 60, "first minute"), (60, 180, "minutes 2-3"), (180, 900, "after minute 3")):
+        g = [r for r in rows if r["first_buy_secs"] is not None and lo <= r["first_buy_secs"] < hi]
+        if g:
+            print("first buy %-14s %2d rounds  won %3.0f%%  total %+9.2f" % (nm, len(g), 100 * len([r for r in g if r["pnl"] > 0]) / len(g), sum(r["pnl"] for r in g)))
     print("last 5 rounds:")
     for r in rows[-5:]:
         print("  %s  %-4s staked %-7s pnl %+7.2f %s" % (time.strftime("%m-%d %H:%M", time.localtime(r["start"])), r["first_side"], r["staked"], r["pnl"], "(sold early)" if r["took_profit_early"] else "(held)"))
