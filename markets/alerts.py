@@ -77,12 +77,14 @@ def send(msg, title="Market agent", wait=False):
 _isl = {"t": 0.0, "sig": None, "tag": None, "ended": False, "hb": 0.0, "t0": 0.0, "warned": False}
 
 
-def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, clear=False):
+def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, clear=False, silent=False):
     if clear:
         body = {"message": "clear_notification", "data": {"tag": tag}}
     else:
         data = {"tag": tag, "live_update": True, "critical_text": crit, "notification_icon": "mdi:record-circle",
                 "notification_icon_color": color, "progress_bar_color": color}
+        if silent:
+            data["silent"] = True                                   # quiet update: no buzz, no pop-open (iOS may batch these)
         if progress:
             data["progress"], data["progress_max"] = progress
         body = {"title": title, "message": msg, "data": data}
@@ -95,7 +97,7 @@ def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, cle
 
 def island(run, now=None):
     """Keep one Live Activity (lock screen + Dynamic Island) in step with the REAL-money session. Sends only to the phone named
-    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates only on a real change (value moved about $2.50, round result, position opened or closed, offline), plus a heartbeat every 10 minutes, so the Island does not keep popping open."""
+    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates within seconds of a change plus a heartbeat every 20 seconds. All updates after the first are sent silent (no buzz, no pop-open); only a problem state (offline, halted) alerts."""
     try:
         now = now or time.time()
         e = _env(); token = e.get("HA_TOKEN"); dev = e.get("HA_LIVE_DEVICE"); base = (e.get("HA_URL") or "http://127.0.0.1:8123").rstrip("/")
@@ -123,17 +125,21 @@ def island(run, now=None):
         offline = (run.get("k_age") or 0) > 15 and not halted       # cannot read the wallet from Kalshi right now
         eq = run.get("equity") if run.get("equity") is not None else run.get("bal", 0)
         pos = run.get("pos")
-        sig = (round(eq * 0.4) / 0.4, run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted, offline)
+        sig = (round(eq, 1), run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted, offline)
         if halted and _isl["ended"] and _isl["tag"] == tag:
             return                                                  # the HALTED notice was already sent
-        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 600:
+        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 20:
             return
-        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 30 and not halted:
+        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 5 and not halted:
             return
+        first = _isl["tag"] != tag
         _isl.update({"tag": tag, "sig": sig, "t": now, "hb": now, "ended": halted})
         pnl = run.get("pnl") or 0.0
         asof = time.strftime("%I:%M:%S %p", time.localtime(now - (run.get("k_age") or 0))).lstrip("0")
-        msg = "Wallet as of " + asof                                # just the wallet and when it was read
+        msg = "%s%.2f this session · %s/%s rounds won" % ("+$" if pnl >= 0 else "-$", abs(pnl), run.get("wins", 0), run.get("windows", 0))
+        if pos:
+            msg += " · open: %s $%.2f" % (pos["side"], pos["cost"])
+        msg += " · as of " + asof
         bad = halted or offline
         title = ("HALTED · $%.2f" if halted else "NO KALSHI DATA · last $%.2f" if offline else "LIVE · $%.2f") % eq
         color = "#8e8e93" if bad else "#ff4d57"
@@ -142,7 +148,7 @@ def island(run, now=None):
         except OSError:
             pass
         rs = int(now % 900)
-        threading.Thread(target=_activity, args=(token, base, dev, tag, title, msg, ("HALT" if halted else "OFFLINE" if offline else "$%d" % round(eq)), color, (rs, 900)), daemon=True).start()
+        threading.Thread(target=_activity, args=(token, base, dev, tag, title, msg, ("HALT" if halted else "OFFLINE" if offline else "$%d" % round(eq)), color, (rs, 900), False, not (first or halted or offline)), daemon=True).start()
     except Exception:
         pass
 
