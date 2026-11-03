@@ -188,34 +188,39 @@ def audit(d, now=None):
 
 
 def review(d, last=8):
-    """The agent's own real positions: best moment to sell vs what it actually got. Returns printable lines."""
+    """The agent's own real positions, one line per (round, side): what it paid, the best moment to sell, and what it actually made."""
     res = outcomes(d)
     ser = series(d)
     pos = {}
-    out = []
     for r in _lines(os.path.join(d, "trades.jsonl")):
-        if r.get("s") != "run" or r.get("a") not in ("BUY", "SELL") or not r.get("ticker"):
+        if r.get("s") != "run" or r.get("a") not in ("BUY", "SELL") or not r.get("ticker") or not r.get("live"):
             continue
-        p = pos.setdefault(r["ticker"], {"side": r["side"], "c": 0.0, "cost": 0.0, "t0": r["t"], "got": 0.0, "sold_c": 0.0, "live": r.get("live")})
+        p = pos.setdefault((r["ticker"], r["side"]), {"c": 0.0, "cost": 0.0, "t0": r["t"], "got": 0.0, "sold_c": 0.0, "t_sell": None})
         if r["a"] == "BUY":
             p["c"] += r["c"]; p["cost"] += r["d"]
         else:
-            p["sold_c"] += r["c"]; p["got"] += r["d"]
-    for tk, p in list(pos.items())[-last:]:
-        rows = ser.get(tk)
-        if not rows or not p["c"]:
+            p["sold_c"] += r["c"]; p["got"] += r["d"]; p["t_sell"] = r["t"]
+    out = []
+    for (tk, side), p in list(pos.items())[-last:]:
+        if not p["c"]:
             continue
         avg = p["cost"] / p["c"]
-        vals = _vals(sorted(rows), p["side"])
-        after = [(t, v) for t, v in vals if t >= p["t0"]]
-        if not after:
-            continue
-        tpk, vpk = max(after, key=lambda x: x[1])
-        won = tk in res and ((res[tk] == "UP") == (p["side"] == "UP"))
-        end = ("held to the end and %s" % ("won" if won else "lost")) if p["sold_c"] < p["c"] - 0.5 and tk in res else "sold"
-        out.append("%s %s %d contracts, avg %d c: best moment to sell was %s at %d c (%+.1f c per contract vs cost); %s%s" % (
-            time.strftime("%H:%M", time.localtime(p["t0"])), p["side"], p["c"], round(100 * avg), time.strftime("%H:%M:%S", time.localtime(tpk)),
-            round(100 * vpk), 100 * (vpk - avg), end, " [live]" if p.get("live") else ""))
+        left = max(0.0, p["c"] - p["sold_c"])
+        done = tk in res
+        won = done and ((res[tk] == "UP") == (side == "UP"))
+        pnl = p["got"] - p["cost"] + (left * (1.0 if won else 0.0) if done else 0.0)
+        best = ""
+        rows = ser.get(tk)
+        if rows:
+            vals = _vals(sorted(rows), side)
+            end_t = p["t_sell"] or 9e18
+            after = [(t, v) for t, v in vals if p["t0"] <= t <= end_t]
+            if after:
+                tpk, vpk = max(after, key=lambda x: x[1])
+                best = "; best moment to sell %s at %d c (%+.1f c vs cost)" % (time.strftime("%H:%M:%S", time.localtime(tpk)), round(100 * vpk), 100 * (vpk - avg))
+        how = ("sold %d" % p["sold_c"] if p["sold_c"] else "") + (" and " if p["sold_c"] and left > 0.5 else "") + ("held %d to the end (%s)" % (left, "won" if won else "lost") if left > 0.5 and done else "held %d, round not finished" % left if left > 0.5 else "")
+        out.append("%s %s %d contracts at about %d c%s; %s -> %s$%.2f" % (
+            time.strftime("%H:%M", time.localtime(p["t0"])), side, p["c"], round(100 * avg), best, how, "+" if pnl >= 0 else "-", abs(pnl)))
     return out
 
 
