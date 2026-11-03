@@ -8,7 +8,7 @@ Every feed can fail on its own: a failed feed just records null and backs off, t
 import gzip, json, os, shutil, threading, time, urllib.request
 
 SHARED = {}          # filled by the collector each cycle: {"sigs": {...}, "pos": {...}, "mode": "practice"|"live", "ticker": ...}
-KEEP_DAYS = 14
+KEEP_DAYS = 60
 
 
 def _get(url, timeout=4):

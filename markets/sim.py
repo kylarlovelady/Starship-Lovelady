@@ -22,10 +22,12 @@ STAGE_GAP = 45          # seconds to wait between buys in one round, so a positi
 ENTRY_BLOCK = []       # price ranges (cents) that the agent's own recordings show lose money after fees
 BLACKOUT = None         # name of a big scheduled news event happening now: no new bets
 PATTERN_BAD = []        # (feature, bucket) pairs that lost money in training and in later test rounds
+MIN_HOLD = 30           # seconds: never sell sooner than this after a buy (a quick flip only pays the spread and fees twice)
+_QSRC = None           # where the current Kalshi quote came from: "book" (live order book) or "list" (lagging market list)
 _FEAT = {}              # what the market looks like right now: seconds into the round, model odds, signal score
 EXIT_ON, EXIT_P, EXIT_D = 1, 8.0, 4.0   # take-profit: once up EXIT_P cents per contract, sell if it falls EXIT_D cents from the best point
 SKIPPED = {}            # entries refused by the price cap, for the log
-SIM_VERSION = 4
+SIM_VERSION = 5
 _EV, _CUR, _T = [], "", 0
 _DIR = None
 _QUOTE = (None, None)  # (ask, bid) of Up when the trade was decided
@@ -51,7 +53,9 @@ def log_trade(e):
         if not _DIR:
             return
         rec = {k: e.get(k) for k in ("t", "s", "a", "side", "c", "px", "d", "bal", "why")}
-        rec["ticker"] = _TK; rec["live"] = bool(_LIVE); rec["ask"] = _QUOTE[0]; rec["bid"] = _QUOTE[1]
+        rec["ticker"] = _TK; rec["live"] = bool(_LIVE); rec["ask"] = _QUOTE[0]; rec["bid"] = _QUOTE[1]; rec["v"] = SIM_VERSION; rec["q"] = _QSRC
+        if _FEAT and e.get("a") == "BUY":
+            rec["f"] = {k: (round(v, 4) if isinstance(v, float) else v) for k, v in _FEAT.items() if v is not None}
         with open(os.path.join(_DIR, "trades.jsonl"), "a") as fh:
             fh.write(json.dumps(rec) + "\n")
     except Exception:
@@ -202,6 +206,8 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     px = ask_up if side == "UP" else 1 - bid_up
     px = min(0.99, max(0.01, px))
     used = a["pos"]["cost"] if a["pos"] else 0.0
+    if not _LIVE and _QSRC == "list":                  # no live order-book price this second: do not trade on the lagging list quote
+        return False
     if px > ENTRY_MAX + 1e-9 and _CUR != "hold":
         if not any(e.get("a") == "SKIP" and e.get("s") == _CUR and _T - e["t"] < 60 for e in _EV[-6:]):
           log_trade({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": "entry cap"})
@@ -212,7 +218,10 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         return False
     why_no = None
     if _CUR != "hold":
-        if px < ENTRY_MIN - 1e-9:
+        if _CUR == "swing":                            # swing has its own price rules; only the news blackout applies to it
+            if BLACKOUT:
+                why_no = "a big US news release is due or just out (%s)" % BLACKOUT
+        elif px < ENTRY_MIN - 1e-9:
             why_no = "the price %d\u00a2 is below your %d\u00a2 minimum (cheap long shots rarely pay)" % (round(px * 100), round(ENTRY_MIN * 100))
         elif BLACKOUT:
             why_no = "a big US news release is due or just out (%s)" % BLACKOUT
@@ -290,6 +299,9 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
 
 def sell(a, ask_up, bid_up, why=""):
     p = a["pos"]
+    lb = (a.get("w") or {}).get("last_buy")
+    if lb is not None and _T - lb < MIN_HOLD and _FEAT.get("left", 999) > 45:     # too soon after buying (except in the last 45 s of a round)
+        return False
     px = bid_up if p["side"] == "UP" else 1 - ask_up
     px = min(0.99, max(0.01, px))
     n = p["c"]
@@ -715,7 +727,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, PATTERN_BAD, _FEAT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -733,12 +745,14 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         ENTRY_BLOCK = C.get("entry_block") or []
         BLACKOUT = C.get("blackout")
         PATTERN_BAD = [(r["feature"], r["bucket"]) for r in (C.get("pattern_bad") or [])]
+        MIN_HOLD = int(C.get("min_hold_secs", MIN_HOLD))
         EXIT_ON, EXIT_P, EXIT_D = int(C.get("exit_on", EXIT_ON)), float(C.get("exit_peak", EXIT_P)), float(C.get("exit_drop", EXIT_D))
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
         _TRUST = C.get("trust") or {}
         PRACTICE = C.get("practice") if C.get("practice") in STRATS else "auto"
     _SZ = ((kal or {}).get("yes_ask_size"), (kal or {}).get("yes_bid_size"))
+    _QSRC = (kal or {}).get("qsrc")
     _DIR = DIR
 
     sim = S.setdefault("sim", {"acc": {}, "win": None, "strike": None, "hours": {}, "mood": 0.0, "synth": False, "joined": False})
@@ -784,7 +798,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         sim["win"] = win
         sim["strike"] = None; sim["ticker"] = None; sim["ready"] = False; sim["last_yes"] = None
     left = win + window_len - now
-    _FEAT = {"el": window_len - left, "pm": pm, "score": score}
+    _FEAT = {"el": window_len - left, "left": left, "pm": pm, "score": score}
     if kal and strike and kal.get("ticker"):             # only ever use Kalshi's own target for this round
         sim["strike"] = float(strike); sim["ticker"] = kal["ticker"]
         if kal.get("yes_bid") is not None and kal.get("yes_ask") is not None:
