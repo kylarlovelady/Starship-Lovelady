@@ -536,6 +536,19 @@ def read_calls():
     return out
 
 
+def learn_health(cache, now):
+    """How many of the last 24 hours' rounds actually became lessons (Kalshi-settled), so a quiet gap in learning is visible."""
+    h = cache.get("lh")
+    if h and now - h["t"] < 60:
+        return h
+    cut = now - 86400
+    calls = [c for c in read_calls() if (c.get("start") or 0) >= cut]
+    k = sum(1 for c in calls if c.get("src") == "kalshi")
+    h = {"t": int(now), "kalshi": k, "estimated": len(calls) - k, "expected": min(96, int((now - (cache.get("first_t") or now)) // 900) + 1) if False else 96}
+    cache["lh"] = h
+    return h
+
+
 def tally(calls):
     scored = [c for c in calls if c["call"] in ("UP", "DOWN") and c["outcome"] in ("UP", "DOWN") and c.get("src") == "kalshi"]
     right = sum(1 for c in scored if c["call"] == c["outcome"])
@@ -828,7 +841,7 @@ def run_cycle(now, S):
             res = get_result(o["ticker"]) if o.get("ticker") else None
             src = "kalshi"
             if res is None:
-                if o.get("ticker") and now - end < 150:
+                if o.get("ticker") and now - end < 540:
                     continue                          # Kalshi has not posted the result yet; try again next cycle
                 S["open"].remove(o)
                 if now - end > 600:
@@ -906,7 +919,7 @@ def run_cycle(now, S):
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
         "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-200:]], "ky": P["ky"][-200:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent,
-        "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None),
+        "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None), "learn_health": learn_health(cache, now),
         "recent_markets": cache.get("recent_markets"), "weights": w,
         "note": "Paper mode: no real money. Information only, not financial advice.",
     }
