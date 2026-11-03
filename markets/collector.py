@@ -243,17 +243,17 @@ def sig_bigtrades(now):
         if not str(t.get("pair", "")).upper().startswith("BTC/"):
             continue
         ts = t.get("timestamp", 0) / 1000.0
-        if now - ts > 1800 or ts > now + 60:
+        if now - ts > 10800 or ts > now + 60:        # the feed runs about 1.5 hours behind, so look back 3 hours
             continue
-        q = float(t.get("quantity_quote") or 0) * (0.5 ** ((now - ts) / 600.0))
+        q = float(t.get("quantity_quote") or 0) * (0.5 ** ((now - ts) / 2700.0))
         if t.get("isBuy"):
             buy += q; nb += 1
         else:
             sell += q; ns += 1
     net = buy - sell
     if nb + ns == 0:
-        return 0.0, "no giant BTC trades in the last 30 min"
-    return clamp(math.tanh(net / 15e6)), "last 30 min (recent counts more): $%.1fM of giant buys (%d), $%.1fM of giant sells (%d)" % (buy / 1e6, nb, sell / 1e6, ns)
+        return 0.0, "no giant BTC trades in the last 3 hours"
+    return clamp(math.tanh(net / 5e6)), "last 3 hours (recent counts more): $%.1fM of giant buys (%d), $%.1fM of giant sells (%d)" % (buy / 1e6, nb, sell / 1e6, ns)
 
 
 def lex(title):
