@@ -95,7 +95,7 @@ def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, cle
 
 def island(run, now=None):
     """Keep one Live Activity (lock screen + Dynamic Island) in step with the REAL-money session. Sends only to the phone named
-    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates only on a real change (value moved about $2.50, round result, position opened or closed, offline), plus a heartbeat every 3 minutes, so the Island does not keep popping open."""
+    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates only on a real change (value moved about $2.50, round result, position opened or closed, offline), plus a heartbeat every 10 minutes, so the Island does not keep popping open."""
     try:
         now = now or time.time()
         e = _env(); token = e.get("HA_TOKEN"); dev = e.get("HA_LIVE_DEVICE"); base = (e.get("HA_URL") or "http://127.0.0.1:8123").rstrip("/")
@@ -126,17 +126,14 @@ def island(run, now=None):
         sig = (round(eq * 0.4) / 0.4, run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted, offline)
         if halted and _isl["ended"] and _isl["tag"] == tag:
             return                                                  # the HALTED notice was already sent
-        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 180:
+        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 600:
             return
         if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 30 and not halted:
             return
         _isl.update({"tag": tag, "sig": sig, "t": now, "hb": now, "ended": halted})
         pnl = run.get("pnl") or 0.0
         asof = time.strftime("%I:%M:%S %p", time.localtime(now - (run.get("k_age") or 0))).lstrip("0")
-        msg = "%s%.2f this session · %s/%s rounds won" % ("+$" if pnl >= 0 else "-$", abs(pnl), run.get("wins", 0), run.get("windows", 0))
-        if pos:
-            msg += " · open: %s $%.2f" % (pos["side"], pos["cost"])
-        msg += " · as of " + asof
+        msg = "Wallet as of " + asof                                # just the wallet and when it was read
         bad = halted or offline
         title = ("HALTED · $%.2f" if halted else "NO KALSHI DATA · last $%.2f" if offline else "LIVE · $%.2f") % eq
         color = "#8e8e93" if bad else "#ff4d57"
