@@ -24,6 +24,7 @@ BLACKOUT = None         # name of a big scheduled news event happening now: no n
 PATTERN_BAD = []        # (feature, bucket) pairs that lost money in training and in later test rounds
 MIN_HOLD = 0            # seconds: optional hard timer after a buy (off; the profit rule below replaces it)
 MIN_PROFIT_USD = 3.0    # never sell a winner for less than this much profit AFTER fees (a few cents of profit is eaten by the cost of trading)
+STOP_ON, STOP_PCT = 1, 0.35   # cut a loss: once a bet is down this share of its cost (after fees, at the price it could sell for), sell it instead of riding it to the end
 MIN_PROFIT_PCT = 0.02   # ...or this share of the money in the bet, whichever is bigger (so big bets need proportionally more)
 _QSRC = None           # where the current Kalshi quote came from: "book" (live order book) or "list" (lagging market list)
 _FEAT = {}              # what the market looks like right now: seconds into the round, model odds, signal score
@@ -733,7 +734,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, STOP_ON, STOP_PCT, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -752,6 +753,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         BLACKOUT = C.get("blackout")
         PATTERN_BAD = [(r["feature"], r["bucket"]) for r in (C.get("pattern_bad") or [])]
         MIN_HOLD = int(C.get("min_hold_secs", MIN_HOLD))
+        STOP_ON, STOP_PCT = int(C.get("stop_on", STOP_ON)), float(C.get("stop_pct", STOP_PCT))
         MIN_PROFIT_USD = float(C.get("min_profit_usd", MIN_PROFIT_USD)); MIN_PROFIT_PCT = float(C.get("min_profit_pct", MIN_PROFIT_PCT))
         EXIT_ON, EXIT_P, EXIT_D = int(C.get("exit_on", EXIT_ON)), float(C.get("exit_peak", EXIT_P)), float(C.get("exit_drop", EXIT_D))
         if isinstance(C.get("weights"), dict):
@@ -958,13 +960,19 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                                                          "sale_net": round(sell_now - 0.0, 4), "peak": round(pk0, 4), "live": bool(_LIVE)}) + "\n")
                             except OSError:
                                 pass
+                if not sold and STOP_ON and pname != "hold" and pos["c"] > 0:      # cut the loss: do not ride a losing bet to the end just because the round is ending
+                    loss_ = pos["cost"] / pos["c"] - sell_now
+                    if loss_ >= STOP_PCT * pos["cost"] / pos["c"]:
+                        if sell(a, ask, bid, "Cutting the loss: this bet is down %d%% (it paid %d\u00a2 per contract and could sell for %d\u00a2), so it sells now instead of riding it to the end." % (
+                                round(100 * loss_ / (pos["cost"] / pos["c"])), round(100 * pos["cost"] / pos["c"]), round(100 * sell_now))):
+                            sold = True; act = "sold"; w["cut"] = True
                 if not sold and sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
                     sell(a, ask, bid, "Selling %s: it can sell at %s\u00a2 but by its own odds holding is worth only %s\u00a2 per contract." % (s, c_(sell_now), c_(side_p(s))))
                     sold = True; act = "sold"
             if not sold:
                 for s, e in (("UP", eU), ("DOWN", eD)):
-                    if w.get("no_more"):                           # it took profit this round: done until the next one
-                        why += " Took profit already this round, so no more buying."
+                    if w.get("no_more") or w.get("cut"):           # it took profit or cut a loss this round: done until the next one
+                        why += (" Cut a loss already this round, so no more buying." if w.get("cut") else " Took profit already this round, so no more buying.")
                         break
                     if a["pos"] and a["pos"]["side"] != s:
                         continue
