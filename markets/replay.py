@@ -277,19 +277,19 @@ def sweep(days, ag, cfg):
     cut = int(len(tuse) * 0.7)
     tr, te = tuse[:cut], tuse[cut:]
     out = []
-    grid = list(itertools.product((0.0, 1.0, 2.0, 3.0), (4.0, 6.0, 8.0), (0.25, 0.35, 0.5)))
+    grid = list(itertools.product((0.0, 10.0, 20.0, 30.0), (0.55, 0.80), (4.0, 6.0), (0.25, 0.35)))
     print("Sweeping %d swing variants on %d training rounds and %d later test rounds ..." % (len(grid), len(tr), len(te)), flush=True)
-    for confirm, move, slow in grid:
-        o = {"confirm": confirm, "move": move, "slow": slow}
+    for stop, cap, move, slow in grid:
+        o = {"stop": stop, "entry_cap": cap, "move": move, "slow": slow}
         a = summarize(run_one("s", "swing", ag, tr, tcand, tbtc, cfg, o))
         b = summarize(run_one("s", "swing", ag, te, tcand, tbtc, cfg, o))
-        out.append({"confirm": confirm, "move": move, "slow": slow, "train": a.get("per_round"), "test": b.get("per_round"), "test_win": b.get("win_pct")})
+        out.append({"stop": stop, "cap": cap, "move": move, "slow": slow, "train": a.get("per_round"), "test": b.get("per_round"), "test_win": b.get("win_pct")})
     base = summarize(run_one("d", "distance", ag, tr, tcand, tbtc, cfg)).get("per_round"), summarize(run_one("d", "distance", ag, te, tcand, tbtc, cfg)).get("per_round")
     out.sort(key=lambda x: -(x["train"] or -99))
     json.dump({"made": int(time.time()), "train_rounds": len(tr), "test_rounds": len(te), "variants": out, "distance": base}, open(os.path.join(H, "sweep.json"), "w"))
     print("  best on training rounds (per round, $20 bets), then the same settings on later rounds they never saw:")
     for x in out[:6]:
-        print("   confirm %.0fc  move %.0fc  slow %.2f : train %+.2f   test %+.2f (won %s%%)" % (x["confirm"], x["move"], x["slow"], x["train"] or 0, x["test"] or 0, x["test_win"]))
+        print("   cut loss at %2.0fc  price limit %.2f  move %.0fc  slow %.2f : train %+.2f   test %+.2f (won %s%%)" % (x["stop"], x["cap"], x["move"], x["slow"], x["train"] or 0, x["test"] or 0, x["test_win"]))
     print("  for comparison, distance-only: train %+.2f  test %+.2f" % (base[0] or 0, base[1] or 0))
     print("  worst on training:", ["%+.2f/%+.2f" % (x["train"] or 0, x["test"] or 0) for x in out[-3:]])
 

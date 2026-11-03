@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# swing v2: waits for the price to turn before flipping (restart marker)
+# swing v3: cuts a losing swing at 20c, price limit 80c (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

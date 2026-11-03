@@ -548,6 +548,7 @@ def _tape_at(tape, t):
 
 
 SW_OVR = {}             # test overrides (the replay sweep sets these); empty in normal use
+SW_STOP = 20.0         # cents per contract: a swing bet that has lost this much is cut instead of being held to the end (0 = never cut)
 SW_CONFIRM = 2.0        # cents the price must turn back before it buys the other side after a sale
 
 
@@ -556,7 +557,7 @@ def swing_params(ag):
     high aggression = makes moves on small trends, takes profit on small moves, re-enters fast, more swings per round."""
     P = {"trend": SW_TREND * (1 - 0.9 * ag), "open": SW_OPEN_SECS + 330 * ag, "move": max(4.0, SW_MOVE - 2.5 * ag), "min_v": SW_MIN_V * (1 - 0.5 * ag),
          "slow": SW_SLOW + 0.25 * ag, "slow_secs": max(5, round(SW_SLOW_SECS - 5 * ag)), "entries": SW_MAX_ENTRIES + int(round(4 * ag)),
-         "min_profit": 0.015 - 0.005 * ag, "hold_edge": SW_HOLD_EDGE - 0.04 * ag, "need_min": 150 - 60 * ag, "confirm": max(1.0, SW_CONFIRM - ag)}
+         "min_profit": 0.015 - 0.005 * ag, "hold_edge": SW_HOLD_EDGE - 0.04 * ag, "need_min": 150 - 60 * ag, "confirm": max(1.0, SW_CONFIRM - ag), "stop": SW_STOP, "entry_cap": 0.80}
     P.update(SW_OVR)
     return P
 
@@ -620,6 +621,13 @@ def swing_step(a, w, now, el, left, price, mid, ask, bid, pm, sigs, score, sim, 
         sw["best"] = max(sw["best"], mv); sw["pk_v"] = max(sw["pk_v"], fv)
         pxb = bid if s == "UP" else 1 - ask
         prof = pxb - fee(pxb) - pos["cost"] / pos["c"]
+        if P["stop"] and prof <= -P["stop"] / 100.0 and left > SW_LAST_SELL:
+            c0, avg0 = pos["c"], pos["cost"] / pos["c"]
+            if sell(a, ask, bid, "Cutting the loss: this %s swing is down %d\u00a2 per contract after fees (your limit is %d\u00a2), so it sells instead of holding to the end." % (s, round(-prof * 100), round(P["stop"]))):
+                _swing_log({"t": int(now), "ticker": _TK, "side": s, "c": round(c0, 1), "avg_cost": round(avg0, 4), "mid_in": round(sw["mid_in"], 4), "mid_out": round(mid, 4),
+                            "best_cents": round(sw["best"], 1), "profit_pc": round(prof, 4), "el": int(el), "cut": True, "live": bool(_LIVE)})
+                sw.update({"want": None, "cut": True, "best": 0.0, "pk_v": 0.0, "slow_t": None, "mid_in": None, "t_in": None})
+                return "sold", "Cut the loss on %s. No more swings this round." % s
         slow = sw["best"] >= P["move"] and sw["pk_v"] >= P["min_v"] and fv <= P["slow"] * sw["pk_v"]
         sw["slow_t"] = (sw["slow_t"] or now) if slow else None
         base = "Riding %s: price is %d\u00a2 %s (best so far %d\u00a2 in its favour), moving %.2f\u00a2/s our way (fastest %.2f). " % (s, abs(round(mv)), "in its favour" if mv >= 0 else "against it", round(sw["best"]), fv, sw["pk_v"])
@@ -640,7 +648,7 @@ def swing_step(a, w, now, el, left, price, mid, ask, bid, pm, sigs, score, sim, 
     # flat
     if left <= 5 or sw.get("hold"):
         return "waiting", why
-    room = left >= need
+    room = left >= need and not sw.get("cut")
     side, reason = None, None
     if sw.get("want") and sw["entries"] < P["entries"] and room:
         ext = sw.get("ext", mid)
@@ -669,13 +677,16 @@ def swing_step(a, w, now, el, left, price, mid, ask, bid, pm, sigs, score, sim, 
             if e_ >= P["hold_edge"] and ENTRY_MIN <= px_ <= ENTRY_MAX and (best is None or e_ > best[1]):
                 best = (s_, e_)
         if not best:
-            return "waiting", "Not enough time left for another swing (%ds, it needs %ds) and no bet worth holding to the finish, so it sits this one out." % (left, need)
+            return "waiting", ("Cut its loss earlier, so no more swings this round" if sw.get("cut") else "Not enough time left for another swing (%ds, it needs %ds)" % (left, need)) + " and no bet worth holding to the finish, so it sits this one out."
         if buy(a, best[0], SW_STAKE, ask, bid, "End of round: its model sees a %d\u00a2 edge on %s after fees, so it places one bet and holds to the end." % (round(best[1] * 100), best[0])):
             sw["hold"] = True
             return "opened", "Placed an end-of-round bet and will hold it."
         return "waiting", why
     if not side:
         return "waiting", "Watching for the next swing (%d of %d used, %ds left)." % (sw["entries"], P["entries"], left)
+    px_ = ask if side == "UP" else 1 - bid
+    if px_ > P["entry_cap"] + 1e-9:
+        return "waiting", reason + " But %s costs %d\u00a2, over the swing price limit of %d\u00a2, so it waits." % (side, round(px_ * 100), round(P["entry_cap"] * 100))
     if buy(a, side, SW_STAKE, ask, bid, reason):
         sw.update({"entries": sw["entries"] + 1, "want": None, "mid_in": mid, "t_in": now, "best": 0.0, "pk_v": 0.0, "slow_t": None})
         if w.get("mix") is None:
