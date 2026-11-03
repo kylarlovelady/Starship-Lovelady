@@ -54,6 +54,16 @@ try:
 except Exception as e:
     print("take-profit rule: no file yet", e)
 try:
+    pt = json.load(open(os.path.join(D, "patterns.json")))
+    print("\nHINDSIGHT PATTERNS (%d finished rounds studied)%s" % (pt.get("rounds", 0), (" | " + pt["note"]) if pt.get("note") else ""))
+    if pt.get("baseline"): print("  an average entry after fees: train %+.1f c, test %+.1f c" % (100 * pt["baseline"]["train"], 100 * pt["baseline"]["test"]))
+    for tag in ("bad", "good"):
+        for r in pt.get(tag, [])[:6]: print("  %s: %s = %s  train %+.1f c, later rounds %+.1f c (%d/%d rounds)" % (tag.upper(), r["feature"], r["bucket"], 100 * r["train"], 100 * r["test"], r["n_train"], r["n_test"]))
+    mem = sum(1 for _ in open(os.path.join(D, "hindsight.jsonl")))
+    print("  hindsight memory: %d rounds stored" % mem)
+except Exception as e:
+    print("hindsight patterns: not built yet (%s)" % str(e)[:60])
+try:
     import sys; sys.path.insert(0, os.path.expanduser("~/starship/markets")); import exit_learn
     ls = exit_learn.review(D)
     if ls: print("\nLOOK-BACK ON YOUR REAL POSITIONS:"); [print("  " + l) for l in ls]

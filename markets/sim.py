@@ -21,6 +21,8 @@ STAGE_FIRST = 0.40      # the first buy of a round is this share of the intended
 STAGE_GAP = 45          # seconds to wait between buys in one round, so a position is built over minutes, not in one go
 ENTRY_BLOCK = []       # price ranges (cents) that the agent's own recordings show lose money after fees
 BLACKOUT = None         # name of a big scheduled news event happening now: no new bets
+PATTERN_BAD = []        # (feature, bucket) pairs that lost money in training and in later test rounds
+_FEAT = {}              # what the market looks like right now: seconds into the round, model odds, signal score
 EXIT_ON, EXIT_P, EXIT_D = 1, 8.0, 4.0   # take-profit: once up EXIT_P cents per contract, sell if it falls EXIT_D cents from the best point
 SKIPPED = {}            # entries refused by the price cap, for the log
 SIM_VERSION = 3
@@ -204,6 +206,15 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
             for lo, hi in ENTRY_BLOCK:
                 if lo <= px * 100 < hi:
                     why_no = "your own recordings show buying at %d-%d\u00a2 has lost money after fees" % (lo, hi)
+            if not why_no and PATTERN_BAD and _FEAT.get("pm") is not None and _FEAT.get("score") is not None:
+                pm_ = _FEAT["pm"] if side == "UP" else 1 - _FEAT["pm"]
+                el_ = _FEAT["el"]; edge_ = pm_ - px - fee(px); sc_ = _FEAT["score"] * (1 if side == "UP" else -1)
+                bk_ = {"time": "t%d" % min(4, int(max(0, el_) // 180)), "edge": "e0" if edge_ < 0 else "e1" if edge_ < 0.05 else "e2" if edge_ < 0.10 else "e3",
+                       "score": "s0" if sc_ < -10 else "s1" if sc_ <= 10 else "s2"}
+                for f_, b_ in PATTERN_BAD:
+                    if bk_.get(f_) == b_:
+                        why_no = "its hindsight memory shows entries like this (%s: %s) lost money on rounds it was tested on" % (f_, b_)
+                        break
     if why_no:
         if not any(e.get("a") == "SKIP" and e.get("s") == _CUR and _T - e["t"] < 60 for e in _EV[-6:]):
             _EV.append({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": "Not buying %s: %s." % (side, why_no), "mix": _MIX, "trace": _TRACE})
@@ -514,7 +525,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, PATTERN_BAD, _FEAT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -530,6 +541,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         STAGE_GAP = C.get("stage_gap", STAGE_GAP)
         ENTRY_BLOCK = C.get("entry_block") or []
         BLACKOUT = C.get("blackout")
+        PATTERN_BAD = [(r["feature"], r["bucket"]) for r in (C.get("pattern_bad") or [])]
         EXIT_ON, EXIT_P, EXIT_D = int(C.get("exit_on", EXIT_ON)), float(C.get("exit_peak", EXIT_P)), float(C.get("exit_drop", EXIT_D))
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
@@ -574,6 +586,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         sim["win"] = win
         sim["strike"] = None; sim["ticker"] = None; sim["ready"] = False; sim["last_yes"] = None
     left = win + window_len - now
+    _FEAT = {"el": window_len - left, "pm": pm, "score": score}
     if kal and strike and kal.get("ticker"):             # only ever use Kalshi's own target for this round
         sim["strike"] = float(strike); sim["ticker"] = kal["ticker"]
         if kal.get("yes_bid") is not None and kal.get("yes_ask") is not None:

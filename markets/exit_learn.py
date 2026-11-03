@@ -73,8 +73,8 @@ def series(d, days=3):
 def _vals(rows, side):
     """sale value per contract after the sell fee, for each second."""
     if side == "UP":
-        return [(t, b - fee(b)) for t, b, a in rows]
-    return [(t, (1 - a) - fee(1 - a)) for t, b, a in rows]
+        return [(r[0], r[1] - fee(r[1])) for r in rows]
+    return [(r[0], (1 - r[2]) - fee(1 - r[2])) for r in rows]
 
 
 def _sim_rule(vals, i0, cost, P, D):
@@ -240,6 +240,11 @@ def _loop(d):
         try:
             learn(d)
             audit(d)
+        except Exception:
+            pass
+        try:
+            import hindsight
+            hindsight.run(d)
         except Exception:
             pass
         time.sleep(1200)
