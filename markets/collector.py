@@ -346,10 +346,26 @@ def get_kalshi():
     bid = to_cents(m, "yes_bid", "yes_bid_dollars")
     ask = to_cents(m, "yes_ask", "yes_ask_dollars")
     last = to_cents(m, "last_price", "last_price_dollars")
+    qsrc, list_q, bsz, asz = "list", (bid, ask), _num(m.get("yes_bid_size_fp")), _num(m.get("yes_ask_size_fp"))
+    try:                                   # the market list can lag by many cents: take the live order book instead
+        d2 = fetch_json("https://api.elections.kalshi.com/trade-api/v2/markets/%s/orderbook?depth=1" % m.get("ticker"), 5)
+        ob = d2.get("orderbook") or d2.get("orderbook_fp") or d2
+        def _best(side):
+            lv = ob.get(side + "_dollars") or ob.get(side)
+            if not lv:
+                return None
+            row = max(lv, key=lambda x: float(x[0]))
+            p_ = float(row[0]); p_ = p_ * 100 if p_ <= 1.0 else p_
+            return p_, _num(row[1])
+        yb, nb = _best("yes"), _best("no")
+        if yb and nb:
+            bid, ask, bsz, asz = yb[0], 100.0 - nb[0], yb[1], nb[1]
+            qsrc = "book"
+    except Exception:
+        pass
     yes = (bid + ask) / 2 if bid is not None and ask is not None else last
     return {"ticker": m.get("ticker"), "yes_pct": yes, "yes_bid": bid, "yes_ask": ask, "close_time": m.get("close_time"), "close_ep": close_epoch(m),
-            "yes_ask_size": to_cents(m, "yes_ask_size_fp") if False else _num(m.get("yes_ask_size_fp")),
-            "yes_bid_size": _num(m.get("yes_bid_size_fp")),
+            "yes_ask_size": asz, "yes_bid_size": bsz, "qsrc": qsrc, "list_bid": list_q[0], "list_ask": list_q[1],
             "strike": m.get("floor_strike") if m.get("floor_strike") is not None else m.get("cap_strike")}
 
 
@@ -921,7 +937,7 @@ def run_cycle(now, S):
                                 "sig": {k: v["score"] for k, v in avail.items()},
                                 "kalshi_yes": k.get("yes_pct"),
                                 "yes_bid": k.get("yes_bid"),
-                                "yes_ask": k.get("yes_ask"),
+                                "yes_ask": k.get("yes_ask"), "qsrc": k.get("qsrc"), "list_bid": k.get("list_bid"), "list_ask": k.get("list_ask"),
                                 "strike": k.get("strike"), "p_model": pm, "secs_left": win + WINDOW - now,
                                 "recent_up": (cache.get("recent_markets") or []).count("UP") if cache.get("recent_markets") else None}) + "\n")
     calls = read_calls()

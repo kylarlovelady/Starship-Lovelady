@@ -55,6 +55,15 @@ def outcomes():
 
 
 def quote(r):
+    ob = r.get("ob") or {}
+    yl, nl = ob.get("yes_dollars") or ob.get("yes"), ob.get("no_dollars") or ob.get("no")
+    if yl and nl:                                    # the live order book is the truth; the market list lags
+        try:
+            yb = max(float(x[0]) for x in yl); nb = max(float(x[0]) for x in nl)
+            yb = yb * 100 if yb <= 1.0 else yb; nb = nb * 100 if nb <= 1.0 else nb
+            return yb, 100.0 - nb
+        except (TypeError, ValueError):
+            pass
     k = r.get("k") or {}
     b, a = cents(k, "yes_bid"), cents(k, "yes_ask")
     return (b, a) if b is not None and a is not None else (None, None)

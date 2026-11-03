@@ -50,6 +50,8 @@ def _samples(d):
     seen = set()
     for r in _lines(os.path.join(d, "snapshots.jsonl")):
         b, a, left, t = r.get("yes_bid"), r.get("yes_ask"), r.get("secs_left"), r.get("t")
+        if r.get("qsrc") != "book":                    # older rows used the market list, which lags by several cents: not trusted
+            continue
         if b is None or a is None or left is None or t is None or not (0 < left < 900):
             continue
         st = int(t + left) - 900
@@ -60,10 +62,17 @@ def _samples(d):
         yield st, left, float(b), float(a), t
     for p in sorted(glob.glob(os.path.join(d, "ticks-*.jsonl*"))):
         for r in _lines(p):
-            k = r.get("k") or {}
             left, t = r.get("left"), r.get("t")
-            b = _cents(k.get("yes_bid_dollars")) if k.get("yes_bid_dollars") is not None else _cents(k.get("yes_bid"))
-            a = _cents(k.get("yes_ask_dollars")) if k.get("yes_ask_dollars") is not None else _cents(k.get("yes_ask"))
+            ob = r.get("ob") or {}
+            yl, nl = ob.get("yes_dollars") or ob.get("yes"), ob.get("no_dollars") or ob.get("no")
+            if not yl or not nl:
+                continue                                # only the live order book is trusted, not the market list
+            try:
+                yb_ = max(float(x[0]) for x in yl); nb_ = max(float(x[0]) for x in nl)
+            except (TypeError, ValueError, IndexError):
+                continue
+            b = yb_ * 100 if yb_ <= 1.0 else yb_
+            a = 100.0 - (nb_ * 100 if nb_ <= 1.0 else nb_)
             if b is None or a is None or left is None or not (0 < left < 900):
                 continue
             st = int(t + left) - 900

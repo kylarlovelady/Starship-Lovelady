@@ -118,6 +118,27 @@ class Broker:
     def forget_balance(self):
         self._bt = 0.0
 
+    def real_book(self, ticker):
+        """Best Yes bid and best Yes ask (dollars) from Kalshi's live order book, or None. The market-list quote can lag by many cents,
+        so every real order is priced from this, never from the list."""
+        try:
+            st, d = self.c.call("GET", "/markets/%s/orderbook?depth=1" % ticker)
+            if st != 200:
+                return None
+            ob = d.get("orderbook") or d.get("orderbook_fp") or d
+            def best(side):
+                lv = ob.get(side + "_dollars") or ob.get(side)
+                if not lv:
+                    return None
+                b = max(float(x[0]) for x in lv)
+                return b / 100.0 if b > 1.0 else b
+            yb, nb = best("yes"), best("no")
+            if yb is None or nb is None:
+                return None
+            return {"bid": yb, "ask": round(1.0 - nb, 4)}
+        except Exception:
+            return None
+
     def trade(self, action, ticker, side, count, ask_up, bid_up):
         """action buy or sell, side UP or DOWN. Returns whole contracts filled. Orders are immediate-or-cancel, priced at the
         side of the book we are crossing, so nothing is left resting. Up is the Yes book. Down is the other side of the same book."""
@@ -128,10 +149,20 @@ class Broker:
         n = int(count)
         if n < 1 or not ticker:
             return 0
+        bk = self.real_book(ticker)
+        if bk is None:                                    # never price an order from a quote that may be stale
+            self._log({"t": int(time.time()), "kind": "skip", "action": action, "side": side, "why": "order book unreadable"})
+            return 0
+        ask_up, bid_up = bk["ask"], bk["bid"]
+        if action == "buy":
+            ks, pr = ("bid", ask_up) if side == "UP" else ("ask", bid_up)
+        else:
+            ks, pr = ("ask", bid_up) if side == "UP" else ("bid", ask_up)
         # Kalshi prices can be fractions of a cent. Round in the direction that still crosses the book: a bid up, an ask down.
         # plus 2 cents of slack so a quote a few seconds old still fills. Kalshi fills at the book price, not our limit (the test showed
         # a 55 cent limit filling at 54), so the slack costs nothing unless the market really moved.
-        pr = (math.ceil(pr * 100 - 1e-9) + 2) / 100.0 if ks == "bid" else (math.floor(pr * 100 + 1e-9) - 2) / 100.0
+        slack = 3 if action == "sell" else 2
+        pr = (math.ceil(pr * 100 - 1e-9) + slack) / 100.0 if ks == "bid" else (math.floor(pr * 100 + 1e-9) - slack) / 100.0
         pr = min(0.99, max(0.01, pr))
         rec = {"t": int(time.time()), "kind": "order", "action": action, "side": side, "ticker": ticker, "book_side": ks, "count": n, "price": pr, "quote_ask": ask_up, "quote_bid": bid_up}
         try:
