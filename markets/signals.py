@@ -12,7 +12,43 @@ def qat(rows, ts, t, maxage=20):
     i = bisect.bisect_right(ts, t)
     return (rows[i - 1][1], rows[i - 1][2]) if i and t - ts[i - 1] <= maxage else None
 
-def build(use, cand, btc):
+def extras(days):
+    """Every extra feed the recorder keeps, as (times, values): the second exchange, trade flow, open interest, and the Kalshi book depth."""
+    import glob, exit_learn as X
+    D = os.environ.get("MARKET_DIR", os.path.join(os.path.expanduser("~"), "market-data"))
+    cut = time.time() - days * 86400
+    E = {k: ([], []) for k in ("kraken", "flow", "oi", "book")}
+    def put(k, t, v):
+        if v is not None and (not E[k][0] or t - E[k][0][-1] >= 2.0):
+            E[k][0].append(t); E[k][1].append(v)
+    sz = lambda arr: sum(float(x[1]) for x in (arr or [])[-3:] if isinstance(x, (list, tuple)) and len(x) > 1)
+    for pth in sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*"))):
+        for r in X._lines(pth):
+            t = r.get("t")
+            if not t or t < cut: continue
+            x = r.get("x") or {}
+            if x.get("kraken"): put("kraken", t, float(x["kraken"]))
+            f = r.get("flow")
+            if f and (f.get("buy_usd", 0) + f.get("sell_usd", 0)) > 0:
+                put("flow", t, (f["buy_usd"] - f["sell_usd"]) / float(f["buy_usd"] + f["sell_usd"]))
+            o = r.get("oi")
+            if o and o.get("oi_usd"): put("oi", t, float(o["oi_usd"]))
+            ob = r.get("ob") or {}
+            y, n = sz(ob.get("yes") or ob.get("yes_dollars")), sz(ob.get("no") or ob.get("no_dollars"))
+            if y + n > 0: put("book", t, (y - n) / (y + n))
+    return E
+
+def eat(E, k, t, maxage=30):
+    ts, vs = E[k]
+    i = bisect.bisect_right(ts, t)
+    return vs[i - 1] if i and t - ts[i - 1] <= maxage else None
+
+def eavg(E, k, t, span=15):
+    ts, vs = E[k]
+    i, j = bisect.bisect_right(ts, t), bisect.bisect_right(ts, t - span)
+    return sum(vs[j:i]) / (i - j) if i - j >= 2 else None
+
+def build(use, cand, btc, E=None):
     """One row per round and moment with every signal score and what it would have cost / paid."""
     out = []
     for r in use:
@@ -43,6 +79,15 @@ def build(use, cand, btc):
                  # slowing: it was moving (prior 90 s) and has now nearly stopped; the score is the direction it WAS moving
                  "bslow": (b30 - b120) / b * 1e4 if v30 < 0.4 * vprev else 0.0,
                  "kslow": 100 * (m(q30) - m(q120)) if abs(m(q) - m(q30)) < 0.4 * abs(m(q30) - m(q120)) / 3 else 0.0}
+            if E:
+                kr = eat(E, "kraken", t, 20)
+                if kr: S["xdiv"] = (b - kr) / b * 1e4                    # Coinbase vs Kraken, in basis points: who is ahead
+                fl = eavg(E, "flow", t, 15)
+                if fl is not None: S["flow"] = fl * 100                   # recent buying minus selling, as a percent of volume
+                o1, o0 = eat(E, "oi", t, 90), eat(E, "oi", t - 300, 90)
+                if o1 and o0: S["oichg"] = (o1 / o0 - 1) * 1e4           # open interest change over 5 minutes
+                bk = eavg(E, "book", t, 10)
+                if bk is not None: S["bookimb"] = bk * 100               # Kalshi book: more size waiting on Up (+) or Down (-)
             out.append({"open": o, "el": el, "S": S, "ask": q[1], "bid": q[0], "res": r["result"],
                         "bid60": qe[0] if qe else None, "ask60": qe[1] if qe else None})
     return out
@@ -51,8 +96,8 @@ def evaluate(rows, name, thr, lo, hi, dr):
     seen, L = set(), []
     for d in rows:
         if d["open"] in seen or not (lo <= d["el"] < hi): continue
-        s = d["S"][name]
-        if abs(s) < thr: continue
+        s = d["S"].get(name)
+        if s is None or abs(s) < thr: continue
         side = "UP" if (s > 0) == (dr > 0) else "DOWN"
         px = d["ask"] if side == "UP" else 1 - d["bid"]
         if not .05 <= px <= .95: continue
@@ -72,15 +117,15 @@ def _out():
     os.makedirs(H, exist_ok=True)
     return os.path.join(H, "signals.json")
 
-def scan(use, cand, btc):
-    rows = build(use, cand, btc)
+def scan(use, cand, btc, E=None):
+    rows = build(use, cand, btc, E)
     if len({d["open"] for d in rows}) < 60: print("Only %d recorded rounds with an hour of Bitcoin before them; need ~60+. Let it record longer." % len({d['open'] for d in rows})); return
     opens = sorted({d["open"] for d in rows}); cut = opens[int(len(opens) * 0.6)]
     tr = [d for d in rows if d["open"] < cut]; te = [d for d in rows if d["open"] >= cut]
-    names = sorted(rows[0]["S"])
+    names = sorted({k for d in rows for k in d["S"]})
     results = []
     for nm in names:
-        vals = sorted(abs(d["S"][nm]) for d in tr if d["S"][nm] != 0)
+        vals = sorted(abs(d["S"][nm]) for d in tr if d["S"].get(nm))
         if len(vals) < 200: continue
         for pct in (0.6, 0.8, 0.93):
             thr = vals[int(len(vals) * pct)]
@@ -113,4 +158,4 @@ if __name__ == "__main__":
     days = float(sys.argv[1]) if len(sys.argv) > 1 else 14
     import replay
     use, cand, btc = replay.load_ticks(days)
-    scan(use, cand, btc)
+    scan(use, cand, btc, extras(days))
