@@ -83,6 +83,44 @@ def f_oi():
     return {"oi": float(d["oi"]), "oi_usd": float(d.get("oiUsd") or 0)}
 
 
+def f_cbbook():
+    """Bitcoin order book on Coinbase: dollars waiting to buy vs to sell within 0.1% of the middle. Pressure shows up here before the price moves."""
+    d = _get("https://api.exchange.coinbase.com/products/BTC-USD/book?level=2")
+    bids = [(float(x[0]), float(x[1])) for x in d["bids"]]
+    asks = [(float(x[0]), float(x[1])) for x in d["asks"]]
+    mid = (bids[0][0] + asks[0][0]) / 2.0
+    b = sum(p * q for p, q in bids if p >= mid * 0.999)
+    a = sum(p * q for p, q in asks if p <= mid * 1.001)
+    return {"bid_usd": round(b), "ask_usd": round(a)}
+
+
+def f_funding():
+    """OKX perpetual funding rate: how crowded the long or short side is."""
+    d = _get("https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USD-SWAP")["data"][0]
+    return {"rate": float(d["fundingRate"]), "next": float(d.get("nextFundingRate") or 0)}
+
+
+def f_liq():
+    """Forced liquidations on OKX in the last minute: dollars of longs wiped out vs shorts wiped out. Often the end of a fast move."""
+    d = _get("https://www.okx.com/api/v5/public/liquidation-orders?instType=SWAP&uly=BTC-USD&state=filled")["data"]
+    now = time.time() * 1000
+    lng = sht = 0.0
+    for blk in d:
+        for x in blk.get("details", []):
+            if now - float(x["ts"]) > 60000:
+                continue
+            usd = float(x["sz"]) * 100.0           # BTC-USD swap: one contract is 100 dollars
+            if x.get("posSide") == "long" or (x.get("side") == "sell" and x.get("posSide") in (None, "net", "")):
+                lng += usd
+            else:
+                sht += usd
+    return {"long_usd": round(lng), "short_usd": round(sht)}
+
+
+def f_bybit():
+    return float(_get("https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT")["result"]["list"][0]["lastPrice"])
+
+
 def f_kalshi(ticker_fn):
     """Best prices and the top of the order book for the market that is open now."""
     def go():
@@ -152,13 +190,16 @@ def build_row(now, feeds, shared):
             pass
     if feeds["book"].val:
         row["ob"] = feeds["book"].val
-    x = {n: feeds[n].val for n in ("kraken", "binanceus") if feeds[n].val is not None}
+    x = {n: feeds[n].val for n in ("kraken", "bybit") if feeds[n].val is not None}
     if x:
         row["x"] = x
     if feeds["flow"].val:
         row["flow"] = feeds["flow"].val
     if feeds["oi"].val:
         row["oi"] = feeds["oi"].val
+    for n in ("cbbook", "funding", "liq"):
+        if feeds[n].val:
+            row[n] = feeds[n].val
     sg = shared.get("sigs")
     if sg:
         row["sig"] = sg
@@ -179,7 +220,10 @@ def run(d, stop=None):
         "kalshi": Feed("kalshi", 1, None),
         "book": Feed("book", 1, None),
         "kraken": Feed("kraken", 5, f_kraken),
-        "binanceus": Feed("binanceus", 5, f_binanceus),
+        "bybit": Feed("bybit", 5, f_bybit),
+        "cbbook": Feed("cbbook", 3, f_cbbook),
+        "funding": Feed("funding", 60, f_funding),
+        "liq": Feed("liq", 5, f_liq),
         "flow": Feed("flow", 3, f_flow),
         "oi": Feed("oi", 30, f_oi),
     }

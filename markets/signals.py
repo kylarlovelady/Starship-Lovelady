@@ -17,7 +17,7 @@ def extras(days):
     import glob, exit_learn as X
     D = os.environ.get("MARKET_DIR", os.path.join(os.path.expanduser("~"), "market-data"))
     cut = time.time() - days * 86400
-    E = {k: ([], []) for k in ("kraken", "flow", "oi", "book")}
+    E = {k: ([], []) for k in ("kraken", "flow", "oi", "book", "bybit", "cb", "fund", "liq")}
     def put(k, t, v):
         if v is not None and (not E[k][0] or t - E[k][0][-1] >= 2.0):
             E[k][0].append(t); E[k][1].append(v)
@@ -31,6 +31,13 @@ def extras(days):
             f = r.get("flow")
             if f and (f.get("buy_usd", 0) + f.get("sell_usd", 0)) > 0:
                 put("flow", t, (f["buy_usd"] - f["sell_usd"]) / float(f["buy_usd"] + f["sell_usd"]))
+            if x.get("bybit"): put("bybit", t, float(x["bybit"]))
+            cb = r.get("cbbook")
+            if cb and (cb.get("bid_usd", 0) + cb.get("ask_usd", 0)) > 0: put("cb", t, (cb["bid_usd"] - cb["ask_usd"]) / float(cb["bid_usd"] + cb["ask_usd"]))
+            fu = r.get("funding")
+            if fu and fu.get("rate") is not None: put("fund", t, fu["rate"] * 1e4)
+            lq = r.get("liq")
+            if lq is not None: put("liq", t, (lq.get("short_usd", 0) - lq.get("long_usd", 0)) / 1e4)   # shorts wiped out minus longs wiped out, in $10k
             o = r.get("oi")
             if o and o.get("oi_usd"): put("oi", t, float(o["oi_usd"]))
             ob = r.get("ob") or {}
@@ -86,6 +93,14 @@ def build(use, cand, btc, E=None):
                 if fl is not None: S["flow"] = fl * 100                   # recent buying minus selling, as a percent of volume
                 o1, o0 = eat(E, "oi", t, 90), eat(E, "oi", t - 300, 90)
                 if o1 and o0: S["oichg"] = (o1 / o0 - 1) * 1e4           # open interest change over 5 minutes
+                by = eat(E, "bybit", t, 20)
+                if by: S["xdiv2"] = (b - by) / b * 1e4                    # Coinbase vs Bybit
+                cbk = eavg(E, "cb", t, 10)
+                if cbk is not None: S["cbbook"] = cbk * 100               # Bitcoin order book: buyers (+) vs sellers (-) waiting
+                fd = eat(E, "fund", t, 300)
+                if fd is not None: S["funding"] = fd                      # funding rate in basis points of a percent
+                lq = eavg(E, "liq", t, 60)
+                if lq is not None: S["liq"] = lq                          # forced liquidations, shorts minus longs
                 bk = eavg(E, "book", t, 10)
                 if bk is not None: S["bookimb"] = bk * 100               # Kalshi book: more size waiting on Up (+) or Down (-)
             out.append({"open": o, "el": el, "S": S, "ask": q[1], "bid": q[0], "res": r["result"],
