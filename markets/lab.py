@@ -17,8 +17,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 SIGNALS = ["bmom10", "bmom60", "bmom180", "kmom30", "kmom60", "bslow", "kslow", "z", "hr", "tr15m", "tr4h", "tr24h", "tr7d", "xdiv", "xdiv2", "flow", "bookimb",
            "oichg", "liq", "cbbook", "funding", "a_news", "a_whales", "a_bigtrades", "a_fng", "a_trend_h", "a_trend_w", "a_levels", "a_book", "a_momentum", "a_SCORE"]
 GENES = {"sig": SIGNALS, "dir": [1, -1], "q": [.6, .75, .85, .93], "lo": [60, 120, 240, 360, 480], "hi": [300, 420, 540, 660, 780],
-         "lean": [None, "tr24h", "hr", "tr4h"], "agree": [True, False], "stake": [25, 50, 100, 200], "adds": [0, 1, 2], "add_at": [5, 10, 20],
+         "band": ["mid", "cheap", "long"], "lean": [None, "tr24h", "hr", "tr4h"], "agree": [True, False], "stake": [25, 50, 100, 200], "adds": [0, 1, 2], "add_at": [5, 10, 20],
          "stop": [None, .2, .35, .5], "tp": [None, 10, 20, 30, 50], "minp": [0, 3, 5], "exit": ["hold", "trail", "slow"], "trail": [5, 10, 15]}
+
+
+BANDS = {"mid": (.08, .92), "cheap": (.02, .15), "long": (.005, .05)}  # entry price range: normal, cheap side, lottery tickets
 
 
 def fee_total(c, p):
@@ -80,7 +83,8 @@ def simulate(g, rd, th):
                 if ln is None or ((ln > 0) == (s > 0)) != g["agree"]: continue
             side = "UP" if (s > 0) == (g["dir"] > 0) else "DOWN"
             px = r["ask"] if side == "UP" else 1 - r["bid"]
-            if not .08 <= px <= .92: continue
+            lo_, hi_ = BANDS[g["band"]]
+            if not lo_ <= px <= hi_: continue
             c = int(g["stake"] / (px + .07 * px * (1 - px)))
             if c < 1: continue
             pos = {"side": side, "c": c, "cost": c * px + fee_total(c, px), "peak": 0.0, "adds": 0, "slowed": False}
@@ -168,6 +172,7 @@ def main():
     def desc(g):
         s = "%s %s the signal (top %d%%), minutes %d-%d" % (g["sig"], "WITH" if g["dir"] > 0 else "AGAINST", round(100 * (1 - g["q"])), g["lo"] // 60, g["hi"] // 60)
         if g["lean"]: s += ", only if it %s the %s" % ("agrees with" if g["agree"] else "disagrees with", g["lean"])
+        s += "; price band %s" % g["band"]
         s += "; stake $%d" % g["stake"]
         if g["adds"]: s += ", add up to %d times when up %d cents" % (g["adds"], g["add_at"])
         s += "; " + ("cut at -%d%%" % round(100 * g["stop"]) if g["stop"] else "no stop")
@@ -183,7 +188,7 @@ def main():
         print("  %s\n     older: %+.1f%% over %d rounds (win %.0f%%)   newest: %s%s" % (desc(g), r["roi"], r["n"], r["win"], ("%+.1f%% over %d rounds (t %+.1f)" % (rt["roi"], rt["n"], rt["t"])) if rt else "too few trades", flag))
     # what matters: average older-round return by choice, across ALL rules tried
     print("\nWHAT MATTERS (average older-round return of every rule that used each choice, so no single lucky rule decides it):")
-    for gene, label in (("exit", "how to sell winners"), ("stop", "loss cut"), ("tp", "bank profit at"), ("adds", "adds to winners"), ("stake", "stake"), ("dir", "with(+1)/against(-1)"), ("lo", "earliest minute (sec)"), ("minp", "min profit $")):
+    for gene, label in (("exit", "how to sell winners"), ("stop", "loss cut"), ("tp", "bank profit at"), ("adds", "adds to winners"), ("stake", "stake"), ("dir", "with(+1)/against(-1)"), ("lo", "earliest minute (sec)"), ("minp", "min profit $"), ("band", "price band (mid / cheap 2-15c / lottery .5-5c)")):
         agg = {}
         for k, (g, r) in seen.items():
             if r: agg.setdefault(g[gene], []).append(r["roi"])
