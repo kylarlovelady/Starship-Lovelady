@@ -30,6 +30,11 @@ def main():
         return
     import alerts, kalshi_trade as kt
     alerts.send("WATCHDOG: the agent stopped updating for %d seconds during a live session. Closing out now." % age, "Market agent: watchdog", wait=True)
+    try:
+        last = (load(OUT, {}).get("sim") or {}).get("run")
+        alerts.island_dead(last, os.path.getmtime(OUT))
+    except Exception:
+        pass
     tmp = os.path.join(DIR, "run.json.tmp")
     json.dump({"active": False, "live": True, "halted": "watchdog", "detail": "The agent froze or stopped; the watchdog closed out.", "t": int(time.time())}, open(tmp, "w"))
     os.replace(tmp, os.path.join(DIR, "run.json"))

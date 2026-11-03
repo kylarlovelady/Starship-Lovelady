@@ -95,7 +95,7 @@ def _activity(token, base, dev, tag, title, msg, crit, color, progress=None, cle
 
 def island(run, now=None):
     """Keep one Live Activity (lock screen + Dynamic Island) in step with the REAL-money session. Sends only to the phone named
-    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates on change, plus a heartbeat about once a minute."""
+    HA_LIVE_DEVICE in the env file, never to other phones. Never raises. Updates within seconds of a change, plus a heartbeat every 20 seconds."""
     try:
         now = now or time.time()
         e = _env(); token = e.get("HA_TOKEN"); dev = e.get("HA_LIVE_DEVICE"); base = (e.get("HA_URL") or "http://127.0.0.1:8123").rstrip("/")
@@ -120,23 +120,45 @@ def island(run, now=None):
         if _isl["tag"] and _isl["tag"] != tag and not _isl["ended"]:  # Apple ends an activity after about 8 hours: start a fresh one
             threading.Thread(target=_activity, args=(token, base, dev, _isl["tag"], "", "", "", "", None, True), daemon=True).start()
         halted = bool(run.get("halt")) or not running
+        offline = (run.get("k_age") or 0) > 15 and not halted       # cannot read the wallet from Kalshi right now
         eq = run.get("equity") if run.get("equity") is not None else run.get("bal", 0)
         pos = run.get("pos")
-        sig = (round(eq, 1), run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted)
+        sig = (round(eq, 1), run.get("windows"), run.get("wins"), (pos or {}).get("side"), round((pos or {}).get("cost", 0)), halted, offline)
         if halted and _isl["ended"] and _isl["tag"] == tag:
             return                                                  # the HALTED notice was already sent
-        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 60:
+        if _isl["tag"] == tag and sig == _isl["sig"] and now - _isl["hb"] < 20:
             return
-        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 15 and not halted:
+        if _isl["tag"] == tag and sig != _isl["sig"] and now - _isl["t"] < 5 and not halted:
             return
         _isl.update({"tag": tag, "sig": sig, "t": now, "hb": now, "ended": halted})
         pnl = run.get("pnl") or 0.0
+        asof = time.strftime("%I:%M:%S %p", time.localtime(now - (run.get("k_age") or 0))).lstrip("0")
         msg = "%s%.2f this session · %s/%s rounds won" % ("+$" if pnl >= 0 else "-$", abs(pnl), run.get("wins", 0), run.get("windows", 0))
         if pos:
             msg += " · open: %s $%.2f" % (pos["side"], pos["cost"])
-        title = ("HALTED · $%.2f" if halted else "LIVE · $%.2f") % eq
-        color = "#8e8e93" if halted else "#ff4d57"
+        msg += " · as of " + asof
+        bad = halted or offline
+        title = ("HALTED · $%.2f" if halted else "NO KALSHI DATA · last $%.2f" if offline else "LIVE · $%.2f") % eq
+        color = "#8e8e93" if bad else "#ff4d57"
+        try:
+            json.dump({"tag": tag, "t": now}, open(os.path.join(DIR, "island.json"), "w"))
+        except OSError:
+            pass
         rs = int(now % 900)
-        threading.Thread(target=_activity, args=(token, base, dev, tag, title, msg, ("HALT" if halted else "$%d" % round(eq)), color, (rs, 900)), daemon=True).start()
+        threading.Thread(target=_activity, args=(token, base, dev, tag, title, msg, ("HALT" if halted else "OFFLINE" if offline else "$%d" % round(eq)), color, (rs, 900)), daemon=True).start()
+    except Exception:
+        pass
+
+
+def island_dead(run, asof_ts):
+    """Called by the independent watchdog when the agent has stopped: turn the pill gray with the last known value and its age."""
+    try:
+        e = _env(); token = e.get("HA_TOKEN"); dev = e.get("HA_LIVE_DEVICE"); base = (e.get("HA_URL") or "http://127.0.0.1:8123").rstrip("/")
+        if not (token and dev and run):
+            return
+        tag = json.load(open(os.path.join(DIR, "island.json")))["tag"]
+        eq = run.get("equity") if run.get("equity") is not None else run.get("bal", 0)
+        asof = time.strftime("%I:%M:%S %p", time.localtime(asof_ts)).lstrip("0")
+        _activity(token, base, dev, tag, "AGENT STOPPED · last $%.2f" % eq, "Lost connection. Last value as of %s. Check the Kalshi app." % asof, "OFFLINE", "#8e8e93")
     except Exception:
         pass
