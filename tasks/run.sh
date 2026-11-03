@@ -18,8 +18,8 @@ for l in open(os.path.join(D, "live_orders.jsonl")):
     n_ord += 1
     n_fill += 1 if float((o.get("reply") or {}).get("fill_count") or 0) > 0 else 0
     r = o.get("reply") or {}
-    print("%s %-4s %-4s want %s @%.2f  status %s  filled %s of %s  %s" % (hm(o["t"]), o["action"], o["side"], o["count"], o["price"], o["status"],
-          r.get("fill_count"), r.get("count") or o["count"], (r.get("error") or r.get("message") or "")[:60]))
+    print("%s %-4s %-4s want %s @%.2f  status %s  filled %s of %s  %s" % (hm(o["t"]), o["action"], o.get("side"), o.get("count"), o.get("price") or 0, o.get("status"),
+          r.get("fill_count"), r.get("count") or o.get("count"), (r.get("error") or r.get("message") or "")[:60]))
 print("\nTOTAL: %d order lines, %d with at least one contract filled (the file also holds %d slippage notes, which are not orders)" % (n_ord, n_fill, n_slip))
 try:
     c = json.load(open(os.path.join(D, "config.json")))
@@ -32,5 +32,12 @@ if fs:
     last = fs[-1]; print("recorder: %d files, newest %s (%.1f MB), updated %d s ago" % (len(fs), os.path.basename(last), os.path.getsize(last) / 1e6, time.time() - os.path.getmtime(last)))
 else:
     print("recorder: no tick files yet")
+try:
+    import subprocess
+    tail = subprocess.run("tail -n 1 " + last, shell=True, capture_output=True, text=True).stdout
+    row = json.loads(tail)
+    print("latest tick, errors:", row.get("err"), "| Kalshi:", row.get("k"), "| book:", row.get("ob"))
+except Exception as e:
+    print("tick sample unavailable:", e)
 PY
 cd ~/starship/markets 2>/dev/null && python3 ticks_report.py 2>&1 | head -40

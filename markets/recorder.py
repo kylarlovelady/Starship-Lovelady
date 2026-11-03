@@ -37,7 +37,7 @@ class Feed:
         except Exception as e:
             self.fails += 1
             self.val = None
-            self.err = str(e)[:60]
+            self.err = (type(e).__name__ + ": " + str(e))[:140]
             self.next = now + min(300, self.every * (2 ** min(self.fails, 6)))
 
 
