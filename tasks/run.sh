@@ -24,10 +24,13 @@ if rl:
     w = sum(1 for r in rl if r.get("pnl", 0) > 0)
     print("rounds %d, won %d, total pnl %+.2f, avg staked %.2f" % (len(rl), w, sum(r.get("pnl", 0) for r in rl), sum(r.get("staked", 0) for r in rl) / len(rl)))
 print("\n=== PRACTICE STRATEGIES (fake $1000 each) ===")
-st = js("state.json") or {}
-for k, a in (st.get("accts") or st.get("strategies") or {}).items():
-    if isinstance(a, dict):
-        print("%-14s windows %-4s wins %-4s pnl %+.2f bal %s" % (k, a.get("windows"), a.get("wins"), a.get("pnl", 0), a.get("bal")))
+try:
+    d = json.load(open(os.path.expanduser("~/crew-web/market.json")))
+    for x in (d.get("sim") or {}).get("strategies") or []:
+        print("%-34s rounds %-4s win%% %-5s pnl %+9.2f trust %-5s refills %s" % (x.get("label"), x.get("windows"), x.get("win_pct"), x.get("pnl", 0), x.get("trust"), x.get("busts")))
+    print("learn health:", d.get("learn_health"))
+except Exception as e:
+    print("could not read market.json:", e)
 print("\n=== LEARNER ===")
 lr = js("learn_report.json")
 print(json.dumps(lr, indent=1)[:1800] if lr else "learn_report.json: none yet (the learner waits for ~20 settled rounds per source)")
