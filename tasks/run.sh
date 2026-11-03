@@ -92,3 +92,5 @@ echo; echo "=== SIGNAL SCAN (second-by-second rounds) ==="
 
 echo; echo "=== COACH: where the practice money went ==="
 (cd "$(dirname "$0")/../markets" 2>/dev/null && python3 coach.py 72 2>&1 | tail -40)
+echo; echo "=== STRATEGY LAB: best complete rules found so far ==="
+( cd ~/starship/markets && python3 lab.py 14 120 2>&1 | head -60 )
