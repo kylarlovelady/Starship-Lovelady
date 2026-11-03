@@ -9,7 +9,10 @@ from signals import evaluate, avg
 # Kylar's starting ratings (voice session, Nov 3): high=1.0, medium-high=.75, medium=.5, low=.25, ignore=0. None = not rated yet.
 RATING = {"bmom10": "high", "bmom60": "high", "bmom180": "high", "kmom30": "medium", "kmom60": "medium", "bslow": "high", "kslow": "high",
           "z": "high", "hr": "medium-high", "xdiv": "low", "xdiv2": "low", "flow": "medium", "oichg": "low", "bookimb": "medium",
-          "cbbook": "low", "funding": "low", "liq": "medium-high"}
+          "cbbook": "low", "funding": "low", "liq": "medium-high",
+          # rated by Claude on 2026-11-03 at Kylar's request ("go with yours"); change any of these any time
+          "tr15m": "medium-high", "tr4h": "medium", "tr24h": "medium-high", "tr7d": "medium", "a_news": "medium-high", "a_whales": "medium",
+          "a_bigtrades": "medium", "a_fng": "low", "a_levels": "medium"}
 LABEL = {"bmom10": "Bitcoin speed, 10 s", "bmom60": "Bitcoin speed, 1 min", "bmom180": "Bitcoin speed, 3 min", "kmom30": "Kalshi ticker speed, 30 s",
          "kmom60": "Kalshi ticker speed, 1 min", "bslow": "Bitcoin slowing down", "kslow": "Kalshi ticker slowing down", "z": "Distance from target (vs time left)",
          "hr": "Trend, 1 hour", "tr15m": "Trend, 15 min", "tr4h": "Trend, 4 hours", "tr24h": "Trend, 24 hours", "tr7d": "Trend, 7 days",
