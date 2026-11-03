@@ -201,7 +201,20 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         c -= 1
     if c < 1:
         return False
-    if _LIVE:                                          # real money: the order has to actually fill
+    if _LIVE:                                          # real money: check the real order book first, never buy off a stale quote
+        rp = BROKER.real_price(_TK, side)
+        why_skip = None
+        if rp is None:
+            why_skip = "could not read Kalshi's order book"
+        elif rp > ENTRY_MAX + 1e-9:
+            why_skip = "the real price is %d\u00a2, above your %d\u00a2 cap" % (round(rp * 100), round(ENTRY_MAX * 100))
+        elif rp > px + 0.03:
+            why_skip = "the quote said %d\u00a2 but the order book says %d\u00a2" % (round(px * 100), round(rp * 100))
+        if why_skip:
+            if not any(e.get("a") == "SKIP" and e.get("s") == _CUR and _T - e["t"] < 30 for e in _EV[-6:]):
+                _EV.append({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": "Not buying %s: %s." % (side, why_skip), "mix": _MIX, "trace": _TRACE})
+                log_trade({"t": _T, "s": _CUR, "a": "SKIP", "side": side, "c": 0, "px": round(px, 3), "d": 0, "bal": round(a["bal"], 2), "why": why_skip})
+            return False
         c = BROKER.trade("buy", _TK, side, c, ask_up, bid_up)
         if c < 1:
             return False

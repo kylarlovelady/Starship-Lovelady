@@ -163,6 +163,25 @@ class Broker:
         except Exception:
             return 0
 
+    def real_price(self, ticker, side):
+        """What a buy of this side would really cost right now, from Kalshi's order book (dollars), or None if unreadable.
+        Buying Up costs 1 minus the best bid on the No side; buying Down costs 1 minus the best bid on the Yes side."""
+        try:
+            st, d = self.c.call("GET", "/markets/%s/orderbook?depth=3" % ticker)
+            if st != 200:
+                return None
+            ob = d.get("orderbook") or d.get("orderbook_fp") or d
+            opp = "no" if side == "UP" else "yes"
+            lv = ob.get(opp + "_dollars") or ob.get(opp)
+            if not lv:
+                return None
+            best = max(float(x[0]) for x in lv)
+            if best > 1.0:                      # whole cents
+                best /= 100.0
+            return round(1.0 - best, 4)
+        except Exception:
+            return None
+
     def position(self, ticker):
         """What Kalshi itself says we hold in this market: {} for nothing, {"side","c","cost"}, or None if it could not be read."""
         try:
