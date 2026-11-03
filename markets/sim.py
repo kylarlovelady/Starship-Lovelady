@@ -15,6 +15,7 @@ _TK = None
 FLOOR = 1.0             # smallest real bet: one contract is never more than $1
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
 MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
+ENTRY_MIN = 0.15        # never pay less than this per contract (15 cents): cheap long shots almost always expire worthless
 ENTRY_MAX = 0.80        # never pay more than this per contract (80 cents): above it one miss costs several wins
 STAGE_FIRST = 0.40      # the first buy of a round is this share of the intended size; the rest is added later if the edge holds
 STAGE_GAP = 45          # seconds to wait between buys in one round, so a position is built over minutes, not in one go
@@ -195,7 +196,9 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         return False
     why_no = None
     if _CUR != "hold":
-        if BLACKOUT:
+        if px < ENTRY_MIN - 1e-9:
+            why_no = "the price %d\u00a2 is below your %d\u00a2 minimum (cheap long shots rarely pay)" % (round(px * 100), round(ENTRY_MIN * 100))
+        elif BLACKOUT:
             why_no = "a big US news release is due or just out (%s)" % BLACKOUT
         else:
             for lo, hi in ENTRY_BLOCK:
@@ -222,6 +225,8 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         why_skip = None
         if rp is None:
             why_skip = "could not read Kalshi's order book"
+        elif rp < ENTRY_MIN - 1e-9 and _CUR != "hold":
+            why_skip = "the real price is %d\u00a2, below your %d\u00a2 minimum" % (round(rp * 100), round(ENTRY_MIN * 100))
         elif rp > ENTRY_MAX + 1e-9:
             why_skip = "the real price is %d\u00a2, above your %d\u00a2 cap" % (round(rp * 100), round(ENTRY_MAX * 100))
         elif rp > px + 0.03:
@@ -509,7 +514,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -520,6 +525,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         KELLY = 0.5 + 4.5 * ag                                 # how hard it leans into an edge
         MIN_PRICE, MAX_PRICE = C.get("min_price", MIN_PRICE), C.get("max_price", MAX_PRICE)
         ENTRY_MAX = C.get("entry_max", ENTRY_MAX)
+        ENTRY_MIN = C.get("entry_min", ENTRY_MIN)
         STAGE_FIRST = C.get("stage_first", STAGE_FIRST)
         STAGE_GAP = C.get("stage_gap", STAGE_GAP)
         ENTRY_BLOCK = C.get("entry_block") or []

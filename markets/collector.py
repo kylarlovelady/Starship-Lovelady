@@ -481,8 +481,8 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
-DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92, "entry_max": 0.80, "stage_first": 0.40, "stage_gap": 45, "exit_on": 1, "exit_peak": 8, "exit_drop": 4}
-LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99), "entry_max": (0.5, 0.99), "stage_first": (0.1, 1.0), "stage_gap": (0, 300), "exit_on": (0, 1), "exit_peak": (1, 50), "exit_drop": (1, 30)}
+DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92, "entry_max": 0.80, "entry_min": 0.15, "stage_first": 0.40, "stage_gap": 45, "exit_on": 1, "exit_peak": 8, "exit_drop": 4}
+LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99), "entry_max": (0.5, 0.99), "entry_min": (0.0, 0.5), "stage_first": (0.1, 1.0), "stage_gap": (0, 300), "exit_on": (0, 1), "exit_peak": (1, 50), "exit_drop": (1, 30)}
 
 
 def clean_cfg(raw):
