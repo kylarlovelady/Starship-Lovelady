@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v5 start: 30 s min hold, live-book prices only, new data feeds, fresh scoreboard (restart marker)
+# v5.1 restart: $3 or 2% minimum profit, 35% loss cut, Kalshi trade tape recording (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
