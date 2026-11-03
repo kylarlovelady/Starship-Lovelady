@@ -43,6 +43,22 @@ try:
     print("  news calendar: %d big US events this week%s" % (len(cal.get("events", [])), (" (fetch failed: %s)" % cal["err"]) if cal.get("err") else ""))
 except Exception as e:
     print("entry evidence not built yet:", e)
+try:
+    xr = json.load(open(os.path.join(D, "exit_rules.json")))
+    print("\nTAKE-PROFIT RULE: %s | sells once up %s c per contract and then falls %s c from the best point | source: %s (%s rounds studied)" % (
+        "ON" if xr.get("enabled", True) else "OFF", xr.get("peak"), xr.get("drop"), xr.get("source"), xr.get("rounds")))
+    if xr.get("audit"): print("  ", xr["audit"])
+    if xr.get("exits_checked"): print("  real early exits checked:", xr["exits_checked"], "| average vs holding to the end: %+.1f c per contract" % (100 * xr.get("exit_vs_hold", 0)))
+    for t in (xr.get("table") or [])[:3]: print("   tested peak %s / drop %s: %+.1f c better than holding (+/-%.1f), %s rounds" % (t["peak"], t["drop"], 100 * t["gain"], 100 * t["se"], t["rounds"]))
+    if xr.get("note"): print("  ", xr["note"])
+except Exception as e:
+    print("take-profit rule: no file yet", e)
+try:
+    import sys; sys.path.insert(0, os.path.expanduser("~/starship/markets")); import exit_learn
+    ls = exit_learn.review(D)
+    if ls: print("\nLOOK-BACK ON YOUR REAL POSITIONS:"); [print("  " + l) for l in ls]
+except Exception as e:
+    print("look-back unavailable:", e)
 import glob
 fs = sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*")))
 if fs:

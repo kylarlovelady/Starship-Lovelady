@@ -481,8 +481,8 @@ def save_atomic(path, obj):
     os.replace(tmp, path)
 
 
-DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92, "entry_max": 0.80, "stage_first": 0.40, "stage_gap": 45}
-LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99), "entry_max": (0.5, 0.99), "stage_first": (0.1, 1.0), "stage_gap": (0, 300)}
+DEFAULTS = {"threshold": THRESHOLD, "aggression": 30.0, "floor": 0.0, "min_bet": 0.0, "cap": 100.0, "edge_min": 0.03, "max_trades": 6, "slice": 0.10, "min_price": 0.08, "max_price": 0.92, "entry_max": 0.80, "stage_first": 0.40, "stage_gap": 45, "exit_on": 1, "exit_peak": 8, "exit_drop": 4}
+LIMITS = {"threshold": (0, 50), "aggression": (0, 100), "floor": (0, 1000000), "min_bet": (0, 100), "cap": (0, 100000), "edge_min": (0, 0.3), "max_trades": (1, 20), "slice": (0.01, 0.5), "min_price": (0.01, 0.4), "max_price": (0.6, 0.99), "entry_max": (0.5, 0.99), "stage_first": (0.1, 1.0), "stage_gap": (0, 300), "exit_on": (0, 1), "exit_peak": (1, 50), "exit_drop": (1, 30)}
 
 
 def clean_cfg(raw):
@@ -824,6 +824,16 @@ def run_cycle(now, S):
     except Exception:
         C["trust"] = {}
     try:
+        import exit_learn as _xl
+        xr = _xl.current(DIR, now)
+        raw_ = load(os.path.join(DIR, "config.json"), {})          # settings you saved yourself win over the learned ones
+        C["exit_on"] = int(raw_["exit_on"]) if "exit_on" in raw_ else (1 if xr["on"] else 0)
+        C["exit_peak"] = float(raw_["exit_peak"]) if "exit_peak" in raw_ else xr["peak"]
+        C["exit_drop"] = float(raw_["exit_drop"]) if "exit_drop" in raw_ else xr["drop"]
+        C["exit_src"] = "you set it" if ("exit_peak" in raw_ or "exit_on" in raw_) else xr["source"]
+    except Exception as e:
+        print("exit rules failed:", e, flush=True)
+    try:
         import evidence as _ev
         st_ = _ev.update(DIR, now)
         C["entry_block"] = st_.get("block", [])
@@ -955,7 +965,7 @@ def run_cycle(now, S):
         "next_window": win + WINDOW,
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
         "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-200:]], "ky": P["ky"][-200:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
-        "scorecard": sc, "recent": recent, "entry_stats": load(os.path.join(DIR, "entry_stats.json"), None), "blackout": C.get("blackout"),
+        "scorecard": sc, "recent": recent, "entry_stats": load(os.path.join(DIR, "entry_stats.json"), None), "blackout": C.get("blackout"), "exit_rules": load(os.path.join(DIR, "exit_rules.json"), None),
         "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None), "learn_health": learn_health(cache, now),
         "recent_markets": cache.get("recent_markets"), "weights": w,
         "note": "Paper mode: no real money. Information only, not financial advice.",
@@ -1107,6 +1117,11 @@ def main():
         recorder.start(DIR)
     except Exception as e:
         print("recorder not started:", e, flush=True)
+    try:
+        import exit_learn
+        exit_learn.start(DIR)
+    except Exception as e:
+        print("exit learning not started:", e, flush=True)
     print("market agent started (paper mode)", flush=True)
     while True:
         now = int(time.time())

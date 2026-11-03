@@ -20,6 +20,7 @@ STAGE_FIRST = 0.40      # the first buy of a round is this share of the intended
 STAGE_GAP = 45          # seconds to wait between buys in one round, so a position is built over minutes, not in one go
 ENTRY_BLOCK = []       # price ranges (cents) that the agent's own recordings show lose money after fees
 BLACKOUT = None         # name of a big scheduled news event happening now: no new bets
+EXIT_ON, EXIT_P, EXIT_D = 1, 8.0, 4.0   # take-profit: once up EXIT_P cents per contract, sell if it falls EXIT_D cents from the best point
 SKIPPED = {}            # entries refused by the price cap, for the log
 SIM_VERSION = 3
 _EV, _CUR, _T = [], "", 0
@@ -508,7 +509,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -523,6 +524,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         STAGE_GAP = C.get("stage_gap", STAGE_GAP)
         ENTRY_BLOCK = C.get("entry_block") or []
         BLACKOUT = C.get("blackout")
+        EXIT_ON, EXIT_P, EXIT_D = int(C.get("exit_on", EXIT_ON)), float(C.get("exit_peak", EXIT_P)), float(C.get("exit_drop", EXIT_D))
         if isinstance(C.get("weights"), dict):
             _W = dict(DEFW, **C["weights"])
         _TRUST = C.get("trust") or {}
@@ -699,11 +701,28 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             if pos:
                 s = pos["side"]
                 sell_now = bid_s(s) - fee(bid_s(s))
-                if sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
+                if EXIT_ON and pname != "hold" and pos["c"] > 0:      # take-profit: learned from the look-back of its own recordings
+                    prof_ = sell_now - pos["cost"] / pos["c"]
+                    pos["pk"] = max(pos.get("pk", -9.0), prof_)
+                    if pos["pk"] >= EXIT_P / 100.0 and prof_ <= pos["pk"] - EXIT_D / 100.0:
+                        c0, avg0, pk0 = pos["c"], pos["cost"] / pos["c"], pos["pk"]
+                        if sell(a, ask, bid, "Take-profit exit: it was up %d\u00a2 per contract, now only %d\u00a2 (fell %d\u00a2 from the best point), so it sells and keeps the gain." % (
+                                round(pk0 * 100), round(prof_ * 100), round((pk0 - prof_) * 100))):
+                            sold = True; act = "sold"; w["no_more"] = True
+                            try:
+                                with open(os.path.join(DIR, "exits.jsonl"), "a") as fh:
+                                    fh.write(json.dumps({"t": int(now), "s": name, "ticker": _TK, "side": s, "c": round(c0, 2), "avg_cost": round(avg0, 4),
+                                                         "sale_net": round(sell_now - 0.0, 4), "peak": round(pk0, 4), "live": bool(_LIVE)}) + "\n")
+                            except OSError:
+                                pass
+                if not sold and sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
                     sell(a, ask, bid, "Selling %s: it can sell at %s\u00a2 but by its own odds holding is worth only %s\u00a2 per contract." % (s, c_(sell_now), c_(side_p(s))))
                     sold = True; act = "sold"
             if not sold:
                 for s, e in (("UP", eU), ("DOWN", eD)):
+                    if w.get("no_more"):                           # it took profit this round: done until the next one
+                        why += " Took profit already this round, so no more buying."
+                        break
                     if a["pos"] and a["pos"]["side"] != s:
                         continue
                     if e > EDGE_MIN:
