@@ -48,7 +48,7 @@ def _wilson(k, n, z=1.96):
     return max(0.0, c - h), min(1.0, c + h)
 
 
-NAMES = {"distance": "Distance only", "signals": "Distance plus all signals", "trend": "Price trend",
+NAMES = {"swing": "Ride the swings", "distance": "Distance only", "signals": "Distance plus all signals", "trend": "Price trend",
          "flow": "Order book and whales", "mood": "News and mood", "hold": "Hold the first bet"}
 
 

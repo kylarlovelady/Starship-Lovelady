@@ -25,13 +25,16 @@ PATTERN_BAD = []        # (feature, bucket) pairs that lost money in training an
 _FEAT = {}              # what the market looks like right now: seconds into the round, model odds, signal score
 EXIT_ON, EXIT_P, EXIT_D = 1, 8.0, 4.0   # take-profit: once up EXIT_P cents per contract, sell if it falls EXIT_D cents from the best point
 SKIPPED = {}            # entries refused by the price cap, for the log
-SIM_VERSION = 3
+SIM_VERSION = 4
 _EV, _CUR, _T = [], "", 0
 _DIR = None
 _QUOTE = (None, None)  # (ask, bid) of Up when the trade was decided
 _SZ = (None, None)      # contracts available at the best ask and best bid right now
 EDGE_MIN = 0.03         # must beat price + fee by 3 cents per dollar before acting
 STRATS = {
+    "swing": "Ride the swings (Kylar's strategy)",
+}
+STRATS_OLD = {
     "distance": "Distance to target only",
     "signals": "Distance plus all signals",
     "trend": "Price trend",
@@ -152,7 +155,7 @@ def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
 
 def auto_pick(sim):
     """For the Auto wallet: follow whichever practice strategy has the best proven record (needs 20 rounds first)."""
-    best, bv = "signals", None
+    best, bv = (next(iter(sim["acc"])) if sim["acc"] else "swing"), None
     for n, a in sim["acc"].items():
         if a["windows"] >= 20:
             v = a["pnl"] / (a["windows"] + 20.0)
@@ -519,6 +522,129 @@ def save_run_off(DIR, reason, detail=""):
         pass
 
 
+# ---------- Kylar's swing strategy ----------
+SW_STAKE = 20.0         # dollars per entry
+SW_OPEN_SECS = 150      # the first entry must come in the first 2.5 minutes of a round (he looks as soon as it opens)
+SW_LAST_ENTRY = 480     # no new swing entries after 8 minutes
+SW_LAST_SELL = 60       # no swing sales in the last minute
+SW_MAX_ENTRIES = 4      # swing entries per round (fees add up)
+SW_TREND = 0.0003       # BTC must have moved this much (0.03%) in the last 10 minutes, and the last 5 minutes the same way
+SW_MOVE = 5.0           # the Up price must have moved this many cents in our favour before a slowdown counts
+SW_MIN_V = 0.05         # cents per second: the move must have reached at least this speed
+SW_SLOW = 0.35          # slowed = current speed is under this share of the fastest speed of the move
+SW_SLOW_SECS = 8        # it has to stay slow for this long
+SW_HOLD_EDGE = 0.05     # near the end it only places a hold-to-the-end bet if its model sees at least this edge after fees
+
+
+def _tape_at(tape, t):
+    r = None
+    for x in tape:
+        if x[0] <= t:
+            r = x
+        else:
+            break
+    return r
+
+
+def swing_trend(tape, now):
+    """(+1 up / -1 down / 0 none, plain reason) from BTC's last 5 and 10 minutes."""
+    if not tape:
+        return 0, "no price history yet"
+    a5, a10 = _tape_at(tape, now - 300), _tape_at(tape, now - 600)
+    cur = tape[-1][1]
+    if not a5 or not cur:
+        return 0, "not enough price history yet (needs 5 minutes)"
+    c5 = cur / a5[1] - 1
+    c10 = (cur / a10[1] - 1) if a10 else c5
+    txt = "BTC %+.2f%% in 5 min, %+.2f%% in 10 min" % (100 * c5, 100 * c10)
+    if c5 > 0 and c10 >= SW_TREND:
+        return 1, txt
+    if c5 < 0 and c10 <= -SW_TREND:
+        return -1, txt
+    return 0, txt + " (no clear trend)"
+
+
+def _swing_log(rec):
+    try:
+        if _DIR:
+            with open(os.path.join(_DIR, "swings.jsonl"), "a") as fh:
+                fh.write(json.dumps(rec) + "\n")
+    except OSError:
+        pass
+
+
+def swing_step(a, w, now, el, left, price, mid, ask, bid, pm, sigs, score, sim, why):
+    """Kylar's way of trading a round:
+    1. Right after the open, look at the trend. If BTC has been rising, buy $20 of DOWN (it is due to turn); if falling, buy $20 of UP.
+    2. Watch the price move in our favour. When its speed slows right down, sell and take the profit, then buy the other side.
+    3. Repeat until minute 8. Then, if the model sees a real edge, place one hold-to-the-end bet; otherwise sit out."""
+    sw = w.setdefault("sw", {"entries": 0, "pk_v": 0.0, "best": 0.0, "slow_t": None, "mid_in": None, "want": None, "hold": False})
+    tape = sim.get("tape") or []
+    m15 = _tape_at(tape, now - 15)
+    v = ((mid - m15[2]) / max(1.0, now - m15[0])) * 100.0 if m15 else 0.0      # Up price speed, cents per second
+    pos = a["pos"]
+    c_ = lambda x: "%d" % round(x * 100)
+    if pos:
+        s = pos["side"]
+        if sw.get("hold"):
+            return "holding to the end", "Holding its end-of-round bet (%s) to the finish." % s
+        if sw["mid_in"] is None:
+            sw["mid_in"] = mid
+        d = 1 if s == "UP" else -1
+        mv = d * (mid - sw["mid_in"]) * 100.0
+        fv = d * v
+        sw["best"] = max(sw["best"], mv); sw["pk_v"] = max(sw["pk_v"], fv)
+        pxb = bid if s == "UP" else 1 - ask
+        prof = pxb - fee(pxb) - pos["cost"] / pos["c"]
+        slow = sw["best"] >= SW_MOVE and sw["pk_v"] >= SW_MIN_V and fv <= SW_SLOW * sw["pk_v"]
+        sw["slow_t"] = (sw["slow_t"] or now) if slow else None
+        base = "Riding %s: price is %d\u00a2 %s (best so far %d\u00a2 in its favour), moving %.2f\u00a2/s our way (fastest %.2f). " % (s, abs(round(mv)), "in its favour" if mv >= 0 else "against it", round(sw["best"]), fv, sw["pk_v"])
+        if slow and now - sw["slow_t"] >= SW_SLOW_SECS and left > SW_LAST_SELL:
+            if prof >= 0.01:
+                c0, avg0 = pos["c"], pos["cost"] / pos["c"]
+                if sell(a, ask, bid, "The move slowed (speed %.2f\u00a2/s, fastest was %.2f), so it sells %s and takes the profit: %+d\u00a2 per contract after fees." % (fv, sw["pk_v"], s, round(prof * 100))):
+                    _swing_log({"t": int(now), "ticker": _TK, "side": s, "c": round(c0, 1), "avg_cost": round(avg0, 4), "mid_in": round(sw["mid_in"], 4), "mid_out": round(mid, 4),
+                                "best_cents": round(sw["best"], 1), "pk_v": round(sw["pk_v"], 3), "v": round(fv, 3), "profit_pc": round(prof, 4), "el": int(el), "live": bool(_LIVE)})
+                    sw.update({"want": ("DOWN" if s == "UP" else "UP"), "best": 0.0, "pk_v": 0.0, "slow_t": None, "mid_in": None})
+                    return "sold", "Sold %s on the slowdown. Next it buys %s." % (s, sw["want"])
+                return "waiting", base + "Wanted to sell but the sale did not go through; trying again."
+            return "holding", base + "It has slowed but selling now would not clear fees yet, so it waits."
+        return "holding", base + ("Slowing, waiting to be sure." if slow else "Still moving, so it keeps riding.")
+    # flat
+    if left <= 5 or sw.get("hold"):
+        return "waiting", why
+    side, reason = None, None
+    if sw.get("want") and sw["entries"] < SW_MAX_ENTRIES and el < SW_LAST_ENTRY:
+        side, reason = sw["want"], "Swing: it just took profit, so it bets the price turns back the other way."
+    elif sw["entries"] == 0 and el <= SW_OPEN_SECS:
+        t, txt = swing_trend(tape, now)
+        if t == 0:
+            return "waiting", "Looking at the trend before it bets: %s. It waits for a clear one." % txt
+        side = "DOWN" if t > 0 else "UP"
+        reason = "Opening swing: %s, so it bets the trend turns and buys %s." % (txt, side)
+    elif el >= SW_LAST_ENTRY and left > 60:
+        p = prob_up("distance", pm, sigs, score, sim.get("mood", 0.0))
+        best = None
+        for s_, p_, px_ in (("UP", p, ask), ("DOWN", 1 - p, 1 - bid)):
+            e_ = p_ - px_ - fee(px_)
+            if e_ >= SW_HOLD_EDGE and ENTRY_MIN <= px_ <= ENTRY_MAX and (best is None or e_ > best[1]):
+                best = (s_, e_)
+        if not best:
+            return "waiting", "Near the end: no bet worth holding to the finish, so it sits this one out."
+        if buy(a, best[0], SW_STAKE, ask, bid, "End of round: its model sees a %d\u00a2 edge on %s after fees, so it places one bet and holds to the end." % (round(best[1] * 100), best[0])):
+            sw["hold"] = True
+            return "opened", "Placed an end-of-round bet and will hold it."
+        return "waiting", why
+    if not side:
+        return "waiting", "Watching. No swing to trade right now (%d of %d entries used)." % (sw["entries"], SW_MAX_ENTRIES)
+    if buy(a, side, SW_STAKE, ask, bid, reason):
+        sw.update({"entries": sw["entries"] + 1, "want": None, "mid_in": mid, "best": 0.0, "pk_v": 0.0, "slow_t": None})
+        if w.get("mix") is None:
+            w["mix"] = _MIX
+        return "opened", reason
+    return "waiting", reason + " (the buy was refused by a price rule)"
+
+
 def run_equity(a, bid, ask):
     p = a["pos"]
     return a["bal"] + (p["c"] * (bid if p["side"] == "UP" else 1 - ask) if p else 0.0)
@@ -559,7 +685,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             os.replace(os.path.join(DIR, "run_log.jsonl"), os.path.join(DIR, "run_log.v%s.jsonl" % sim.get("ver", 1)))
         except OSError:
             pass
-        sim.update({"ver": SIM_VERSION, "acc": {}, "win": None, "hours": {}, "joined": False, "run": None, "pending": [], "events": []})
+        sim.update({"ver": SIM_VERSION, "acc": {}, "win": None, "hours": {}, "joined": False, "run": None, "pending": [], "events": [], "tape": sim.get("tape", [])})
     _SIM = sim
     for n in STRATS:
         sim["acc"].setdefault(n, new_acc())
@@ -569,6 +695,12 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     sim["mood"] = 0.9 * sim["mood"] + 0.1 * (0.7 * g("news") + 0.3 * g("fng"))   # slow mood
     bid, ask, synth = prices(kal, pm)
     _QUOTE = (round(ask, 3), round(bid, 3))
+    if not synth and price:
+        tp = sim.setdefault("tape", [])
+        if not tp or now - tp[-1][0] >= 2.0:
+            tp.append([round(now, 1), round(price, 2), round((bid + ask) / 2.0, 4)])
+        if len(tp) > 600 or (tp and tp[0][0] < now - 2400):
+            sim["tape"] = [x for x in tp if x[0] >= now - 2400][-600:]
     resolve_pending(sim, now, price, result_fn, DIR)
     if sim["win"] != win:
         if sim["win"] is not None:                       # park the finished round until Kalshi posts its result
@@ -593,7 +725,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             sim["last_yes"] = (kal["yes_bid"] + kal["yes_ask"]) / 2.0
         if not sim.get("ready"):
             sim["ready"] = True
-            sim["joined"] = now - win <= 90              # the six practice strategies only join near the start
+            sim["joined"] = now - win <= 150             # practice strategies only join near the start
             for a in sim["acc"].values():
                 a["w"] = newwin(win, sigs) if sim["joined"] else None
             r_ = sim.get("run")
@@ -603,7 +735,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     rc = run_cfg or {}
     run = sim.get("run")
     if rc.get("active") and (not run or run["id"] != rc.get("id")):
-        st = rc.get("strategy") if rc.get("strategy") in STRATS else "signals"
+        st = rc.get("strategy") if (rc.get("strategy") in STRATS or rc.get("strategy") in (list(STRATS_OLD) + ["auto"])) else "swing"
         acc = new_acc(); acc["bal"] = float(rc.get("start", 1000))
         run = sim["run"] = {"id": rc.get("id"), "strategy": st, "start": acc["bal"], "acc": acc, "rounds": [],
                             "curve": [], "started": now, "stopped": None, "status": "running", "live": bool(rc.get("live"))}
@@ -694,7 +826,9 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         act = "waiting"
         why = "It thinks Up is %s%%. Kalshi sells Up at %s\u00a2 and Down at %s\u00a2. Edge after fees: Up %+d\u00a2, Down %+d\u00a2 (needs +%d\u00a2 to trade)." % (
             c_(p), c_(ask_s("UP")), c_(ask_s("DOWN")), round(eU * 100), round(eD * 100), round(EDGE_MIN * 100))
-        if w["first"] is None and w["trades"] == 0 and (MIN_BET > 0 or max(eU, eD) > EDGE_MIN):   # min bet above 0 = must bet every round
+        if pname == "swing":
+            act, why = swing_step(a, w, now, window_len - left, left, price, (bid + ask) / 2.0, ask, bid, pm, sigs, score, sim, why)
+        elif w["first"] is None and w["trades"] == 0 and (MIN_BET > 0 or max(eU, eD) > EDGE_MIN):   # min bet above 0 = must bet every round
             s = "UP" if p >= 0.5 else "DOWN"
             e = side_p(s) - ask_s(s) - fee(ask_s(s))
             if MIN_BET <= 0:
@@ -793,7 +927,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             if not c_ or now - c_[-1][0] >= 10:
                 c_.append([int(now), round(eq - run.get("added", 0.0), 2)])
             run["curve"] = c_[-500:]
-        runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
+        runout = {"id": run["id"], "strategy": run["strategy"], "label": STRATS.get(run["strategy"]) or STRATS_OLD.get(run["strategy"]) or "Auto: follows the best-performing strategy", "using": (sim.get("auto_pick") if run["strategy"] == "auto" else run["strategy"]), "autolog": sim.get("autolog", [])[-6:], "status": run["status"],
                   "live": bool(run.get("live")), "slip_avg": (round(sum(BROKER.slips) / len(BROKER.slips), 2) if (BROKER and BROKER.slips) else None), "warn": run.get("warn"), "halt": run.get("halt") or (rc.get("detail") if rc.get("halted") else None), "start": run["start"], "bal": round(a_["bal"], 2), "equity": round(eq, 2), "inflight": round(infl, 2), "k_age": round(max(0.0, now - sim.get("k_ok", now)), 1), "pnl": round(eq - run.get("added", 0.0) - run["start"], 2), "added": round(run.get("added", 0.0), 2), "refills": len(run.get("refills", [])),
                   "windows": a_["windows"], "wins": a_["wins"], "trades": a_["trades"], "started": run["started"],
                   "stopped": run["stopped"], "in_round": bool(a_["w"]), "round_cash": round(a_["w"]["cash"], 2) if a_["w"] else None,

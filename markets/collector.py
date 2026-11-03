@@ -655,7 +655,7 @@ def do_reset(S, now):
     S["score_ver"] = 2
     rp = os.path.join(DIR, "run.json")
     if old.get("status") == "running":                    # a run was going: begin a fresh $1,000 one right away
-        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "signals"), "start": 1000.0})
+        save_atomic(rp, {"active": True, "id": int(now), "strategy": old.get("strategy", "swing"), "start": 1000.0})
     else:
         save_atomic(rp, {"active": False})
     print("reset done, old data archived in", arch, flush=True)
@@ -1032,7 +1032,7 @@ class Control(BaseHTTPRequestHandler):
                 if body.get("soft") is True:       # keep everything it learned; old lessons count half; fresh wallet
                     save_atomic(os.path.join(DIR, "learn_state.json"), {"soft_t": int(time.time())})
                     old = load(os.path.join(DIR, "run.json"), {})
-                    save_atomic(os.path.join(DIR, "run.json"), {"active": True, "id": int(time.time()), "strategy": old.get("strategy", "signals"), "start": 1000.0})
+                    save_atomic(os.path.join(DIR, "run.json"), {"active": True, "id": int(time.time()), "strategy": old.get("strategy", "swing"), "start": 1000.0})
                     return self._send({"ok": True, "soft": True})
                 save_atomic(os.path.join(DIR, "reset.json"), {"id": int(time.time() * 1000)})
                 return self._send({"ok": True})
@@ -1054,7 +1054,7 @@ class Control(BaseHTTPRequestHandler):
                 if bal is None or bal < 1:
                     return self._send({"error": "could not read your Kalshi balance"}, 400)
                 st = str(body.get("strategy") or "auto")
-                if st not in ("distance", "signals", "trend", "flow", "mood", "hold", "auto"):
+                if st not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold", "auto"):
                     st = "auto"
                 b.halt = None; b.fails = 0
                 run = {"active": True, "live": True, "id": int(time.time()), "strategy": st, "start": round(bal, 2)}
@@ -1067,9 +1067,9 @@ class Control(BaseHTTPRequestHandler):
                 if body.get("start"):
                     if cur.get("live") and cur.get("active"):
                         return self._send({"error": "end the live session first"}, 400)
-                    st = str(body.get("strategy") or "signals")
-                    if st not in ("distance", "signals", "trend", "flow", "mood", "hold", "auto"):
-                        st = "signals"
+                    st = str(body.get("strategy") or "swing")
+                    if st not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold", "auto"):
+                        st = "swing"
                     amt = min(1000.0, max(10.0, float(body.get("amount") or 1000)))
                     cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}
                 else:
