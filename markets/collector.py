@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v6.1 restart: learned loss-cut level (response learner), separate trends, ratings x evidence weights, $5 min bet and profit (restart marker)
+# v6.2 restart: Live view shows what the lab is trying (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -576,6 +576,40 @@ def read_calls():
     return out
 
 
+_LABC = {}
+
+
+def lab_view():
+    """What the strategy lab and response learner have been trying (read-only files written by lab.py / response_learn.py), for the Live view."""
+    try:
+        st = load(os.path.join(DIR, "lab_state.json"), None)
+        if not st:
+            return None
+        p = os.path.join(DIR, "lab_log.jsonl")
+        try:
+            sz = os.path.getsize(p)
+        except OSError:
+            sz = 0
+        if _LABC.get("sz") != sz:
+            try:
+                with open(p, "rb") as fh:
+                    _LABC["n"] = sum(1 for _ in fh)
+            except OSError:
+                _LABC["n"] = 0
+            _LABC["sz"] = sz
+        resp = []
+        try:
+            with open(os.path.join(DIR, "response_log.jsonl")) as fh:
+                resp = [json.loads(x) for x in fh.readlines()[-3:]]
+        except (OSError, ValueError):
+            pass
+        return {"made": st.get("made"), "rounds": st.get("rounds"), "tried_run": st.get("tried"), "tried_total": _LABC.get("n", 0), "marginals": st.get("marginals"),
+                "final": [{"rule": f.get("rule"), "train": f.get("train"), "test": f.get("test")} for f in (st.get("final") or [])[:5]],
+                "promoted": (load(os.path.join(DIR, "lab_promoted.json"), {}) or {}).get("rules", []), "response": [{"t": r.get("t"), "msg": r.get("msg")} for r in resp]}
+    except Exception:
+        return None
+
+
 def learn_health(cache, now):
     """How many of the last 24 hours' rounds actually became lessons (Kalshi-settled), so a quiet gap in learning is visible."""
     h = cache.get("lh")
@@ -997,7 +1031,7 @@ def run_cycle(now, S):
         "signals": [dict(key=k, label=LABELS[k], weight=w[k], **sigs[k]) for k in order if k in sigs],
         "kalshi": cache.get("kalshi"), "p_model": pm, "sim": simout, "path": {"win": win, "pts": [[t, round(p + off, 2)] for t, p in P["pts"][-200:]], "ky": P["ky"][-200:]}, "config": {"now": {k: v for k, v in C.items()}, "defaults": dict(DEFAULTS, weights=dict(WEIGHTS)), "limits": LIMITS}, "headlines": cache.get("headlines", []),
         "scorecard": sc, "recent": recent, "entry_stats": load(os.path.join(DIR, "entry_stats.json"), None), "blackout": C.get("blackout"), "exit_rules": load(os.path.join(DIR, "exit_rules.json"), None), "patterns": load(os.path.join(DIR, "patterns.json"), None),
-        "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None), "learn_health": learn_health(cache, now),
+        "lessons": read_tail("reviews.jsonl", 6)[::-1], "learning": load(os.path.join(DIR, "learn_report.json"), None), "learn_health": learn_health(cache, now), "lab": lab_view(),
         "recent_markets": cache.get("recent_markets"), "weights": w,
         "note": "Paper mode: no real money. Information only, not financial advice.",
     }

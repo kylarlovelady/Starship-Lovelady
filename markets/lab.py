@@ -199,7 +199,13 @@ def main():
     best = sorted(((sum(v) / len(v), s, len(v)) for s, v in sig.items() if len(v) >= 6), reverse=True)
     print("  best signals to trigger on: " + ", ".join("%s %+.1f%% (%d)" % (s, m, n) for m, s, n in best[:6]))
     print("\n%d of the top %d rules held up on the newest rounds. With %d rules tried, some look good by luck alone: trust only a rule that keeps winning as more rounds arrive (check again tomorrow)." % (ok, len(finals), tried))
-    json.dump({"made": int(t0), "rounds": len(rounds), "tried": tried, "elite": [g for _, g, _ in scored[:40]],
+    marg = {}
+    for gene in ("exit", "stop", "tp", "adds", "stake", "dir", "lo", "minp", "band", "lean"):
+        agg = {}
+        for k_, (g_, r_) in seen.items():
+            if r_: agg.setdefault(str(g_[gene]), []).append(r_["roi"])
+        marg[gene] = {v: [round(sum(x) / len(x), 1), len(x)] for v, x in agg.items() if len(x) >= 5}
+    json.dump({"made": int(t0), "rounds": len(rounds), "tried": tried, "gens": gen, "marginals": marg, "elite": [g for _, g, _ in scored[:40]],
                "final": [{"rule": desc(g), "g": g, "train": r, "test": rt} for g, r, rt in finals]}, open(sp, "w"))
 
 
