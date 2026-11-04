@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v6 restart: separate trends (1h/4h/24h/7d), weights from ratings x evidence, $5 min bet and profit, smart loss cut (restart marker)
+# v6.1 restart: learned loss-cut level (response learner), separate trends, ratings x evidence weights, $5 min bet and profit (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -520,6 +520,12 @@ def cfg():
     if c["cap"] > 0:                       # 0 means no limit
         c["cap"] = max(c["cap"], c["min_bet"], 1.0)
     c["weights"] = weights()
+    try:                                                   # response_learn.py: loss-cut level that beat plain holding in BOTH halves (else default)
+        lr = load(os.path.join(DIR, "learned_response.json"), {})
+        if "stop_pct" in lr and "stop_pct" not in clean_cfg(load(os.path.join(DIR, "config.json"), {})):
+            c["stop_pct"] = min(0.8, max(0.15, float(lr["stop_pct"])))
+    except Exception:
+        pass
     return c
 
 
