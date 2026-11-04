@@ -46,6 +46,22 @@ STRATS = {
     "mood": "News and market mood",
     "hold": "Control: open once, hold to the end",
 }
+# REACTION TESTS: the same entry logic ("distance") with a different way of reacting once in a bet. Each has its own pretend $1,000 and trades live beside the others,
+# so the scoreboard shows which response (hold, trail, cut tight or loose, add or not, wait to buy) actually earns the most after fees.
+ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
+ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
+VARIANTS = {
+    "v_hold": ("Reaction test: never sell early, hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0}),
+    "v_trail": ("Reaction test: trail the profit (up 30\u00a2, sell if it falls 10\u00a2)", "distance", {"EXIT_P": 30.0, "EXIT_D": 10.0}),
+    "v_trail_wide": ("Reaction test: trail wide (up 50\u00a2, sell if it falls 15\u00a2)", "distance", {"EXIT_P": 50.0, "EXIT_D": 15.0}),
+    "v_cut_tight": ("Reaction test: cut losses tight (20%, even small bets)", "distance", {"STOP_PCT": 0.20, "STOP_SMALL": 5.0}),
+    "v_cut_loose": ("Reaction test: cut losses loose (60%)", "distance", {"STOP_PCT": 0.60}),
+    "v_no_cut": ("Reaction test: never cut a loss", "distance", {"STOP_ON": 0}),
+    "v_one_shot": ("Reaction test: one bet per round, no adding", "distance", {"MAX_TRADES": 1}),
+    "v_adds": ("Reaction test: keep adding to a winner (up to 8 buys)", "distance", {"MAX_TRADES": 8, "STAGE_GAP": 25}),
+    "v_late": ("Reaction test: wait 5 minutes before the first bet", "distance", {"ENTRY_AFTER": 300}),
+}
+STRATS.update({k: v[0] for k, v in VARIANTS.items()})
 STRATS_OLD = {}
 AGG = 0.3             # aggression dial 0..1, also drives how eagerly the swing strategy moves
 PRACTICE = "auto"       # "auto": every practice strategy trades and learns; or one strategy key: only that one trades
@@ -859,7 +875,13 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items()]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ENTRY_AFTER")
+    _g = globals()
+    _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
+        _g.update(_BASE)                                   # every strategy starts from the normal settings...
+        if pname in VARIANTS:                              # ...and a reaction test changes only its own response settings
+            _g.update(VARIANTS[pname][2]); pname = VARIANTS[pname][1]
         w = a["w"]
         if not w or not kal or not sim.get("ready"):
             continue                                       # never trade without Kalshi's live price for this round
@@ -926,6 +948,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             c_(p), c_(ask_s("UP")), c_(ask_s("DOWN")), round(eU * 100), round(eD * 100), round(EDGE_MIN * 100))
         if pname == "swing":
             act, why = swing_step(a, w, now, window_len - left, left, price, (bid + ask) / 2.0, ask, bid, pm, sigs, score, sim, why)
+        elif w["first"] is None and w["trades"] == 0 and window_len - left < ENTRY_AFTER:
+            act = "waiting"; why += " Waiting %d s before the first bet (reaction test)." % int(ENTRY_AFTER - (window_len - left))
         elif w["first"] is None and w["trades"] == 0 and (MIN_BET > 0 or max(eU, eD) > EDGE_MIN):   # min bet above 0 = must bet every round
             s = "UP" if p >= 0.5 else "DOWN"
             e = side_p(s) - ask_s(s) - fee(ask_s(s))
@@ -979,7 +1003,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                         if sell(a, ask, bid, "Cutting the loss: $%d bet is down %d%% with %d:%02d left and only a %d%% chance left of winning (BTC too far from the target), so it sells now instead of riding it to the end." % (
                                 round(pos["cost"]), round(100 * loss_ / avg_), int(left) // 60, int(left) % 60, round(100 * pw))):
                             sold = True; act = "sold"; w["cut"] = True
-                if not sold and sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
+                if not sold and ODDS_SELL and sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
                     sell(a, ask, bid, "Selling %s: it can sell at %s\u00a2 but by its own odds holding is worth only %s\u00a2 per contract." % (s, c_(sell_now), c_(side_p(s))))
                     sold = True; act = "sold"
             if not sold:
@@ -989,6 +1013,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                         break
                     if a["pos"] and a["pos"]["side"] != s:
                         continue
+                    if not a["pos"] and ENTRY_AFTER and window_len - left < ENTRY_AFTER:
+                        break
                     if e > EDGE_MIN:
                         cm, cwhy = conv_mult(sigs, s, e) if gate else (1.0, "")
                         if cm == 0.0:
@@ -1004,6 +1030,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                 else:
                     act = "holding" if a["pos"] else "waiting"
         a["now"] = {"p": round(p, 3), "ask": round(ask, 3), "bid": round(bid, 3), "eU": round(eU, 3), "eD": round(eD, 3), "act": act, "why": why, "mix": _MIX, "trace": _TRACE, "conv": (round(conviction(sigs)[0], 2) if gate else None)}
+    _g.update(_BASE)                                       # put the normal settings back after the reaction tests
     ranked = []
     for name, a in sim["acc"].items():
         ranked.append({"key": name, "label": STRATS[name], "bal": round(a["bal"], 2), "pnl": round(a["pnl"], 2),

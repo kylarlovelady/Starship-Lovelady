@@ -29,7 +29,7 @@ def main():
         for l in open(os.path.join(D, "trades.jsonl")):
             try: r = json.loads(l)
             except ValueError: continue
-            if r.get("a") == "BUY" and not r.get("live") and r.get("ticker") in res and (r.get("t") or 0) > cut and r.get("s") not in ("hold",):
+            if r.get("a") == "BUY" and not r.get("live") and r.get("ticker") in res and (r.get("t") or 0) > cut and r.get("s") not in ("hold",) and not str(r.get("s")).startswith("v_"):
                 buys.append(r)
     except OSError:
         pass

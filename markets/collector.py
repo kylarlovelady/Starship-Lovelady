@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v6.2 restart: Live view shows what the lab is trying (restart marker)
+# v6.3 restart: 9 live reaction tests beside the strategies, signal grades on the page (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -583,8 +583,15 @@ def lab_view():
     """What the strategy lab and response learner have been trying (read-only files written by lab.py / response_learn.py), for the Live view."""
     try:
         st = load(os.path.join(DIR, "lab_state.json"), None)
+        gr = []
+        try:
+            for k_, v_ in ((load(os.path.join(DIR, "signal_weights.json"), {}) or {}).get("signals") or {}).items():
+                b_ = v_.get("best") or {}
+                gr.append({"label": v_.get("label") or k_, "rating": v_.get("rating"), "grade": v_.get("grade"), "weight": v_.get("weight"), "dir": b_.get("direction"), "older": b_.get("older"), "newer": b_.get("newer")})
+        except Exception:
+            gr = []
         if not st:
-            return None
+            return {"grades": gr, "final": [], "promoted": [], "response": []} if gr else None
         p = os.path.join(DIR, "lab_log.jsonl")
         try:
             sz = os.path.getsize(p)
@@ -603,7 +610,7 @@ def lab_view():
                 resp = [json.loads(x) for x in fh.readlines()[-3:]]
         except (OSError, ValueError):
             pass
-        return {"made": st.get("made"), "rounds": st.get("rounds"), "tried_run": st.get("tried"), "tried_total": _LABC.get("n", 0), "marginals": st.get("marginals"),
+        return {"grades": gr, "made": st.get("made"), "rounds": st.get("rounds"), "tried_run": st.get("tried"), "tried_total": _LABC.get("n", 0), "marginals": st.get("marginals"),
                 "final": [{"rule": f.get("rule"), "train": f.get("train"), "test": f.get("test")} for f in (st.get("final") or [])[:5]],
                 "promoted": (load(os.path.join(DIR, "lab_promoted.json"), {}) or {}).get("rules", []), "response": [{"t": r.get("t"), "msg": r.get("msg")} for r in resp]}
     except Exception:
@@ -1114,7 +1121,7 @@ class Control(BaseHTTPRequestHandler):
                 if bal is None or bal < 1:
                     return self._send({"error": "could not read your Kalshi balance"}, 400)
                 st = str(body.get("strategy") or "auto")
-                if st not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold", "auto"):
+                if st not in tuple(__import__("sim").STRATS) + ("auto",):
                     st = "auto"
                 b.halt = None; b.fails = 0
                 run = {"active": True, "live": True, "id": int(time.time()), "strategy": st, "start": round(bal, 2)}
@@ -1126,7 +1133,7 @@ class Control(BaseHTTPRequestHandler):
                 cur = load(rp, {})
                 if "practice" in body:                         # which practice strategy trades: one of them, or "auto" (all of them, learning)
                     pm_ = str(body.get("practice"))
-                    if pm_ != "auto" and pm_ not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold"):
+                    if pm_ != "auto" and pm_ not in tuple(__import__("sim").STRATS):
                         return self._send({"error": "unknown strategy"}, 400)
                     save_atomic(os.path.join(DIR, "practice.json"), {"mode": pm_, "t": int(time.time())})
                     return self._send({"ok": True, "practice": pm_})
@@ -1134,7 +1141,7 @@ class Control(BaseHTTPRequestHandler):
                     if cur.get("live") and cur.get("active"):
                         return self._send({"error": "end the live session first"}, 400)
                     st = str(body.get("strategy") or "auto")
-                    if st not in ("swing", "distance", "signals", "trend", "flow", "mood", "hold", "auto"):
+                    if st not in tuple(__import__("sim").STRATS) + ("auto",):
                         st = "auto"
                     amt = min(1000.0, max(10.0, float(body.get("amount") or 1000)))
                     cur = {"active": True, "id": int(time.time()), "strategy": st, "start": amt}

@@ -30,7 +30,7 @@ def main():
         for l in open(os.path.join(D, "trades.jsonl")):
             try: r = json.loads(l)
             except ValueError: continue
-            if r.get("a") == "BUY" and not r.get("live") and r.get("ticker") in res and (r.get("t") or 0) > cut and r.get("s") != "hold" and (r.get("d") or 0) >= 5:
+            if r.get("a") == "BUY" and not r.get("live") and r.get("ticker") in res and (r.get("t") or 0) > cut and r.get("s") != "hold" and not str(r.get("s")).startswith("v_") and (r.get("d") or 0) >= 5:
                 first.setdefault((r["s"], r["ticker"]), r)
     except OSError: pass
     ents = sorted(first.values(), key=lambda r: r["t"])
