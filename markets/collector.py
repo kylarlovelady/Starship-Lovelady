@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v5.3 restart: $5 minimum bet, $5 minimum profit to sell a winner, smart loss cut, trade tape (restart marker)
+# v6 restart: separate trends (1h/4h/24h/7d), weights from ratings x evidence, $5 min bet and profit, smart loss cut (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -17,10 +17,12 @@ WINDOW = 900            # 15 minutes
 CYCLE = 5               # seconds between looks (numbers move fast)
 THRESHOLD = 12          # |score| needed to lean; below that the call is NONE
 WEIGHTS = {"book": 0.20, "momentum": 0.15, "whales": 0.15, "bigtrades": 0.11, "news": 0.08, "fng": 0.04, "funding": 0.03,
-           "trend_h": 0.12, "trend_w": 0.06, "levels": 0.06}
+           "trend_h": 0.0, "trend_w": 0.0, "levels": 0.06,
+           "trend_1h": 0.04, "trend_4h": 0.03, "trend_24h": 0.04, "trend_7d": 0.03}   # trend_h / trend_w are the old lumped blends: still shown and graded, no weight
 LABELS = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
           "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate",
-          "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance"}
+          "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance",
+          "trend_1h": "Trend, 1 hour", "trend_4h": "Trend, 4 hours", "trend_24h": "Trend, 24 hours", "trend_7d": "Trend, 7 days"}
 EVERY = {"candles": 120, "whales": 60, "bigtrades": 20, "news": 300, "fng": 3600, "funding": 120, "kalshi": 5, "recent": 300, "xcheck": 30}
 FEEDS = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss",
          "https://decrypt.co/feed", "https://bitcoinmagazine.com/.rss/full/"]
@@ -138,6 +140,9 @@ def trend_signals(cd, price):
         sc = clamp(sc + (0.15 if price > sma24 else -0.15))
         kind = "up on every time scale" if min(r1, r4, r24) > 0 else "down on every time scale" if max(r1, r4, r24) < 0 else \
             ("short-term bounce inside a bigger down-move" if r1 > 0 and r24 < 0 else "short-term dip inside a bigger up-move" if r1 < 0 and r24 > 0 else "mixed")
+        out["trend_1h"] = (clamp(z(r1, 1)), "1 hour %s" % _pc(r1))
+        out["trend_4h"] = (clamp(z(r4, 4)), "4 hours %s" % _pc(r4))
+        out["trend_24h"] = (clamp(z(r24, 24)), "24 hours %s" % _pc(r24))
         out["trend_h"] = (sc, "1 hour %s, 4 hours %s, 24 hours %s, %s its 24-hour average: %s" % (_pc(r1), _pc(r4), _pc(r24), "above" if price > sma24 else "below", kind))
     if len(d) >= 31 and len(h) >= 168:
         cl = [c[4] for c in d]
@@ -147,6 +152,7 @@ def trend_signals(cd, price):
         hc = [c[4] for c in h]
         sma7 = sum(hc[-168:]) / 168
         sc = 0.4 * math.tanh(r7 / (sd_ * math.sqrt(7)) / 1.5) + 0.4 * math.tanh(r30 / (sd_ * math.sqrt(30)) / 1.5) + (0.2 if price > sma7 else -0.2)
+        out["trend_7d"] = (clamp(math.tanh(r7 / (sd_ * math.sqrt(7)) / 1.5)), "7 days %s" % _pc(r7))
         out["trend_w"] = (clamp(sc), "7 days %s, 30 days %s, %s its 7-day average" % (_pc(r7), _pc(r30), "above" if price > sma7 else "below"))
     if len(h) >= 48:
         win_ = h[-72:]
@@ -520,6 +526,17 @@ def cfg():
 def weights():
     w = dict(WEIGHTS)
     w.update(load(os.path.join(DIR, "weights.json"), {}))                       # what the nightly learner chose
+    try:                                                                       # Kylar's ratings x evidence from grades.py (separate, never lumped)
+        sw = load(os.path.join(DIR, "signal_weights.json"), {}).get("signals", {})
+        mp = {"momentum": "bmom60", "book": "bookimb", "whales": "a_whales", "bigtrades": "a_bigtrades", "news": "a_news", "fng": "a_fng", "funding": "funding",
+              "levels": "a_levels", "trend_1h": "hr", "trend_4h": "tr4h", "trend_24h": "tr24h", "trend_7d": "tr7d"}
+        new = {k: float(sw[g]["weight"]) for k, g in mp.items() if g in sw and sw[g].get("weight") is not None and k in w}
+        if len(new) >= 6:
+            mass, tot = sum(w[k] for k in new), sum(new.values()) or 1.0
+            for k, v in new.items():
+                w[k] = mass * v / tot
+    except Exception as e:
+        print("signal_weights not applied:", e, flush=True)
     w.update(clean_cfg(load(os.path.join(DIR, "config.json"), {})).get("weights", {}))   # Kylar's edits win
     t = sum(w.values()) or 1.0
     return {k: v / t for k, v in w.items()}
@@ -799,7 +816,7 @@ def run_cycle(now, S):
         ts_ = trend_signals(cache.get("candles") or {}, price)
     except Exception as e:
         print("trend failed:", e, flush=True)
-    for k_ in ("trend_h", "trend_w", "levels"):
+    for k_ in ("trend_h", "trend_w", "trend_1h", "trend_4h", "trend_24h", "trend_7d", "levels"):
         if k_ in ts_:
             sigs[k_] = {"score": round(ts_[k_][0], 3), "detail": ts_[k_][1], "ok": True}
         else:

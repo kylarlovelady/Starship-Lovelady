@@ -112,7 +112,8 @@ OLD = 0.5       # after a soft reset, rounds from before it count this much
 
 LAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
        "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate",
-       "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance"}
+       "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance",
+       "trend_1h": "Trend, 1 hour", "trend_4h": "Trend, 4 hours", "trend_24h": "Trend, 24 hours", "trend_7d": "Trend, 7 days"}
 
 
 def trust_of(r, n, prior=PRIOR):

@@ -101,7 +101,8 @@ def prob_up(name, pm, sigs, score, mood):
 
 
 DEFW = {"book": 0.20, "momentum": 0.15, "whales": 0.15, "bigtrades": 0.11, "news": 0.08, "fng": 0.04, "funding": 0.03,
-        "trend_h": 0.12, "trend_w": 0.06, "levels": 0.06}
+        "trend_h": 0.0, "trend_w": 0.0, "levels": 0.06,
+        "trend_1h": 0.04, "trend_4h": 0.03, "trend_24h": 0.04, "trend_7d": 0.03}
 REFILL = 100.0         # (old) fixed refill; pretend wallets are now topped back up to their starting amount
 
 
@@ -149,7 +150,8 @@ def mix(name, pm, sigs, score, mood):
 def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
     k_of = {"Order book": "book", "Price momentum": "momentum", "Whale moves": "whales", "News vibe": "news",
             "Fear & Greed": "fng", "Funding rate": "funding", "Big exchange trades": "bigtrades",
-            "Hourly and daily trend": "trend_h", "Weekly and monthly trend": "trend_w", "Support and resistance": "levels"}
+            "Hourly and daily trend": "trend_h", "Weekly and monthly trend": "trend_w", "Support and resistance": "levels",
+            "Trend, 1 hour": "trend_1h", "Trend, 4 hours": "trend_4h", "Trend, 24 hours": "trend_24h", "Trend, 7 days": "trend_7d"}
     L = []
     if strike:
         gap = price - strike
@@ -456,7 +458,8 @@ def resolve_pending(sim, now, price, result_fn, DIR):
 
 SIGLAB = {"book": "Order book", "momentum": "Price momentum", "whales": "Whale moves",
           "bigtrades": "Big exchange trades", "news": "News vibe", "fng": "Fear & Greed", "funding": "Funding rate",
-          "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance"}
+          "trend_h": "Hourly and daily trend", "trend_w": "Weekly and monthly trend", "levels": "Support and resistance",
+          "trend_1h": "Trend, 1 hour", "trend_4h": "Trend, 4 hours", "trend_24h": "Trend, 24 hours", "trend_7d": "Trend, 7 days"}
 
 
 def newwin(win, sigs):
