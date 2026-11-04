@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v7 restart: $50 unproven cap, odds-sell margin 4c, mood/flow flip tests (restart marker)
+# v8 restart: innovator (live experiments), $50 cap, flip tests, odds margin (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -591,7 +591,7 @@ def lab_view():
         except Exception:
             gr = []
         if not st:
-            return {"grades": gr, "final": [], "promoted": [], "response": []} if gr else None
+            return {"grades": gr, "final": [], "promoted": [], "response": [], "innov": []} if gr else None
         p = os.path.join(DIR, "lab_log.jsonl")
         try:
             sz = os.path.getsize(p)
@@ -604,6 +604,12 @@ def lab_view():
             except OSError:
                 _LABC["n"] = 0
             _LABC["sz"] = sz
+        innov = []
+        try:
+            with open(os.path.join(DIR, "innovations.jsonl")) as fh:
+                innov = [{"t": x.get("t"), "msg": x.get("msg"), "action": x.get("action")} for x in (json.loads(l) for l in fh.readlines()[-40:]) if x.get("action") in ("new", "retire")][-6:]
+        except (OSError, ValueError):
+            pass
         resp = []
         try:
             with open(os.path.join(DIR, "response_log.jsonl")) as fh:
@@ -612,7 +618,7 @@ def lab_view():
             pass
         return {"grades": gr, "made": st.get("made"), "rounds": st.get("rounds"), "tried_run": st.get("tried"), "tried_total": _LABC.get("n", 0), "marginals": st.get("marginals"),
                 "final": [{"rule": f.get("rule"), "train": f.get("train"), "test": f.get("test")} for f in [x for i, x in enumerate(st.get("final") or []) if x.get("rule") not in [y.get("rule") for y in (st.get("final") or [])[:i]]][:5]],
-                "promoted": (load(os.path.join(DIR, "lab_promoted.json"), {}) or {}).get("rules", []), "response": [{"t": r.get("t"), "msg": r.get("msg")} for r in resp]}
+                "promoted": (load(os.path.join(DIR, "lab_promoted.json"), {}) or {}).get("rules", []), "innov": innov, "response": [{"t": r.get("t"), "msg": r.get("msg")} for r in resp]}
     except Exception:
         return None
 

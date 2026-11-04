@@ -146,3 +146,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+    try:                                                   # the supervisor also keeps the experiments moving (innovate.py), not just watching
+        import innovate
+        sys.argv = [sys.argv[0]]
+        innovate.main()
+    except Exception as e:
+        print("innovator failed:", e)

@@ -67,6 +67,41 @@ VARIANTS = {
     "v_late": ("Reaction test: wait 5 minutes before the first bet", "distance", {"ENTRY_AFTER": 300}),
 }
 STRATS.update({k: v[0] for k, v in VARIANTS.items()})
+_STATIC_V = set(VARIANTS)
+_DYN = {"mt": None, "keys": set()}
+_OV_OK = {"STOP_ON": (0, 1), "STOP_PCT": (0.1, 0.9), "STOP_SMALL": (0, 100), "EXIT_ON": (0, 1), "EXIT_P": (3, 80), "EXIT_D": (2, 40), "MAX_TRADES": (1, 12),
+          "STAGE_GAP": (5, 300), "ODDS_SELL": (0, 1), "ODDS_MARGIN": (0.0, 0.2), "ENTRY_AFTER": (0, 600), "FLIP": (0, 1)}
+_BASES = ("distance", "signals", "trend", "flow", "mood")
+
+
+def load_dynamic(DIR):
+    """Experiments the innovator (innovate.py) invented or retired: variants.json = {key: {label, base, ov}}. Applied live, validated and clamped."""
+    p = os.path.join(DIR, "variants.json")
+    try:
+        mt = os.path.getmtime(p)
+    except OSError:
+        mt = None
+    if mt == _DYN["mt"]:
+        return
+    _DYN["mt"] = mt
+    try:
+        raw = json.load(open(p)) if mt else {}
+    except (OSError, ValueError):
+        raw = {}
+    new = {}
+    for k, v in (raw or {}).items():
+        try:
+            if not str(k).startswith("v_") or k in _STATIC_V or v.get("base") not in _BASES:
+                continue
+            ov = {n: min(hi, max(lo, float(x))) for n, x in (v.get("ov") or {}).items() if n in _OV_OK for lo, hi in [_OV_OK[n]]}
+            new[k] = ("Experiment: " + str(v.get("label") or k)[:90], v["base"], ov)
+        except Exception:
+            continue
+    for k in _DYN["keys"] - set(new):
+        VARIANTS.pop(k, None); STRATS.pop(k, None)
+    for k, v in new.items():
+        VARIANTS[k] = v; STRATS[k] = v[0]
+    _DYN["keys"] = set(new)
 STRATS_OLD = {}
 AGG = 0.3             # aggression dial 0..1, also drives how eagerly the swing strategy moves
 PRACTICE = "auto"       # "auto": every practice strategy trades and learns; or one strategy key: only that one trades
@@ -199,6 +234,8 @@ def auto_pick(sim):
     """For the Auto wallet: follow whichever practice strategy has the best proven record (needs 20 rounds first)."""
     best, bv = ("distance" if "distance" in sim["acc"] else (next(iter(sim["acc"])) if sim["acc"] else "swing")), None
     for n, a in sim["acc"].items():
+        if n not in STRATS:
+            continue
         if a["windows"] >= 20:
             v = a["pnl"] / (a["windows"] + 20.0)
             if bv is None or v > bv:
@@ -808,7 +845,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             pass
         sim.update({"ver": SIM_VERSION, "acc": {}, "win": None, "hours": {}, "joined": False, "run": None, "pending": [], "events": [], "tape": sim.get("tape", [])})
     _SIM = sim
-    for n in STRATS:
+    load_dynamic(DIR)
+    for n in list(STRATS):
         sim["acc"].setdefault(n, new_acc())
     sim.setdefault("events", [])
     _EV, _T = sim["events"], now
@@ -882,10 +920,10 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     if run and run["status"] == "running" and not run.get("live") and rc.get("active") and rc.get("strategy") and rc.get("strategy") != run["strategy"] \
             and (rc["strategy"] in STRATS or rc["strategy"] in (list(STRATS_OLD) + ["auto"])):
         run["strategy"] = rc["strategy"]                   # the pretend wallet can be switched without restarting it
-    items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items()]
+    items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ENTRY_AFTER", "FLIP")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
@@ -1045,6 +1083,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     _g.update(_BASE)                                       # put the normal settings back after the reaction tests
     ranked = []
     for name, a in sim["acc"].items():
+        if name not in STRATS:
+            continue
         ranked.append({"key": name, "label": STRATS[name], "bal": round(a["bal"], 2), "pnl": round(a["pnl"], 2),
                        "windows": a["windows"], "win_pct": round(100 * a["wins"] / a["windows"], 1) if a["windows"] else None,
                        "trades": a["trades"], "mgmt": round(a["mgmt"], 2), "busts": a["busts"], "trust": round(100 * (a["wins"] + 5.0) / (a["windows"] + 10.0), 1),
