@@ -48,6 +48,9 @@ STRATS = {
 }
 # REACTION TESTS: the same entry logic ("distance") with a different way of reacting once in a bet. Each has its own pretend $1,000 and trades live beside the others,
 # so the scoreboard shows which response (hold, trail, cut tight or loose, add or not, wait to buy) actually earns the most after fees.
+ODDS_MARGIN = 0.04      # sell on its own odds only if selling beats holding by this much (selling on a 1c edge lost money in the 24h review)
+UNPROVEN_CAP = 50.0     # no strategy may put more than this into one round until the evidence earns it (0 = off); lift with config "unproven_cap"
+FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
 VARIANTS = {
@@ -59,6 +62,8 @@ VARIANTS = {
     "v_no_cut": ("Reaction test: never cut a loss", "distance", {"STOP_ON": 0}),
     "v_one_shot": ("Reaction test: one bet per round, no adding", "distance", {"MAX_TRADES": 1}),
     "v_adds": ("Reaction test: keep adding to a winner (up to 8 buys)", "distance", {"MAX_TRADES": 8, "STAGE_GAP": 25}),
+    "v_mood_flip": ("Reaction test: bet the opposite of the Mood strategy", "mood", {"FLIP": 1}),
+    "v_flow_flip": ("Reaction test: bet the opposite of the Flow strategy", "flow", {"FLIP": 1}),
     "v_late": ("Reaction test: wait 5 minutes before the first bet", "distance", {"ENTRY_AFTER": 300}),
 }
 STRATS.update({k: v[0] for k, v in VARIANTS.items()})
@@ -758,10 +763,13 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, STOP_ON, STOP_PCT, STOP_SMALL, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, STOP_ON, STOP_PCT, STOP_SMALL, UNPROVEN_CAP, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
+        UNPROVEN_CAP = float(C.get("unproven_cap", UNPROVEN_CAP))
+        if UNPROVEN_CAP > 0:
+            CAP = min(CAP, UNPROVEN_CAP)                       # nothing has proven an edge yet, so no big bets (bigger bets only multiply the cost of trading)
         ag = min(1.0, max(0.0, float(C.get("aggression", 30)) / 100.0))
         AGG = ag
         SLICE = 0.04 + 0.96 * ag * ag                          # most of the wallet one bet may use
@@ -877,7 +885,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items()]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ENTRY_AFTER")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ENTRY_AFTER", "FLIP")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
@@ -929,6 +937,8 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                 if b_ is not None:
                     a["bal"] = b_
         p = prob_up(pname, pm, sigs, score, sim["mood"])
+        if FLIP:
+            p = 1.0 - p
         _MIX = mix(pname, pm, sigs, score, sim["mood"])
         if not enabled:                                   # switched off: close out safely, then idle
             if a["pos"]:
@@ -1005,7 +1015,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                         if sell(a, ask, bid, "Cutting the loss: $%d bet is down %d%% with %d:%02d left and only a %d%% chance left of winning (BTC too far from the target), so it sells now instead of riding it to the end." % (
                                 round(pos["cost"]), round(100 * loss_ / avg_), int(left) // 60, int(left) % 60, round(100 * pw))):
                             sold = True; act = "sold"; w["cut"] = True
-                if not sold and ODDS_SELL and sell_now > side_p(s) + 0.01:           # selling beats holding by our own odds
+                if not sold and ODDS_SELL and sell_now > side_p(s) + ODDS_MARGIN:           # selling beats holding by our own odds
                     sell(a, ask, bid, "Selling %s: it can sell at %s\u00a2 but by its own odds holding is worth only %s\u00a2 per contract." % (s, c_(sell_now), c_(side_p(s))))
                     sold = True; act = "sold"
             if not sold:

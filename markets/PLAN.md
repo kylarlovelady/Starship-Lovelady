@@ -22,3 +22,8 @@ Lab (read-only, runs overnight): `bash ~/starship/tasks/lab_setup.sh`.
 
 ## Open
 Kylar to rate 9 signals (or "go with yours"); run pairs.py, endgame.py, stops.py; Kalshi API location check by Nov 9; confirm maker fee on first real fill.
+
+## Review of Nov 3-4 (24 h, 81 rounds, review.py)
+Every strategy lost; best were signals -1.5% and trend -1.6% per $ staked, mood -38.7%. 'run' lost 5.8% per $ staked = about the cost of trading, no detectable edge. Losses came from big
+conviction bets (stakes over $25 lost ~$250 net; under $25 was about break-even). Selling on its own odds hurt (-$200 over 17 sells vs holding). Changes (v7): $50 per-round cap until
+evidence earns more (config unproven_cap, 0 = off), odds-sell margin 1c -> 4c, flip tests for mood and flow. Lift the cap only after a strategy wins on unseen rounds (t >= 2).
