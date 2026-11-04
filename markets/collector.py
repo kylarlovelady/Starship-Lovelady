@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v6.3 restart: 9 live reaction tests beside the strategies, signal grades on the page (restart marker)
+# v6.4 restart: de-duplicated best-rules list on the page (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -611,7 +611,7 @@ def lab_view():
         except (OSError, ValueError):
             pass
         return {"grades": gr, "made": st.get("made"), "rounds": st.get("rounds"), "tried_run": st.get("tried"), "tried_total": _LABC.get("n", 0), "marginals": st.get("marginals"),
-                "final": [{"rule": f.get("rule"), "train": f.get("train"), "test": f.get("test")} for f in (st.get("final") or [])[:5]],
+                "final": [{"rule": f.get("rule"), "train": f.get("train"), "test": f.get("test")} for f in [x for i, x in enumerate(st.get("final") or []) if x.get("rule") not in [y.get("rule") for y in (st.get("final") or [])[:i]]][:5]],
                 "promoted": (load(os.path.join(DIR, "lab_promoted.json"), {}) or {}).get("rules", []), "response": [{"t": r.get("t"), "msg": r.get("msg")} for r in resp]}
     except Exception:
         return None
