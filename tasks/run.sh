@@ -95,3 +95,4 @@ echo; echo "=== COACH: where the practice money went ==="
 echo; echo "=== STRATEGY LAB: best complete rules found so far ==="
 ( cd ~/starship/markets && python3 lab.py 14 120 2>&1 | head -60 )
 echo; echo "=== RESPONSE LEARNER ==="; ( cd ~/starship/markets && python3 response_learn.py 2>&1 | tail -5 )
+echo; echo "=== TRADE REVIEW: actual vs hindsight, last 24 h ==="; ( cd ~/starship/markets && python3 review.py 24 2>&1 | head -80 )
