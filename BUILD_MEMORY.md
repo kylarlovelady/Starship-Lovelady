@@ -5,7 +5,8 @@ Owner: Kylar ("Kyler"), America/Chicago, iPhone. Pi 5 "LoveladyMainAiHub". Shell
 ## Pi
 - Repo: kylarlovelady/Starship-Lovelady, on Pi at ~/starship. Pi pulls via cron `crew-update` (~3 min).
 - Chromium kiosk: `--app=http://localhost:8080` (home screen). Home Assistant in ~/homeassistant (HACS installed). Tailscale name: loveladymainaihub.taild703ca.ts.net.
-- Home screen themes: NOT in this repo and no ~/homeassistant/www or themes dir. Likely served from ~/crew-web (support.js found there). Open issue: text-cursor line appears next to clock when going full screen (Nov 4). Not yet fixed; find the theme file first.
+- Home screen themes: NOT in this repo and no ~/homeassistant/www or themes dir. Likely served from ~/crew-web (support.js found there). Home screen = ~/crew-web/index.html (served on :8080, not in this repo; backup index.html.bak). Nov 4: injected a no-cursor style/script (id=nocursor) to hide the text-cursor line in full screen; Kylar to confirm it worked (if not, likely Chromium caret browsing, fix in launch flags).
+- TODO (Kylar, later): make clock, weather and date easier to read on busy/photo backgrounds (e.g. text shadow, dim overlay, backing panel). Think it through with him first.
 - Sandbox cannot reach the Pi or PyPI; Kylar runs commands and sends screenshots.
 
 ## Markets (Kalshi 15-min BTC, practice money only, live mode OFF)
