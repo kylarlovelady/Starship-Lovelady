@@ -274,9 +274,11 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     if dollars < FLOOR - 1e-9:                         # hard rule: no bet smaller than the minimum
         return False
     c = math.floor(dollars / px + 1e-9)                # Kalshi sells whole contracts only
+    if c * px < FLOOR - 1e-9:                          # whole contracts can land just under the minimum (10 x 48c = $4.80): buy enough to reach it
+        c = int(math.ceil(FLOOR / px - 1e-9))
     while c >= 1 and (c * px + fee_total(c, px) > a["bal"] + 1e-9 or c * px + fee_total(c, px) > (CAP - used) + 1e-9):
         c -= 1
-    if c < 1:
+    if c < 1 or c * px < FLOOR - 1e-9:
         return False
     if _LIVE:                                          # real money: check the real order book first, never buy off a stale quote
         rp = BROKER.real_price(_TK, side)

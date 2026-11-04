@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v6.4 restart: de-duplicated best-rules list on the page (restart marker)
+# v6.5 restart: whole-contract rounding can no longer put a bet under $5 (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
