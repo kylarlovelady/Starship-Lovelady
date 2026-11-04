@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v5.2 restart: smart loss cut (bet size, time left, distance via odds), $3 or 2% min profit, trade tape (restart marker)
+# v5.3 restart: $5 minimum bet, $5 minimum profit to sell a winner, smart loss cut, trade tape (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

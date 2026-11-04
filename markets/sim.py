@@ -12,7 +12,7 @@ BROKER = None          # set by the collector while a live (real money) run exis
 _LIVE = False
 _SIM = None
 _TK = None
-FLOOR = 1.0             # smallest real bet: one contract is never more than $1
+FLOOR = 5.0             # smallest bet: never less than $5 (Kylar)
 MAX_TRADES = 6          # per window per strategy, so fees cannot be churned away
 MIN_PRICE, MAX_PRICE = 0.08, 0.92   # bigger-than-minimum bets only in this price range (no 1-cent long shots)
 ENTRY_MIN = 0.15        # never pay less than this per contract (15 cents): cheap long shots almost always expire worthless
@@ -23,7 +23,7 @@ ENTRY_BLOCK = []       # price ranges (cents) that the agent's own recordings sh
 BLACKOUT = None         # name of a big scheduled news event happening now: no new bets
 PATTERN_BAD = []        # (feature, bucket) pairs that lost money in training and in later test rounds
 MIN_HOLD = 0            # seconds: optional hard timer after a buy (off; the profit rule below replaces it)
-MIN_PROFIT_USD = 3.0    # never sell a winner for less than this much profit AFTER fees (a few cents of profit is eaten by the cost of trading)
+MIN_PROFIT_USD = 5.0    # never sell a winner for less than this much profit AFTER fees (a few cents of profit is eaten by the cost of trading)
 STOP_SMALL = 10.0   # a bet costing less than this is never cut: losing it is fine, so let it ride
 STOP_ON, STOP_PCT = 1, 0.35   # cut a loss: once a bet is down this share of its cost (after fees, at the price it could sell for), sell it instead of riding it to the end
 MIN_PROFIT_PCT = 0.02   # ...or this share of the money in the bet, whichever is bigger (so big bets need proportionally more)
@@ -253,6 +253,8 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
     avail = _SZ[0] if side == "UP" else _SZ[1]       # cannot buy more than Kalshi has on offer at that price
     if avail is not None:
         dollars = min(dollars, avail * px)
+    if dollars < FLOOR - 1e-9:                         # hard rule: no bet smaller than the minimum
+        return False
     c = math.floor(dollars / px + 1e-9)                # Kalshi sells whole contracts only
     while c >= 1 and (c * px + fee_total(c, px) > a["bal"] + 1e-9 or c * px + fee_total(c, px) > (CAP - used) + 1e-9):
         c -= 1
