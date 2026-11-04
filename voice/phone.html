@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Phone Voice</title>
+<style>
+:root{--bg:#0b0f1a;--card:#121a2b;--line:#22304d;--tx:#e8eefc;--mut:#8fa0c4;--grn:#52d68a;--red:#ff6b75;--acc:#4d8dff;--amb:#f2b84b}
+@media (prefers-color-scheme:light){:root{--bg:#f3f6fc;--card:#fff;--line:#d5dded;--tx:#101828;--mut:#5b6b8c}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px -apple-system,system-ui,sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top));padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+h1{font-size:20px;margin:0 0 2px}h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:0 0 8px}.mut{color:var(--mut)}.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+button{font:inherit;border:1px solid var(--line);background:transparent;color:var(--tx);border-radius:12px;padding:10px 14px;min-height:44px}
+button.go{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600;width:100%;font-size:18px;min-height:56px}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}button.bad{border-color:var(--red);color:var(--red)}button.ok{border-color:var(--grn);color:var(--grn)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row.sb{justify-content:space-between}
+#st{font-size:22px;font-weight:700}#meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:10px}#meter i{display:block;height:100%;width:0;background:var(--grn);transition:width .15s}
+.ev{border-top:1px solid var(--line);padding:10px 0}.ev:first-child{border-top:0}.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;border:1px solid var(--line)}
+input[type=range]{width:100%}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:3px 4px;text-align:right}th:first-child,td:first-child{text-align:left}
+</style></head><body>
+<h1>Phone Voice</h1><div class="mut small">Listens for its name through this phone. Answers only here: nothing plays on the home speakers or shows on the Pi.</div>
+<div class="card"><div id="st">Not listening</div><div id="sub" class="mut small">Tap Start, then leave this page open with the screen on (plug in the phone).</div><div id="meter"><i></i></div>
+<div style="margin-top:12px"><button class="go" id="start">Start listening</button></div>
+<div class="row" style="margin-top:10px"><button id="pause">Pause</button><button id="missed">I said it, it missed</button><button id="end">End chat</button></div>
+<div class="small mut" id="hint" style="margin-top:8px"></div></div>
+<div id="reply" class="card" style="display:none"><h2>Last conversation</h2><div id="said" class="small mut"></div><div id="ans"></div></div>
+<div class="card"><h2>Tune the wake word</h2>
+<div class="row sb"><span>Sensitivity threshold</span><b id="thv">0.60</b></div><input type="range" id="th" min="0.25" max="0.95" step="0.01" value="0.6">
+<div class="small mut">Lower = wakes more easily (more false wakes). Higher = stricter (may miss you).</div>
+<div id="tune" class="small" style="margin-top:8px"></div>
+<div class="row" style="margin-top:8px"><button id="apply">Apply suggested</button><button id="priv">Private mode: off</button></div>
+<div class="small mut" style="margin-top:6px">Private mode keeps no audio clips. Clips are short (6 s) and only saved around wake-word candidates; coworkers may be in them, so mark and clear them when needed.</div></div>
+<div class="card"><h2>What it heard (newest first)</h2><div id="evs" class="small mut">Nothing yet.</div></div>
+<audio id="player" playsinline></audio>
+<script>
+var $=function(i){return document.getElementById(i)},esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var SID=(function(){try{var s=localStorage.getItem('pvsid');if(!s){s='ph'+Math.random().toString(36).slice(2,8);localStorage.setItem('pvsid',s)}return s}catch(e){return 'ph'+Math.random().toString(36).slice(2,8)}})();
+var ctx=null,node=null,stream=null,wake=null,running=false,queue=[],queued=0,sending=false,failing=0,S=null,paused=false,player=$('player');
+var WORKLET="class R extends AudioWorkletProcessor{constructor(){super();this.r=sampleRate/16000;this.acc=0;this.n=0;this.out=[]}process(i){var x=i[0]&&i[0][0];if(!x)return true;for(var k=0;k<x.length;k++){this.acc+=x[k];this.n++;if(this.n>=this.r){var v=this.acc/this.n;this.out.push(Math.max(-1,Math.min(1,v))*32767|0);this.acc=0;this.n-=this.r;if(this.n<0)this.n=0}}if(this.out.length>=4000){var a=new Int16Array(this.out);this.out=[];this.port.postMessage(a.buffer,[a.buffer])}return true}}registerProcessor('r',R)";
+function status(t,s){$('st').textContent=t;if(s!=null)$('sub').textContent=s}
+function beep(freqs,dur,vol){if(!ctx)return;var t=ctx.currentTime;freqs.forEach(function(f,i){var o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*dur);g.gain.linearRampToValueAtTime(vol||.15,t+i*dur+.02);g.gain.linearRampToValueAtTime(0,t+(i+1)*dur);o.connect(g);g.connect(ctx.destination);o.start(t+i*dur);o.stop(t+(i+1)*dur+.02)})}
+function api(p,b){return fetch(p+(p.indexOf('?')<0?'?':'&')+'sid='+SID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(function(r){return r.json()})}
+function start(){
+  if(running)return;
+  status('Starting...','Allow the microphone when asked.');
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  player.src='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';player.play().catch(function(){});   // unlock audio playback for replies
+  navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1}}).then(function(s){
+    stream=s;var src=ctx.createMediaStreamSource(s);
+    var url=URL.createObjectURL(new Blob([WORKLET],{type:'application/javascript'}));
+    return ctx.audioWorklet.addModule(url).then(function(){node=new AudioWorkletNode(ctx,'r');node.port.onmessage=function(e){queue.push(new Int16Array(e.data));queued+=e.data.byteLength/2;pump()};src.connect(node);
+      var z=ctx.createGain();z.gain.value=0;node.connect(z);z.connect(ctx.destination);
+      s.getAudioTracks()[0].onended=function(){running=false;status('Microphone stopped','iPhone stopped the microphone. Tap Start again.');$('start').style.display=''};
+      running=true;$('start').style.display='none';status('Listening','Say its name. Keep this page open, screen on.');keepAwake()})
+  }).catch(function(e){status('No microphone','This page needs HTTPS and microphone permission. '+(e&&e.name||''))})
+}
+function keepAwake(){try{if(navigator.wakeLock){navigator.wakeLock.request('screen').then(function(l){wake=l;l.onrelease=function(){wake=null}}).catch(function(){})}}catch(e){}$('hint').textContent=(navigator.wakeLock?'Screen will stay on while this page is open. ':'This browser cannot keep the screen on: set Auto-Lock to Never. ')+'AirPods mic is used if they are the connected input.'}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&running){if(ctx&&ctx.state!=='running')ctx.resume();if(!wake)keepAwake()}});
+function pump(){
+  if(sending||!queue.length)return;sending=true;
+  var n=0,parts=[];while(queue.length&&n<16000){var a=queue.shift();parts.push(a);n+=a.length}
+  var all=new Int16Array(n),o=0;parts.forEach(function(a){all.set(a,o);o+=a.length});queued-=n;
+  fetch('/audio?sid='+SID,{method:'POST',body:all.buffer}).then(function(r){return r.json()}).then(function(j){failing=0;onReply(j);sending=false;pump()}).catch(function(){failing++;sending=false;if(queued>16000*8){queue=[];queued=0}status('Reconnecting...','Lost the connection to the Pi. Retrying.');setTimeout(pump,Math.min(5000,500*failing))})
+}
+function onReply(j){
+  paused=!!j.paused;$('pause').textContent=paused?'Resume':'Pause';$('pause').className=paused?'on':'';
+  var lv=Math.min(1,(j.level||0)/6000);$('meter').firstChild.style.width=(lv*100)+'%';
+  if(running&&!(j.acts||[]).length){var m={idle:['Listening','Say its name.'],listening:['Listening to you...',''],follow:['Your turn','Still in the conversation.'],thinking:['Thinking...',''],speaking:['Speaking','']}[j.state];if(paused)status('Paused','Not listening. Tap Resume.');else if(m)status(m[0],m[1]||$('sub').textContent)}
+  (j.acts||[]).forEach(function(a){
+    if(a.type==='trigger'){beep([880,1175],.09,.18);status('Heard its name','Score '+a.score)}
+    else if(a.type==='chime'){}
+    else if(a.type==='say'){$('reply').style.display='';$('said').textContent='You: '+a.text}
+    else if(a.type==='play'){$('reply').style.display='';$('ans').textContent=a.text;status('Speaking','');player.src=a.url;player.onended=function(){api('/played')};player.onerror=function(){api('/played')};player.play().catch(function(){api('/played')})}
+    else if(a.type==='tone_end'){beep([660,440],.14,.1);status('Listening','Conversation closed ('+(a.why||'')+'). Say its name to start again.')}
+    else if(a.type==='error'){status('Problem',a.text)}
+    else if(a.type==='event'){refresh()}
+  })
+}
+function refresh(){fetch('/state?sid='+SID).then(function(r){return r.json()}).then(function(s){S=s;draw()}).catch(function(){})}
+function draw(){
+  if(!S)return;var set=S.settings;$('th').value=set.threshold;$('thv').textContent=Number(set.threshold).toFixed(2);$('priv').textContent='Private mode: '+(set.private?'on':'off');$('priv').className=set.private?'on':'';
+  var t=S.tuning,h='<div>'+S.heard_hours+' h listened &middot; '+t.good+' marked good/missed &middot; '+t.false+' marked false &middot; '+S.unreviewed_triggers+' triggers not reviewed &middot; detector: '+esc(S.detector)+(S.mock?' (TEST)':'')+'</div>';
+  if(t.rows.length&&(t.good||t.false)){h+='<table><tr><th>threshold</th><th>hits</th><th>false wakes</th></tr>'+t.rows.filter(function(r,i){return i%2==0}).map(function(r){return'<tr><td>'+r.t.toFixed(2)+'</td><td>'+r.hits+'/'+t.good+'</td><td>'+r.false+'/'+t.false+'</td></tr>'}).join('')+'</table>'}
+  h+=t.recommended!=null?'<div style="margin-top:6px"><b>Suggested threshold: '+t.recommended.toFixed(2)+'</b></div>':'<div class="mut" style="margin-top:6px">Mark some wake-ups good or false and it will suggest a threshold.</div>';
+  var miss=(S.keys||[]).indexOf('OPENAI_API_KEY')<0;if(miss)h+='<div style="margin-top:6px;color:var(--amb)">Conversation is off until the OpenAI and ElevenLabs keys are added on the Pi (bash ~/starship/tasks/voice_setup.sh). Wake-word logging works without them.</div>';
+  $('tune').innerHTML=h;
+  $('evs').innerHTML=S.events.length?S.events.map(function(e){var d=new Date(e.t*1000),tm=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'});
+    var lab=e.label?'<span class="pill" style="border-color:'+(e.label==='false'?'var(--red)':'var(--grn)')+'">'+e.label+'</span>':'<span class="pill">not reviewed</span>';
+    return '<div class="ev"><div class="row sb"><span>'+tm+' &middot; score '+e.peak+(e.triggered?' &middot; <b>woke</b>':' &middot; <span class="mut">below threshold</span>')+(e.kind==='missed'?' &middot; you said it':'')+'</span>'+lab+'</div>'+
+    '<div class="row" style="margin-top:6px">'+(e.clip?'<button onclick="playClip(\''+e.clip+'\')">Play</button>':'<span class="mut">no clip (private)</span>')+'<button class="ok" onclick="lab(\''+e.id+'\',\'good\')">Good</button><button class="bad" onclick="lab(\''+e.id+'\',\'false\')">False</button></div></div>'}).join(''):'Nothing yet.'
+}
+function playClip(c){player.onended=null;player.src='/clip/'+c;player.play().catch(function(){})}
+function lab(id,l){api('/label',{id:id,label:l}).then(refresh)}
+$('start').onclick=start;
+$('pause').onclick=function(){api('/settings',{paused:!paused}).then(refresh)};
+$('missed').onclick=function(){api('/missed').then(function(){refresh();status('Marked','Saved the last few seconds as a miss. Thank you.')})};
+$('end').onclick=function(){api('/end').then(function(){beep([660,440],.14,.1)})};
+$('th').oninput=function(){$('thv').textContent=Number(this.value).toFixed(2)};
+$('th').onchange=function(){api('/settings',{threshold:Number(this.value)}).then(refresh)};
+$('apply').onclick=function(){if(S&&S.tuning.recommended!=null)api('/settings',{threshold:S.tuning.recommended}).then(refresh)};
+$('priv').onclick=function(){api('/settings',{private:!(S&&S.settings.private)}).then(refresh)};
+refresh();setInterval(refresh,15000);
+</script></body></html>
