@@ -203,5 +203,32 @@ def main():
                "final": [{"rule": desc(g), "g": g, "train": r, "test": rt} for g, r, rt in finals]}, open(sp, "w"))
 
 
+def promote():
+    """A rule is only PROMOTED (written to lab_promoted.json for the agent to practice-trade) when, in at least 3 separate lab runs spread over 12+ hours,
+    it won on the newest rounds it never saw in selection (return > 0 and t >= 1.65) and its average newest-round return across those runs is positive."""
+    per = {}
+    try:
+        for ln in open(os.path.join(D, "lab_log.jsonl")):
+            try: r = json.loads(ln)
+            except Exception: continue
+            te = r.get("test")
+            if te: per.setdefault(key(r["g"]), []).append((r["t"], te, r["g"]))
+    except OSError:
+        return []
+    out = []
+    for k, L in per.items():
+        runs = {}
+        for t, te, g in L: runs[t] = te
+        win = [te for te in runs.values() if te["roi"] > 0 and te["t"] >= 1.65]
+        ts = sorted(runs)
+        if len(win) >= 3 and ts[-1] - ts[0] >= 12 * 3600 and sum(te["roi"] for te in runs.values()) / len(runs) > 0:
+            out.append({"g": L[0][2], "runs": len(runs), "wins": len(win), "avg_newest_roi": round(sum(te["roi"] for te in runs.values()) / len(runs), 1)})
+    out.sort(key=lambda x: -x["avg_newest_roi"])
+    json.dump({"made": int(time.time()), "rules": out[:5]}, open(os.path.join(D, "lab_promoted.json"), "w"))
+    print("\nPROMOTED (won on unseen rounds in 3+ separate runs over 12+ hours): %s" % (("%d rule(s), see lab_promoted.json" % len(out)) if out else "none yet. That is expected this early."))
+    return out
+
+
 if __name__ == "__main__":
     main()
+    promote()
