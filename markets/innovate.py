@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """INNOVATOR: keeps the experiment board moving. Reads how every live practice strategy and reaction test has done (cents per dollar staked, real fills, fees in),
-retires experiments that are clearly worse than the strategy they modify, and invents new ones by changing one thing about the best performers (how it cuts losses, when it sells,
+reports experiments that lag the strategy they modify (they keep trading; nothing is removed), and invents new ones by changing one thing about the best performers (how it cuts losses, when it sells,
 how often it adds, how long it waits, which entry it uses, whether it bets the opposite). New experiments start trading on pretend money within seconds (variants.json -> sim.py).
 Every move is written in plain English to innovations.jsonl and shown on the Live View. It never touches real money, the hard rules ($5 minimum bet, $5 minimum profit) or the stake cap,
 and an experiment is NOT a promoted strategy: promotion still needs wins on unseen rounds.   python3 innovate.py [hours=72]"""
@@ -9,7 +9,7 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 D = os.environ.get("MARKET_DIR", os.path.join(os.path.expanduser("~"), "market-data"))
-MAXDYN = 6
+MAXDYN = 40         # nothing is ever retired: experiments only get added. When the board is full it stops inventing and says so.
 MIN_RETIRE_ROUNDS = 40
 LADDER = {"STOP_PCT": (0.15, 0.25, 0.35, 0.5, 0.65, 0.8), "EXIT_P": (5, 8, 15, 30, 50), "EXIT_D": (3, 4, 8, 12, 20), "MAX_TRADES": (1, 2, 3, 6, 10), "STAGE_GAP": (10, 25, 45, 90, 180),
           "ODDS_MARGIN": (0.0, 0.02, 0.04, 0.08, 0.15), "ENTRY_AFTER": (0, 60, 120, 240, 360, 480), "STOP_SMALL": (0, 5, 10, 25), "STOP_ON": (0, 1), "ODDS_SELL": (0, 1), "EXIT_ON": (0, 1), "FLIP": (0, 1)}
@@ -89,18 +89,16 @@ def main():
         say("Innovator: only %d settled strategy-rounds in the last %d h, too little to judge anything. Keeping the current %d experiments running." % (sum(v[0] for v in st.values()), hours, len(dyn))); 
         if dyn: return
     changed = False
-    # 1) retire experiments that are clearly worse than the strategy they modify
-    for k in list(dyn):
-        r = ret.get(k)
-        if not r or r[1] < MIN_RETIRE_ROUNDS: continue
-        refv = ret.get(dyn[k]["base"])
-        if refv and r[0] < refv[0] - 0.10:
-            say("Retired %s after %d rounds: it earned %+.1f%% per dollar staked against %+.1f%% for plain %s, the strategy it modifies. Not worth more pretend money." % (dyn[k]["label"], r[1], 100 * r[0], 100 * refv[0], dyn[k]["base"]), action="retire", key=k)
-            del dyn[k]; changed = True
-    # 2) make room if over the limit: drop the worst
-    while len(dyn) > MAXDYN:
-        worst = min(dyn, key=lambda k: ret.get(k, (0, 0))[0])
-        say("Retired %s: more than %d experiments running, and it was the weakest." % (dyn[worst]["label"], MAXDYN), action="retire", key=worst); del dyn[worst]; changed = True
+    # 1) nothing is taken off the table. Experiments that are lagging are only reported, and they keep trading.
+    lag = []
+    for k in dyn:
+        r = ret.get(k); refv = ret.get(dyn[k]["base"])
+        if r and refv and r[1] >= MIN_RETIRE_ROUNDS and r[0] < refv[0] - 0.10:
+            lag.append("%s %+.1f%% vs %+.1f%% for plain %s (%d rounds)" % (dyn[k]["label"], 100 * r[0], 100 * refv[0], dyn[k]["base"], r[1]))
+    if lag:
+        say("Lagging experiments (still trading, nothing is removed): " + "; ".join(lag[:3]), action="lag")
+    if len(dyn) >= MAXDYN:
+        say("Experiment board is full (%d). Not inventing more until you clear space; every experiment keeps trading." % len(dyn), action="board")
     # 3) invent up to 2 new experiments by changing one thing about the best performers
     pool = []
     for k, (b, ov) in static.items():
@@ -110,9 +108,9 @@ def main():
     for b in BUILT_IN:
         if b in ret and ret[b][1] >= 25: pool.append((ret[b][0], b, b, {}))
     pool.sort(reverse=True)
-    existing = {(v["base"], json.dumps(v["ov"], sort_keys=True)) for v in dyn.values()} | {(b, json.dumps(o, sort_keys=True)) for b, o in static.values()}
+    existing = {(v["base"], json.dumps(v["ov"], sort_keys=True)) for v in dyn.values()} | {(b, json.dumps(o, sort_keys=True)) for b, o in static.values()} | {(b, "{}") for b in BUILT_IN}
     made = 0
-    bases_ranked = [b for b in sorted((b for b in BUILT_IN if b in ret and ret[b][1] >= 25 and b != "mood"), key=lambda b: -ret[b][0])]
+    bases_ranked = [b for b in sorted((b for b in BUILT_IN if b in ret and ret[b][1] >= 25 and True), key=lambda b: -ret[b][0])]
     for _ in range(12):
         if len(dyn) >= MAXDYN or made >= 2: break
         if pool:
@@ -121,12 +119,11 @@ def main():
         else:
             base, ov, pk, parent = "distance", {}, "distance", "no results yet, so it starts from the default"
         ov = dict(ov)
-        if bases_ranked and rng.random() < 0.3:
-            nb = bases_ranked[0]; why = "it moves the same responses onto %s, the best-scoring entry so far" % nb; base = nb
+        if rng.random() < 0.3:
+            nb = rng.choice([b for b in BUILT_IN if b != base] or [base]); why = "it moves the same responses onto the %s entry (every entry stays on the table)" % nb; base = nb
         else:
             gene = rng.choice(list(LADDER)); cur = ov.get(gene)
             opts = [x for x in LADDER[gene] if x != cur]
-            if gene == "FLIP" and base != "mood" and base != "flow": gene = "ENTRY_AFTER"; opts = [x for x in LADDER[gene] if x != cur]
             ov[gene] = rng.choice(opts); why = "it changes one thing: %s" % (NAMES[gene].format("on" if ov[gene] else "off") if gene in BOOL else NAMES[gene].format(ov[gene]))
         key = (base, json.dumps(ov, sort_keys=True))
         if key in existing: continue
