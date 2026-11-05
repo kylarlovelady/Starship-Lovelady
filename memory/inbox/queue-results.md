@@ -1,41 +1,4 @@
-nl')):
-             ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/kylarlovelady/voice-data/trace.jsonl'
-(exit 0)
-```
-
-## 2026-11-05 02:04:01 tasks/queue/003-homescreen-look.sh
-```
-== crew-update.sh
-#!/bin/bash
-cd ~/starship && git pull -q --ff-only && cp -f index.html support.js ~/crew-web/
-cp ~/starship/markets/markets.html ~/crew-web/markets.html
-cp ~/starship/markets/live.html ~/crew-web/live.html
-cp ~/starship/markets/report.html ~/crew-web/report.html
-== crew-web
-total 748
--rw-r--r-- 1 kylarlovelady kylarlovelady 144473 Nov  5 02:03 index.html
--rw-r--r-- 1 kylarlovelady kylarlovelady 142042 Nov  4 15:13 index.html.bak
--rw-rw-r-- 1 kylarlovelady kylarlovelady  49563 Nov  5 02:03 live.html
--rw-r--r-- 1 kylarlovelady kylarlovelady 163913 Nov  5 02:03 market.json
--rw-rw-r-- 1 kylarlovelady kylarlovelady  14611 Nov  5 02:03 markets.html
--rw-rw-r-- 1 kylarlovelady kylarlovelady  11664 Nov  5 02:03 report.html
--rw-r--r-- 1 kylarlovelady kylarlovelady  32318 Nov  5 02:03 report.json
-lrwxrwxrwx 1 kylarlovelady kylarlovelady     43 Oct 30 14:17 status.json -> /home/kylarlovelady/crew
--rw-r--r-- 1 kylarlovelady kylarlovelady 188749 Nov  5 02:03 support.js
-== size/lines
-  1475 144473 /home/kylarlovelady/crew-web/index.html
-SAME as repo index.html
-== hits (line:text, cut)
-8:<body>
-495:function clockN(x, z, r) {
-503:function clockW(y, z, r) {
-== has glass already?
-0
-(exit 0)
-```
-
-## 2026-11-05 02:13:01 tasks/queue/004-find-theme.sh
+26-11-05 02:13:01 tasks/queue/004-find-theme.sh
 ```
 == kiosk / chromium command
 kylarlo+    1731  0.8  4.2 55429072 354416 ?     Sl   Oct25 129:52 /usr/lib/chromium/chromium --force-renderer-accessibility --enable-remote-extensions --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --m
@@ -452,5 +415,36 @@ other keys: ['time', 'scored', 'adopted', 'notes', 'weights']
 'run' stakes by round, last 14 h (from sim_windows / trades):
 no buy rows found with a cost field; first row keys:
 ['t', 'pnl', 'outcome', 'bal', 'src', 'hold', 'trades', 'moves', 'first', 'end', 'mix', 'sigs', 'p_open', 'staked', 'ticker', 'why', 'run', 'strat', 'hour']
+(exit 0)
+```
+
+## 2026-11-05 02:37:01 tasks/queue/012-stakes.sh
+```
+rows: 137
+Wed 20:00 staked $5.59 pnl -5.59 UP strat auto trades 1
+Wed 20:15 staked $5.48 pnl 5.52 DOWN strat auto trades 1
+Wed 20:30 staked $0.0 pnl 0.0 DOWN strat auto trades 0
+Wed 20:45 staked $5.48 pnl 5.52 DOWN strat auto trades 1
+Wed 21:00 staked $5.59 pnl -5.59 UP strat auto trades 1
+Wed 21:15 staked $0.0 pnl 0.0 UP strat auto trades 0
+Wed 21:30 staked $49.68 pnl -26.39 UP strat auto trades 3
+Wed 21:45 staked $0.0 pnl 0.0 DOWN strat auto trades 0
+Wed 22:00 staked $0.0 pnl 0.0 DOWN strat auto trades 0
+Wed 22:15 staked $48.22 pnl -18.9 UP strat auto trades 4
+Wed 22:30 staked $0.0 pnl 0.0 UP strat auto trades 0
+Wed 22:45 staked $49.75 pnl -28.52 DOWN strat auto trades 4
+Wed 23:00 staked $36.63 pnl -15.53 DOWN strat auto trades 3
+Wed 23:15 staked $48.26 pnl -24.68 DOWN strat auto trades 5
+Wed 23:30 staked $49.83 pnl -19.09 UP strat auto trades 5
+Wed 23:45 staked $0.0 pnl 0.0 DOWN strat auto trades 0
+Thu 00:00 staked $20.3 pnl -20.3 UP strat auto trades 1
+Thu 00:15 staked $0.0 pnl 0.0 UP strat auto trades 0
+Thu 00:30 staked $49.71 pnl 25.65 DOWN strat auto trades 3
+Thu 00:45 staked $19.85 pnl 6.15 UP strat auto trades 1
+Thu 01:00 staked $49.71 pnl 30.02 UP strat auto trades 5
+Thu 01:15 staked $49.55 pnl 50.45 DOWN strat auto trades 2
+Thu 01:30 staked $49.66 pnl 14.34 DOWN strat auto trades 2
+Thu 01:45 staked $49.6 pnl -10.09 DOWN strat auto trades 6
+max staked, last 14h: $49.83
 (exit 0)
 ```
