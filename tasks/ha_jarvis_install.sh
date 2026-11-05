@@ -8,7 +8,8 @@ CFG=""
 for c in ~/homeassistant /config /opt/homeassistant; do [ -d "$c/.storage" ] && CFG="$c" && break; done
 [ -z "$CFG" ] && { echo "Could not find the Home Assistant config folder (looked for .storage in ~/homeassistant). Tell Claude."; exit 1; }
 [ -f "$SRC/manifest.json" ] || { echo "Update first: cd ~/starship && git pull"; exit 1; }
-mkdir -p "$CFG/custom_components"; rm -rf "$CFG/custom_components/jarvis_hub"; cp -r "$SRC" "$CFG/custom_components/jarvis_hub"
+# the Home Assistant folder is owned by root (it runs in Docker), so this step needs your Pi password
+sudo mkdir -p "$CFG/custom_components" && sudo rm -rf "$CFG/custom_components/jarvis_hub" && sudo cp -r "$SRC" "$CFG/custom_components/jarvis_hub" || { echo "Could not copy the add-on. Tell Claude."; exit 1; }
 echo "Copied the Jarvis Hub add-on into $CFG/custom_components"
 NAME=$(docker ps --format '{{.Names}}' 2>/dev/null | grep -i -m1 homeassistant || true)
 URL="http://127.0.0.1:8099"

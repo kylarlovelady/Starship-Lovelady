@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (late night, install)
+- Kylar ran tasks/pi_update.sh ha: alert checker, Kalshi daily sync, task queue installed and notes sync ran (CONFIRMED by his screenshot). Home-speaker add-on copy failed: ~/homeassistant is root-owned (Docker); installer now uses sudo for the copy. First task-queue script (tasks/queue/001-diagnose.sh) pushed to check Pi-hole, HA network mode, crontab and Jarvis tools; results land in memory/inbox/queue-results.md.
+
 ## 2026-11-05 (night): making everything work together
 - Jarvis tools (voice/tools.py): live facts pulled in when asked (Pi status, Kalshi agent, Pi-hole, what Claude changed) and spoken device control for lights, switches and fans via Home Assistant (locks and doors deliberately excluded). Works on phone page, Shortcut, and home speaker. Status: built, tested here with a fake Home Assistant; needs install on Pi (pi_update.sh); uses HA_TOKEN already in ~/market-data/env.
 - One alert channel (tasks/alerts_check.py, every 5 min): services down, Pi hot/full, Kalshi data stale, Jarvis errors, Pi-hole down, stuck repo pull, and dated to-dos (lines starting "- YYYY-MM-DD" in memory/todo.md Open). Phone alert through Home Assistant, re-alert every 6 h, "Cleared" message, shows on Starship Mission board and Security light. Status: built, tested here; needs install on Pi.
