@@ -1,138 +1,4 @@
-", "action": "buy", "side": "DOWN"}
-{"t": 1793681702, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "sell", "side": "DOWN"}
-{"t": 1793681918, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "UP"}
-{"t": 1793681966, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "UP"}
-{"t": 1793682188, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030015-15", "action": "buy", "side": "DOWN"}
-{"t": 1793683870, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "buy", "side": "DOWN"}
-{"t": 1793683924, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "sell", "side": "DOWN"}
-(exit 0)
-```
-
-## 2026-11-05 02:34:01 tasks/queue/011-signals-and-stakes.sh
-```
-signals (n, right%, 95% range, verdict, weight):
-  momentum       n=193  right= 57.0%  range 46.9-65.6  no clear edge      x1.16
-  levels         n=159  right= 52.2%  range 42.4-63.0  no clear edge      x1.07
-  trend_1h       n=108  right= 51.9%  range 40.3-62.0  no clear edge      x1.03
-  funding        n=238  right= 51.3%  range 42.7-59.9  no clear edge      x1.03
-  fng            n=215  right= 51.2%  range 41.7-60.5  no clear edge      x1.03
-  trend_h        n=196  right= 51.0%  range 40.9-59.0  no clear edge      x1.00
-  book           n=161  right= 50.3%  range 39.7-60.6  no clear edge      x1.00
-  bigtrades      n=156  right= 48.1%  range 41.3-61.1  no clear edge      x1.03
-  trend_w        n=189  right= 48.1%  range 38.5-57.2  no clear edge      x0.94
-  news           n=202  right= 48.0%  range 38.0-56.7  no clear edge      x0.93
-  trend_4h       n=98   right= 48.0%  range 35.1-58.0  no clear edge      x0.92
-  trend_7d       n=94   right= 47.9%  range 36.3-59.0  no clear edge      x0.94
-  trend_24h      n=110  right= 47.3%  range 37.0-58.2  no clear edge      x0.94
-  whales         n=94   right= 41.5%  range 27.8-54.4  no clear edge      x0.80
-other keys: ['time', 'scored', 'adopted', 'notes', 'weights']
-
-'run' stakes by round, last 14 h (from sim_windows / trades):
-no buy rows found with a cost field; first row keys:
-['t', 'pnl', 'outcome', 'bal', 'src', 'hold', 'trades', 'moves', 'first', 'end', 'mix', 'sigs', 'p_open', 'staked', 'ticker', 'why', 'run', 'strat', 'hour']
-(exit 0)
-```
-
-## 2026-11-05 02:37:01 tasks/queue/012-stakes.sh
-```
-rows: 137
-Wed 20:00 staked $5.59 pnl -5.59 UP strat auto trades 1
-Wed 20:15 staked $5.48 pnl 5.52 DOWN strat auto trades 1
-Wed 20:30 staked $0.0 pnl 0.0 DOWN strat auto trades 0
-Wed 20:45 staked $5.48 pnl 5.52 DOWN strat auto trades 1
-Wed 21:00 staked $5.59 pnl -5.59 UP strat auto trades 1
-Wed 21:15 staked $0.0 pnl 0.0 UP strat auto trades 0
-Wed 21:30 staked $49.68 pnl -26.39 UP strat auto trades 3
-Wed 21:45 staked $0.0 pnl 0.0 DOWN strat auto trades 0
-Wed 22:00 staked $0.0 pnl 0.0 DOWN strat auto trades 0
-Wed 22:15 staked $48.22 pnl -18.9 UP strat auto trades 4
-Wed 22:30 staked $0.0 pnl 0.0 UP strat auto trades 0
-Wed 22:45 staked $49.75 pnl -28.52 DOWN strat auto trades 4
-Wed 23:00 staked $36.63 pnl -15.53 DOWN strat auto trades 3
-Wed 23:15 staked $48.26 pnl -24.68 DOWN strat auto trades 5
-Wed 23:30 staked $49.83 pnl -19.09 UP strat auto trades 5
-Wed 23:45 staked $0.0 pnl 0.0 DOWN strat auto trades 0
-Thu 00:00 staked $20.3 pnl -20.3 UP strat auto trades 1
-Thu 00:15 staked $0.0 pnl 0.0 UP strat auto trades 0
-Thu 00:30 staked $49.71 pnl 25.65 DOWN strat auto trades 3
-Thu 00:45 staked $19.85 pnl 6.15 UP strat auto trades 1
-Thu 01:00 staked $49.71 pnl 30.02 UP strat auto trades 5
-Thu 01:15 staked $49.55 pnl 50.45 DOWN strat auto trades 2
-Thu 01:30 staked $49.66 pnl 14.34 DOWN strat auto trades 2
-Thu 01:45 staked $49.6 pnl -10.09 DOWN strat auto trades 6
-max staked, last 14h: $49.83
-(exit 0)
-```
-
-## 2026-11-05 02:40:01 tasks/queue/013-starship-url.sh
-```
-== routes/mounts in server.py
-47:@app.get("/", response_class=HTMLResponse)
-65:@app.post("/event/{name}")
-75:@app.get("/mute")
-79:@app.post("/mute/toggle")
-89:app.include_router(router)
-91:app.include_router(settings_router)
-93:app.include_router(crop_router)
-95:app.include_router(preview_router)
-97:app.include_router(memory_router)
-99:app.include_router(hub_router)
-101:app.include_router(janitor_router)
-103:app.include_router(mute_router)
-105:app.include_router(network_router)
-107:app.include_router(health_router)
-109:app.include_router(layout_router)
-== listeners
-0.0.0.0:22
-0.0.0.0:53
-0.0.0.0:8089
-0.0.0.0:8123
-100.105.140.126:8090
-100.105.140.126:8095
-100.105.140.126:8097
-100.105.140.126%tailscale0:41665
-100.105.140.126%tailscale0:443
-100.105.140.126%tailscale0:8081
-127.0.0.1:10200
-127.0.0.1:10300
-127.0.0.1:10400
-127.0.0.1:10700
-127.0.0.1:18554
-127.0.0.1:8080
-127.0.0.1:8099
-*:18555
-[::]:22
-[::]:53
-[::]:8123
-[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:38492
-[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:443
-[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081
-== other http servers
-kylarlo+ 1413028  0.1  1.1 207648 98240 ?        Ssl  Oct26  16:36 /home/kylarlovelady/kdp-studio/.venv/bin/python3 /home/kylarlovelady/kdp-studio/.venv/bin/uvicorn app:app --host 100.105.140.126 --po
-kylarlo+ 2711573  0.0  0.2 328576 21488 ?        Ss   Oct30   0:36 /usr/bin/python3 -m http.server 8095 --bind 100.105.140.126 --directory /home/kylarlovelady/crew-web
-== tailscale serve
-https://loveladymainaihub.taild703ca.ts.net (tailnet only)
-|-- / proxy http://127.0.0.1:8099
-
-http://loveladymainaihub:8081 (tailnet only)
-http://loveladymainaihub.taild703ca.ts.net:8081 (tailnet only)
-|-- / proxy http://127.0.0.1:8080
-
-(exit 0)
-```
-
-## 2026-11-05 02:49:01 tasks/queue/014-maker-study.sh
-```
-rounds used: 0 (from /home/kylarlovelady/market-data, last 3 days)
-
-Reading it: the maker only helps if per-$ profit beats the taker's AFTER filling only on dips (adverse selection shows up as a lower win rate when filled). Fee for maker is assumed; confirm on a first real fill.
-(exit 0)
-```
-
-## 2026-11-05 02:58:01 tasks/queue/015-hub-source.sh
-```
-== hub_api.py
-import asyncio, json, os, subprocess, time, urllib.request
+s, time, urllib.request
 from pathlib import Path
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
@@ -582,4 +448,125 @@ drwxrwxr-x  5 kylarlovelady kylarlovelady  4096 Oct 25 23:44 .venv
 == README / notes
 == app routes
 (exit 0)
+```
+
+## 2026-11-05 13:55:01 tasks/queue/025-kdp-engine.sh
+```
+== engine.py head
+"""KDP Studio engine: 6x9 hardcover spec, fonts, cover + interior renderer, checks."""
+import os, re, copy, subprocess, hashlib, json, io, random
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import simpleSplit
+from reportlab.lib.colors import HexColor, Color
+IN = 72.0
+# ---- KDP 6x9 hardcover spec (VERIFY with KDP cover calculator before first upload) ----
+SPEC = dict(trim_w=6.0, trim_h=9.0, wrap=0.591, wrap_v=0.709, hinge=0.197, board=0.189,
+            rate={"white": 0.002252, "cream": 0.0025}, min_pages=75, max_pages=550,
+            safe_edge=0.635, hinge_keep=0.4, bc_w=2.0, bc_h=1.2, bc_bottom=0.76, bc_side=0.25,
+            verified=False)
+def spine(pages, paper): return round(pages * SPEC["rate"][paper] + SPEC["board"], 4)
+def gutter(p): return 0.375 if p <= 150 else 0.5 if p <= 300 else 0.625 if p <= 500 else 0.75
+def cover_size(pages, paper):
+    s = spine(pages, paper)
+    return (2 * SPEC["wrap"] + 2 * SPEC["trim_w"] + 2 * SPEC["hinge"] + s, SPEC["trim_h"] + 2 * SPEC["wrap_v"], s)
+# ---- fonts ----
+_F = {}
+def discover():
+    if _F: return _F
+    import reportlab
+    vd = os.path.join(os.path.dirname(reportlab.__file__), "fonts")
+    _F["Bitstream Vera"] = {k: os.path.join(vd, f) for k, f in
+        (("r", "Vera.ttf"), ("b", "VeraBd.ttf"), ("i", "VeraIt.ttf"))}
+    cands = ["DejaVu Sans", "DejaVu Serif", "Liberation Sans", "Liberation Serif", "Liberation Mono", "Inter",
+             "Carlito", "Caladea", "Lato", "Roboto", "Open Sans", "Montserrat", "Oswald", "Bitstream Charter",
+             "FreeSerif", "FreeSans", "Noto Sans", "Noto Serif", "Playfair Display", "Merriweather", "Source Sans 3"]
+    def fc(fam, st):
+== engine functions
+14:def spine(pages, paper): return round(pages * SPEC["rate"][paper] + SPEC["board"], 4)
+15:def gutter(p): return 0.375 if p <= 150 else 0.5 if p <= 300 else 0.625 if p <= 500 else 0.75
+16:def cover_size(pages, paper):
+21:def discover():
+30:    def fc(fam, st):
+41:def fn(fam, bold=False):
+77:def merge(base, patch):
+82:def _num(v, lo, hi, d):
+85:def clean_el(e, F):
+98:def clean(b):
+102:    def walk(x, dflt):
+133:def plan(b):
+141:def lum(h):
+145:def contrast(a, b2):
+148:def interior(b, path):
+223:def geometry(b):
+239:def region(g, panel):
+243:def crop_box(iw, ih, rw, rh, zoom, fx, fy):
+250:def _rgb(h): return tuple(int(h[i:i + 2], 16) for i in (1, 3, 5))
+251:def tint_image(im, tint, amt):
+259:def to_srgb(im):
+268:def prep_image(src, cache, rw_in, rh_in, zoom, fx, fy, tint, tint_amt):
+288:def make_texture(kind, w_in, h_in, path, seed=None):
+294:    def noise(cell, sigma=64):
+330:def draw_text(c, x, y, s, f, size, col, foil):
+339:def image_report(b, imgdir):
+352:def _lines(text, font, size, width):
+357:def cover(b, path, guides=False, imgdir=None):
+436:def overflow(b, info):
+453:def png(pdf, out, page=1, dpi=70):
+456:def check(b, cpdf, ipdf, info, imgdir=None):
+== app routes
+== book.json shape (newest book)
+books-old-1026-0008/process-operator-5079/book.json
+   name : "Process Operator"
+   title : "Process Operator"
+   subtitle : "Lined Journal & Logbook"
+   tagline : "Notes. Shifts. Ideas."
+   author : ""
+   paper : "cream"
+   pages : 120
+   cover : {"bg": "#26313d", "accent": "#ff7a2f", "text": "#ffffff", "title_font": "DejaVu Sans", "body_font": "DejaVu Sa
+   inside : {"font": "DejaVu Sans", "color": "#444444", "page_bg": "#ffffff", "style": "lines", "line_color": "#b9bec6", "
+   front : {"title_page": false, "owner_page": true, "owner_fields": ["Name", "Company", "Phone", "Email"], "contacts": 0
+   back : {"notes_pages": 0}
+   listing : {"description": "", "keywords": [], "categories": "", "price": ""}
+   answers : {"author": false}
+books/new-book-e841/book.json
+   name : "New book"
+   title : "Process Operator Notebook Journal"
+   subtitle : ""
+   author : "K.J.Lovelady"
+   paper : "white"
+   pages : 120
+   cover : {"bg": "#000000", "pattern": "none", "pattern_color": "#999999", "frame": false, "frame_color": "#000000", "fo
+   inside : {"font": "DejaVu Sans", "color": "#444444", "page_bg": "#ffffff", "style": "lines", "line_color": "#b9bec6", "
+   front : {"title_page": false, "owner_page": false, "owner_heading": "", "owner_footer": "", "owner_fields": [], "conta
+   back : {"notes_pages": 0}
+   labels : {"contacts": "Contacts", "index": "Index", "goals": "Goals", "notes": "Notes"}
+   listing : {"description": "A hardcover Process Operator Notebook Journal with 120 numbered, lined pages (6 x 9 inches). 
+   answers : {"spine_text": true, "owner_page": true, "goals": true, "contacts": true, "date_header": true, "index": true, 
+   chat : [{"role": "user", "text": "Ok on the front cover i want \u201cProcess Operator\u201d in yellow gold letters an
+== outputs
+books/new-book-e841/out:
+total 260
+drwxr-xr-x 2 kylarlovelady kylarlovelady   4096 Oct 26 01:21 .
+drwxr-xr-x 5 kylarlovelady kylarlovelady   4096 Oct 26 00:55 ..
+-rw-r--r-- 1 kylarlovelady kylarlovelady  30148 Oct 26 01:21 061c1c5034_cover_90.png
+-rw-r--r-- 1 kylarlovelady kylarlovelady  44959 Oct 26 01:21 061c1c5034_coverg_90.png
+-rw-r--r-- 1 kylarlovelady kylarlovelady  45669 Oct 26 01:21 061c1c5034_coverg.pdf
+-rw-r--r-- 1 kylarlovelady kylarlovelady  24982 Oct 26 01:21 061c1c5034_cover.pdf
+-rw-r--r-- 1 kylarlovelady kylarlovelady 101233 Oct 26 01:21 061c1c5034_interior.pdf
+
+books-old-1026-0008/new-journal-fcd0/out:
+total 268
+drwxr-xr-x 2 kylarlovelady kylarlovelady   4096 Oct 25 23:46 .
+drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Oct 25 23:46 ..
+-rw-r--r-- 1 kylarlovelady kylarlovelady  51221 Oct 25 23:46 3d06037250_coverg_80.png
+-rw-r--r-- 1 kylarlovelady kylarlovelady  44357 Oct 25 23:46 3d06037250_coverg.pdf
+-rw-r--r-- 1 kylarlovelady kylarlovelady  44143 Oct 25 23:46 3d06037250_cover.pdf
+-rw-r--r-- 1 kylarlovelady kylarlovelady 121995 Oct 25 23:46 3d06037250_interior.pdf
+
+books-old-1026-0008/process-operator-5079/out:
+total 268
+drwxr-xr-x 2 kylarlovelady kylarlovelad(exit 0)
 ```
