@@ -1,163 +1,4 @@
-arket-data, last 3 days)
-
-entry at about 1 min in: 138 orders per method
-  TAKER  profit per contract -0.022  per $ staked -4.1%   (win rate 50%)
-  MAKER  filled 128 of 138 (93%); avg price 1.0 cents better than the ask; win rate when filled 52% (taker on the same orders 52%)
-         profit per FILLED contract +0.017 (assumed 1.75% fee) / +0.021 (0 fee);  taker on those same orders -0.006
-         per $ staked: maker +3.4% vs taker -4.1%;  per ATTEMPT (unfilled = 0): maker +0.016 vs taker -0.022
-
-entry at about 2 min in: 138 orders per method
-  TAKER  profit per contract -0.021  per $ staked -4.0%   (win rate 50%)
-  MAKER  filled 128 of 138 (93%); avg price 1.0 cents better than the ask; win rate when filled 49% (taker on the same orders 49%)
-         profit per FILLED contract -0.001 (assumed 1.75% fee) / +0.003 (0 fee);  taker on those same orders -0.023
-         per $ staked: maker -0.3% vs taker -4.0%;  per ATTEMPT (unfilled = 0): maker -0.001 vs taker -0.021
-
-entry at about 3 min in: 138 orders per method
-  TAKER  profit per contract -0.020  per $ staked -3.9%   (win rate 50%)
-  MAKER  filled 125 of 138 (91%); avg price 1.0 cents better than the ask; win rate when filled 50% (taker on the same orders 50%)
-         profit per FILLED contract -0.004 (assumed 1.75% fee) / -0.000 (0 fee);  taker on those same orders -0.026
-         per $ staked: maker -0.8% vs taker -3.9%;  per ATTEMPT (unfilled = 0): maker -0.004 vs taker -0.020
-
-Reading it: the maker only helps if per-$ profit beats the taker's AFTER filling only on dips (adverse selection shows up as a lower win rate when filled). Fee for maker is assumed; confirm on a first real fill.
-
-=== review 24h (tail)
-TRADE REVIEW, last 24 hours: 2363 (strategy, round) results from 65 rounds with full recordings.
-
-EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
-  v_hold          54    +990.35   70%  +63.3%
-  v_cut_loose     54    +577.86   61%  +26.9%
-  v_late          35    +571.24   60%  +33.6%
-  v_x96220861     28    +561.71   68%  +31.3%
-  v_x88221261     25    +508.59   60%  +41.9%
-  v_flow_flip     60    +458.14   48%   +9.6%
-  v_no_cut        54    +399.06   67%  +25.4%
-  v_x60222031     27    +397.62   67%  +31.2%
-  v_x64216771     50    +388.75   56%   +9.8%
-  v_x16217721     38    +361.06   42%  +11.2%
-  v_x32221881     28    +357.28   57%  +12.7%
-  mood            58    +354.37   50%  +14.5%
-  v_x52220781     25    +266.30   52%  +21.8%
-  v_x219211       47    +233.55   45%   +9.2%
-  v_x72222451     44    +224.51   45%   +9.5%
-  v_one_shot      54    +203.17   70%  +46.6%
-  v_x28219981     52    +201.35   52%   +4.9%
-  v_x80218931     40    +195.57   45%   +9.0%
-  swing           65    +176.90   43%   +5.2%
-  v_x80218932     40    +158.30   62%  +21.7%
-  flow            57    +148.58   49%  +10.0%
-  v_x28219982     52    +144.01   52%   +7.5%
-  v_x219212       47    +141.38   47%   +3.8%
-  v_x96220872     28    +128.96   39%   +8.9%
-  v_x36215122     26    +125.39   50%  +12.0%
-  v_x32221882     28    +122.96   54%   +5.1%
-  v_x52220782     24    +110.21   42%   +9.5%
-  v_x64216772     50    +108.55   64%  +17.3%
-  v_x36215121     45    +106.19   42%   +4.6%
-  signals         55    +102.32   51%   +5.6%
-  v_x24220781     31    +101.88   61%  +17.5%
-  v_x60222032     28     +92.04   71%  +29.8%
-  hold            65     +83.95   57%  +11.5%
-  v_x68220542     25     +81.14   48%   +8.3%
-  v_x76218991     15     +74.22   60%  +26.3%
-  v_x76218992     15     +74.22   60%  +26.3%
-  v_x40223631     19     +55.28   58%  +22.5%
-  v_x68220541     25     +54.52   48%   +2.6%
-  v_x44219232     43     +47.69   44%   +1.4%
-  trend           57     +35.07   44%   +2.8%
-  v_adds          54     +29.39   50%   +1.9%
-  distance        54     +10.12   54%   +1.1%
-  v_x8220762      43      -6.37   47%   -0.3%
-  v_x12229262     12     -15.60   42%   -3.6%
-  v_x40223632     20     -22.69   35%   -6.2%
-  v_x44219231     43     -38.94   40%   -1.2%
-  v_x8220761      44     -47.37   43%   -1.3%
-  v_mood_flip     60     -54.37   52%   -1.4%
-  v_x72222452     44     -57.10   39%   -1.7%
-  v_x12229261     12     -70.61   33%  -16.3%
-  v_x88221262     34     -95.57   41%   -3.7%
-  v_cut_tight     54     -95.89   41%   -8.1%
-  v_x16217722     39    -103.03   38%   -6.7%
-  v_x24220782     31    -142.99   35%   -6.0%
-  v_trail         54    -148.31   48%  -10.6%
-  v_trail_wide    54    -148.31   48%  -10.6%
-  v_x4227191      22    -202.60   32%  -11.5%
-  v_x4227192      22    -204.69   32%  -10.5%
-  run             54    -291.88   46%  -12.8%
-
-=== 'run': 54 rounds. Total profit -291.88 ===
-1) SIDE: first bet on the winning side in 33 of 54 rounds (61%). Money-weighted: 52% of dollars staked were on the winning side (coin flip = 50%).
-2) TIMING: it makes its first bet a median 1:32 into the round. The cheapest price on the winning side came a median 3:58 in. Median paid 21 cents above that cheapest point when it was on the right side.
-   first bet time -> rounds, profit, side right:  0-1 min: 24, -214, 14 right  |  1-3 min: 17, -14, 13 right  |  10+ min: 2, -17, 1 right  |  3-6 min: 6, -32, 2 right  |  6-10 min: 5, -16, 3 right
-3) SELLING (money made or lost by selling versus just holding those contracts to the end):
-   cut a loss                  15 sells    -325.01  selling HURT (holding would have been better)
-   other                        1 sells      +6.75  selling HELPED
-   its own odds said sell      28 sells     +33.85  selling HELPED
-4) BET SIZE -> rounds, profit, wins:  $100-250: 6, -167, 1  |  $25-100: 23, -161, 8  |  under $25: 25, +36, 16
-5) HOUR OF DAY -> rounds, profit:  00h: 3, +11  |  01h: 4, +85  |  04h: 2, -1  |  05h: 4, +17  |  06h: 2, -10  |  07h: 4, -68  |  08h: 2, -8  |  09h: 4, -77  |  10h: 4, -26  |  11h: 2, -73  |  12h: 3, -28  |  13h: 3, +19  |  14h: 2, -23  |  15h: 3, -3  |  16h: 2, +1  |  17h: 1, -6  |  20h: 3, +5  |  21h: 2, -32  |  22h(exit 0)
-```
-
-## 2026-11-05 12:43:01 tasks/queue/020-kalshi-more.sh
-```
-=== key strategies, last 72 h
-  v_hold          95    +296.88   60%   +8.5%
-  v_late          60    +125.62   48%   +2.9%
-  v_one_shot      95     -58.77   60%   -5.7%
-  v_cut_loose     95     -83.26   52%   -1.8%
-  v_no_cut        95    -269.14   57%   -6.5%
-  hold           188    -274.35   51%   -5.3%
-  v_adds          95    -483.14   43%   -9.1%
-  v_trail         95    -535.18   42%  -11.5%
-  v_cut_tight     95    -562.70   35%  -14.3%
-  swing          186    -767.42   34%   -7.5%
-  signals        162    -798.12   44%   -7.3%
-  distance       148   -1125.74   45%   -9.6%
-  flow           156   -1151.33   39%   -8.0%
-  trend          169   -1250.37   34%   -8.1%
-  run            158   -1748.43   39%  -15.6%
-  mood           159   -1825.53   42%  -18.1%
-=== key strategies, last 12 h
-  v_hold          32    +738.53   78%  +82.7%
-  v_late          25    +505.31   56%  +42.0%
-  mood            33    +419.86   58%  +31.5%
-  v_cut_loose     32    +399.14   62%  +27.8%
-  v_no_cut        32    +274.79   69%  +27.1%
-  swing           34    +248.03   47%  +13.8%
-  trend           33    +146.83   58%  +22.6%
-  v_adds          32    +143.80   56%  +15.9%
-  flow            33    +139.75   55%  +16.6%
-  v_one_shot      32    +124.47   78%  +51.1%
-  distance        32     +79.12   62%  +15.7%
-  hold            34     +77.25   68%  +18.7%
-  signals         32     +48.60   59%   +4.7%
-  v_cut_tight     32      +5.29   50%   +0.8%
-  v_trail         32     -30.53   56%   -4.4%
-  run             31    -186.85   52%  -10.0%
-
-=== run, recent rounds (is the cap working?)
-{'strategy': 'auto', 'bal': 827.72, 'pnl': -172.28, 'windows': 42, 'active': None, 'live': False}
-Thu 09:00 {'staked': 49.24, 'pnl': 15.76}
-Thu 09:15 {'staked': 49.8, 'pnl': -29.65}
-Thu 09:30 {'staked': 50.0, 'pnl': -27.79}
-Thu 09:45 {'staked': 49.96, 'pnl': -34.89}
-Thu 10:00 {'staked': 49.95, 'pnl': -37.19}
-Thu 10:15 {'staked': 20.48, 'pnl': 21.52}
-Thu 10:30 {'staked': 49.93, 'pnl': -32.33}
-Thu 10:45 {'staked': 49.64, 'pnl': 22.02}
-Thu 11:00 {'staked': 0.0, 'pnl': 0.0}
-Thu 11:15 {'staked': 49.96, 'pnl': -41.19}
-Thu 11:30 {'staked': 49.9, 'pnl': -31.85}
-Thu 11:45 {'staked': 0.0, 'pnl': 0.0}
-Thu 12:00 {'staked': 49.77, 'pnl': -22.12}
-Thu 12:15 {'staked': 20.73, 'pnl': -11.13}
-
-=== collector restart / version
-ActiveEnterTimestamp=Mon 2026-11-02 22:27:17 CST
-# v8.2 restart: cap 25, Auto wallet needs 40+ rounds and a positive record (else holds to the end); nothing is retired (
-
-=== real live orders
-61 rows; keys: ['action', 'book_side', 'count', 'price', 'reply', 'side', 'status', 't', 'ticker']
-{('buy', 'UP'): 22, ('sell', 'UP'): 27, ('buy', 'DOWN'): 7, ('sell', 'DOWN'): 5}
-{"t": 1793652359, "action": "buy", "side": "UP", "ticker": "KXBTC15M-26NOV021600-00", "book_side": "bid", "count": 1, "price": 0.55, "status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5400", "client_order_id": "1ab386c5-dfb6-42c2-a759-a0b764994f79", "fill_count": "1.00", "order_id": "01a19e02-ff58-7c
+"status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5400", "client_order_id": "1ab386c5-dfb6-42c2-a759-a0b764994f79", "fill_count": "1.00", "order_id": "01a19e02-ff58-7c
 {"t": 1793652361, "action": "sell", "side": "UP", "ticker": "KXBTC15M-26NOV021600-00", "book_side": "ask", "count": 1, "price": 0.54, "status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5500", "client_order_id": "d174effe-9f14-4d4e-87ef-78e666d416c1", "fill_count": "1.00", "order_id": "01a19e03-0728-7
 {"t": 1793683924, "kind": "order", "action": "sell", "side": "DOWN", "ticker": "KXBTC15M-26NOV030045-45", "book_side": "bid", "count": 18, "price": 0.38, "quote_ask": 0.35, "quote_bid": 0.34, "status": 201, "reply": {"average_fee_paid": "0.0159", "average_fill_price": "0.3500", "client_order_id": "3036302b-8f89-4e26-b607-b0c9294
 {"t": 1793683924, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "sell", "side": "DOWN"}
@@ -603,5 +444,135 @@ drwxrwxr-x 3 kylarlovelady kylarlovelady  4096 Nov  5 15:01 ..
 -rw-r--r-- 1 kylarlovelady kylarlovelady  9588 Nov  5 15:01 book-current.json
 -rw-r--r-- 1 kylarlovelady kylarlovelady  1411 Nov  5 15:01 book-old.json
 -rw-r--r-- 1 kylarlovelady kylarlovelady 33061 Nov  5 15:01 engine.py
+(exit 0)
+```
+
+## 2026-11-05 15:04:01 tasks/queue/029-home-voice-diag.sh
+```
+== services
+hub-satellite: active
+hub-voice: active
+phone-voice: active
+hub-dashboard: active
+hub-watchdog: active
+== containers
+openwakeword Up 6 days
+whisper Up 6 days (healthy)
+piper Up 6 days (healthy)
+pihole Up 19 hours (healthy)
+homeassistant Up 13 hours
+== hub-satellite log (last 25)
+Nov 05 14:56:55 LoveladyMainAiHub bash[2546920]: WARNING:root:Mic service disconnected
+Nov 05 14:57:38 LoveladyMainAiHub bash[2546920]: INFO:root:Waiting for wake word
+Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: Stopping hub-satellite.service - Wyoming satellite (main hub)...
+Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: hub-satellite.service: Deactivated successfully.
+Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: Stopped hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: hub-satellite.service: Consumed 1h 31min 37.976s CPU time.
+Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 14:58:19 LoveladyMainAiHub bash[2665352]: INFO:root:Ready
+Nov 05 14:58:20 LoveladyMainAiHub bash[2665352]: INFO:root:Connected to services
+Nov 05 14:58:32 LoveladyMainAiHub bash[2665352]: INFO:root:Connected to server
+Nov 05 14:58:32 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
+Nov 05 14:58:52 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
+Nov 05 14:58:55 LoveladyMainAiHub bash[2666912]: Playing raw data 'stdin' : Signed 16 bit Little Endian, Rate 22050 Hz, Mono
+Nov 05 15:00:18 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
+Nov 05 15:00:20 LoveladyMainAiHub bash[2670871]: Playing raw data 'stdin' : Signed 16 bit Little Endian, Rate 22050 Hz, Mono
+Nov 05 15:00:51 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
+Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: Stopping hub-satellite.service - Wyoming satellite (main hub)...
+Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: hub-satellite.service: Deactivated successfully.
+Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: Stopped hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: hub-satellite.service: Consumed 2.083s CPU time.
+Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 15:01:36 LoveladyMainAiHub bash[2674286]: INFO:root:Ready
+Nov 05 15:01:36 LoveladyMainAiHub bash[2674286]: INFO:root:Connected to services
+Nov 05 15:01:48 LoveladyMainAiHub bash[2674286]: INFO:root:Connected to server
+Nov 05 15:01:48 LoveladyMainAiHub bash[2674286]: INFO:root:Waiting for wake word
+== hub-voice log (last 15)
+-- No entries --
+== phone-voice errors today
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]: Exception occurred during processing of request from ('127.0.0.1', 40060)
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]: Traceback (most recent call last):
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]: BrokenPipeError: [Errno 32] Broken pipe
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]: During handling of the above exception, another exception occurred:
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]: Traceback (most recent call last):
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]:     except Exception as e: return self._send(500, {"error": str(e)[:200]})
+Nov 05 15:00:53 LoveladyMainAiHub python[692834]: BrokenPipeError: [Errno 32] Broken pipe
+== HA log, jarvis/assist/wake lines
+[36m2026-11-05 14:57:38.136 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=datetime.datetime(2026, 11, 5
+[36m2026-11-05 14:58:52.352 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=datetime.datetime(2026, 11, 5
+[36m2026-11-05 14:58:54.445 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update[0m
+[36m2026-11-05 15:00:18.370 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What can you tell me about Shari?', attachments=None, created=datetime.datetime(2026, 1
+[36m2026-11-05 15:00:19.925 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update[0m
+[36m2026-11-05 15:00:51.274 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' Do you know who I am?', attachments=None, created=datetime.datetime(2026, 11, 5, 21, 0,
+== jarvis trace, last 14 events
+05:54:45 sentence {'sid': 'phes14a5', 'n': 0, 'text': "Sounds good! Glad to chat, and I’ll be ready for tomorrow's fixes.", 'tts_secs': 0.43, 'since
+05:54:45 state {'sid': 'phes14a5', 'frm': 'thinking', 'to': 'speaking', 'why': ''}
+05:54:46 sentence {'sid': 'phes14a5', 'n': 1, 'text': 'Have a great evening!', 'tts_secs': 0.3, 'since_heard': 1.5}
+05:54:46 client {'sid': 'phes14a5', 'what': 'play_start', 'info': ''}
+05:54:50 client {'sid': 'phes14a5', 'what': 'play_end', 'info': ''}
+05:54:50 client {'sid': 'phes14a5', 'what': 'play_start', 'info': ''}
+05:54:52 client {'sid': 'phes14a5', 'what': 'play_end', 'info': ''}
+05:54:52 state {'sid': 'phes14a5', 'frm': 'speaking', 'to': 'follow', 'why': 'he finished talking'}
+05:54:56 hangup {'sid': 'phes14a5', 'why': 'you ended it', 'after': 3.3, 'state': 'follow'}
+05:54:56 state {'sid': 'phes14a5', 'frm': 'follow', 'to': 'idle', 'why': 'hung up: you ended it'}
+05:55:02 client {'sid': 'phes14a5', 'what': 'page_hidden', 'info': ''}
+13:53:20 client {'sid': 'phtnri1w', 'what': 'page_hidden', 'info': ''}
+13:53:49 client {'sid': 'phtnri1w', 'what': 'page_visible', 'info': ''}
+13:53:51 client {'sid': 'phtnri1w', 'what': 'page_hidden', 'info': ''}
+(exit 0)
+```
+
+## 2026-11-05 15:04:01 tasks/queue/030-popup-font.sh
+```
+== files
+  
+4096 11-05_14:57 .
+4096 11-05_04:28 ..
+4096 11-04_14:52 backgrounds
+4348 10-20_20:23 crop_api.py
+1147 10-26_22:14 device-names.json
+138 10-26_22:11 device-names.json.bak-oct26
+4096 10-20_21:15 fontcache
+1841 10-25_22:21 health_api.py
+3025 10-26_22:23 hub_api.py
+2913 10-22_16:25 hub_api.py.bak-jh
+2949 10-26_22:23 hub_api.py.bak-names
+11098 11-05_03:04 hub.html
+7400 10-30_14:51 hub.html.bak-cr
+8936 10-30_15:25 hub.html.bak-crop
+8936 10-30_15:20 hub.html.bak-dbg
+8992 10-30_15:28 hub.html.bak-ha
+7093 10-25_22:22 hub.html.bak-hl
+7550 10-30_15:01 hub.html.bak-imm
+8850 10-30_15:10 hub.html.bak-imm2
+7291 10-25_23:00 hub.html.bak-ly
+10776 11-02_00:51 hub.html.bak-markets
+8920 10-30_15:35 hub.html.bak-merge
+10449 10-30_15:43 hub.html.bak-sheet
+9377 11-05_02:22 index.html
+8143 11-05_02:22 index.html.bak-glass
+7351 10-25_23:00 index.html.bak-ly
+8072 10-25_23:19 index.html.bak-ly2
+4896 10-23_11:48 janitor_api.py
+7216 10-23_11:48 janitor.html
+== settings (font/theme keys only)
+{'font': 'Great Vibes', 'text_color': '#000000'}
+== reply popup code in index.html
+62:  else if(m.name==='transcript'){$('you').textContent=m.text;show('thinking','Thinking');hideLater(30000);}
+== font rules in theme.html / index.html
+theme.html:16:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
+index.html:8: font-family:"Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex;
+index.html:10:#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
+index.html:12:#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
+index.html:13:#wx{display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
+index.html:14:#temp{font-size:7vw;font-weight:200;color:#e8f4ff}
+index.html:15:#cond{font-size:3vw;color:#e8f4ff}
+index.html:18: box-shadow:0 0 40px rgba(56,232,255,.2);backdrop-filter:blur(12px);
+index.html:21:#status{display:flex;align-items:center;gap:1.2vw;font-size:2vw;letter-spacing:.2em;
+index.html:27:.lbl{font-size:1.7vw;color:var(--dim);text-transform:uppercase;letter-spacing:.15em}
+index.html:28:#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bottom:1.5vh}
+index.html:29:#ai{font-size:3vw;line-height:1.3;min-height:4vw}
+index.html:32: border:1px solid rgba(255,255,255,.6);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7);
+index.html:121:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
 (exit 0)
 ```
