@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (late night, home screen)
+- Found where the home screen lives: ~/hub-dashboard (server.py on 127.0.0.1:8080, page index.html with #clock, #date, #wx; theme in theme.html + settings.json), NOT the repo's index.html. crew-update.sh copies the repo index.html over ~/crew-web/index.html every 3 minutes, which also wiped the earlier no-cursor edit (that was applied to the wrong file).
+- Built tasks/queue/007-glass-bubble.sh: frosted-glass bubble behind clock/date/weather (iOS look, tint adapts to dark or light text), no text caret, backups *.bak-glass, safe to run twice; "glass": false in settings.json turns it off. Tested here on a mock page with a busy background. Status: queued for the Pi, result pending.
+- Dropped by Kylar: GitHub 2-step reminder (moved to _archive.md).
+
 ## 2026-11-05 (late night, second queue run)
 - CONFIRMED on the Pi: Jarvis waits now 25 s / 40 s / 1.3 s (the old saved values are replaced); Home Assistant loaded the jarvis_hub add-on (shows in its log); Pi-hole is Core v6.5, Web v6.6.1, FTL v6.8 (needs its password for stats: tasks/pihole_key.sh); Kalshi agent running practice (run.json active, strategy set), market-data about 190 MB, disk 9%. No trace.jsonl yet: no page conversations since the replay log was added, so the truck retest is still the real test.
 - Still open: Kylar adds the "Jarvis Hub" integration in Home Assistant and selects it as the conversation agent (2 taps each); run tasks/pihole_key.sh (optional).
