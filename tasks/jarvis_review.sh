@@ -27,3 +27,5 @@ tags = {}
 for f in rd("feedback.jsonl"): tags[f.get("tag")] = tags.get(f.get("tag"), 0) + 1
 print("Tag counts:", tags or "none yet")
 PY
+
+echo; echo "===== REPLAY (last 30 min) ====="; curl -s "localhost:8099/report?min=30"; echo

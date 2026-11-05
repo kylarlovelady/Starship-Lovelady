@@ -30,6 +30,11 @@ LOCK = threading.RLock()
 def now(): return time.time()
 def jl_append(name, obj):
     with open(os.path.join(DATA, name), "a") as fh: fh.write(json.dumps(obj) + "\n")
+def trace(sid, kind, **kw):
+    """One line per thing that happened, so a conversation can be replayed afterwards (see /report)."""
+    try:
+        with LOCK: jl_append("trace.jsonl", dict(t=round(now(), 3), sid=sid, kind=kind, **kw))
+    except Exception: pass
 def jl_read(name):
     out = []
     try:
@@ -41,7 +46,7 @@ def jl_read(name):
 
 
 # ------------------------------------------------------------------ settings
-DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5", "silence_end": 1.0, "barge_in": True, "stream": True, "voice_threshold": 3.0, "ask_unknown": False}
+DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 25.0, "follow_question": 40.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5", "silence_end": 1.3, "barge_in": True, "stream": True, "voice_threshold": 3.0, "ask_unknown": False}
 def load_settings():
     s = dict(DEFAULTS)
     try: s.update(json.load(open(os.path.join(DATA, "settings.json"))))
@@ -344,7 +349,8 @@ class Session:
         if self.det is None: self.det = DET
         return self.det is not None
 
-    def set_state(self, s):
+    def set_state(self, s, why=""):
+        if s != self.state: trace(self.sid, "state", frm=self.state, to=s, why=why)
         self.state = s; self.t_state = now()
 
     # ---- main entry: raw int16 PCM from the phone
@@ -397,9 +403,10 @@ class Session:
         """He said its name while it was talking: stop at once and listen."""
         self.gen += 1; self.ew = None
         self.pending = [a for a in self.pending if a.get("type") not in ("play", "play_done", "say")]
+        trace(self.sid, "barge", score=score)
         acts.append({"type": "stop_audio"}); acts.append({"type": "trigger", "id": "barge", "score": score})
         with LOCK: jl_append("events.jsonl", {"id": uuid.uuid4().hex[:10], "t": now(), "peak": score, "model": "-", "triggered": True, "threshold": SET["threshold"], "clip": None, "kind": "barge", "sid": self.sid})
-        self.on_trigger({"live": True}, acts)
+        self.on_trigger({"live": True, "barge": True}, acts)
 
     def close_ep(self):
         ep, self.ep = self.ep, None
@@ -416,7 +423,7 @@ class Session:
     def on_trigger(self, ep, acts):
         self.gen += 1
         self.utt = []; self.speech_t = None; self.last_voice = now() + 0.6; self.follow_for = 6.0; self.discard_until = now() + 0.5
-        self.set_state("listening")
+        self.set_state("listening", "interrupted him" if ep.get("barge") else "wake word")
         acts.append({"type": "chime"})
 
     # ---- listening for an utterance (after the wake word, or as a follow-up)
@@ -436,21 +443,34 @@ class Session:
             if t - self.t_state > limit:                      # nobody spoke: close the conversation with a soft tone
                 self.close_conv(acts, "quiet")
         elif silent_for > float(SET.get("silence_end", 1.0)) or utter > SET["max_utter"]:
-            self.respond(np.concatenate(self.utt), acts)
+            spoke = self.last_voice - self.speech_t
+            if spoke < 0.35 and utter <= SET["max_utter"]:       # a click or a bump, not speech: keep listening instead of answering it
+                trace(self.sid, "noise_blip", secs=round(spoke, 2), floor=round(self.floor))
+                self.utt = []; self.speech_t = None; self.last_voice = t
+                return
+            self.respond(np.concatenate(self.utt), acts, why="silence" if silent_for > float(SET.get("silence_end", 1.0)) else "max length")
 
     def close_conv(self, acts, why):
         self.gen += 1; self.pending = [a for a in self.pending if a.get("type") not in ("play", "play_done", "say")]
         if self.ep: self.close_ep()
-        acts.append({"type": "tone_end", "why": why}); self.hist = []; self.set_state("idle")
+        trace(self.sid, "hangup", why=why, after=round(now() - self.t_state, 1), state=self.state)
+        acts.append({"type": "tone_end", "why": why}); self.hist = []; self.set_state("idle", "hung up: " + why)
         if self.det and hasattr(self.det, "reset"): self.det.reset()
 
     def begin_follow(self, acts):
-        self.utt = []; self.speech_t = None; self.last_voice = now(); self.ew = None; self.discard_until = now() + 0.3
-        self.set_state("follow")
+        self.utt = []; self.speech_t = None; self.last_voice = now(); self.ew = None; self.discard_until = now() + 0.9
+        self.set_state("follow", "he finished talking")
         if self.ep: self.close_ep()
 
-    def respond(self, pcm, acts):
-        self.set_state("thinking")
+    def respond(self, pcm, acts, why=""):
+        uid = "u" + uuid.uuid4().hex[:9]; self.cur_utt = uid
+        if not SET["private"]:
+            try: open(os.path.join(CLIPS, uid + ".wav"), "wb").write(wav_bytes(pcm))
+            except OSError: pass
+        a = np.abs(pcm.astype(np.float32)) if len(pcm) else np.zeros(1)
+        trace(self.sid, "utterance", utt=uid, secs=round(len(pcm) / SR, 2), speech=round((self.last_voice - self.speech_t) if self.speech_t else 0, 2), ended_by=why,
+              rms=round(rms(pcm)), peak=int(a.max()), floor=round(self.floor), clipped=round(float((a >= 32000).mean()), 4), state_before=self.state)
+        self.set_state("thinking", "utterance ended")
         threading.Thread(target=self._think, args=(pcm, self.gen), daemon=True).start()
 
     def _think(self, pcm, gen):
@@ -459,7 +479,8 @@ class Session:
             who, conf = speaker_check(pcm); TL.who = who
             text = stt(pcm)
             t0 = now()
-            jl_append("conversations.jsonl", {"t": t0, "sid": self.sid, "who": who, "who_conf": conf, "heard": text})
+            trace(self.sid, "heard", utt=getattr(self, "cur_utt", None), text=text, stt_secs=times_get().get("stt"), who=who)
+            jl_append("conversations.jsonl", {"t": t0, "sid": self.sid, "who": who, "who_conf": conf, "heard": text, "utt": getattr(self, "cur_utt", None)})
             if getattr(self, "ask_pcm", None) is not None and text:
                 m = re.search(r"(?:this is|it'?s|i'?m|i am|my name is|name'?s)?\s*([A-Z][a-zA-Z'-]{1,20})\b", text.strip())
                 name = (m.group(1) if m else "").strip().title(); apcm = self.ask_pcm; self.ask_pcm = None
@@ -480,18 +501,24 @@ class Session:
                 jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "who": "unknown", "asked_who": True}); return
             if not text or len(text) < 2:
                 with LOCK:
-                    if gen == self.gen: out.append({"type": "tone_end", "why": "nothing heard"}); self.hist = []; self.set_state("idle")
-            elif END_RE.search(text):
+                    if gen == self.gen:
+                        self.blanks = getattr(self, "blanks", 0) + 1
+                        trace(self.sid, "nothing_heard", count=self.blanks)
+                        if self.blanks >= 3: out.append({"type": "tone_end", "why": "nothing heard 3 times"}); self.hist = []; self.set_state("idle", "nothing heard 3 times"); self.blanks = 0
+                        else: self.begin_follow([])                    # keep the conversation open and keep listening
+            elif END_RE.search(text) and len(text.split()) <= 7:
                 with LOCK:
                     if gen == self.gen: out.append({"type": "say", "text": text}); out.append({"type": "tone_end", "why": "you ended it"}); self.hist = []; self.set_state("idle")
             else:
+                self.blanks = 0
                 self.hist.append({"role": "user", "content": text})
                 parts = []; first = None; tl0 = now()
                 if SET.get("stream", True): gen_text = sentences(chat_stream(self.hist))
                 else: gen_text = iter(sentences(iter([chat(self.hist)])))
                 for sent in gen_text:
                     if gen != self.gen: return
-                    rid = uuid.uuid4().hex[:10]; mime = tts(sent, os.path.join(REPLIES, rid + ".bin"))
+                    ts0 = now(); rid = uuid.uuid4().hex[:10]; mime = tts(sent, os.path.join(REPLIES, rid + ".bin"))
+                    trace(self.sid, "sentence", n=len(parts), text=sent, tts_secs=round(now() - ts0, 2), since_heard=round(now() - t0, 2))
                     with LOCK:
                         if gen != self.gen: return
                         if not parts:
@@ -502,7 +529,7 @@ class Session:
                 reply = " ".join(parts)
                 if not parts:
                     with LOCK:
-                        if gen == self.gen: self.pending.append({"type": "tone_end", "why": "no answer"}); self.set_state("idle")
+                        if gen == self.gen: self.begin_follow([]); trace(self.sid, "no_answer")
                     return
                 self.hist.append({"role": "assistant", "content": reply})
                 tm = times_get(); tm["first_audio"] = first; tm["llm"] = round(now() - tl0, 2)
@@ -513,7 +540,8 @@ class Session:
         except Exception as e:
             print("conversation error:", repr(e), flush=True)
             with LOCK:
-                if gen == self.gen: self.pending.extend([{"type": "error", "text": str(e)[:160]}, {"type": "tone_end", "why": "error"}]); self.set_state("idle")
+                trace(self.sid, "error", text=repr(e)[:200])
+                if gen == self.gen: self.pending.append({"type": "error", "text": str(e)[:160]}); self.begin_follow([])
         with LOCK: self.pending.extend(out)
 
     def played(self):
@@ -657,6 +685,38 @@ def tips_for(rows):
     return tips
 
 
+def build_report(minutes=20):
+    """Plain-text replay of recent conversations: every state change, what was heard, every sentence he spoke, timings, hang-up reasons."""
+    cut = now() - minutes * 60
+    ev = [r for r in jl_read("trace.jsonl") if r.get("t", 0) >= cut]
+    if not ev: return "No activity in the last %d minutes." % minutes
+    out = ["JARVIS REPLAY, last %d minutes (clock times, then seconds after the first line)" % minutes, ""]
+    t0 = ev[0]["t"]; cur = None
+    for r in ev:
+        if r["sid"] != cur:
+            cur = r["sid"]; out.append("--- session %s ---" % str(cur)[:6])
+        k = r["kind"]; ts = "%s +%5.1fs" % (time.strftime("%H:%M:%S", time.localtime(r["t"])), r["t"] - t0)
+        if k == "state": line = "state %s -> %s%s" % (r["frm"], r["to"], (" (%s)" % r["why"]) if r.get("why") else "")
+        elif k == "utterance": line = "YOUR RECORDING: %.1fs long, %.1fs of it speech, ended by %s; loudness %d (room noise %d), peak %d%s  [audio /clip/%s.wav]" % (r["secs"], r["speech"], r["ended_by"], r["rms"], r["floor"], r["peak"], ", CLIPPING" if r.get("clipped", 0) > 0.002 else "", r["utt"])
+        elif k == "heard": line = "HE HEARD: %r  (transcribe %.1fs, speaker %s)" % (r.get("text"), r.get("stt_secs") or 0, r.get("who"))
+        elif k == "sentence": line = "HE SAYS #%d (voice %.1fs, %.1fs after you stopped): %s" % (r["n"] + 1, r["tts_secs"], r["since_heard"], r["text"])
+        elif k == "noise_blip": line = "ignored a %.2fs blip (not speech)" % r["secs"]
+        elif k == "nothing_heard": line = "heard nothing in the recording (%d in a row), stayed listening" % r["count"]
+        elif k == "hangup": line = "HUNG UP: %s (state was %s)" % (r["why"], r["state"])
+        elif k == "barge": line = "you interrupted him (wake word score %s)" % r["score"]
+        elif k == "error": line = "ERROR: %s" % r["text"]
+        elif k == "no_answer": line = "he had no answer to say"
+        elif k == "client": line = "PHONE: %s %s" % (r.get("what"), r.get("info", ""))
+        else: line = k + " " + json.dumps({a: b for a, b in r.items() if a not in ("t", "sid", "kind")})
+        out.append("%s  %s" % (ts, line))
+    first = [r for r in ev if r["kind"] == "sentence" and r["n"] == 0]
+    if first: out += ["", "Time from end of your speech to his first voice: average %.1fs, slowest %.1fs, over %d answers" % (sum(r["since_heard"] for r in first) / len(first), max(r["since_heard"] for r in first), len(first))]
+    hang = [r for r in ev if r["kind"] == "hangup"]
+    if hang: out.append("Hang-ups: " + ", ".join(str(r["why"]) for r in hang))
+    out.append("Settings: " + ", ".join("%s=%s" % (k, SET.get(k)) for k in ("silence_end", "follow_quiet", "follow_question", "max_tokens", "speech_speed", "tts_model", "barge_in", "threshold")))
+    return "\n".join(out)
+
+
 class H(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     def log_message(self, *a): pass
@@ -687,8 +747,10 @@ class H(http.server.BaseHTTPRequestHandler):
             for r in rows: r["tags"] = fb.get(round(r.get("t", 0), 1), [])
             return self._send(200, {"rows": rows[::-1], "settings": {k: SET.get(k) for k in ("speech_speed", "max_tokens", "tts_model", "follow_quiet", "follow_question", "silence_end", "barge_in")}, "pron": load_pron(), "tips": tips_for(rows)})
         if p == "/voices": return self._send(200, {"voices": voicebook().listing(), "threshold": SET.get("voice_threshold"), "ask_unknown": SET.get("ask_unknown")})
+        if p == "/report":
+            return self._send(200, build_report(float(q.get("min", 20))).encode(), "text/plain; charset=utf-8")
         if p == "/state": return self._send(200, state_json(q.get("sid")))
-        m = re.match(r"^/clip/([0-9a-f]+)\.wav$", p)
+        m = re.match(r"^/clip/([0-9a-zA-Z]+)\.wav$", p)
         if m:
             try: return self._send(200, open(os.path.join(CLIPS, m.group(1) + ".wav"), "rb").read(), "audio/wav")
             except OSError: return self._send(404, {"error": "gone"})
@@ -761,6 +823,8 @@ class H(http.server.BaseHTTPRequestHandler):
             return self._send(200, {"ok": True})
         if p == "/missed":
             session(q.get("sid", "x")).missed(); return self._send(200, {"ok": True})
+        if p == "/ev":
+            trace(q.get("sid", "x"), "client", what=str(b.get("what", ""))[:40], info=str(b.get("info", ""))[:120]); return self._send(200, {"ok": True})
         if p == "/played":
             session(q.get("sid", "x")).played(); return self._send(200, {"ok": True})
         if p == "/settings":
