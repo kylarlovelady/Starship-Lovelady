@@ -22,7 +22,7 @@ for f in rd("feedback.jsonl"): fb[f.get("tag")] = fb.get(f.get("tag"), 0) + 1
 try: st = json.load(open(os.path.join(d, "settings.json")))
 except Exception: st = {}
 tot = [(r["times"].get("first_audio") if r["times"].get("first_audio") is not None else sum(r["times"].get(k, 0) for k in ("stt", "llm", "tts"))) for r in conv[-40:]]
-lines = ["# Jarvis feedback summary (auto, no transcripts)", "Updated %s" % time.strftime("%Y-%m-%d %H:%M"), "",
+lines = ["# Jarvis feedback summary (auto, no transcripts)","",
  "- Conversations logged (last 40 with timings): %d" % len(tot),
  "- Average time to first words: %s" % ("%.1fs (slowest %.1fs)" % (sum(tot) / len(tot), max(tot)) if tot else "n/a"),
  "- Tags tapped in the Lab: %s" % (", ".join("%s x%d" % kv for kv in sorted(fb.items())) or "none"),
@@ -30,6 +30,7 @@ lines = ["# Jarvis feedback summary (auto, no transcripts)", "Updated %s" % time
  "- Voices enrolled: %d" % len(json.load(open(os.path.join(d, "voiceid", "voices.json")))) if os.path.exists(os.path.join(d, "voiceid", "voices.json")) else "- Voices enrolled: 0"]
 open(os.path.expanduser("~/starship/memory/inbox/jarvis-feedback-summary.md"), "w").write("\n".join(lines) + "\n")
 PY
+bash "$HOME/starship/tasks/status_report.sh" >/dev/null 2>&1 || true
 git add memory/inbox
 git diff --cached --quiet && { echo "notes unchanged"; exit 0; }
 git commit -qm "Jarvis notes and feedback summary sync"

@@ -9,3 +9,5 @@ Done items move to _archive.md.
 - At home: unmute mic and test Hey Jarvis; switch Assist STT to OpenAI Whisper; router reservations; Pi-hole pilot (see pi-home-assistant.md).
 - Empty the janitor trash (57 items, check the Hub first); encrypted off-Pi backups (destination undecided); check OpenAI key "Last used" dates.
 - Tell Claude about the truck/vehicle projects so truck-project.md can be filled in.
+- Starship: replace sample rows on the crew board/decision log with real data; make the HA speaker pipeline use shared memory (or route it through phone-voice); optional daily Claude check that files inbox notes and writes a morning brief.
+- Run `bash ~/starship/tasks/memory_sync.sh` once after the update so pi-status.md appears in the repo.
