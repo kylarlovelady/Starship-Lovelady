@@ -1,6 +1,6 @@
 #!/bin/bash
 # QUEUE-OK
-# Home speaker: turn mic recording on and KEEP it if healthy (038 showed it works; 037 misjudged because the old process's shutdown trace matched "Error"). Rolls back if unhealthy.
+# Home speaker: turn mic recording on and KEEP it if healthy (038 showed it works; 037 misjudged because a trace from the stopped process matched "Error"). Rolls back if unhealthy.
 cd ~/wyoming-satellite || exit 1
 mkdir -p ~/voice-data/home-mic
 [ -f run-hub.sh.bak-good ] || cp run-hub.sh run-hub.sh.bak-good
