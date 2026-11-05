@@ -328,3 +328,14 @@ poll();setInterval(poll,3000);})();
 all keys: ['bg_color', 'bg_image', 'bg_mode', 'clock_color', 'date_color', 'dim', 'font', 'layout', 'reload', 'text_color', 'version', 'weather_color']
 (exit 0)
 ```
+
+## 2026-11-05 02:22:01 tasks/queue/007-glass-bubble.sh
+```
+patched: ['theme.html', 'index.html']
+asked the screen to reload
+== check
+1
+index.html:1
+theme.html:1
+(exit 0)
+```
