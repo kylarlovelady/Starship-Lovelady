@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Writes real facts for the Starship page: ~/crew-web/crew.json, and copies hub-extra.json / hub-alerts.json
+next to the page (it is served from ~/crew-web, not ~/starship). No keys, no transcripts. Never raises."""
+import json, os, re, shutil, time, glob
+H = os.path.expanduser("~"); R = os.path.join(H, "starship"); W = os.path.join(H, "crew-web"); now = time.time()
+def rd(p):
+    try: return open(p, encoding="utf-8", errors="replace").read()
+    except OSError: return ""
+out = {"time": now}
+for n in ("hub-extra.json", "hub-alerts.json"):
+    try: shutil.copyfile(os.path.join(R, n), os.path.join(W, n))
+    except OSError: pass
+# decision log: changelog entries (newest first)
+dec = []; cur = None
+for l in rd(os.path.join(R, "memory", "changelog.md")).splitlines():
+    if l.startswith("## "): cur = {"t": l[3:].strip(), "what": ""}; dec.append(cur)
+    elif cur and l.startswith("- ") and not cur["what"]: cur["what"] = l[2:].strip()[:220]
+out["log"] = [d for d in dec if d["what"]][:12]; out["changes"] = len(dec)
+# usage (stands in for the budget): Jarvis chats and replies, last 30 days
+chats = replies = 0
+for l in rd(os.path.join(H, "voice-data", "trace.jsonl")).splitlines():
+    try: r = json.loads(l)
+    except ValueError: continue
+    if r.get("t", 0) > now - 30 * 86400:
+        if r.get("kind") == "heard": chats += 1
+        if r.get("kind") == "sentence" and r.get("n") == 0: replies += 1
+out["usage"] = {"heard": chats, "replies": replies}
+# filing / rule book / trash
+mem = glob.glob(os.path.join(R, "memory", "**", "*.md"), recursive=True)
+out["files"] = {"memory_files": len(mem), "jarvis_notes": len(glob.glob(os.path.join(H, "voice-data", "memory", "*.md"))),
+                "clips": len(glob.glob(os.path.join(H, "voice-data", "clips", "*")))}
+arch = rd(os.path.join(R, "memory", "_archive.md")); out["dropped"] = len([l for l in arch.splitlines() if l.startswith("- ")])
+todo = rd(os.path.join(R, "memory", "todo.md")); op = todo.split("## Done")[0]
+out["todo_open"] = len([l for l in op.splitlines() if l.startswith("- ")]); out["todo_done"] = len([l for l in todo.split("## Done")[-1].splitlines() if l.startswith("- ")]) if "## Done" in todo else 0
+out["rules"] = len(re.findall(r"^\d+\. ", rd(os.path.join(R, "CLAUDE.md")), re.M))
+json.dump(out, open(os.path.join(W, "crew.json"), "w"))
+print("crew.json written")

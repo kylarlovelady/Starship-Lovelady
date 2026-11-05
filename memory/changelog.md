@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (03:10)
+- Kalshi changes (commit d5c60bc): unproven-strategy cap $50 to $25; Auto wallet only trusts a strategy with 40+ rounds and a positive record, otherwise holds; collector marker v8.2 (agent restarts on next Pi pull; Kalshi is in maintenance until 5 am ET, practice only); read-only maker-vs-taker study (markets/maker_study.py, queue 014, result not read yet). Status: pushed, not yet confirmed on Pi.
+- Crew changes: new tasks/crew_report.py (run by alerts_check every 5 min) writes crew.json plus copies hub-extra.json and hub-alerts.json into ~/crew-web (fixes the 404 bug, the page is served from there). index.html now shows real data for Decision log (from this changelog), Captain, Safe (Jarvis usage; dollar spend is NOT tracked yet), Bookshelf, Filing, Trash, Monitor wall Pi health and Threat view. Falls back to sample text if the files are missing. Agent rows, meetings, gauges, weak spots, training board are still sample. Status: tested here, not yet on Pi.
+
 ## 2026-11-05 (02:45)
 - Kalshi review (12 h, 24 h, learned files, signal grades, stake check) read from the Pi through the queue and recorded in kalshi-ai.md with recommendations (waiting for Kylar's go). Confirmed the $50 cap holds. Jarvis Hub integration in Home Assistant confirmed done by Kylar.
 - Found the real URLs: Starship page is :8095 (not :8080, which is the home-screen clock). Fixed the /home front door tile and pi-home-assistant.md.

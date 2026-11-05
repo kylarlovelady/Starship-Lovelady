@@ -67,3 +67,6 @@ for k in [k for k in st if k not in problems and st[k]]:
 json.dump(st, open(STATE, "w"))
 json.dump({"time": now, "active": list(problems.values())}, open(os.path.join(R, "hub-alerts.json"), "w"))
 print("alerts: %d active, %d sent" % (len(problems), len(sent)))
+try:
+    import subprocess; subprocess.run(["python3", os.path.join(R, "tasks", "crew_report.py")], timeout=30, capture_output=True)
+except Exception: pass
