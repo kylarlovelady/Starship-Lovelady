@@ -38,6 +38,11 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - API key: works now; a new one is due around Nov 9 (Kylar unsure what is needed). Claude to check the Kalshi API notice and give exact steps before Nov 8. Keys never go in this repo.
 - Live stays OFF until Kylar says. Hard rules unchanged ($5 min bet, no selling a winner without $5 profit after fees).
 
+## How Kylar wants Claude to help (2026-11-05)
+- Claude both investigates every day and proposes changes that make the bets better (review, innovate, test), and reports plainly.
+- Live alerts go to Kylar's phone only. Wish: the live wallet shown in the iPhone Dynamic Island so he can watch it grow. (Claude note: a Dynamic Island / Live Activity needs a small native iPhone app; Shortcuts and widgets cannot do it. Options: lock-screen/home widget, notification updates, or a small app built later. Put under iPhone Shortcuts research.)
+- Goal beyond this bot: Kylar wants to learn how to predict markets so he can place better bets on other markets too. Claude should explain what the data shows in plain words (why each signal works or fails), not only report results.
+
 ## Parked
 - More agents on other markets (options, stocks, commodities) only after the Kalshi agent shows a real edge; share the method, not the bets. Other coins on hold. Mempool tracker for big transfers only.
 

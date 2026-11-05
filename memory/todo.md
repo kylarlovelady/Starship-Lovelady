@@ -2,6 +2,9 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- Jarvis replaces Alexa: alarms, timers, thermostat, Spotify, any question. Order: fix hear/hang-up/talk-over/false wake first, then reminders and timers, thermostat, Spotify (pi-home-assistant.md).
+- Poly pellets: research products and equipment (business.md).
+- Dynamic Island wallet: research what is possible (needs an iPhone app) alongside iPhone Shortcuts.
 - SAFETY (Kylar): F-250 pitman arm loose on the spline: torque to spec before driving; inspect front left noise. See truck-project.md.
 - Jarvis reminders: one-time and repeating, spoken back at the time (build in voice server, store in voice-data, alerts via phone notify).
 - KDP: pen name, one repeatable process from idea to upload, journals for plant jobs (amazon-kdp.md).

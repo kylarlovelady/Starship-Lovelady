@@ -13,5 +13,9 @@ Updated 2026-11-04 (imported from Hub Notes, Nov 2 voice call).
 - Plastic idea: he can BUY poly pellets from the company he works for, very cheap, and can do whatever he wants with them (corrected 2026-11-05; no policy issue since he buys them). Looking for a business use.
 - Equipment he already owns: freeze dryer, Bambu Lab 3D printer, some bait-making supplies.
 
+## Poly pellets and KDP details (Kylar, 2026-11-05)
+- The plant makes polyethylene (PE). He can buy up to about 100 lb per shift worked, very cheap. Ideas to research: injection or compression molding with the Bambu/other tools, recycled-filament, molded products; connect to bait and 3D printing. Claude to research what sells well from PE pellets and what equipment it needs.
+- KDP: publish under Lovelady LLC (no pen name needed). Claude helps fit each book into KDP's templates and design the pages. Target: idea to submitted-for-review in under 1 hour per book. Journals by plant job role.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
