@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (late night, after first queue run)
+- Task queue CONFIRMED working end to end (Pi ran 001-diagnose.sh and sent results back). Real findings: Pi-hole runs in Docker with the v6 API (needs a password to read stats; tasks/pihole_key.sh stores it on the Pi only); Home Assistant is on host network (URL 127.0.0.1:8099 is right); Jarvis tools answered "how is the Pi" correctly from live data; first words averaged 1.7 s over 4 chats; crontab has crew-update, market-watchdog/supervisor/lab, memory sync, alerts, Kalshi sync, queue.
+- Found: Jarvis's saved settings.json still held the OLD waits (silence 1.0 s, 10 s, 20 s), overriding my new defaults, so the hang-up fix was not in effect. 002-fix-settings.sh sets 1.3 / 25 / 40.
+- Fixed: markets file path is ~/crew-web/market.json (alerts and status were looking in the wrong place); live mode read from run.json; containers (pihole, homeassistant, whisper, piper, openwakeword) now watched by alerts instead of a non-existent pihole-FTL service; Pi-hole v6 login in Jarvis tools.
+
 ## 2026-11-05 (late night, install)
 - Kylar ran tasks/pi_update.sh ha: alert checker, Kalshi daily sync, task queue installed and notes sync ran (CONFIRMED by his screenshot). Home-speaker add-on copy failed: ~/homeassistant is root-owned (Docker); installer now uses sudo for the copy. First task-queue script (tasks/queue/001-diagnose.sh) pushed to check Pi-hole, HA network mode, crontab and Jarvis tools; results land in memory/inbox/queue-results.md.
 

@@ -27,7 +27,7 @@ if t and float(t) > 80: problems["temp"] = "Pi is hot: %s C." % t
 m = re.search(r"(\d+)%", sh("df -h / | awk 'NR==2{print $5}'"))
 if m and int(m.group(1)) > 90: problems["disk"] = "Pi disk is %s%% full." % m.group(1)
 # markets data fresh
-a = age_h(os.path.join(H, "market-data", "market.json"))
+a = age_h(os.path.join(H, "crew-web", "market.json"))
 if a is not None and a > 0.5: problems["markets"] = "Kalshi agent data is %.1f hours old (agent may be stuck)." % a
 # Jarvis errors in the last 15 min
 try:
@@ -38,8 +38,12 @@ try:
         if r.get("kind") == "error" and r.get("t", 0) > now - 900: errs += 1
     if errs >= 2: problems["jarvis"] = "Jarvis had %d errors in the last 15 minutes." % errs
 except OSError: pass
-# Pi-hole
-if sh("systemctl list-unit-files pihole-FTL.service --no-legend") and sh("systemctl is-active pihole-FTL") != "active": problems["pihole"] = "Pi-hole (pihole-FTL) is not running."
+# containers (Pi-hole, Home Assistant, voice helpers)
+ups = {l.split()[0]: l for l in sh("docker ps --format '{{.Names}} {{.Status}}'").splitlines() if l.strip()}
+if sh("docker ps -a --format '{{.Names}}'"):
+    for c in ("pihole", "homeassistant", "whisper", "piper", "openwakeword"):
+        if c not in ups: problems["ctr:" + c] = "Container %s is not running." % c
+        elif "unhealthy" in ups[c]: problems["ctr:" + c] = "Container %s is unhealthy." % c
 # repo copy stuck (cron pull failing)
 last = sh("cd %s && git log -1 --format=%%ct" % R)
 if last.isdigit() and now - int(last) > 3 * 86400 and sh("cd %s && git fetch -q 2>&1; git status -sb | head -1" % R).find("behind") >= 0: problems["pull"] = "The Pi has not pulled new code for 3 days."

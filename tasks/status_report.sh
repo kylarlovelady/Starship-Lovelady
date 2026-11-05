@@ -29,18 +29,21 @@ dk = sh("docker ps --format '{{.Names}} {{.Status}}' 2>/dev/null"); md += ["- co
 # repo / sync / cron
 last = sh("cd %s && git log -1 --format='%%h %%cr: %%s'" % R); out["repo"] = last
 ms = os.path.join(H, "memory_sync.log"); mls = (sh("tail -1 %s" % ms) if os.path.exists(ms) else "never run")
-cron = [re.sub(r"^.*?(\S*(?:/|)([\w.-]+\.(?:sh|py)))\b.*$", r"\2", l) for l in sh("crontab -l").splitlines() if l.strip() and not l.startswith("#")]
+cron = [(l.split("#")[-1].strip() if "#" in l else re.findall(r"[\w.-]+\.(?:sh|py)", l)[0] if re.findall(r"[\w.-]+\.(?:sh|py)", l) else l[:30]) for l in sh("crontab -l").splitlines() if l.strip() and not l.startswith("#")]
 md += ["", "## Sync and schedule", "- Pi repo copy at: %s" % last, "- last notes sync result: %s" % mls, "- cron jobs (script names): %s" % (", ".join(cron) or "none")]
 out["sync"] = mls; out["cron"] = len(cron)
 # markets
-md_dir = os.path.join(H, "market-data"); mk = {"data_age": age(os.path.join(md_dir, "market.json"))}
-live = None
+md_dir = os.path.join(H, "market-data"); mj = os.path.join(H, "crew-web", "market.json")
+mk = {"data_age": age(mj) if os.path.exists(mj) else age(os.path.join(md_dir, "market.json"))}
+live = {}
 try:
-    c = json.load(open(os.path.join(md_dir, "config.json")))
-    live = {k: v for k, v in c.items() if "live" in k.lower() and isinstance(v, (bool, str, int))}
+    rj = json.load(open(os.path.join(md_dir, "run.json"))); live = {"live_run_active": bool(rj.get("active") and rj.get("live")), "last_run_live": bool(rj.get("live"))}
+except Exception: live = None
+try:
+    mm = json.load(open(mj)); mk["mode"] = mm.get("mode") or next((v.get("mode") for v in mm.values() if isinstance(v, dict) and v.get("mode")), None)
 except Exception: pass
 mk["live"] = live; out["markets"] = mk
-md += ["", "## Markets agent (practice money)", "- data last written: %s; live flags: %s" % (hrs(mk["data_age"]), json.dumps(live) if live is not None else "unreadable")]
+md += ["", "## Markets agent (practice money)", "- agent data last written: %s; mode shown by the agent: %s; live-run flags: %s" % (hrs(mk["data_age"]), mk.get("mode") or "?", json.dumps(live) if live is not None else "no run.json")]
 pg = os.path.join(md_dir, "progress.txt")
 if os.path.exists(pg): md += ["- supervisor report (%s), first lines:" % hrs(age(pg))] + ["    " + l for l in open(pg).read().splitlines()[:25]]
 # jarvis

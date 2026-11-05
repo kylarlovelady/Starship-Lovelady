@@ -22,8 +22,11 @@ def _env():
     return out
 
 
-def _http(url, token=None, body=None, timeout=4):
-    req = urllib.request.Request(url, data=(json.dumps(body).encode() if body is not None else None), headers=({"Authorization": "Bearer " + token, "Content-Type": "application/json"} if token else {}))
+def _http(url, token=None, body=None, timeout=4, headers=None, method=None):
+    h = {"Authorization": "Bearer " + token, "Content-Type": "application/json"} if token else {}
+    if body is not None: h["Content-Type"] = "application/json"
+    h.update(headers or {})
+    req = urllib.request.Request(url, data=(json.dumps(body).encode() if body is not None else None), headers=h, method=method)
     with urllib.request.urlopen(req, timeout=timeout) as r: return json.loads(r.read().decode() or "null")
 
 
@@ -54,14 +57,28 @@ def markets():
 
 
 def pihole():
-    for url in ("http://127.0.0.1:8089/admin/api.php?summaryRaw", "http://127.0.0.1:8089/api/stats/summary", "http://127.0.0.1/admin/api.php?summaryRaw"):
+    base = "http://127.0.0.1:8089"
+    pw = _env().get("PIHOLE_PASSWORD")
+    if pw:                                                   # Pi-hole v6: log in, read, log out
+        sid = None
+        try:
+            sid = _http(base + "/api/auth", body={"password": pw}, timeout=4)["session"]["sid"]
+            hd = {"sid": sid}; j = _http(base + "/api/stats/summary", headers=hd, timeout=4); q = j.get("queries", {}); c = j.get("clients", {}); g = j.get("gravity", {})
+            return "Pi-hole: %s queries today, %s blocked (%s%%), %s active clients, %s domains on the blocklists." % (q.get("total"), q.get("blocked"), round(float(q.get("percent_blocked", 0)), 1), c.get("active"), g.get("domains_being_blocked"))
+        except Exception: pass
+        finally:
+            if sid:
+                try: _http(base + "/api/auth", headers={"sid": sid}, method="DELETE", timeout=3)
+                except Exception: pass
+    for url in (base + "/admin/api.php?summaryRaw",):        # Pi-hole v5
         try:
             j = _http(url, timeout=3)
             if "dns_queries_today" in j: return "Pi-hole: %s queries today, %s blocked (%s%%), %s clients, status %s." % (j.get("dns_queries_today"), j.get("ads_blocked_today"), round(float(j.get("ads_percentage_today", 0)), 1), j.get("unique_clients"), j.get("status"))
-            q = j.get("queries", {}); 
-            if q: return "Pi-hole: %s queries, %s blocked (%s%%), %s clients." % (q.get("total"), q.get("blocked"), round(float(q.get("percent_blocked", 0)), 1), (j.get("clients") or {}).get("active"))
         except Exception: continue
-    return "Pi-hole did not answer from the Pi, or it needs a login I do not have."
+    try:
+        up = "healthy" in (os.popen("docker ps --filter name=pihole --format '{{.Status}}' 2>/dev/null").read())
+    except Exception: up = False
+    return "Pi-hole container is %s, but I need its password to read stats (run tasks/pihole_key.sh once)." % ("up and healthy" if up else "not confirmed")
 
 
 def changed():
