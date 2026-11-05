@@ -1,24 +1,4 @@
-26-11-05 02:13:01 tasks/queue/004-find-theme.sh
-```
-== kiosk / chromium command
-kylarlo+    1731  0.8  4.2 55429072 354416 ?     Sl   Oct25 129:52 /usr/lib/chromium/chromium --force-renderer-accessibility --enable-remote-extensions --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --m
-kylarlo+    3135  0.0  0.0 54541856 2912 ?       Sl   Oct25   0:00 /usr/lib/chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/kylarlovelady/.config/chromium/Crash Reports --annotation=channel=buil
-kylarlo+    3137  0.0  0.0 54533536 2400 ?       S    Oct25   0:00 /usr/lib/chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/kylarlovelady/.config/chromium/Crash Reports --annotation=channel
-== ports 8080/8081
-LISTEN 0      200                                   0.0.0.0:8089       0.0.0.0:*                                         
-LISTEN 0      2048                                127.0.0.1:8080       0.0.0.0:*    users:(("python",pid=3765271,fd=12)) 
-LISTEN 0      4096               100.105.140.126%tailscale0:8081       0.0.0.0:*                                         
-LISTEN 0      4096   [fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081          [::]:*                                         
-== hub files
-ls: cannot access '/usr/local/bin/hub-dashboard.py': No such file or directory
-/home/kylarlovelady/hub-alerts-state.json
-/home/kylarlovelady/hub-backup-2026-10-20.tar.gz
-/home/kylarlovelady/hub-dashboard
-/home/kylarlovelady/hub-devices.py
-/home/kylarlovelady/hub-devices.py.bak-ts1026-0206
-/home/kylarlovelady/hub-mic.py
-/home/kylarlovelady/hub-outage.py
-/home/kylarlovelady/hub-outage.py.bak-ts1026-0206
+-ts1026-0206
 /home/kylarlovelady/hub-scripts-backup-2026-10-26.tar.gz
 /home/kylarlovelady/hub-voice
 == files mentioning clock+weather
@@ -446,5 +426,62 @@ Thu 01:15 staked $49.55 pnl 50.45 DOWN strat auto trades 2
 Thu 01:30 staked $49.66 pnl 14.34 DOWN strat auto trades 2
 Thu 01:45 staked $49.6 pnl -10.09 DOWN strat auto trades 6
 max staked, last 14h: $49.83
+(exit 0)
+```
+
+## 2026-11-05 02:40:01 tasks/queue/013-starship-url.sh
+```
+== routes/mounts in server.py
+47:@app.get("/", response_class=HTMLResponse)
+65:@app.post("/event/{name}")
+75:@app.get("/mute")
+79:@app.post("/mute/toggle")
+89:app.include_router(router)
+91:app.include_router(settings_router)
+93:app.include_router(crop_router)
+95:app.include_router(preview_router)
+97:app.include_router(memory_router)
+99:app.include_router(hub_router)
+101:app.include_router(janitor_router)
+103:app.include_router(mute_router)
+105:app.include_router(network_router)
+107:app.include_router(health_router)
+109:app.include_router(layout_router)
+== listeners
+0.0.0.0:22
+0.0.0.0:53
+0.0.0.0:8089
+0.0.0.0:8123
+100.105.140.126:8090
+100.105.140.126:8095
+100.105.140.126:8097
+100.105.140.126%tailscale0:41665
+100.105.140.126%tailscale0:443
+100.105.140.126%tailscale0:8081
+127.0.0.1:10200
+127.0.0.1:10300
+127.0.0.1:10400
+127.0.0.1:10700
+127.0.0.1:18554
+127.0.0.1:8080
+127.0.0.1:8099
+*:18555
+[::]:22
+[::]:53
+[::]:8123
+[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:38492
+[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:443
+[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081
+== other http servers
+kylarlo+ 1413028  0.1  1.1 207648 98240 ?        Ssl  Oct26  16:36 /home/kylarlovelady/kdp-studio/.venv/bin/python3 /home/kylarlovelady/kdp-studio/.venv/bin/uvicorn app:app --host 100.105.140.126 --po
+kylarlo+ 2711573  0.0  0.2 328576 21488 ?        Ss   Oct30   0:36 /usr/bin/python3 -m http.server 8095 --bind 100.105.140.126 --directory /home/kylarlovelady/crew-web
+== tailscale serve
+https://loveladymainaihub.taild703ca.ts.net (tailnet only)
+|-- / proxy http://127.0.0.1:8099
+
+http://loveladymainaihub:8081 (tailnet only)
+http://loveladymainaihub.taild703ca.ts.net:8081 (tailnet only)
+|-- / proxy http://127.0.0.1:8080
+
 (exit 0)
 ```
