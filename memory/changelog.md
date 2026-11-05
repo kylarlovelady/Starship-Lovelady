@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (03:10)
+- CONFIRMED on the Pi (queue 017): Overview tab added to the Hub page (first, default). Queue 016 was refused because its comment contained the word sudo; renamed to 017. Still to confirm by eye: Kylar opens :8081/hub.
+
 ## 2026-11-05 (03:05)
 - Kylar ran pi_update.sh (restart Jarvis OK). Added "iPhone Shortcuts" to todo.md Open.
 
