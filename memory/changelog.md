@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (late night, second queue run)
+- CONFIRMED on the Pi: Jarvis waits now 25 s / 40 s / 1.3 s (the old saved values are replaced); Home Assistant loaded the jarvis_hub add-on (shows in its log); Pi-hole is Core v6.5, Web v6.6.1, FTL v6.8 (needs its password for stats: tasks/pihole_key.sh); Kalshi agent running practice (run.json active, strategy set), market-data about 190 MB, disk 9%. No trace.jsonl yet: no page conversations since the replay log was added, so the truck retest is still the real test.
+- Still open: Kylar adds the "Jarvis Hub" integration in Home Assistant and selects it as the conversation agent (2 taps each); run tasks/pihole_key.sh (optional).
+
 ## 2026-11-05 (late night, after first queue run)
 - Task queue CONFIRMED working end to end (Pi ran 001-diagnose.sh and sent results back). Real findings: Pi-hole runs in Docker with the v6 API (needs a password to read stats; tasks/pihole_key.sh stores it on the Pi only); Home Assistant is on host network (URL 127.0.0.1:8099 is right); Jarvis tools answered "how is the Pi" correctly from live data; first words averaged 1.7 s over 4 chats; crontab has crew-update, market-watchdog/supervisor/lab, memory sync, alerts, Kalshi sync, queue.
 - Found: Jarvis's saved settings.json still held the OLD waits (silence 1.0 s, 10 s, 20 s), overriding my new defaults, so the hang-up fix was not in effect. 002-fix-settings.sh sets 1.3 / 25 / 40.
