@@ -118,3 +118,52 @@ SAME as repo index.html
 0
 (exit 0)
 ```
+
+## 2026-11-05 02:13:01 tasks/queue/004-find-theme.sh
+```
+== kiosk / chromium command
+kylarlo+    1731  0.8  4.2 55429072 354416 ?     Sl   Oct25 129:52 /usr/lib/chromium/chromium --force-renderer-accessibility --enable-remote-extensions --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --m
+kylarlo+    3135  0.0  0.0 54541856 2912 ?       Sl   Oct25   0:00 /usr/lib/chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/kylarlovelady/.config/chromium/Crash Reports --annotation=channel=buil
+kylarlo+    3137  0.0  0.0 54533536 2400 ?       S    Oct25   0:00 /usr/lib/chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/kylarlovelady/.config/chromium/Crash Reports --annotation=channel
+== ports 8080/8081
+LISTEN 0      200                                   0.0.0.0:8089       0.0.0.0:*                                         
+LISTEN 0      2048                                127.0.0.1:8080       0.0.0.0:*    users:(("python",pid=3765271,fd=12)) 
+LISTEN 0      4096               100.105.140.126%tailscale0:8081       0.0.0.0:*                                         
+LISTEN 0      4096   [fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081          [::]:*                                         
+== hub files
+ls: cannot access '/usr/local/bin/hub-dashboard.py': No such file or directory
+/home/kylarlovelady/hub-alerts-state.json
+/home/kylarlovelady/hub-backup-2026-10-20.tar.gz
+/home/kylarlovelady/hub-dashboard
+/home/kylarlovelady/hub-devices.py
+/home/kylarlovelady/hub-devices.py.bak-ts1026-0206
+/home/kylarlovelady/hub-mic.py
+/home/kylarlovelady/hub-outage.py
+/home/kylarlovelady/hub-outage.py.bak-ts1026-0206
+/home/kylarlovelady/hub-scripts-backup-2026-10-26.tar.gz
+/home/kylarlovelady/hub-voice
+== files mentioning clock+weather
+/home/kylarlovelady/crew-web/index.html
+/home/kylarlovelady/hub-dashboard/theme.html
+/home/kylarlovelady/hub-dashboard/settings.html
+/home/kylarlovelady/hub-dashboard/layout.html
+/home/kylarlovelady/hub-dashboard/preview_api.py
+/home/kylarlovelady/hub-dashboard/settings_api.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/watchfiles/_rust_notify.abi3.so
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/h11/_receivebuffer.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/PIL/Image.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/urllib3/util/timeout.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/resolvelib/providers.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/rich/progress.py
+== theme words
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/PIL/ImageColor.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/pygments/lexers/_mapping.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/rich/_emoji_codes.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/networks.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/__init__.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/color.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/v1/color.py
+/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/uvloop/loop.cpython-313-aarch64-linux-gnu.so
+== nocursor
+(exit 0)
+```
