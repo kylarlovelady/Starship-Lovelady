@@ -1,0 +1,1 @@
+{"config": {"step": {"user": {"title": "Jarvis Hub", "description": "Address of the Jarvis voice server on the Pi.", "data": {"url": "Server address"}}}, "abort": {"single_instance_allowed": "Already set up."}}}

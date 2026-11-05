@@ -891,6 +891,11 @@ def main():
     DET = make_detector()
     threading.Thread(target=janitor, daemon=True).start()
     print("phone voice on 127.0.0.1:%d | detector: %s | keys: %s | data: %s" % (port, DET.name if DET else "NONE", sorted(load_keys().keys()), DATA), flush=True)
+    extra = os.environ.get("VOICE_BIND_EXTRA", "").strip()      # optional: the Docker bridge address, so Home Assistant in a container can reach Jarvis (not the Wi-Fi/LAN)
+    if extra:
+        try:
+            srv2 = TServer((extra, port), H); threading.Thread(target=srv2.serve_forever, daemon=True).start(); print("also listening on %s:%d" % (extra, port), flush=True)
+        except OSError as e: print("extra bind failed:", e, flush=True)
     TServer(("127.0.0.1", port), H).serve_forever()
 
 

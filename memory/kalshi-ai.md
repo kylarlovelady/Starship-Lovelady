@@ -7,6 +7,8 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - Honest findings: no signal or strategy has beaten price plus fees. 24 h review (Nov 4): `run` lost $548, nearly all from $25-100 bets (1 win in 12); bets under $25 roughly break-even. After the $50 cap went in (Nov 4 afternoon) the 8 h loss was only $40. Opposite-side tests (mood/flow flip) lost more than the normal versions. Break-even needs roughly 55-57% right; goal is 55%+.
 - Next: let it run; review 12 h in the morning (`python3 ~/starship/markets/review.py 12`). A strategy needs about 40+ positive rounds before it earns bigger bets.
 
+- Data (2026-11-05): `bash ~/starship/tasks/kalshi_data_sync.sh install` makes a daily 4:10 am pull of 30 days of rounds/prices/Bitcoin minutes plus your real fills, and writes memory/inbox/kalshi-data-status.md (coverage). Per-second recordings and practice logs already run continuously. Mission 2 (betting help) formally starts after Jarvis is complete (roadmap.md); data keeps collecting now.
+
 ## Standing rules (Kylar's)
 - BTC only for now. Nothing is retired: no strategy or signal is taken off the table; test them side by side and trust evidence.
 - Hard rules only: $5 minimum bet; no selling a winner for a few cents (need about $5 profit after fees). Loss cut is flexible: depends on bet size, time left, distance to target; small bets can ride. $50 per-round cap until a strategy proves itself.
