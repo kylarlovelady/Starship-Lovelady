@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 week, 3 days, 14 hours, 49 minutes; temp 38.9'C; throttled flags 0x0 (0x0 is clean); memory 57%; disk 9%
+- up 1 week, 3 days, 14 hours, 55 minutes; temp 41.1'C; throttled flags 0x0 (0x0 is clean); memory 57%; disk 9%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 6 hours (healthy); homeassistant Up 2 minutes
+- containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 6 hours (healthy); homeassistant Up 4 minutes
 
 ## Sync and schedule
-- Pi repo copy at: a8fbcf9 4 minutes ago: HA installer uses sudo for root-owned config; first task-queue diagnostic; changelog
+- Pi repo copy at: b4ba8da 3 minutes ago: Fix real-world mismatches found by first queue run: market file path, container alerts, Pi-hole v6 auth, Jarvis wait settings queue script
 - last notes sync result: notes pushed to the repo
-- cron jobs (script names): e.sh, g.py, r.py, b.py, c.sh, k.py, c.sh, r.sh
+- cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
-- data last written: no file; live flags: {}
-- supervisor report (42 min ago), first lines:
+- agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
+- supervisor report (48 min ago), first lines:
     MARKET AGENT PROGRESS  Thu 05 Nov 01:07
     
     1. ALIVE
@@ -50,7 +50,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - time to first words: no answers logged yet
 
 ## Pi-hole
-- Pi-hole did not answer from the Pi, or it needs a login I do not have.
+- Pi-hole container is up and healthy, but I need its password to read stats (run tasks/pihole_key.sh once).
 
 ## Notes
 - Jarvis note files: 0 (synced to memory/inbox)

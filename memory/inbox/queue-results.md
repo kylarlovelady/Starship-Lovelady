@@ -47,3 +47,43 @@ alerts: 0 active, 0 sent
 /usr/local/bin/hub-watchdog.py.bak-ts1026-0210
 (exit 0)
 ```
+
+## 2026-11-05 01:55:01 tasks/queue/002-fix-settings.sh
+```
+{"ok": true, "settings": {"threshold": 0.6, "paused": false, "private": false, "models": ["/home/kylarlovelady/voice-venv/lib/python3.13/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx"], "follow_quiet": 25.0, "follow_question": 40.0, "voice_id": "Brian", "max_utter": 20.0, "speech_
+== market-data newest files
+total 190112
+-rw-r--r-- 1 kylarlovelady kylarlovelady 56782392 Nov  5 01:55 ticks-20261105.jsonl
+-rw-r--r-- 1 kylarlovelady kylarlovelady   313092 Nov  5 01:54 state.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady  1552060 Nov  5 01:54 snapshots.jsonl
+-rw-r--r-- 1 kylarlovelady kylarlovelady 33332209 Nov  5 01:54 trades.jsonl
+-rw-r--r-- 1 kylarlovelady kylarlovelady     2224 Nov  5 01:54 kalshi_raw.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady      269 Nov  5 01:50 calendar.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady     1721 Nov  5 01:50 entry_stats.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady      124 Nov  5 01:48 patterns.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady   146240 Nov  5 01:47 hindsight.jsonl
+-rw-r--r-- 1 kylarlovelady kylarlovelady      971 Nov  5 01:47 exit_rules.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady   327922 Nov  5 01:45 run_log.jsonl
+-rw-r--r-- 1 kylarlovelady kylarlovelady   370092 Nov  5 01:45 sim_windows.jsonl
+-rw-r--r-- 1 kylarlovelady kylarlovelady     2451 Nov  5 01:45 learn_report.json
+== crew-web market file
+-rw-r--r-- 1 kylarlovelady kylarlovelady 191585 Nov  5 01:54 /home/kylarlovelady/crew-web/
+== run.json keys
+{'active': True, 'id': 1793858830, 'strategy': '...', 'start': 1000.0}
+== pihole
+Core version is v6.5 (Latest: N/A)
+Web version is v6.6.1 (Latest: N/A)
+FTL version is v6.8 (Latest: N/A)
+== ha logs (jarvis_hub)
+[33m2026-11-05 01:47:07.056 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems
+[33m2026-11-05 01:50:46.731 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration jarvis_hub which has not been tested by Home Assistant. This component might cause stability pr
+[33m2026-11-05 01:50:46.733 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration openai_whisper_cloud which has not been tested by Home Assistant. This component might cause st
+[33m2026-11-05 01:50:46.734 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems
+== jarvis conversations today
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+    for l in open(os.path.expanduser('~/voice-data/trace.jsonl')):
+             ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/kylarlovelady/voice-data/trace.jsonl'
+(exit 0)
+```
