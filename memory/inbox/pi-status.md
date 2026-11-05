@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 week, 3 days, 15 hours, 49 minutes; temp 44.4'C; throttled flags 0x0 (0x0 is clean); memory 55%; disk 9%
+- up 1 week, 3 days, 15 hours, 58 minutes; temp 40.0'C; throttled flags 0x0 (0x0 is clean); memory 58%; disk 9%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 7 hours (healthy); homeassistant Up 58 minutes
+- containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 7 hours (healthy); homeassistant Up About an hour
 
 ## Sync and schedule
-- Pi repo copy at: d5c60bc 3 minutes ago: Kalshi: cap 25, Auto wallet needs 40+ rounds and a positive record else holds; read-only maker-entry study
+- Pi repo copy at: 735dcfa 2 minutes ago: Safe shows real wallet money
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (42 min ago), first lines:
+- supervisor report (50 min ago), first lines:
     MARKET AGENT PROGRESS  Thu 05 Nov 02:07
     
     1. ALIVE

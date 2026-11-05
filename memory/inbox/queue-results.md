@@ -1,131 +1,4 @@
-ew_api.py
-/home/kylarlovelady/hub-dashboard/settings_api.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/watchfiles/_rust_notify.abi3.so
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/h11/_receivebuffer.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/PIL/Image.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/urllib3/util/timeout.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/resolvelib/providers.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/rich/progress.py
-== theme words
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/PIL/ImageColor.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/pygments/lexers/_mapping.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pip/_vendor/rich/_emoji_codes.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/networks.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/__init__.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/color.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/pydantic/v1/color.py
-/home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/uvloop/loop.cpython-313-aarch64-linux-gnu.so
-== nocursor
-(exit 0)
-```
-
-## 2026-11-05 02:16:01 tasks/queue/005-hubdash-map.sh
-```
-== files
-2 ./oled-message.json
-1147 ./device-names.json
-1 ./muted
-1416 ./theme.html
-3025 ./hub_api.py
-1654 ./pictures.py
-2003 ./memory_api.py
-7216 ./janitor.html
-1942 ./network_api.py
-8072 ./index.html.bak-ly2
-8992 ./hub.html.bak-ha
-530 ./mute_api.py
-1080 ./theme.html.bak4
-7400 ./hub.html.bak-cr
-2949 ./hub_api.py.bak-names
-138 ./device-names.json.bak-oct26
-3485 ./server.py.bak-ly
-7093 ./hub.html.bak-hl
-4171 ./messages.py
-5404 ./settings_api.py.bak-ly
-3311 ./network.html
-5 ./settings-pin.txt
-7550 ./hub.html.bak-imm
-3650 ./memory.html
-4348 ./crop_api.py
-6640 ./fontcache/Nunito_Sans.png
-7318 ./fontcache/Open_Sans.png
-7094 ./fontcache/Quicksand.png
-5341 ./fontcache/Staatliches.png
-6730 ./fontcache/Roboto.png
-11684 ./fontcache/Great_Vibes.png
-8324 ./fontcache/Gochi_Hand.png
-6928 ./fontcache/Noto_Mono.png
-6087 ./fontcache/Ubuntu_Condensed.png
-7093 ./fontcache/FreeSerif.png
-7511 ./fontcache/Fira_Code.png
-7077 ./fontcache/IBM_Plex_Serif.png
-6940 ./fontcache/Noto_Sans_Mono.png
-7271 ./fontcache/Stardos_Stencil.png
-9774 ./fontcache/Satisfy.png
-10098 ./fontcache/Pacifico.png
-6603 ./fontcache/League_Spartan.png
-8424 ./fontcache/P052.png
-5496 ./fontcache/Saira_Stencil_One.png
-1185 ./fontcache/Press_Start_2P.png
-11363 ./fontcache/Fontdiner_Swanky.png
-6797 ./fontcache/FreeSans.png
-6577 ./fontcache/Nimbus_Sans_Narrow.png
-6933 ./fontcache/Hack.png
-7257 ./fontcache/Allerta_Stencil.png
-6848 ./fontcache/IBM_Plex_Sans_Var.png
-7604 ./fontcache/Caveat.png
-6032 ./fontcache/Roboto_Condensed.png
-7260 ./fontcache/Nimbus_Roman.png
-6861 ./fontcache/Nimbus_Mono_PS.png
-7988 ./fontcache/Luckiest_Guy.png
-8362 ./fontcache/Chewy.png
-7125 ./fontcache/Nimbus_Sans.png
-7700 ./fontcache/Montserrat.png
-6427 ./fontcache/DejaVu_Sans_Mono.png
-== who serves 8080
-    PID COMMAND
-3765271 /home/kylarlovelady/hub-dashboard/.venv/bin/python /home/kylarlovelady/hub-dashboard/server.py
-== clock/weather/date in html (line:text)
-index.html:10:#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
-index.html:12:#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
-index.html:32:<div id="clock">--:--</div><div id="date"></div>
-index.html:109:col('clock',s.clock_color);if(g('clock'))g('clock').style.textShadow=s.clock_color?'0 0 30px '+rgba(s.clock_color,.35):'';
-index.html:110:col('date',s.date_color);col('wx',s.weather_color);
-janitor.html:67: d.trash.forEach(t=>{const r=el('div','row');const b=el('div','b');b.appendChild(el('div','p',t.path));b.appendChild(el('div','w','Moved '+t.date+' · '+t
-settings.html:28:<div class="r"><span>Clock color</span><input type="color" id="clock_color"></div>
-settings.html:29:<div class="r"><span>Date color</span><input type="color" id="date_color"></div>
-settings.html:30:<div class="r"><span>Weather color</span><input type="color" id="weather_color"></div>
-theme.html:9:col('clock',s.clock_color);if(g('clock'))g('clock').style.textShadow=s.clock_color?'0 0 30px '+rgba(s.clock_color,.35):'';
-theme.html:10:col('date',s.date_color);col('wx',s.weather_color);
-== theme storage
--rw-r--r-- 1 kylarlovelady kylarlovelady 1147 Oct 26 22:14 device-names.json
--rw-r--r-- 1 kylarlovelady kylarlovelady    2 Oct 19 17:33 oled-message.json
--rw-r--r-- 1 kylarlovelady kylarlovelady  495 Nov  4 15:02 settings.json
-settings_api.py:14:CFG = BASE / "settings.json"
-settings_api.py:80:    body = await request.json()
-settings_api.py:137:    url = str((await request.json()).get("url", ""))
-settings_api.py:157:    name = str((await request.json()).get("name", ""))
-preview_api.py:74:    b = await request.json()
-(exit 0)
-```
-
-## 2026-11-05 02:19:01 tasks/queue/006-homescreen-source.sh
-```
-== index.html lines 1-40 (cut 330)
-<!doctype html>
-<html><head><meta charset="utf-8"><title>Hub</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-:root{--bg:#05080f;--cyan:#38e8ff;--dim:#6b7f94;--red:#ff4d5e;--blue:#4d8dff;--green:#3dffa0}
-*{box-sizing:border-box;margin:0}
-body{background:radial-gradient(ellipse at 50% 20%,#0d1a2b 0%,var(--bg) 70%);color:#e8f4ff;
- font-family:"Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex;
- flex-direction:column;align-items:center;justify-content:center}
-#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
- text-shadow:0 0 30px rgba(56,232,255,.35)}
-#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
-#wx{display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
-#temp{font-size:7vw;font-weight:200;color:#e8f4ff}
+eight:200;color:#e8f4ff}
 #cond{font-size:3vw;color:#e8f4ff}
 #panel{position:fixed;left:5vw;right:5vw;bottom:4vh;padding:2.5vh 3vw;border-radius:22px;
  background:rgba(10,20,34,.88);border:1px solid rgba(56,232,255,.4);
@@ -484,4 +357,115 @@ rounds used: 0 (from /home/kylarlovelady/market-data, last 3 days)
 
 Reading it: the maker only helps if per-$ profit beats the taker's AFTER filling only on dips (adverse selection shows up as a lower win rate when filled). Fee for maker is assumed; confirm on a first real fill.
 (exit 0)
+```
+
+## 2026-11-05 02:58:01 tasks/queue/015-hub-source.sh
+```
+== hub_api.py
+import asyncio, json, os, subprocess, time, urllib.request
+from pathlib import Path
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse
+from settings_api import auth
+
+router = APIRouter()
+PAGE = Path(__file__).parent / "hub.html"
+OUT = Path(os.environ.get("HUB_OUTAGE_DIR", "/var/lib/hub-outage"))
+DEV = Path(os.environ.get("HUB_DEV_FILE", "/var/lib/hub-devices/known.json"))
+MEM = Path(os.environ.get("HUB_MEM_FILE", "/home/kylarlovelady/homeassistant/memory/facts.md"))
+SVC = [("hub-satellite", "Voice satellite"), ("hub-oled", "Small screen"), ("hub-lights", "Lights"),
+       ("hub-dashboard", "Dashboard"), ("hub-watchdog", "Watchdog"), ("hub-devices", "Device alerts"),
+       ("hub-outage", "Outage logger"), ("hub-memlog", "Conversation log")]
+
+def jread(p, default):
+    try:
+        return json.loads(Path(p).read_text())
+    except Exception:
+        return default
+
+def state(unit):
+    try:
+        return subprocess.run(["systemctl", "is-active", unit], capture_output=True, text=True, timeout=5).stdout.strip() or "unknown"
+    except Exception:
+        return "unknown"
+
+def ha_up():
+    try:
+        urllib.request.urlopen("http://127.0.0.1:8123", timeout=3)
+        return True
+    except urllib.error.HTTPError:
+        return True
+    except Exception:
+        return False
+
+def collect():
+    now = time.time()
+    svcs = [{"name": n, "state": state(u)} for u, n in SVC]
+    svcs.append({"name": "Home Assistant", "state": "active" if ha_up() else "down"})
+    recs = []
+    try:
+        for line in (OUT / "outages.jsonl").read_text().splitlines():
+            r = json.loads(line)
+            if r["end"] >= now - 30 * 86400:
+                recs.append(r)
+    except Exception:
+        pass
+    st = jread(OUT / "state.json", {})
+    outages = {"count": len(recs), "total": sum(r["secs"] for r in recs), "last": recs[-1] if recs else None,
+               "since": st.get("since"), "watching": bool(st.get("beat")) and now - st["beat"] < 180}
+    known = jread(DEV, {}); names = jread(PAGE.parent / "device-names.json", {})
+    devs = sorted(({"ip": v.get("ip", ""), "name": names.get(mac) or v.get("name") or "", "vendor": v.get("vendor", ""),
+                    "new": v.get("first_seen", 0) > now - 86400 and v.get("notified", False)} for mac, v in known.items()),
+                  key=lambda d: [int(x) if x.isdigit() else 0 for x in d["ip"].split(".")])
+    try:
+        facts = sum(1 for l in MEM.read_text(encoding="utf-8").splitlines() if l.startswith("- "))
+    except Exception:
+        facts = None
+    try:
+        up = float(Path("/proc/uptime").read_text().split()[0])
+    except Exception:
+        up = None
+    return {"services": svcs, "outages": outages, "devices": devs, "facts": facts, "uptime": up, "now": int(now)}
+
+@router.get("/hub")
+async def hub_page():
+    return HTMLResponse(PAGE.read_text(encoding="utf-8"))
+
+@router.get("/api/status")
+async def status(request: Request):
+    await auth(request)
+    return await asyncio.to_thread(collect)
+== hub.html (tabs and script, trimmed)
+<!doctype html><html><head><meta charset="utf-8"><title>Hub</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hub"><meta name="theme-color" content="#0b1220">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#e8f4ff;font:16px system-ui,sans-serif;display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 6px}
+header b{font-size:19px}
+#pin{width:120px;background:#16233a;color:#fff;border:1px solid #2a3b57;border-radius:10px;padding:8px 10px;font-size:16px}
+nav{display:flex;gap:6px;padding:4px 14px 10px;overflow-x:auto}
+nav button,nav a{flex:none;background:#26354f;color:#e8f4ff;border:0;border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;text-decoration:none}
+nav button.on{background:#1c6bff}
+.pane{display:none;flex:1;min-height:0;width:100%;border:0;overflow:auto}
+.pane.on{display:block}
+#status{padding:0 14px 20px}
+.card{background:#101b2e;border:1px solid #1d2a3d;border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7f93a8}
+.row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:15px}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;background:#ff4d5e}
+.dot.ok{background:#3dffa0}
+.sub{color:#9fb0c3;font-size:14px}
+.nw{background:#ffb02e;color:#201400;border-radius:6px;font-size:11px;font-weight:700;padding:1px 6px}
+button.act{background:#1c6bff;color:#fff;border:0;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;margin:4px 6px 0 0}
+</style></head><body>
+<header><b>Lovelady Hub</b><input id="pin" type="password" inputmode="numeric" placeholder="PIN"></header>
+<nav><button data-t="status" class="on">Status</button><button data-t="look">Look</button><button data-t="memory">Memory</button><button data-t="janitor">Janitor</button><button data-t="network">Network</button><button data-t="layout">Layout</button><button data-t="crew">Control Room</button><button data-t="markets">Markets</button></nav>
+<main id="status" class="pane on"><div class="card"><div class="sub" id="msg">Enter your PIN above.</div></div></main>
+<iframe id="look" class="pane" data-src="/settings"></iframe>
+<iframe id="memory" class="pane" data-src="/memory"></iframe>
+<iframe id="janitor" class="pane" data-src="/janitor"></iframe><iframe id="network" class="pane" data-src="/network"></iframe><iframe id="layout" class="pane" data-src="/layout"></iframe><iframe id="crew" class="pane" data-src="http://loveladymainaihub.taild703ca.ts.net:8095/"></iframe><iframe id="markets" class="pane" data-src="http://loveladymainaihub.taild703ca.ts.net:8095/live.html"></iframe>
+<scrip(exit 0)
 ```
