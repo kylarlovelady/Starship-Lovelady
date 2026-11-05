@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (03:30)
+- Safe now shows real money: real Kalshi cash (read-only from the agent, unknown while Kalshi is in maintenance), practice wallet balance/profit, Jarvis usage. OpenAI dollar spend still not measured. (crew_report.py wallet block + index.html.)
+- ONE SITE: the Lovelady Hub (:8081/hub) is now the single website. Queue 016 adds an Overview tab (first, default) to Hub that embeds the Jarvis front door (/home?embed=1: right-now chips incl. wallets, alerts, Jarvis/Lab/Replay/Pi-hole/HA/KDP links, notes viewer). Duplicates removed from it (Starship, Live View, Hub tiles, services chip; those are Hub tabs). Visiting Jarvis /home directly now redirects to the Hub (/home?old=1 keeps the old page). /api/hub also returns crew.json. Needs: pull, `sudo` restart of phone-voice (bash ~/starship/tasks/pi_update.sh) and queue 016 (auto). hub.html backup: hub.html.bak-merge. Status: built, not yet on Pi.
+- Maker study (014) ran but found 0 rounds: no recorded per-second ticks in ~/market-data for the last 3 days (check the tick file names/location before trusting it).
+
 ## 2026-11-05 (03:10)
 - Kalshi changes (commit d5c60bc): unproven-strategy cap $50 to $25; Auto wallet only trusts a strategy with 40+ rounds and a positive record, otherwise holds; collector marker v8.2 (agent restarts on next Pi pull; Kalshi is in maintenance until 5 am ET, practice only); read-only maker-vs-taker study (markets/maker_study.py, queue 014, result not read yet). Status: pushed, not yet confirmed on Pi.
 - Crew changes: new tasks/crew_report.py (run by alerts_check every 5 min) writes crew.json plus copies hub-extra.json and hub-alerts.json into ~/crew-web (fixes the 404 bug, the page is served from there). index.html now shows real data for Decision log (from this changelog), Captain, Safe (Jarvis usage; dollar spend is NOT tracked yet), Bookshelf, Filing, Trash, Monitor wall Pi health and Threat view. Falls back to sample text if the files are missing. Agent rows, meetings, gauges, weak spots, training board are still sample. Status: tested here, not yet on Pi.

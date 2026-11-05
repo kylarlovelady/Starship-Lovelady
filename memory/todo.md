@@ -2,6 +2,8 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- One site: after the next pull run `bash ~/starship/tasks/pi_update.sh` once (restarts Jarvis, needs the Pi password) so Jarvis /home redirects to the Hub; open http://loveladymainaihub:8081/hub and look at the new Overview tab. Tell Claude what else to fold in.
+- Maker study found 0 rounds of tick data; Claude to check where the per-second ticks are stored.
 - Home screen: confirm the frosted bubble looks right and the cursor line is gone (revert: copy index.html.bak-glass back in ~/hub-dashboard). Tell Claude if you want it bigger/smaller/clearer.
 - Pi-hole: confirm it is answering, pilot on the iPad, then phones, then TVs; turn off Private Wi-Fi Address/Private Relay/VPN/Private DNS on devices; name the 11 unnamed devices; then feed its stats into Starship/Jarvis (see architecture.md).
 - On the Pi: `cd ~/starship && git pull -q; bash ~/starship/tasks/pi_update.sh ha` (installs alerts, Kalshi sync, task queue, restarts Jarvis, installs the home-speaker add-on), then add the Jarvis Hub integration in Home Assistant (steps print at the end).

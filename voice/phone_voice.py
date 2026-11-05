@@ -780,12 +780,17 @@ class H(http.server.BaseHTTPRequestHandler):
             import urllib.parse
             try: return self._send(200, ask_text(urllib.parse.unquote_plus(q.get("text", "")), q.get("audio", "1") != "0", self.headers.get("Host")))
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
-        if p == "/home": return self._send(200, open(os.path.join(HERE, "home.html"), "rb").read(), "text/html; charset=utf-8")
+        if p == "/home":
+            if q.get("embed") or q.get("old"): return self._send(200, open(os.path.join(HERE, "home.html"), "rb").read(), "text/html; charset=utf-8")
+            return self._send(200, b'<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><body style="background:#0b1220;color:#e8f4ff;font:18px system-ui;padding:24px">Everything now lives in one place: <a style="color:#6ab7ff" id=a>the Lovelady Hub</a>.<script>var u="http://"+location.hostname+":8081/hub";document.getElementById("a").href=u;location.replace(u)</script>', "text/html; charset=utf-8")
         if p == "/api/hub":
             def rj(n):
                 try: return json.load(open(os.path.expanduser("~/starship/" + n)))
                 except Exception: return {}
-            return self._send(200, {"extra": rj("hub-extra.json"), "alerts": rj("hub-alerts.json")})
+            def rc(n):
+                try: return json.load(open(os.path.expanduser("~/crew-web/" + n)))
+                except Exception: return {}
+            return self._send(200, {"extra": rj("hub-extra.json"), "alerts": rj("hub-alerts.json"), "crew": rc("crew.json")})
         if p == "/mem":
             f = q.get("f", "projects.md")
             if not re.match(r"^[A-Za-z0-9_./-]+\.md$", f) or ".." in f: return self._send(404, {"error": "no"})

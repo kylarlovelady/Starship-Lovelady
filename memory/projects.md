@@ -7,6 +7,7 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | Jarvis at home (Home Assistant speaker) | in progress | Add-on installed; Jarvis Hub integration added in Home Assistant (Kylar, 2026-11-05); test at home, then echo/false-wake fixes | pi-home-assistant.md |
 | Shared memory (Claude, Jarvis, Pi) | in progress | Run for a week; daily Claude check to file inbox notes | README.md |
 | Pi health and network | in progress | Net watchdog installed 2026-11-05; at-home tasks (router reservations, Pi-hole pilot) | pi-home-assistant.md |
+| One site (Hub + Jarvis front door merged) | built, waiting on Pi | Overview tab in Hub (queue 016), /home redirects after pi_update | todo.md |
 | Starship control room page | in progress | Rooms: captain, log, safe, monitors, filing, trash now real (needs Pi pull to confirm). Next: agent rows, meetings, gauges are still sample | pi-home-assistant.md |
 | Kalshi practice agent | in progress | Data sync now automatic (tasks/kalshi_data_sync.sh); find any proven edge; mission starts AFTER Jarvis is complete (roadmap.md) | kalshi-ai.md |
 | Amazon KDP | in progress | Record what is being published and results | amazon-kdp.md |
