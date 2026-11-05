@@ -1,5 +1,4 @@
 # Jarvis feedback summary (auto, no transcripts)
-Updated 2026-11-05 01:00
 
 - Conversations logged (last 40 with timings): 3
 - Average time to first words: 1.5s (slowest 2.0s)
