@@ -1,81 +1,4 @@
-rice 14c at 14:05
-  Thu 00:00  -21  bet DOWN at 0:15 @48c ($26) (WRONG SIDE); result UP. best swing UP bought at 6:20 sold at 13:50, +62c/contract;  cheapest winning-side price 36c at 6:20
-  Wed 23:30  -19  bet DOWN at 3:20 @47c ($47) (WRONG SIDE); result UP. best swing DOWN bought at 10:28 sold at 14:00, +72c/contract;  cheapest winning-side price 23c at 14:00
-  Wed 22:15  -19  bet UP at 1:32 @48c ($46); result UP. best swing UP bought at 4:40 sold at 14:21, +78c/contract;  cheapest winning-side price 21c at 4:40
-
-BEST 3 ROUNDS:
-  Thu 01:15  +50  bet DOWN at 2:01 @49c ($47); result DOWN
-  Thu 01:00  +30  bet UP at 0:57 @44c ($96); result UP
-  Thu 00:30  +26  bet DOWN at 0:26 @48c ($48); result DOWN
-(exit 0)
-```
-
-## 2026-11-05 02:31:17 tasks/queue/009-review-24.sh
-```
-TRADE REVIEW, last 24 hours: 1282 (strategy, round) results from 71 rounds with full recordings.
-
-EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
-  v_x8220761      15    +253.71   67%  +21.3%
-  v_x44219232     14    +239.11   64%  +25.9%
-  v_x219212       18    +176.34   56%  +14.0%
-  v_x44219231     14    +174.29   57%  +18.9%
-  v_x72222452     15    +156.13   53%  +15.3%
-  v_x88221262      5    +117.66  100%  +63.8%
-  v_x28219981     23     +88.49   52%   +5.5%
-  v_x80218932     11     +82.77   73%  +44.0%
-  v_cut_loose     53     +81.47   51%   +4.4%
-  v_hold          53     +66.51   55%   +4.4%
-  v_x16217722     10     +63.24   60%  +17.9%
-  v_x24220782      2     +55.99  100%  +82.5%
-  v_x64216771     21     +55.33   52%   +3.8%
-  v_x28219982     23     +32.07   48%   +3.5%
-  v_x24220781      2     +26.35  100%  +66.6%
-  v_x36215122      7      +4.71   43%   +2.0%
-  v_x88221261      2      +3.16  100%  +29.9%
-  v_x64216772     21      -5.01   52%   -1.7%
-  distance        53     -18.88   43%   -1.6%
-  v_no_cut        53     -19.13   55%   -1.2%
-  v_x8220762      15     -37.95   47%   -6.7%
-  v_x52220782      2     -42.40    0%  -42.4%
-  v_x52220781      3     -48.97   33%  -48.5%
-  v_x16217721     10     -71.41   40%  -10.7%
-  v_trail         53     -98.51   38%   -3.8%
-  v_trail_wide    53     -98.51   38%   -3.8%
-  v_x219211       18    -126.84   28%  -15.5%
-  v_one_shot      52    -135.62   54%  -19.8%
-  v_x72222451     15    -135.88   27%  -20.8%
-  flow            56    -155.11   36%  -11.5%
-  v_x36215121     16    -155.78   25%  -22.2%
-  v_x80218931     11    -164.82   18%  -35.8%
-  v_late          30    -165.74   47%  -10.8%
-  signals         57    -194.59   33%   -9.4%
-  v_cut_tight     53    -261.88   28%  -13.2%
-  v_adds          53    -326.58   38%  -11.9%
-  trend           60    -362.62   28%  -16.3%
-  v_mood_flip     30    -365.94   40%  -15.5%
-  run             54    -392.53   43%  -34.2%
-  v_flow_flip     30    -394.45   30%  -15.5%
-  hold            70    -536.47   37%  -47.9%
-  swing           71    -584.03   31%  -16.3%
-  mood            55    -599.92   35%  -17.7%
-
-=== 'run': 54 rounds. Total profit -392.53 ===
-1) SIDE: first bet on the winning side in 24 of 54 rounds (44%). Money-weighted: 38% of dollars staked were on the winning side (coin flip = 50%).
-2) TIMING: it makes its first bet a median 2:08 into the round. The cheapest price on the winning side came a median 4:44 in. Median paid 15 cents above that cheapest point when it was on the right side.
-   first bet time -> rounds, profit, side right:  0-1 min: 14, -48, 8 right  |  1-3 min: 18, -44, 8 right  |  10+ min: 4, -127, 1 right  |  3-6 min: 12, -120, 5 right  |  6-10 min: 6, -54, 2 right
-3) SELLING (money made or lost by selling versus just holding those contracts to the end):
-   its own odds said sell       3 sells     -52.59  selling HURT (holding would have been better)
-   cut a loss                   5 sells     -12.97  selling HURT (holding would have been better)
-   other                        1 sells      +6.75  selling HELPED
-4) BET SIZE -> rounds, profit, wins:  $25-100: 19, -389, 5  |  under $25: 35, -4, 18
-5) HOUR OF DAY -> rounds, profit:  00h: 3, +11  |  01h: 3, +95  |  03h: 2, -11  |  04h: 4, -29  |  05h: 4, -64  |  06h: 2, -58  |  07h: 2, -41  |  08h: 3, -182  |  09h: 3, -5  |  10h: 3, +5  |  11h: 3, +12  |  12h: 2, -10  |  13h: 3, +19  |  14h: 2, -23  |  15h: 3, -3  |  16h: 2, +1  |  17h: 1, -6  |  20h: 3, +5  |  21h: 2, -32  |  22h: 1, -19  |  23h: 3, -59
-6) HINDSIGHT: buying the winning side at its cheapest moment and holding earns an average 69 cents per contract after fees; the best swing (buy low, sell high, any side) averages 68 cents per contract. It is not achievable (nobody knows the cheapest moment); it shows how much room there is.
-
-WORST 5 ROUNDS (when, what it did, what was best):
-  Wed 08:45  -84  bet UP at 0:43 @37c ($80) (WRONG SIDE); result DOWN. best swing DOWN bought at 4:50 sold at 12:27, +67c/contract;  cheapest winning-side price 31c at 4:50
-  Wed 08:15  -64  bet UP at 10:14 @46c ($61) (WRONG SIDE); result DOWN. best swing DOWN bought at 11:41 sold at 14:27, +92c/contract;  cheapest winning-side price 7c at 11:41
-  Wed 06:45  -63  bet DOWN at 13:05 @49c ($60) (WRONG SIDE); result UP. best swing UP bought at 9:42 sold at 14:31, +95c/contract;  cheapest winning-side price 4c at 9:42
-  Wed 05:30  -56  bet UP at 3:14 @49c ($53) (WRONG SIDE); result DOWN. best swing DOWN bought at 7:58 sold at 14:54, +67c/contract;  cheapest winning-side price 31c at 7:58
+ winning-side price 31c at 7:58
   Wed 07:45  -46  bet UP at 3:02 @49c ($44) (WRONG SIDE); result DOWN. best swing DOWN bought at 11:46 sold at 14:09, +67c/contract;  cheapest winning-side price 31c at 11:46
 
 BEST 3 ROUNDS:
@@ -482,4 +405,100 @@ EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
    its own odds said sell      28 sells     +33.85  selling HELPED
 4) BET SIZE -> rounds, profit, wins:  $100-250: 6, -167, 1  |  $25-100: 23, -161, 8  |  under $25: 25, +36, 16
 5) HOUR OF DAY -> rounds, profit:  00h: 3, +11  |  01h: 4, +85  |  04h: 2, -1  |  05h: 4, +17  |  06h: 2, -10  |  07h: 4, -68  |  08h: 2, -8  |  09h: 4, -77  |  10h: 4, -26  |  11h: 2, -73  |  12h: 3, -28  |  13h: 3, +19  |  14h: 2, -23  |  15h: 3, -3  |  16h: 2, +1  |  17h: 1, -6  |  20h: 3, +5  |  21h: 2, -32  |  22h(exit 0)
+```
+
+## 2026-11-05 12:43:01 tasks/queue/020-kalshi-more.sh
+```
+=== key strategies, last 72 h
+  v_hold          95    +296.88   60%   +8.5%
+  v_late          60    +125.62   48%   +2.9%
+  v_one_shot      95     -58.77   60%   -5.7%
+  v_cut_loose     95     -83.26   52%   -1.8%
+  v_no_cut        95    -269.14   57%   -6.5%
+  hold           188    -274.35   51%   -5.3%
+  v_adds          95    -483.14   43%   -9.1%
+  v_trail         95    -535.18   42%  -11.5%
+  v_cut_tight     95    -562.70   35%  -14.3%
+  swing          186    -767.42   34%   -7.5%
+  signals        162    -798.12   44%   -7.3%
+  distance       148   -1125.74   45%   -9.6%
+  flow           156   -1151.33   39%   -8.0%
+  trend          169   -1250.37   34%   -8.1%
+  run            158   -1748.43   39%  -15.6%
+  mood           159   -1825.53   42%  -18.1%
+=== key strategies, last 12 h
+  v_hold          32    +738.53   78%  +82.7%
+  v_late          25    +505.31   56%  +42.0%
+  mood            33    +419.86   58%  +31.5%
+  v_cut_loose     32    +399.14   62%  +27.8%
+  v_no_cut        32    +274.79   69%  +27.1%
+  swing           34    +248.03   47%  +13.8%
+  trend           33    +146.83   58%  +22.6%
+  v_adds          32    +143.80   56%  +15.9%
+  flow            33    +139.75   55%  +16.6%
+  v_one_shot      32    +124.47   78%  +51.1%
+  distance        32     +79.12   62%  +15.7%
+  hold            34     +77.25   68%  +18.7%
+  signals         32     +48.60   59%   +4.7%
+  v_cut_tight     32      +5.29   50%   +0.8%
+  v_trail         32     -30.53   56%   -4.4%
+  run             31    -186.85   52%  -10.0%
+
+=== run, recent rounds (is the cap working?)
+{'strategy': 'auto', 'bal': 827.72, 'pnl': -172.28, 'windows': 42, 'active': None, 'live': False}
+Thu 09:00 {'staked': 49.24, 'pnl': 15.76}
+Thu 09:15 {'staked': 49.8, 'pnl': -29.65}
+Thu 09:30 {'staked': 50.0, 'pnl': -27.79}
+Thu 09:45 {'staked': 49.96, 'pnl': -34.89}
+Thu 10:00 {'staked': 49.95, 'pnl': -37.19}
+Thu 10:15 {'staked': 20.48, 'pnl': 21.52}
+Thu 10:30 {'staked': 49.93, 'pnl': -32.33}
+Thu 10:45 {'staked': 49.64, 'pnl': 22.02}
+Thu 11:00 {'staked': 0.0, 'pnl': 0.0}
+Thu 11:15 {'staked': 49.96, 'pnl': -41.19}
+Thu 11:30 {'staked': 49.9, 'pnl': -31.85}
+Thu 11:45 {'staked': 0.0, 'pnl': 0.0}
+Thu 12:00 {'staked': 49.77, 'pnl': -22.12}
+Thu 12:15 {'staked': 20.73, 'pnl': -11.13}
+
+=== collector restart / version
+ActiveEnterTimestamp=Mon 2026-11-02 22:27:17 CST
+# v8.2 restart: cap 25, Auto wallet needs 40+ rounds and a positive record (else holds to the end); nothing is retired (
+
+=== real live orders
+61 rows; keys: ['action', 'book_side', 'count', 'price', 'reply', 'side', 'status', 't', 'ticker']
+{('buy', 'UP'): 22, ('sell', 'UP'): 27, ('buy', 'DOWN'): 7, ('sell', 'DOWN'): 5}
+{"t": 1793652359, "action": "buy", "side": "UP", "ticker": "KXBTC15M-26NOV021600-00", "book_side": "bid", "count": 1, "price": 0.55, "status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5400", "client_order_id": "1ab386c5-dfb6-42c2-a759-a0b764994f79", "fill_count": "1.00", "order_id": "01a19e02-ff58-7c
+{"t": 1793652361, "action": "sell", "side": "UP", "ticker": "KXBTC15M-26NOV021600-00", "book_side": "ask", "count": 1, "price": 0.54, "status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5500", "client_order_id": "d174effe-9f14-4d4e-87ef-78e666d416c1", "fill_count": "1.00", "order_id": "01a19e03-0728-7
+{"t": 1793683924, "kind": "order", "action": "sell", "side": "DOWN", "ticker": "KXBTC15M-26NOV030045-45", "book_side": "bid", "count": 18, "price": 0.38, "quote_ask": 0.35, "quote_bid": 0.34, "status": 201, "reply": {"average_fee_paid": "0.0159", "average_fill_price": "0.3500", "client_order_id": "3036302b-8f89-4e26-b607-b0c9294
+{"t": 1793683924, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "sell", "side": "DOWN"}
+
+=== my real trades
+fills downloaded: 439
+fills that were YOUR own: 429, fills from the agent's live sessions: 10
+rounds traded: 107   won: 49 (46%)   total after fees: -2201.25   fees: 423.82
+avg stake per round: $106.34   avg win: +93.25   avg loss: -116.73
+first buy in the first 2 minutes: 70 of 107 rounds   avg first buy 145s into the round
+avg buy price: 47 cents
+took profit early (sold before close): 38 rounds, avg -47.90, won 61%
+held to the end: 69 rounds, avg -5.52, won 38%
+avg time of first sale: 387s into the round
+date range: 10-31 00:30 to 11-05 01:00
+sold early at a profit: 23 rounds, avg +100.21   sold early at a loss (cut loser): 15 rounds, avg -275.00
+stake under $10  14 rounds  won  50%  total    +26.00
+stake $10-50     53 rounds  won  42%  total   -343.91
+stake $50-150    21 rounds  won  52%  total   -179.99
+stake over $150  19 rounds  won  47%  total  -1703.35
+first buy first minute   55 rounds  won  51%  total  -1736.64
+first buy minutes 2-3    21 rounds  won  29%  total   -687.50
+first buy after minute 3 29 rounds  won  45%  total   +213.53
+last 5 rounds:
+  11-04 23:45  yes  staked 48.4    pnl  -50.00 (held)
+  11-05 00:00  yes  staked 96.29   pnl +131.41 (sold early)
+  11-05 00:15  no   staked 47.47   pnl  -50.00 (held)
+  11-05 00:30  no   staked 19.4    pnl  +25.20 (sold early)
+  11-05 01:00  no   staked 18.95   pnl  -20.00 (held)
+THE AGENT'S live rounds (not yours): 4 rounds, -2.58 after fees
+saved to ~/market-data/my_trades.json
+(exit 0)
 ```
