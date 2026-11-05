@@ -29,5 +29,11 @@ Engine: 6.7L Power Stroke diesel (confirmed by Kylar 2026-11-05).
 - First steps: baseline (compression and leak-down test, check oil use, trans condition, rear gear ratio, brakes and tires), then pick a power level and budget. Budget and state/inspection rules: Kylar to tell us.
 - Typical path for a 5.4 on its own block and trans, to be researched before buying: tune, intake and headers, cams, heads, forced induction (supercharger or turbo), strengthened transmission and torque converter, rear gears, stronger rear axle, brakes and cooling.
 
+## Priorities (Kylar, 2026-11-05) and safety
+- Lives in South Texas (Texas rules: safety inspection yearly; emissions testing applies in some counties only, check the county before F-150 parts).
+- Do first: Sheree's Expedition, and the F-250 suspension.
+- SAFETY: the F-250's pitman arm is loose on the spline gear and the front left makes noise. A loose pitman arm is a steering failure risk. Do not drive it until the nut is torqued to spec (look up the exact torque and socket for a 2020 F-250; it needs a very large socket and a long breaker bar or impact). Also check the spline for wear: if it is worn or the arm has been moving, the arm or sector shaft may need replacing. Have the front end inspected at the same time (front left noise could be ball joint, track bar, bushing or shock).
+- Quick shop option: many tire shops or a friend with an impact can torque it.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)

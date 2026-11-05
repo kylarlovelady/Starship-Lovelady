@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (04:00)
+- Filed Kylar's answers: live-trading plan and API key (kalshi-ai.md), family and work schedule and Jarvis access (family.md), business order, LLC, plastic idea (business.md), KDP plan (amazon-kdp.md), vehicle priorities and the pitman-arm safety note (truck-project.md), new open items (todo.md).
+
 ## 2026-11-05 (03:45)
 - truck-project.md: recorded the F-150 goal (street legal daily to work, max power, no engine or trans swap).
 

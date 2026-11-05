@@ -6,5 +6,12 @@ Updated 2026-11-04 (imported from Hub Notes, Nov 2 voice call).
 - Parked ideas: options-trading agent via a broker API on paper money first; house plans and 3D home models (his wife has a strong design eye; start with concept plans and 3D walkthroughs, local code needs a licensed pro for finals); Home Assistant install service; AI phone answering for small businesses; printable/template digital products sharing the KDP pipeline; 3D model packs; packaging the market dashboard or home assistant for others.
 - Declined (do not revisit): the AI cam-performer idea and an unrestricted AI.
 
+## Update 2026-11-05 (Kylar)
+- Order now: 1) Kalshi betting, 2) Amazon KDP shortly after. Trucks are hobbies, not business. What comes after KDP is undecided.
+- KDP: account made and ready. Templates and book ideas started, nothing published. Idea: journals for different job roles in the plants he works around (many buyers expected). Needs: a streamlined way to make books inside KDP's very strict templates and publish them; a pen name; (see amazon-kdp.md).
+- Lovelady LLC: needs to organise all business ideas under it (what each project is called, one bank/accounting view, which ones sit under the LLC). Claude to propose a simple structure; for legal and tax finals see a CPA or lawyer.
+- Plastic idea: he can get plastic from work very cheaply and has been trying to find a business use for it (check company policy on taking or selling material before starting).
+- Equipment he already owns: freeze dryer, Bambu Lab 3D printer, some bait-making supplies.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)

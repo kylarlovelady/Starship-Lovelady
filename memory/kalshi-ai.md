@@ -33,6 +33,11 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - The agent must look every second, not every 5 seconds.
 - Live checklist before going live: chip shows live; balance matches Kalshi; aggression low and biggest bet small (about $5) for the first session; loss floor set by Kylar; API verification not expired; kill switch and End session known.
 
+## Going live (Kylar, 2026-11-05)
+- Plan: yes, he will go live with real money and wants to watch it grow while learning to read trends. He has gone live before and it worked, but the agent could not use the option Kalshi offers after each trade to take profits over time (Kylar's description; Claude to look up exactly which Kalshi order option this is, e.g. a resting sell order, and add it to the agent).
+- API key: works now; a new one is due around Nov 9 (Kylar unsure what is needed). Claude to check the Kalshi API notice and give exact steps before Nov 8. Keys never go in this repo.
+- Live stays OFF until Kylar says. Hard rules unchanged ($5 min bet, no selling a winner without $5 profit after fees).
+
 ## Parked
 - More agents on other markets (options, stocks, commodities) only after the Kalshi agent shows a real edge; share the method, not the bets. Other coins on hold. Mempool tracker for big transfers only.
 

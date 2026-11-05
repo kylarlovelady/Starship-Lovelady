@@ -2,6 +2,12 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- SAFETY (Kylar): F-250 pitman arm loose on the spline: torque to spec before driving; inspect front left noise. See truck-project.md.
+- Jarvis reminders: one-time and repeating, spoken back at the time (build in voice server, store in voice-data, alerts via phone notify).
+- KDP: pen name, one repeatable process from idea to upload, journals for plant jobs (amazon-kdp.md).
+- Lovelady LLC: Claude proposes a structure for all business ideas (business.md).
+- Kalshi: look up the take-profit option Kalshi offers after each trade and add it; new API key around Nov 9 (kalshi-ai.md).
+- Satellite Pis for 3 bedrooms (family.md / pi-home-assistant.md).
 - iPhone Shortcuts (added 2026-11-05 by Kylar): set up Siri Shortcuts for Jarvis and the Hub (e.g. "Hey Siri, Jarvis" opens/asks Jarvis, truck-mode shortcut, Hub and Starship on the home screen). Claude to list what to build, then give step-by-step taps.
 - One site: after the next pull run `bash ~/starship/tasks/pi_update.sh` once (restarts Jarvis, needs the Pi password) so Jarvis /home redirects to the Hub; open http://loveladymainaihub:8081/hub and look at the new Overview tab. Tell Claude what else to fold in.
 - Maker study found 0 rounds of tick data; Claude to check where the per-second ticks are stored.
