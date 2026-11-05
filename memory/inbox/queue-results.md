@@ -1,8 +1,4 @@
-s": "Notes"}
-   listing : {"description": "A hardcover Process Operator Notebook Journal with 120 numbered, lined pages (6 x 9 inches). 
-   answers : {"spine_text": true, "owner_page": true, "goals": true, "contacts": true, "date_header": true, "index": true, 
-   chat : [{"role": "user", "text": "Ok on the front cover i want \u201cProcess Operator\u201d in yellow gold letters an
-== outputs
+puts
 books/new-book-e841/out:
 total 260
 drwxr-xr-x 2 kylarlovelady kylarlovelady   4096 Oct 26 01:21 .
@@ -554,5 +550,16 @@ Nov 05 15:16:04 LoveladyMainAiHub bash[2713975]: INFO:root:Ready
 Nov 05 15:16:04 LoveladyMainAiHub bash[2713975]: INFO:root:Connected to services
 Nov 05 15:16:06 LoveladyMainAiHub bash[2713975]: INFO:root:Connected to server
 Nov 05 15:16:06 LoveladyMainAiHub bash[2713975]: INFO:root:Waiting for wake word
+(exit 0)
+```
+
+## 2026-11-05 15:19:01 tasks/queue/036-home-mic-record-only.sh
+```
+recording flag added
+NOT healthy: rolled back
+active
+Nov 05 15:19:19 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Ready
+Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Connected to services
 (exit 0)
 ```
