@@ -139,6 +139,10 @@ def load_pron():
     try: p.update(json.load(open(os.path.join(DATA, "pronunciations.json"))))
     except Exception: pass
     return p
+NAME_FIX = re.compile(r"\b(shari|sharee|sherry|sheri|sherri|shery|sharie|sheeri|shuri)(?=\b|'s)", re.I)
+def fix_names(text):
+    """Speech recognition hears Kylar's wife Sheree (shuh-ree) as Shari, Sherry and so on: normalise to Sheree so Jarvis knows who is meant."""
+    return NAME_FIX.sub("Sheree", text or "")
 def apply_pron(text):
     for k, v in load_pron().items():
         if k: text = re.sub(r"\b%s\b" % re.escape(k), v, text, flags=re.I)
@@ -480,7 +484,7 @@ class Session:
         out = []; times_reset()
         try:
             who, conf = speaker_check(pcm); TL.who = who
-            text = stt(pcm)
+            text = fix_names(stt(pcm))
             t0 = now()
             trace(self.sid, "heard", utt=getattr(self, "cur_utt", None), text=text, stt_secs=times_get().get("stt"), who=who)
             jl_append("conversations.jsonl", {"t": t0, "sid": self.sid, "who": who, "who_conf": conf, "heard": text, "utt": getattr(self, "cur_utt", None)})
@@ -671,7 +675,7 @@ def memory_command_hit(text):
 
 def ask_text(text, want_audio=True, host=None):
     """Text in, answer out, for the Siri Shortcut. Keeps a short running conversation (resets after 3 minutes of quiet)."""
-    text = (text or "").strip()
+    text = fix_names((text or "").strip())
     if len(text) < 2: return {"reply": "", "end": True, "followup": False}
     t0 = now()
     reply = direct_reply(text)

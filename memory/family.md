@@ -1,6 +1,6 @@
 # Family
 - Owner: Kylar Lovelady (spelled Kylar, pronounced "Kyler"; the voice assistant must say it right). Central time. iPhone. Works overnight shifts at Dow, often alone.
-- Family: wife Sheree (pronounced "shuh-ree"; Jarvis must say it that way; built in as a default pronunciation 2026-11-05), son Warren (and the babies). Wife and kids use the voice assistant at home. His partner is getting annoyed at the unfinished home assistant: make it work well.
+- Family: wife Sheree (pronounced "shuh-ree"; speech recognition mishears it as Shari/Sherry, so Jarvis converts those to Sheree on input; Jarvis must say it that way; built in as a default pronunciation 2026-11-05), son Warren (and the babies). Wife and kids use the voice assistant at home. His partner is getting annoyed at the unfinished home assistant: make it work well.
 - Long-term hope behind the income projects: his wife can stay home with the babies while he keeps a day job for the insurance.
 - His wife has a strong design eye (house plans idea).
 - Voice ID (planned): Jarvis learns the family's voices (Kylar, Sheree, Warren). Voiceprints (audio data) stay on the Pi, not in this repo. Voices change as Warren grows, so keep updating them; when unsure, ask who is speaking.
