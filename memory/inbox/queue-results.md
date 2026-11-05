@@ -1,28 +1,3 @@
-er:blur(12px);
- transform:translateY(130%);opacity:0;transition:transform .45s ease,opacity .45s ease}
-#panel.show{transform:none;opacity:1}
-#status{display:flex;align-items:center;gap:1.2vw;font-size:2vw;letter-spacing:.2em;
- text-transform:uppercase;color:var(--dim);margin-bottom:1.5vh}
-#dot{width:1.6vw;height:1.6vw;border-radius:50%;background:var(--red);animation:pulse 1.2s infinite}
-#panel.thinking #dot{background:var(--blue)}
-#panel.speaking #dot{background:var(--green)}
-@keyframes pulse{50%{opacity:.35;transform:scale(.8)}}
-.lbl{font-size:1.7vw;color:var(--dim);text-transform:uppercase;letter-spacing:.15em}
-#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bottom:1.5vh}
-#ai{font-size:3vw;line-height:1.3;min-height:4vw}
-#pic{display:none;max-height:28vh;max-width:100%;border-radius:12px;margin-top:1.5vh;object-fit:contain}
-</style></head><body>
-<div id="clock">--:--</div><div id="date"></div>
-<div id="wx"><span id="temp"></span><span id="cond"></span><span id="extra"></span></div>
-<div id="panel"><div id="status"><div id="dot"></div><span id="stext">Listening</span></div>
-<div class="lbl">You</div><div id="you"></div><div class="lbl">Alexa</div><div id="ai"></div><img id="pic" alt=""></div>
-<script>
-const $=id=>document.getElementById(id);
-function tick(){const d=new Date();
- $('clock').textContent=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
- $('date').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});}
-== theme.html
-<!--theme--><script>
 (function(){var v=-1,rl=null,q=null;
 try{q=new URLSearchParams(location.search).get('pv');}catch(e){}
 function g(i){return document.getElementById(i);}
@@ -474,5 +449,36 @@ REFUSED: sudo is not allowed in queue scripts
 merged: True
 data-t="overview" class="on">
 (hub.html is read fresh on every request, no restart needed)
+(exit 0)
+```
+
+## 2026-11-05 05:01:02 tasks/queue/018-starship-check.sh
+```
+== listener
+LISTEN 0      5                             100.105.140.126:8095       0.0.0.0:*   
+== server process
+kylarlo+ 2711573  0.0  0.2 328576 21536 ?        Ss   Oct30   0:37 /usr/bin/python3 -m http.server 8095 --bind 100.105.140.126 --directory /home/kylarlovelady/crew-web
+== files in crew-web
+total 800
+drwxr-xr-x  2 kylarlovelady kylarlovelady   4096 Nov  5 05:00 .
+drwx------ 36 kylarlovelady kylarlovelady   4096 Nov  5 04:28 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady   3280 Nov  5 05:00 crew.json
+-rw-rw-r--  1 kylarlovelady kylarlovelady     42 Nov  5 05:00 hub-alerts.json
+-rw-rw-r--  1 kylarlovelady kylarlovelady   1022 Nov  5 05:00 hub-extra.json
+-rw-r--r--  1 kylarlovelady kylarlovelady 147057 Nov  5 03:27 index.html
+-rw-r--r--  1 kylarlovelady kylarlovelady 142042 Nov  4 15:13 index.html.bak
+-rw-rw-r--  1 kylarlovelady kylarlovelady  49563 Nov  5 05:00 live.html
+-rw-r--r--  1 kylarlovelady kylarlovelady 189303 Nov  5 05:00 market.json
+-rw-rw-r--  1 kylarlovelady kylarlovelady  14611 Nov  5 05:00 markets.html
+-rw-rw-r--  1 kylarlovelady kylarlovelady  11664 Nov  5 05:00 report.html
+-rw-r--r--  1 kylarlovelady kylarlovelady  38121 Nov  5 04:59 report.json
+lrwxrwxrwx  1 kylarlovelady kylarlovelady     43 Oct 30 14:17 status.json -> /home/kylarlovelady/crew-status/status.json
+-rw-r--r--  1 kylarlovelady kylarlovelady 188749 Nov  5 03:27 support.js
+== fetch
+index 200 147057b
+crew.json 200
+== index.html matches repo?
+same
+== crew-update log
 (exit 0)
 ```
