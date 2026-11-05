@@ -49,7 +49,8 @@ STRATS = {
 # REACTION TESTS: the same entry logic ("distance") with a different way of reacting once in a bet. Each has its own pretend $1,000 and trades live beside the others,
 # so the scoreboard shows which response (hold, trail, cut tight or loose, add or not, wait to buy) actually earns the most after fees.
 ODDS_MARGIN = 0.04      # sell on its own odds only if selling beats holding by this much (selling on a 1c edge lost money in the 24h review)
-UNPROVEN_CAP = 50.0     # no strategy may put more than this into one round until the evidence earns it (0 = off); lift with config "unproven_cap"
+UNPROVEN_CAP = 25.0     # no strategy may put more than this into one round until the evidence earns it (0 = off); lift with config "unproven_cap". Was 50; bets over $25 lost, under $25 broke even (24 h review 2026-11-05)
+AUTO_MIN_ROUNDS = 40    # rounds a strategy needs before the Auto wallet may follow it
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
@@ -231,19 +232,22 @@ def build_trace(pm, p, price, strike, left, sigs, mix_, ask, bid, eU, eD):
 
 
 def auto_pick(sim):
-    """For the Auto wallet: follow whichever practice strategy has the best proven record (needs 20 rounds first)."""
-    best, bv = ("distance" if "distance" in sim["acc"] else (next(iter(sim["acc"])) if sim["acc"] else "swing")), None
+    """For the Auto wallet: follow a practice strategy only once it has a proven POSITIVE record (40+ rounds, record shrunk toward zero so a lucky streak
+    of a few rounds cannot win it). Until one earns that, hold to the end (the cheapest way to take part: no sell fee, no second spread). Changed 2026-11-05:
+    before, it followed whichever strategy looked best after only 20 rounds, which with ~40 variants in the race mostly picks luck."""
+    base = "v_hold" if "v_hold" in sim["acc"] else ("hold" if "hold" in sim["acc"] else ("distance" if "distance" in sim["acc"] else (next(iter(sim["acc"])) if sim["acc"] else "swing")))
+    best, bv, found = base, 0.0, False
     for n, a in sim["acc"].items():
         if n not in STRATS:
             continue
-        if a["windows"] >= 20:
-            v = a["pnl"] / (a["windows"] + 20.0)
-            if bv is None or v > bv:
-                best, bv = n, v
+        if a["windows"] >= AUTO_MIN_ROUNDS:
+            v = a["pnl"] / (a["windows"] + float(AUTO_MIN_ROUNDS))
+            if v > bv:
+                best, bv, found = n, v, True
     pick = sim.get("auto_pick")
     if pick != best:
         sim.setdefault("autolog", []).append({"t": int(time.time()), "from": pick, "to": best,
-            "why": ("Best record so far per round after fees (%d+ rounds each)." % 20) if bv is not None else "Not enough rounds yet, using the default."})
+            "why": ("Best positive record so far per round after fees (%d+ rounds each)." % AUTO_MIN_ROUNDS) if found else "No strategy has a proven positive record over %d+ rounds yet, so it holds to the end (least cost)." % AUTO_MIN_ROUNDS})
         sim["autolog"] = sim["autolog"][-20:]
         sim["auto_pick"] = best
     return best

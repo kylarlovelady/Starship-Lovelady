@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.1 restart: nothing is retired, all strategies and signals stay on the table (restart marker)
+# v8.2 restart: cap 25, Auto wallet needs 40+ rounds and a positive record (else holds to the end); nothing is retired (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
