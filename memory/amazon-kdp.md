@@ -38,5 +38,11 @@
 - Cover guide: 14.035 x 10.418 in for 120 pages on white paper (spine 0.4592 in by the studio formula; MUST be confirmed with KDP's cover template once the page count is entered). Overlay PNG sent to Kylar.
 - Studio check (queue 026): book.json supports cover background, pattern (texture), frame, text elements with position and size, barcode_box, lined interior (style lines, spacing, margins), owner_page with fields, page headers, index, notes, listing text. The existing new-book project has the title "Process Operator Notebook Journal" (gold on black); change it: KDP rejects generic words like notebook or journal stuffed in the title, so the title should be just "Process Operator".
 
+## Choices made (Claude picked, Kylar delegated; 2026-11-05 14:40)
+- Title font: Playfair Display Bold (bold, professional, slightly elegant); fallback bold serif if not installed. Small print: clean sans.
+- Colours (not plain black): Process Operator = deep navy cover (#16233F) with warm gold lettering (#D4AF37 style flat gold); Lab Operator = deep forest green (#17382B) with the same gold. Same layout, texture and fonts on both so the series matches. Subtle woven-cloth texture over the whole book, thin gold border line, no pictures.
+- Inside paper: CREAM, black-and-white interior (looks premium, easy on the eyes, takes ballpoint, gel pen and pencil; KDP paper is uncoated; felt markers and fountain pens can show through). Lined at about 5/16 in spacing, light grey lines, page numbers bottom corner, owner page first. Cream changes the spine: 0.0025 in per page plus 0.189 = about 0.489 in at 120 pages (confirm with KDP's template).
+- Cover size therefore about 14.065 x 10.418 for 120 pages on cream (confirm).
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
