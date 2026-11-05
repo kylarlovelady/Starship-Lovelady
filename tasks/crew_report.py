@@ -33,5 +33,18 @@ arch = rd(os.path.join(R, "memory", "_archive.md")); out["dropped"] = len([l for
 todo = rd(os.path.join(R, "memory", "todo.md")); op = todo.split("## Done")[0]
 out["todo_open"] = len([l for l in op.splitlines() if l.startswith("- ")]); out["todo_done"] = len([l for l in todo.split("## Done")[-1].splitlines() if l.startswith("- ")]) if "## Done" in todo else 0
 out["rules"] = len(re.findall(r"^\d+\. ", rd(os.path.join(R, "CLAUDE.md")), re.M))
+# wallet Jarvis/the agent can use: practice wallet from market.json, real Kalshi cash from the agent (read-only)
+wl = {}
+try:
+    r = (json.load(open(os.path.join(W, "market.json"))).get("sim") or {}).get("run") or {}
+    wl["practice"] = {"bal": r.get("bal"), "pnl": r.get("pnl"), "rounds": r.get("windows"), "strategy": r.get("strategy")}
+except Exception: pass
+try:
+    import subprocess, urllib.request
+    ip = subprocess.run("tailscale ip -4", shell=True, capture_output=True, text=True, timeout=5).stdout.split()[0]
+    j = json.load(urllib.request.urlopen("http://%s:8097/live" % ip, timeout=6))
+    wl["kalshi"] = {"ready": j.get("ready"), "env": j.get("env"), "balance": j.get("balance")}
+except Exception: pass
+out["wallet"] = wl
 json.dump(out, open(os.path.join(W, "crew.json"), "w"))
 print("crew.json written")
