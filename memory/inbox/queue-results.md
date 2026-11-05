@@ -1,51 +1,4 @@
-"assistant" else "user", "text": str(m.get("text", ""))[:3000], "changes": [str(c)[:200] for c in (m.get("changes") if isinstance(m.get("chang
-                 for m in (b.get("chat") if isinstance(b.get("chat"), list) else [])[-60:] if isinstance(m, dict)]
-    return d
-== interior()
-def interior(b, path):
-    I = b["inside"]; pages = b["pages"]; W, H = SPEC["trim_w"] * IN, SPEC["trim_h"] * IN
-    c = canvas.Canvas(path, pagesize=(W, H), initialFontName=fn(I["font"])); c.setTitle(b["title"] or b["name"])
-    inner = max(I["inner"], gutter(pages)); outer = I["outer"]
-    kinds = plan(b); fam = I["font"]; col = HexColor(I["color"]); sp = I["spacing"] * IN
-    for n, kind in enumerate(kinds, 1):
-        odd = n % 2 == 1; L = (inner if odd else outer) * IN; R = W - (outer if odd else inner) * IN
-        top = H - I["top"] * IN; bot = I["bottom"] * IN
-        if I["page_bg"].lower() != "#ffffff":
-            c.setFillColor(HexColor(I["page_bg"])); c.rect(0, 0, W, H, fill=1, stroke=0)
-        c.setFillColor(col)
-        def label(t, y, size=11, bold=False, x=L):
-            c.setFont(fn(fam, bold), size); c.drawString(x, y, t)
-        def ruled(y0, y1):
-            c.setStrokeColor(HexColor(I["line_color"])); c.setFillColor(HexColor(I["line_color"])); c.setLineWidth(I["line_width"])
-            if I["dash"]: c.setDash(2, 2)
-            y = y0
-            if I["style"] == "lines":
-                while y >= y1: c.line(L, y, R, y); y -= sp
-            elif I["style"] == "grid":
-                while y >= y1: c.line(L, y, R, y); y -= sp
-                x = L
-                while x <= R + 0.1: c.line(x, y0, x, y + sp); x += sp
-            elif I["style"] == "dots":
-                while y >= y1:
-                    x = L
-                    while x <= R + 0.1: c.circle(x, y, max(.4, I["line_width"] * .8), stroke=0, fill=1); x += sp
-                    y -= sp
-            c.setDash()
-        y0 = top
-        if kind == "title":
-            c.setFont(fn(fam, True), 26)
-            for i, l in enumerate(simpleSplit(b["title"], fn(fam, True), 26, R - L)): c.drawCentredString((L + R) / 2, H * .62 - i * 32, l)
-            c.setFont(fn(fam), 13)
-            if b["subtitle"]: c.drawCentredString((L + R) / 2, H * .62 - 70, b["subtitle"])
-            if b["author"]: c.drawCentredString((L + R) / 2, H *(exit 0)
-```
-
-## 2026-11-05 15:01:01 tasks/queue/027-kdp-fonts.sh
-```
-studio fonts (13):
-Bitstream Vera, Caladea, Carlito, DejaVu Sans, DejaVu Serif, FreeSans, FreeSerif, Lato, Liberation Mono, Liberation Sans, Liberation Serif, Open Sans, Roboto
-== other fonts on the system
-Abril Fatface;Allerta Stencil;Allura;Audiowide;Bangers;Bebas Neue,Bebas Neue Bold;Bebas Neue,Bebas Neue Book;Bebas Neue,Bebas Neue Light;Bebas Neue,Bebas Neue Regular;Bebas Neue,Bebas Neue Thin;Black Ops One;Boogaloo;Bubblegum Sans;Bungee;Butcherman;C059;Caladea;Cantarell;Carlito;Caveat;Chelsea Market;Chewy;Cinzel;Comfortaa;Comfortaa,Comfortaa Light;Creepster;D050000L;DejaVu Math TeX Gyre;DejaVu Sans;DejaVu Sans,DejaVu Sans Condensed;DejaVu Sans,DejaVu Sans Light;DejaVu Sans Mono;DejaVu Serif;DejaVu Serif,DejaVu Serif Condensed;Droid Sans Fallback;Eater;Fira Code;Fira Code,Fira Code Light;Fira Code,Fira Code Medium;Fira Code,Fira Code Retina;Fira Code,Fira Code SemiBold;Fontdiner Swanky;FreeMono;FreeSans;FreeSerif;Frijole;GFS Didot Classic;Gochi Hand;Great Vibes;Griffy;Hack;IBM Plex Mono;IBM Plex Mono,IBM Plex Mono ExtLt;IBM Plex Mono,IBM Plex Mono Light;IBM Plex Mono,IBM Plex Mono Medm;IBM Plex Mono,IBM Plex Mono SmBld;IBM Plex Mono,IBM Plex Mono Text;IBM Plex Mono,IBM Plex Mono Thin;IBM Plex Sans;IBM Plex Sans Arabic;
+ght;IBM Plex Mono,IBM Plex Mono Medm;IBM Plex Mono,IBM Plex Mono SmBld;IBM Plex Mono,IBM Plex Mono Text;IBM Plex Mono,IBM Plex Mono Thin;IBM Plex Sans;IBM Plex Sans Arabic;
 
 == can reach GitHub raw?
 200
@@ -493,5 +446,75 @@ Nov 05 17:16:04 LoveladyMainAiHub bash[3036587]: INFO:root:Ready
 Nov 05 17:16:05 LoveladyMainAiHub bash[3036587]: INFO:root:Connected to services
 Nov 05 17:16:14 LoveladyMainAiHub bash[3036587]: INFO:root:Connected to server
 Nov 05 17:16:14 LoveladyMainAiHub bash[3036587]: INFO:root:Waiting for wake word
+(exit 0)
+```
+
+## 2026-11-05 17:22:01 tasks/queue/041-kdp-build-scheme-a.sh
+```
+font download: 0 300724 
+
+instance Bold 0 ont /home/kylarlovelady/.local/share/fonts/PlayfairDisplay-Bold.ttf
+Attempting to fix OTLOffsetOverflowError ('GPOS', 'LookupIndex:', 4, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
+
+instance Regular 0 , 5, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
+Attempting to fix OTLOffsetOverflowError ('GPOS', 'LookupIndex:', 4, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
+
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Playfair Display | interior font: Lato
+== process-operator-a cover 14.065 x 10.418 spine 0.489
+  OK Page count 120 (hardcover needs 75 to 550)
+  OK Page count is even
+  OK Cover file 14.065 x 10.418 in, spine 0.489 in
+  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
+  OK Inside margin 0.500 in (KDP minimum 0.375)
+  OK All cover text inside the safe zone and clear of the barcode area
+  OK Inside text contrast 15.9:1
+  OK Picture on the full: sharp (300 dpi)
+  OK cover PDF fonts embedded
+  OK interior PDF fonts embedded
+  OK Author / pen name set
+  OK Title set
+  OK Title + subtitle length OK
+  WARN Book description not written
+  WARN 0 of 7 keywords
+  WARN Price not set
+  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
+== lab-operator-a cover 14.065 x 10.418 spine 0.489
+  OK Page count 120 (hardcover needs 75 to 550)
+  OK Page count is even
+  OK Cover file 14.065 x 10.418 in, spine 0.489 in
+  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
+  OK Inside margin 0.500 in (KDP minimum 0.375)
+  OK All cover text inside the safe zone and clear of the barcode area
+  OK Inside text contrast 15.9:1
+  OK Picture on the full: sharp (300 dpi)
+  OK cover PDF fonts embedded
+  OK interior PDF fonts embedded
+  OK Author / pen name set
+  OK Title set
+  OK Title + subtitle length OK
+  WARN Book description not written
+  WARN 0 of 7 keywords
+  WARN Price not set
+  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+total 1988
+drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:22 .
+drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:22 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1015384 Nov  5 17:22 cover-guides.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  994007 Nov  5 17:22 cover.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:22 page1.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:22 page2.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:22 page3.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
+total 1988
+drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:22 .
+drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:22 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1013726 Nov  5 17:22 cover-guides.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  992198 Nov  5 17:22 cover.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:22 page1.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:22 page2.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:22 page3.png
 (exit 0)
 ```
