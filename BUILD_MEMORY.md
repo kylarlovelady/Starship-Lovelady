@@ -25,3 +25,9 @@ Owner: Kylar ("Kyler"), America/Chicago, iPhone. Pi 5 "LoveladyMainAiHub". Shell
 
 ## Dates
 - KDP identity verification before Nov 8. Kalshi API location check by Nov 9. ElevenLabs renewal Nov 24.
+
+## Shared memory between Claude and Jarvis (set up Nov 4)
+- Jarvis (voice) reads ~/starship/BUILD_MEMORY.md + ~/voice-data/memory.md into every answer. "Jarvis, remember that ..." appends to memory.md.
+- tasks/memory_sync.sh copies memory.md to memory/jarvis_notes.md in this repo and pushes (needs GitHub push access on the Pi, untested). Claude: read memory/jarvis_notes.md at session start if it exists.
+- Siri Shortcut "Jarvis": Record audio -> POST /ask (File body) -> Play Sound. Back Tap runs it. Tap-to-finish for long talk; a duplicate with 6 s timer for hands-free.
+- Kylar wants to talk to Jarvis in the car (hands-free only, no phone fiddling while driving).

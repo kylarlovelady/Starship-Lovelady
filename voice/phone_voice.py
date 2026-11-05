@@ -166,11 +166,21 @@ def audio_from_body(ctype, raw):
     return raw
 
 
+def _read(path, limit):
+    try: return open(os.path.expanduser(path), encoding="utf-8", errors="ignore").read().strip()[:limit]
+    except OSError: return ""
+
+
 def prompt_text():
-    try: return open(os.path.join(DATA, "prompt.txt")).read().strip()
-    except OSError:
-        return ("You are the Lovelady family's home assistant, talking to the owner through his phone and earbuds. Be blunt and honest, say when you do not know, "
-                "keep answers short enough to listen to, and ask a short question back only when you really need the answer.")
+    base = _read(os.path.join(DATA, "prompt.txt"), 4000) or (
+        "You are Jarvis, the Lovelady family's home assistant, talking to the owner (Kylar) through his phone and earbuds, often while driving. Be blunt and honest, say when you do not know, "
+        "keep answers short enough to listen to, and ask a short question back only when you really need the answer.")
+    shared = _read("~/starship/BUILD_MEMORY.md", 6000)
+    notes = _read(os.path.join(DATA, "memory.md"), 4000)
+    extra = ""
+    if shared: extra += "\n\nShared project memory (written with Claude, the coding assistant; trust it as background, it may be a little out of date):\n" + shared
+    if notes: extra += "\n\nThings Kylar told you to remember:\n" + notes
+    return base + extra
 
 
 def chat(history):
@@ -405,6 +415,19 @@ def ask_text(text, want_audio=True, host=None):
     text = (text or "").strip()
     if len(text) < 2: return {"reply": "", "end": True, "followup": False}
     t0 = now()
+    mem = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:remember|make a note|take a note|note to self|save this)(?: that| this)?[:, ]*(.+)$", text, re.I | re.S)
+    if mem and len(mem.group(1).strip()) > 2:
+        with LOCK:
+            with open(os.path.join(DATA, "memory.md"), "a", encoding="utf-8") as f: f.write("- %s: %s\n" % (time.strftime("%Y-%m-%d"), mem.group(1).strip()))
+        reply = "Got it. I'll remember that."
+        out = {"reply": reply, "end": False, "followup": False}
+        if want_audio:
+            try:
+                rid = uuid.uuid4().hex[:10]; tts(reply, os.path.join(REPLIES, rid + ".bin"))
+                out["audio_url"] = "https://%s/reply/%s.bin" % (host, rid) if host else "/reply/%s.bin" % rid
+            except Exception as e: out["audio_error"] = str(e)[:120]
+        jl_append("conversations.jsonl", {"t": t0, "sid": "siri", "who": "owner", "heard": text, "reply": reply, "saved_note": True})
+        return out
     with SIRI_LOCK:
         if t0 - SIRI["t"] > 180: SIRI["hist"] = []
         if END_RE.search(text):
