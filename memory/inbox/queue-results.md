@@ -1,59 +1,4 @@
-5', 'what': 'play_end', 'info': ''}
-05:54:50 client {'sid': 'phes14a5', 'what': 'play_start', 'info': ''}
-05:54:52 client {'sid': 'phes14a5', 'what': 'play_end', 'info': ''}
-05:54:52 state {'sid': 'phes14a5', 'frm': 'speaking', 'to': 'follow', 'why': 'he finished talking'}
-05:54:56 hangup {'sid': 'phes14a5', 'why': 'you ended it', 'after': 3.3, 'state': 'follow'}
-05:54:56 state {'sid': 'phes14a5', 'frm': 'follow', 'to': 'idle', 'why': 'hung up: you ended it'}
-05:55:02 client {'sid': 'phes14a5', 'what': 'page_hidden', 'info': ''}
-13:53:20 client {'sid': 'phtnri1w', 'what': 'page_hidden', 'info': ''}
-13:53:49 client {'sid': 'phtnri1w', 'what': 'page_visible', 'info': ''}
-13:53:51 client {'sid': 'phtnri1w', 'what': 'page_hidden', 'info': ''}
-(exit 0)
-```
-
-## 2026-11-05 15:04:01 tasks/queue/030-popup-font.sh
-```
-== files
-  
-4096 11-05_14:57 .
-4096 11-05_04:28 ..
-4096 11-04_14:52 backgrounds
-4348 10-20_20:23 crop_api.py
-1147 10-26_22:14 device-names.json
-138 10-26_22:11 device-names.json.bak-oct26
-4096 10-20_21:15 fontcache
-1841 10-25_22:21 health_api.py
-3025 10-26_22:23 hub_api.py
-2913 10-22_16:25 hub_api.py.bak-jh
-2949 10-26_22:23 hub_api.py.bak-names
-11098 11-05_03:04 hub.html
-7400 10-30_14:51 hub.html.bak-cr
-8936 10-30_15:25 hub.html.bak-crop
-8936 10-30_15:20 hub.html.bak-dbg
-8992 10-30_15:28 hub.html.bak-ha
-7093 10-25_22:22 hub.html.bak-hl
-7550 10-30_15:01 hub.html.bak-imm
-8850 10-30_15:10 hub.html.bak-imm2
-7291 10-25_23:00 hub.html.bak-ly
-10776 11-02_00:51 hub.html.bak-markets
-8920 10-30_15:35 hub.html.bak-merge
-10449 10-30_15:43 hub.html.bak-sheet
-9377 11-05_02:22 index.html
-8143 11-05_02:22 index.html.bak-glass
-7351 10-25_23:00 index.html.bak-ly
-8072 10-25_23:19 index.html.bak-ly2
-4896 10-23_11:48 janitor_api.py
-7216 10-23_11:48 janitor.html
-== settings (font/theme keys only)
-{'font': 'Great Vibes', 'text_color': '#000000'}
-== reply popup code in index.html
-62:  else if(m.name==='transcript'){$('you').textContent=m.text;show('thinking','Thinking');hideLater(30000);}
-== font rules in theme.html / index.html
-theme.html:16:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
-index.html:8: font-family:"Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex;
-index.html:10:#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
-index.html:12:#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
-index.html:13:#wx{display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
+display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
 index.html:14:#temp{font-size:7vw;font-weight:200;color:#e8f4ff}
 index.html:15:#cond{font-size:3vw;color:#e8f4ff}
 index.html:18: box-shadow:0 0 40px rgba(56,232,255,.2);backdrop-filter:blur(12px);
@@ -559,5 +504,51 @@ drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:46 page1.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:46 page2.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
+(exit 0)
+```
+
+## 2026-11-05 17:49:01 tasks/queue/045-kdp-build-approved-look.sh
+```
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Liberation Serif | interior font: Lato
+== process-operator-a FAILS: none | spine 0.489
+== process-operator-b FAILS: none | spine 0.489
+== process-operator-c FAILS: none | spine 0.489
+== process-operator-e FAILS: none | spine 0.489
+== lab-operator-a FAILS: none | spine 0.489
+== lab-operator-b FAILS: none | spine 0.489
+== lab-operator-c FAILS: none | spine 0.489
+== lab-operator-e FAILS: none | spine 0.489
+sheet done
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1954345 Nov  5 17:50 /home/kylarlovelady/starship/memory/inbox/kdp-preview/contact-sheet.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+total 2580
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:49 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  371246 Nov  5 17:49 cover-guides.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady 1306165 Nov  5 17:49 cover-hi.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  350388 Nov  5 17:49 cover.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  583258 Nov  5 17:49 front.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:49 page1.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:49 page2.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-b:
+total 2540
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  365446 Nov  5 17:50 cover-guides.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady 1283146 Nov  5 17:50 cover-hi.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  343754 Nov  5 17:50 cover.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  578551 Nov  5 17:50 front.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:50 page1.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:50 page2.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-c:
+total 2556
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  366146 Nov  5 17:50 cover-guides.png
 (exit 0)
 ```
