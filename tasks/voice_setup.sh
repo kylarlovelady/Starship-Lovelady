@@ -22,6 +22,25 @@ print("wake-word model ready")
 PY
 mkdir -p ~/voice-data; chmod 700 ~/voice-data
 K=~/voice-data/keys.env; touch $K; chmod 600 $K
+# Try to reuse keys Home Assistant already stores on this Pi (never printed).
+python3 - <<'PY'
+import json, os
+k = os.path.expanduser("~/voice-data/keys.env")
+have = open(k).read() if os.path.exists(k) else ""
+for ha in ("~/homeassistant/.storage/core.config_entries", "/config/.storage/core.config_entries"):
+    f = os.path.expanduser(ha)
+    if not os.path.exists(f): continue
+    try: es = json.load(open(f))["data"]["entries"]
+    except Exception: continue
+    for name, var in (("openai", "OPENAI_API_KEY"), ("elevenlabs", "ELEVENLABS_API_KEY")):
+        if var in have: continue
+        for e in es:
+            if name in e.get("domain", "").lower():
+                v = (e.get("data") or {}).get("api_key")
+                if v:
+                    open(k, "a").write("%s=%s\n" % (var, v)); have += var; print("Reused the %s key from Home Assistant." % name); break
+    break
+PY
 have() { grep -q "^$1=" $K; }
 if ! have OPENAI_API_KEY; then
   echo; echo "Conversation needs your OpenAI key (the one the home assistant already uses). Paste it, then Enter (it will not show). Press Enter alone to skip for now."
