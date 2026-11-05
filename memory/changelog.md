@@ -4,6 +4,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 ## 2026-11-05 (daily check, 06:20 Central)
 - Read repo memory and inbox. No Jarvis voice notes to file (0 note files). Pi snapshot (pi-status.md, 06:00 sync, 20 min old): all services active, no failed units, 40.6C, disk 9%, no throttling; containers up (Pi-hole up 10 h, Home Assistant up 4 h). Jarvis last 24 h: 71 turns, 0 errors, first words avg 1.6 s (slowest 4.2 s), 9 hang-ups by you, 2 by quiet timeout; 0 voices enrolled. Kalshi data fresh to 04:19 (practice only, live OFF); digest shows most strategies positive over 24 h but the 05:07 report shows a bad last 4 rounds for the top ones. Queue 018: Starship page on :8095 is up and serves 200. Nothing in todo.md dated today or tomorrow. Wrote memory/brief.md and updated projects.md. Status: memory only, nothing run on the Pi.
 
+## 2026-11-05 (12:50)
+- Full Kalshi review (queues 019-022 read from the Pi), recorded in kalshi-ai.md. Found and fixed a bug: saved default unproven_cap 50 in collector.py was overriding the 25 cap (v8.3). Fixed maker_study.py (it read the wrong price field and used 0 rounds; now 69 rounds). Looked up Kalshi's auto sell / take profit. Status: pushed, Pi pulls and restarts the agent itself.
+
 ## 2026-11-05 (04:35)
 - Added to todo.md: Pi home pages cluttered; Starship page not loading.
 
