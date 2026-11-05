@@ -10,7 +10,7 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | One site (Hub + Jarvis front door merged) | built, waiting on Pi | Overview tab in Hub (queue 016), /home redirects after pi_update | todo.md |
 | Starship control room page | in progress | Pi check 05:01 says :8095 is served and returns 200 with the latest index.html; if it still fails on Kylar's phone, suspect the device/Tailscale (server only listens on the Tailscale address). Cleanup of cluttered Hub tabs still to do. Rooms: captain, log, safe, monitors, filing, trash now real (needs Pi pull to confirm). Next: agent rows, meetings, gauges are still sample | pi-home-assistant.md |
 | Kalshi practice agent | in progress | Data sync now automatic (tasks/kalshi_data_sync.sh); find any proven edge; mission starts AFTER Jarvis is complete (roadmap.md) | kalshi-ai.md |
-| Amazon KDP | in progress | Record what is being published and results | amazon-kdp.md |
+| Amazon KDP | in progress | 8 notebook files built (look approved 2026-11-05); verify cover size with KDP calculator, write listings, Kylar uploads | amazon-kdp.md |
 | Freeze-drying business | idea | Pick containers, label template | projects/freeze-drying.md |
 | 3D printing | idea | Fill in details | projects/3d-printing.md |
 | Truck / vehicle projects | in progress | Pick first job per vehicle: Expedition sensors + radio, F-250 SIM + dyno tune | truck-project.md |
