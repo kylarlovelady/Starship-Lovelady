@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (03:40)
+- truck-project.md: confirmed F-250 is a 6.7 Power Stroke and the white 2003 F-150 is a 5.4.
+
 ## 2026-11-05 (03:30)
 - Filled memory/truck-project.md from Kylar's message: the 2020 F-250, Sheree's 2022 Expedition and the 2003 F-150, with open jobs. Flagged two things to confirm (F-250 engine, F-150 engine).
 

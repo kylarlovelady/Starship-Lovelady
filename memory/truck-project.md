@@ -2,7 +2,7 @@
 Told by Kylar 2026-11-05 03:23. Add to this file whenever a part is bought, a job is done or a problem shows up; finished items go under Done with the date (never deleted). Costs and part numbers: add as we learn them.
 
 ## Vehicle 1: Kylar's 2020 Ford F-250 (black, bought last year, about 100k miles)
-Engine: presumably the 6.7L Power Stroke diesel (Titan turbo, FASS, delete). Kylar to confirm.
+Engine: 6.7L Power Stroke diesel (confirmed by Kylar 2026-11-05).
 ### What is on it now
 - Inside: aftermarket Android-style screen, Pedal Commander.
 - Outside: chicken lights, new headlights and tail lights, bed toolbox, brush guard, steel rear bumper, LOVELADY tailgate plaque.
@@ -22,8 +22,8 @@ Engine: presumably the 6.7L Power Stroke diesel (Titan turbo, FASS, delete). Kyl
 - OEM radio dead; suspect water from the cubby above the radio reached a module behind it. It has worked 3 times in a year, which points to moisture or a bad connection rather than a dead unit. Next: check for water, look for corrosion, check fuses, then the module.
 - Wanted: rear bumper guard for protection and a tougher look.
 
-## Vehicle 3: 2003 Ford F-150 crew cab Lariat
-- Kylar listed a 5.7. Ford did not make a 5.7 in the 2003 F-150 (usual choices: 4.6 or 5.4 V8). Kylar to check the engine label or VIN and tell us what it has.
+## Vehicle 3: 2003 Ford F-150 crew cab Lariat (white)
+- Engine: 5.4L V8 (confirmed by Kylar 2026-11-05; the earlier "5.7" was a mix-up).
 - Idea: performance parts and general repairs, maybe a drag truck. Not decided. First step: pick the goal (daily, drag, or both), then check the condition.
 
 ## Done
