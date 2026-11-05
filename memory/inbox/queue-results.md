@@ -257,3 +257,74 @@ settings_api.py:157:    name = str((await request.json()).get("name", ""))
 preview_api.py:74:    b = await request.json()
 (exit 0)
 ```
+
+## 2026-11-05 02:19:01 tasks/queue/006-homescreen-source.sh
+```
+== index.html lines 1-40 (cut 330)
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Hub</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#05080f;--cyan:#38e8ff;--dim:#6b7f94;--red:#ff4d5e;--blue:#4d8dff;--green:#3dffa0}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(ellipse at 50% 20%,#0d1a2b 0%,var(--bg) 70%);color:#e8f4ff;
+ font-family:"Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex;
+ flex-direction:column;align-items:center;justify-content:center}
+#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
+ text-shadow:0 0 30px rgba(56,232,255,.35)}
+#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
+#wx{display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
+#temp{font-size:7vw;font-weight:200;color:#e8f4ff}
+#cond{font-size:3vw;color:#e8f4ff}
+#panel{position:fixed;left:5vw;right:5vw;bottom:4vh;padding:2.5vh 3vw;border-radius:22px;
+ background:rgba(10,20,34,.88);border:1px solid rgba(56,232,255,.4);
+ box-shadow:0 0 40px rgba(56,232,255,.2);backdrop-filter:blur(12px);
+ transform:translateY(130%);opacity:0;transition:transform .45s ease,opacity .45s ease}
+#panel.show{transform:none;opacity:1}
+#status{display:flex;align-items:center;gap:1.2vw;font-size:2vw;letter-spacing:.2em;
+ text-transform:uppercase;color:var(--dim);margin-bottom:1.5vh}
+#dot{width:1.6vw;height:1.6vw;border-radius:50%;background:var(--red);animation:pulse 1.2s infinite}
+#panel.thinking #dot{background:var(--blue)}
+#panel.speaking #dot{background:var(--green)}
+@keyframes pulse{50%{opacity:.35;transform:scale(.8)}}
+.lbl{font-size:1.7vw;color:var(--dim);text-transform:uppercase;letter-spacing:.15em}
+#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bottom:1.5vh}
+#ai{font-size:3vw;line-height:1.3;min-height:4vw}
+#pic{display:none;max-height:28vh;max-width:100%;border-radius:12px;margin-top:1.5vh;object-fit:contain}
+</style></head><body>
+<div id="clock">--:--</div><div id="date"></div>
+<div id="wx"><span id="temp"></span><span id="cond"></span><span id="extra"></span></div>
+<div id="panel"><div id="status"><div id="dot"></div><span id="stext">Listening</span></div>
+<div class="lbl">You</div><div id="you"></div><div class="lbl">Alexa</div><div id="ai"></div><img id="pic" alt=""></div>
+<script>
+const $=id=>document.getElementById(id);
+function tick(){const d=new Date();
+ $('clock').textContent=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+ $('date').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});}
+== theme.html
+<!--theme--><script>
+(function(){var v=-1,rl=null,q=null;
+try{q=new URLSearchParams(location.search).get('pv');}catch(e){}
+function g(i){return document.getElementById(i);}
+function rgba(h,a){var n=parseInt(h.slice(1),16);return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+function col(i,c){var e=g(i);if(e)e.style.color=c||'';}
+function apply(s){var b=document.body.style;
+b.fontFamily=s.font?'"'+s.font+'",system-ui,sans-serif':'';
+col('clock',s.clock_color);if(g('clock'))g('clock').style.textShadow=s.clock_color?'0 0 30px '+rgba(s.clock_color,.35):'';
+col('date',s.date_color);col('wx',s.weather_color);
+b.color=s.text_color||'';col('temp',s.text_color);col('cond',s.text_color);
+if(s.bg_mode==='image'&&s.bg_image){var d=s.dim;b.background='linear-gradient(rgba(0,0,0,'+d+'),rgba(0,0,0,'+d+')),url("/bg/'+s.bg_image+'") center/cover no-repeat';}
+else if(s.bg_mode==='color'){b.background=s.bg_color;}
+else{b.background='';}}
+if(q){var st=document.createElement('style');st.textContent='#mutebtn{display:none!important}';document.head.appendChild(st);try{apply(JSON.parse(q));}catch(e){}return;}
+function poll(){fetch('/api/settings').then(function(r){return r.json();}).then(function(s){
+if(rl===null){rl=s.reload||0;}else if((s.reload||0)!==rl){location.reload();return;}
+if(s.version!==v){v=s.version;apply(s);}}).catch(function(){});}
+poll();setInterval(poll,3000);})();
+</script><!--/theme-->
+== how theme.html is used
+== settings.json (colors/fonts/sizes only)
+{'font': 'Great Vibes', 'clock_color': '#000000', 'date_color': '#000000', 'weather_color': '#000000', 'text_color': '#000000', 'bg_mode': 'image', 'bg_color': '#05080f', 'bg_image': 'bg-1793825570392.jpg'}
+all keys: ['bg_color', 'bg_image', 'bg_mode', 'clock_color', 'date_color', 'dim', 'font', 'layout', 'reload', 'text_color', 'version', 'weather_color']
+(exit 0)
+```
