@@ -2,6 +2,9 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- HOME JARVIS (Kylar 2026-11-05 15:00, urgent): at home he is very slow or does not reply at all; Kylar wants the home mic audio and what the mic heard WITH TIME STAMPS so Claude can find why replies take so long, why he sometimes does not hear him, and why there is no back-and-forth. Claude is checking HA's pipeline timeline (queue 031/032); then set up recording of home utterances (Wyoming satellite debug recording or HA assist_pipeline debug_recording_dir; needs one sudo or HA config edit) and a replay report like /report for the phone. Also stop the satellite from being restarted repeatedly (14:58 and 15:01).
+- HOME SCREEN reply pop-up: Kylar does not want the custom font (settings.json font is Great Vibes) applied to the pop window that shows Jarvis replies; fix in ~/hub-dashboard/theme.html / index.html (reply and 'you' text should use the normal font).
+- STARSHIP SHOULD DO THIS (Kylar 2026-11-05): the Captain and crew should do the project work and discussions, not Claude by hand. Build the real Captain: see architecture.md "Captain runtime".
 - Kalshi stake ladder: measure win rate per confidence bucket on unseen rounds, then raise stakes only where it is proven (kalshi-ai.md, Kylar's idea 2026-11-05).
 - Pi home pages are sloppy and cluttered, and the Starship page is not loading (reported by Kylar 2026-11-05 04:26). Claude to: find why Starship fails (likely my crew.json/overview changes or the :8095 server), clean up and simplify the Hub tabs and Overview, then confirm by screenshot. Check first thing.
 - Jarvis replaces Alexa: alarms, timers, thermostat, Spotify, any question. Order: fix hear/hang-up/talk-over/false wake first, then reminders and timers, thermostat, Spotify (pi-home-assistant.md).

@@ -4,6 +4,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 ## 2026-11-05 (daily check, 06:20 Central)
 - Read repo memory and inbox. No Jarvis voice notes to file (0 note files). Pi snapshot (pi-status.md, 06:00 sync, 20 min old): all services active, no failed units, 40.6C, disk 9%, no throttling; containers up (Pi-hole up 10 h, Home Assistant up 4 h). Jarvis last 24 h: 71 turns, 0 errors, first words avg 1.6 s (slowest 4.2 s), 9 hang-ups by you, 2 by quiet timeout; 0 voices enrolled. Kalshi data fresh to 04:19 (practice only, live OFF); digest shows most strategies positive over 24 h but the 05:07 report shows a bad last 4 rounds for the top ones. Queue 018: Starship page on :8095 is up and serves 200. Nothing in todo.md dated today or tomorrow. Wrote memory/brief.md and updated projects.md. Status: memory only, nothing run on the Pi.
 
+## 2026-11-05 (15:15)
+- Home Jarvis urgent: queued diagnostics 029-032; added HOME JARVIS, pop-up font and Captain runtime items to todo.md/architecture.md. Found so far: HA hears Kylar (transcripts like 'What do you know about Shari?') but the Jarvis agent returns nothing: 'Chat Log opened but no assistant message was added', and phone-voice logs BrokenPipe from HA at 15:00:53; satellite restarted 14:58 and 15:01. Home font: settings.json font is Great Vibes. Sheree pronunciation added.
+
 ## 2026-11-05 (14:55)
 - KDP: Kylar chose 4 colour schemes per job title (A navy/gold, B forest/gold, C burgundy/cream, E espresso/tan). Tonight: Process Operator A and Lab Operator A. Flagged the duplicate-content risk for same-interior books.
 
