@@ -1,24 +1,4 @@
- 971 Nov  5 01:47 exit_rules.json
--rw-r--r-- 1 kylarlovelady kylarlovelady   327922 Nov  5 01:45 run_log.jsonl
--rw-r--r-- 1 kylarlovelady kylarlovelady   370092 Nov  5 01:45 sim_windows.jsonl
--rw-r--r-- 1 kylarlovelady kylarlovelady     2451 Nov  5 01:45 learn_report.json
-== crew-web market file
--rw-r--r-- 1 kylarlovelady kylarlovelady 191585 Nov  5 01:54 /home/kylarlovelady/crew-web/
-== run.json keys
-{'active': True, 'id': 1793858830, 'strategy': '...', 'start': 1000.0}
-== pihole
-Core version is v6.5 (Latest: N/A)
-Web version is v6.6.1 (Latest: N/A)
-FTL version is v6.8 (Latest: N/A)
-== ha logs (jarvis_hub)
-[33m2026-11-05 01:47:07.056 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems
-[33m2026-11-05 01:50:46.731 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration jarvis_hub which has not been tested by Home Assistant. This component might cause stability pr
-[33m2026-11-05 01:50:46.733 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration openai_whisper_cloud which has not been tested by Home Assistant. This component might cause st
-[33m2026-11-05 01:50:46.734 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems
-== jarvis conversations today
-Traceback (most recent call last):
-  File "<string>", line 4, in <module>
-    for l in open(os.path.expanduser('~/voice-data/trace.jsonl')):
+nl')):
              ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FileNotFoundError: [Errno 2] No such file or directory: '/home/kylarlovelady/voice-data/trace.jsonl'
 (exit 0)
@@ -447,5 +427,30 @@ BEST 3 ROUNDS:
 {"t": 1793682188, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030015-15", "action": "buy", "side": "DOWN"}
 {"t": 1793683870, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "buy", "side": "DOWN"}
 {"t": 1793683924, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "sell", "side": "DOWN"}
+(exit 0)
+```
+
+## 2026-11-05 02:34:01 tasks/queue/011-signals-and-stakes.sh
+```
+signals (n, right%, 95% range, verdict, weight):
+  momentum       n=193  right= 57.0%  range 46.9-65.6  no clear edge      x1.16
+  levels         n=159  right= 52.2%  range 42.4-63.0  no clear edge      x1.07
+  trend_1h       n=108  right= 51.9%  range 40.3-62.0  no clear edge      x1.03
+  funding        n=238  right= 51.3%  range 42.7-59.9  no clear edge      x1.03
+  fng            n=215  right= 51.2%  range 41.7-60.5  no clear edge      x1.03
+  trend_h        n=196  right= 51.0%  range 40.9-59.0  no clear edge      x1.00
+  book           n=161  right= 50.3%  range 39.7-60.6  no clear edge      x1.00
+  bigtrades      n=156  right= 48.1%  range 41.3-61.1  no clear edge      x1.03
+  trend_w        n=189  right= 48.1%  range 38.5-57.2  no clear edge      x0.94
+  news           n=202  right= 48.0%  range 38.0-56.7  no clear edge      x0.93
+  trend_4h       n=98   right= 48.0%  range 35.1-58.0  no clear edge      x0.92
+  trend_7d       n=94   right= 47.9%  range 36.3-59.0  no clear edge      x0.94
+  trend_24h      n=110  right= 47.3%  range 37.0-58.2  no clear edge      x0.94
+  whales         n=94   right= 41.5%  range 27.8-54.4  no clear edge      x0.80
+other keys: ['time', 'scored', 'adopted', 'notes', 'weights']
+
+'run' stakes by round, last 14 h (from sim_windows / trades):
+no buy rows found with a cost field; first row keys:
+['t', 'pnl', 'outcome', 'bal', 'src', 'hold', 'trades', 'moves', 'first', 'end', 'mix', 'sigs', 'p_open', 'staked', 'ticker', 'why', 'run', 'strat', 'hour']
 (exit 0)
 ```
