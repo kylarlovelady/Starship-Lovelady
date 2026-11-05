@@ -1,11 +1,4 @@
-, "20-35": {"n": 625, "rounds": 188, "win": 0.269, "avg": -0.0179}, "35-50": {"n": 747, "rounds": 171, "win": 0.431, "avg": -0.0109}, "50-60": {"n": 538, "rounds": 154, "win": 0.53, "avg": -0.0294}, "60-70": {"n": 469, "rounds": 170, "win": 0.635, "avg": -0.0254}, "70-80": {"n": 395, "rounds": 169, "win": 0.742, "avg": -0.0153}, "80-90": {"n": 353, "rounds": 158, "win": 0.822, "avg": -0.0292}, "90-100": {"n": 465, "rounds": 138, "win": 0.946, "avg": -0.0039}}, "hours": {"0": {"n": 106, "rounds": 12, "avg": 0.0233}, "1": {"n": 105, "rounds": 11, "avg": -0.1425}, "2": {"n": 70, "rounds": 8, "avg": 0.0457}, "3": {"n": 87, "rounds": 8, "avg": -0.0401}, "4": {"n": 119, "rounds": 8, "avg": -0.0665}, "5": {"n": 113, "rounds": 8, "avg": -0.0513}, "6": {"n": 94, "rounds": 8, "avg": -0.0212}, "7": {"n": 94, "rounds": 8, "avg": 0.0209}, "8": {"n": 87, "rounds": 7, "avg": -0.0399}, "9": {"n": 111, "rounds": 8, "avg": -0.0462}, "10": {"n": 95, "rounds": 8, "avg": 0.0081}, "11": {"n": 116, "rounds": 8, "avg": -0.0162}, "12": {"n": 67, "rounds": 7, "avg": 0.0019}, "13": {"n": 88, "rounds": 8, "avg": -0.0311}, "14": {"n": 77, "rounds": 8, "avg": 0.0149}, "15": {"n": 90, "rounds": 8, "av
-== patterns.json
-{"updated": 1793867373, "rounds": 196, "bad": [], "good": [], "note": null, "baseline": {"train": -0.0491, "test": -0.0439}}
-== config (keys with plain values only)
-{'threshold': 12.0, 'min_bet': 5.0, 'cap': 0, 'edge_min': 0.03, 'max_trades': 6.0, 'slice': 0.1, 'min_price': 0.08, 'max_price': 0.92, 'aggression': 50.0, 'floor': 0, 'entry_max': 0.8, 'entry_min': 0.15}
-== real (live) order slippage notes, last 8
-{"t": 1793679463, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV022330-30", "action": "buy", "side": "UP"}
-{"t": 1793681642, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "DOWN"}
+", "action": "buy", "side": "DOWN"}
 {"t": 1793681702, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "sell", "side": "DOWN"}
 {"t": 1793681918, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "UP"}
 {"t": 1793681966, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "UP"}
@@ -535,5 +528,58 @@ autolog 12:54 v_hold - No strategy has a proven positive record over 80+ rounds 
 12:30 staked 49.83 pnl -14.72
 12:45 staked 24.91 pnl -24.91
 13:00 staked 0.0 pnl 0.0
+(exit 0)
+```
+
+## 2026-11-05 13:52:01 tasks/queue/024-kdp-look.sh
+```
+== top
+total 120
+drwxrwxr-x  8 kylarlovelady kylarlovelady  4096 Oct 26 00:54 .
+drwx------ 36 kylarlovelady kylarlovelady  4096 Nov  5 04:28 ..
+-rw-r--r--  1 kylarlovelady kylarlovelady 25292 Oct 26 00:54 app.py
+drwxrwxr-x  2 kylarlovelady kylarlovelady  4096 Oct 26 00:08 backup-1026-0008
+drwxrwxr-x  2 kylarlovelady kylarlovelady  4096 Oct 26 00:54 backup-v2-1026-0054
+drwxrwxr-x  3 kylarlovelady kylarlovelady  4096 Oct 26 00:12 books
+drwxrwxr-x  4 kylarlovelady kylarlovelady  4096 Oct 25 23:46 books-old-1026-0008
+-rw-r--r--  1 kylarlovelady kylarlovelady 33061 Oct 26 00:54 engine.py
+-rw-r--r--  1 kylarlovelady kylarlovelady 15534 Oct 26 00:54 index.html
+-rw-------  1 kylarlovelady kylarlovelady     5 Oct 25 23:44 pin.txt
+drwxr-xr-x  2 kylarlovelady kylarlovelady  4096 Oct 26 00:54 __pycache__
+-rw-------  1 kylarlovelady kylarlovelady   182 Oct 26 00:18 settings.json
+drwxrwxr-x  5 kylarlovelady kylarlovelady  4096 Oct 25 23:44 .venv
+== tree (depth 3, no venv)
+.
+./books
+./books/new-book-e841
+./books/new-book-e841/history
+./books/new-book-e841/out
+./books/new-book-e841/book.json
+./books/new-book-e841/img
+./pin.txt
+./books-old-1026-0008
+./books-old-1026-0008/process-operator-5079
+./books-old-1026-0008/process-operator-5079/out
+./books-old-1026-0008/process-operator-5079/book.json
+./books-old-1026-0008/new-journal-fcd0
+./books-old-1026-0008/new-journal-fcd0/out
+./books-old-1026-0008/new-journal-fcd0/book.json
+./app.py
+./engine.py
+./__pycache__
+./backup-v2-1026-0054
+./backup-v2-1026-0054/app.py
+./backup-v2-1026-0054/engine.py
+./backup-v2-1026-0054/index.html
+./settings.json
+./backup-1026-0008
+./backup-1026-0008/app.py
+./backup-1026-0008/engine.py
+./backup-1026-0008/index.html
+./index.html
+== sizes
+27M	.
+== README / notes
+== app routes
 (exit 0)
 ```
