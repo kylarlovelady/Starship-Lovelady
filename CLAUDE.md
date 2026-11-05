@@ -19,3 +19,6 @@ Tell Kylar the exact lines to add, and where, or attach the repo (add_repo kylar
 
 ## Pi facts
 Pi 5 "LoveladyMainAiHub", user kylarlovelady, repo clone ~/starship (cron pulls every ~3 min), Tailscale name loveladymainaihub.taild703ca.ts.net. Jarvis phone server: voice/ (service phone-voice, port 8099). Markets agent: markets/ (service market-agent, live mode OFF). The sandbox cannot reach the Pi; Kylar runs commands and pastes results, or reads `memory/inbox/pi-status.md`.
+
+## How Kylar likes to work (2026-11-05)
+When a Pi job will take a while, give Kylar the exact command to paste in the terminal as well as queueing it; he often finishes faster and sees what is happening. Say what you are doing in a short line every few minutes so he never thinks you are frozen. Paste-back results can go straight in the chat.
