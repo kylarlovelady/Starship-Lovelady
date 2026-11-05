@@ -19,6 +19,7 @@ input[type=range]{width:100%}table{width:100%;border-collapse:collapse;font-size
 <h1>Phone Voice</h1><div class="mut small">Listens for its name through this phone. Answers only here: nothing plays on the home speakers or shows on the Pi.</div>
 <div class="card"><div id="st">Not listening</div><div id="sub" class="mut small">Tap Start, then leave this page open with the screen on (plug in the phone).</div><div id="meter"><i></i></div>
 <div style="margin-top:12px"><button class="go" id="start">Start listening</button></div>
+<div style="margin-top:10px"><button id="stop" style="width:100%;min-height:64px;font-size:20px;font-weight:800;background:#7a1c24;border-color:#e5484d">STOP TALKING</button></div>
 <div class="row" style="margin-top:10px"><button id="pause">Pause</button><button id="missed">I said it, it missed</button><button id="end">End chat</button></div>
 <div class="small mut" id="hint" style="margin-top:8px"></div></div>
 <div id="reply" class="card" style="display:none"><h2>Last conversation</h2><div id="said" class="small mut"></div><div id="ans"></div></div>
@@ -30,6 +31,7 @@ input[type=range]{width:100%}table{width:100%;border-collapse:collapse;font-size
 <div class="small mut" style="margin-top:6px">Private mode keeps no audio clips. Clips are short (6 s) and only saved around wake-word candidates; coworkers may be in them, so mark and clear them when needed.</div></div>
 <div class="card"><h2>What it heard (newest first)</h2><div id="evs" class="small mut">Nothing yet.</div></div>
 <audio id="player" playsinline></audio>
+<div class="small mut" style="text-align:center;margin-top:10px"><a href="/lab" style="color:#7aa7ff">Open Jarvis Lab (tuning and transcripts)</a></div>
 <script>
 var $=function(i){return document.getElementById(i)},esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 var SID=(function(){try{var s=localStorage.getItem('pvsid');if(!s){s='ph'+Math.random().toString(36).slice(2,8);localStorage.setItem('pvsid',s)}return s}catch(e){return 'ph'+Math.random().toString(36).slice(2,8)}})();
@@ -98,4 +100,5 @@ $('th').onchange=function(){api('/settings',{threshold:Number(this.value)}).then
 $('apply').onclick=function(){if(S&&S.tuning.recommended!=null)api('/settings',{threshold:S.tuning.recommended}).then(refresh)};
 $('priv').onclick=function(){api('/settings',{private:!(S&&S.settings.private)}).then(refresh)};
 refresh();setInterval(refresh,15000);
+$('stop').onclick=function(){try{player.onended=null;player.pause();player.removeAttribute('src');player.load()}catch(e){}api('/end');status('Stopped','Say its name when you want him again.')};
 </script></body></html>

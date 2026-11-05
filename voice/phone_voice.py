@@ -39,7 +39,7 @@ def jl_read(name):
 
 
 # ------------------------------------------------------------------ settings
-DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0}
+DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5"}
 def load_settings():
     s = dict(DEFAULTS)
     try: s.update(json.load(open(os.path.join(DATA, "settings.json"))))
@@ -111,11 +111,38 @@ def rms(x):
 
 
 # ------------------------------------------------------------------ OpenAI / ElevenLabs (urllib only)
+TL = threading.local()
+def timed(name):
+    def deco(fn):
+        def w(*a, **k):
+            t0 = time.time()
+            try: return fn(*a, **k)
+            finally:
+                if not hasattr(TL, "t"): TL.t = {}
+                TL.t[name] = round(time.time() - t0, 2)
+        return w
+    return deco
+def times_reset(): TL.t = {}
+def times_get(): return dict(getattr(TL, "t", {}))
+
+
+def load_pron():
+    p = {"Kylar": "Kyler"}
+    try: p.update(json.load(open(os.path.join(DATA, "pronunciations.json"))))
+    except Exception: pass
+    return p
+def apply_pron(text):
+    for k, v in load_pron().items():
+        if k: text = re.sub(r"\b%s\b" % re.escape(k), v, text, flags=re.I)
+    return text
+
+
 def _post(url, headers, body, timeout=60):
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     return urllib.request.urlopen(req, timeout=timeout).read()
 
 
+@timed("stt")
 def stt(pcm):
     if MOCK: return os.environ.get("VOICE_MOCK_TEXT", "what time is it")
     key = load_keys().get("OPENAI_API_KEY")
@@ -140,6 +167,7 @@ def sniff_audio(b):
     return "m4a", "audio/mp4"
 
 
+@timed("stt")
 def stt_file(data):
     if MOCK: return os.environ.get("VOICE_MOCK_TEXT", "what time is it")
     key = load_keys().get("OPENAI_API_KEY")
@@ -196,7 +224,7 @@ def _read(path, limit):
 def prompt_text():
     base = _read(os.path.join(DATA, "prompt.txt"), 4000) or (
         "You are Jarvis, the Lovelady family's home assistant, talking to the owner (Kylar) through his phone and earbuds, often while driving. Be blunt and honest, say when you do not know, "
-        "keep answers short enough to listen to, and ask a short question back only when you really need the answer.")
+        "keep answers short enough to listen to (one to three sentences unless he asks for more), and ask a short question back only when you really need the answer.")
     extra = ""
     repo = os.path.expanduser("~/starship/memory")
     mem = ""
@@ -219,22 +247,24 @@ def prompt_text():
     return base + extra
 
 
+@timed("llm")
 def chat(history):
     if MOCK: return "It is a mock reply. Anything else?"
     key = load_keys().get("OPENAI_API_KEY")
-    body = json.dumps({"model": "gpt-4o-mini", "messages": [{"role": "system", "content": prompt_text()}] + history[-12:], "max_tokens": 300}).encode()
+    body = json.dumps({"model": "gpt-4o-mini", "messages": [{"role": "system", "content": prompt_text()}] + history[-12:], "max_tokens": int(SET.get("max_tokens", 150))}).encode()
     r = _post("https://api.openai.com/v1/chat/completions", {"Authorization": "Bearer " + key, "Content-Type": "application/json"}, body)
     return json.loads(r)["choices"][0]["message"]["content"].strip()
 
 
+@timed("tts")
 def tts(text, path):
     if MOCK:
         pcm = (np.sin(2 * np.pi * 440 * np.arange(SR // 4) / SR) * 3000).astype("<i2")
         open(path, "wb").write(wav_bytes(pcm)); return "audio/wav"
     k = load_keys(); key = k.get("ELEVENLABS_API_KEY"); vid = k.get("ELEVENLABS_VOICE_ID")
     if not key or not vid: raise RuntimeError("no ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID in %s/keys.env" % DATA)
-    body = json.dumps({"text": text, "model_id": "eleven_turbo_v2_5"}).encode()
-    audio = _post("https://api.elevenlabs.io/v1/text-to-speech/%s?output_format=mp3_44100_64" % vid, {"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"}, body)
+    body = json.dumps({"text": apply_pron(text), "model_id": SET.get("tts_model", "eleven_flash_v2_5"), "voice_settings": {"speed": max(0.7, min(1.2, float(SET.get("speech_speed", 1.0))))}}).encode()
+    audio = _post("https://api.elevenlabs.io/v1/text-to-speech/%s?output_format=mp3_44100_64&optimize_streaming_latency=3" % vid, {"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"}, body)
     open(path, "wb").write(audio); return "audio/mpeg"
 
 
@@ -355,7 +385,7 @@ class Session:
         threading.Thread(target=self._think, args=(pcm,), daemon=True).start()
 
     def _think(self, pcm):
-        out = []
+        out = []; times_reset()
         try:
             who, conf = speaker_check(pcm)
             text = stt(pcm)
@@ -370,7 +400,7 @@ class Session:
                 reply = chat(self.hist); self.hist.append({"role": "assistant", "content": reply})
                 rid = uuid.uuid4().hex[:10]; ext = "mp3"
                 mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
-                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "secs": round(now() - t0, 1)})
+                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "secs": round(now() - t0, 1), "times": times_get()})
                 self.follow_for = float(SET["follow_question"] if reply.rstrip().endswith("?") else SET["follow_quiet"])
                 with LOCK:
                     out.append({"type": "say", "text": text}); out.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": reply})
@@ -496,7 +526,7 @@ def ask_text(text, want_audio=True, host=None):
             out["audio_url"] = "https://%s/reply/%s.bin" % (host, rid) if host else "/reply/%s.bin" % rid
         except Exception as e:
             print("siri tts error:", repr(e), flush=True); out["audio_error"] = str(e)[:120]
-    jl_append("conversations.jsonl", {"t": now(), "sid": "siri", "who": "owner", "heard": text, "reply": reply, "secs": round(now() - t0, 1)})
+    jl_append("conversations.jsonl", {"t": now(), "sid": "siri", "who": "owner", "heard": text, "reply": reply, "secs": round(now() - t0, 1), "times": times_get()})
     return out
 
 
@@ -523,6 +553,12 @@ class H(http.server.BaseHTTPRequestHandler):
             import urllib.parse
             try: return self._send(200, ask_text(urllib.parse.unquote_plus(q.get("text", "")), q.get("audio", "1") != "0", self.headers.get("Host")))
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
+        if p == "/lab": return self._send(200, open(os.path.join(HERE, "lab.html"), "rb").read(), "text/html; charset=utf-8")
+        if p == "/conv":
+            rows = jl_read("conversations.jsonl")[-60:]; fb = {}
+            for f in jl_read("feedback.jsonl"): fb.setdefault(round(f.get("t", 0), 1), []).append(f.get("tag"))
+            for r in rows: r["tags"] = fb.get(round(r.get("t", 0), 1), [])
+            return self._send(200, {"rows": rows[::-1], "settings": {k: SET.get(k) for k in ("speech_speed", "max_tokens", "tts_model", "follow_quiet", "follow_question")}, "pron": load_pron()})
         if p == "/state": return self._send(200, state_json(q.get("sid")))
         m = re.match(r"^/clip/([0-9a-f]+)\.wav$", p)
         if m:
@@ -550,7 +586,7 @@ class H(http.server.BaseHTTPRequestHandler):
                 lvl = rms(pcm)
             return self._send(200, {"acts": acts + pend, "state": s.state, "level": round(lvl), "paused": SET["paused"]})
         if p == "/ask":
-            n = int(self.headers.get("Content-Length") or 0); raw = self.rfile.read(n); ct = self.headers.get("Content-Type", "")
+            n = int(self.headers.get("Content-Length") or 0); raw = self.rfile.read(n); ct = self.headers.get("Content-Type", ""); times_reset()
             try:
                 if "json" in ct.lower() or raw[:1] == b"{":
                     try: b = json.loads(raw or b"{}")
@@ -569,6 +605,14 @@ class H(http.server.BaseHTTPRequestHandler):
                 return self._send(200, data, "audio/wav" if data[:4] == b"RIFF" else "audio/mpeg")
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
         b = self._json()
+        if p == "/feedback":
+            with LOCK: jl_append("feedback.jsonl", {"t": b.get("t"), "tag": str(b.get("tag", ""))[:40], "at": now()})
+            return self._send(200, {"ok": True})
+        if p == "/pron":
+            cur = {}
+            for k, v in (b.get("map") or {}).items():
+                if str(k).strip(): cur[str(k).strip()[:40]] = str(v).strip()[:60]
+            json.dump(cur, open(os.path.join(DATA, "pronunciations.json"), "w")); return self._send(200, {"ok": True, "pron": load_pron()})
         if p == "/label":
             if b.get("label") in ("good", "false", "unsure", None):
                 with LOCK: jl_append("labels.jsonl", {"id": b.get("id"), "label": b.get("label"), "t": now()})
@@ -579,7 +623,7 @@ class H(http.server.BaseHTTPRequestHandler):
             session(q.get("sid", "x")).played(); return self._send(200, {"ok": True})
         if p == "/settings":
             with LOCK:
-                for k in ("threshold", "paused", "private", "follow_quiet", "follow_question"):
+                for k in ("threshold", "paused", "private", "follow_quiet", "follow_question", "speech_speed", "max_tokens", "tts_model"):
                     if k in b:
                         SET[k] = type(DEFAULTS[k])(b[k]) if not isinstance(DEFAULTS[k], bool) else bool(b[k])
                 SET["threshold"] = min(0.99, max(0.1, float(SET["threshold"]))); save_settings()
