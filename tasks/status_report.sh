@@ -61,6 +61,12 @@ J = {"turns24": turns, "hangups": hang, "errors": errs, "blips": blips, "first_a
 out["jarvis"] = J
 md += ["", "## Jarvis (phone voice), last 24 h", "- turns: %d; errors: %d; ignored blips: %d; last activity: %s" % (turns, errs, blips, hrs(lastact)), "- hang-ups: %s" % (", ".join("%s x%d" % kv for kv in hang.items()) or "none"),
        "- time to first words: %s" % ("avg %.1fs, slowest %.1fs over %d answers" % (J["first_avg"], J["first_max"], len(first)) if first else "no answers logged yet")]
+# pi-hole
+try:
+    import sys; sys.path.insert(0, os.path.join(R, "voice")); import tools
+    ph = tools.pihole()
+except Exception: ph = "unknown"
+out["pihole"] = ph; md += ["", "## Pi-hole", "- " + ph]
 # memory notes
 nm = len(glob.glob(os.path.join(H, "voice-data", "memory", "*.md"))); md += ["", "## Notes", "- Jarvis note files: %d (synced to memory/inbox)" % nm]
 out["time"] = now

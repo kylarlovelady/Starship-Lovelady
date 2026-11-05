@@ -14,6 +14,8 @@ mkdir -p ~/market-data
 echo "=== $(date '+%F %T') Kalshi data sync ==="
 echo "-- old rounds and prices (30 days, up to 20 min)"; timeout 1500 python3 backfill.py 30 1200 2>&1 | tail -6
 echo "-- your real fills"; timeout 300 python3 my_trades.py 2>&1 | tail -4
+echo "-- daily digest for Claude and Jarvis (practice results only)"
+{ echo "# Kalshi practice agent digest (auto, daily, last 24 h; practice money only)"; echo; timeout 180 python3 review.py 24 2>&1 | grep -v -i -E "balance|key|token|secret" | head -70; } > ~/starship/memory/inbox/kalshi-digest.md
 python3 - <<'PY'
 import glob, gzip, json, os, time
 D = os.path.expanduser("~/market-data"); H = os.path.join(D, "history"); R = os.path.expanduser("~/starship/memory/inbox")

@@ -35,7 +35,7 @@ body.truck #reply{display:block!important}body.truck #ans{font-size:22px}
 <div class="small mut" style="margin-top:6px">Private mode keeps no audio clips. Clips are short (6 s) and only saved around wake-word candidates; coworkers may be in them, so mark and clear them when needed.</div></div>
 <div class="card"><h2>What it heard (newest first)</h2><div id="evs" class="small mut">Nothing yet.</div></div>
 <audio id="player" playsinline></audio>
-<div class="small mut" style="text-align:center;margin-top:10px"><a href="/lab" style="color:#7aa7ff">Open Jarvis Lab (tuning and transcripts)</a></div>
+<div class="small mut" style="text-align:center;margin-top:10px"><a href="/lab" style="color:#7aa7ff">Jarvis Lab (tuning and transcripts)</a> &middot; <a href="/home" style="color:#7aa7ff">Hub (everything)</a></div>
 <script>
 var $=function(i){return document.getElementById(i)},esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 var SID=(function(){try{var s=localStorage.getItem('pvsid');if(!s){s='ph'+Math.random().toString(36).slice(2,8);localStorage.setItem('pvsid',s)}return s}catch(e){return 'ph'+Math.random().toString(36).slice(2,8)}})();

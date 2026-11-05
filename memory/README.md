@@ -12,6 +12,8 @@ One topic per file. Read this index first, then only the files that matter for t
 | todo.md | things to do with dates; check things off by moving them to _archive.md |
 | truck-project.md | the truck and other vehicle projects: parts, steps, notes |
 | projects.md | THE TRACKER: every project, its status (idea / in progress / stalled / done), next step, last touched. Keep it current; finish what is started |
+| changelog.md | what Claude changed and when, with status (built / installed / confirmed). Add an entry every time something changes |
+| brief.md | the morning brief written by the daily Claude check (read it first thing) |
 | architecture.md | how the Pi, Jarvis, Home Assistant, Starship, Kalshi agent, Pi-hole and Claude connect, and the build order for making them work together |
 | roadmap.md | the Starship's missions in order, and what must be true before moving to the next one |
 | _archive.md | dropped items only (Kylar said drop it, or it was wrong). Nothing is permanently deleted |

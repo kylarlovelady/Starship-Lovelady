@@ -11,6 +11,7 @@ import urllib.parse, http.server, io, json, math, os, re, socketserver, struct, 
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import voiceid
+import tools
 
 DATA = os.environ.get("VOICE_DIR", os.path.join(os.path.expanduser("~"), "voice-data"))
 CLIPS = os.path.join(DATA, "clips")
@@ -251,6 +252,8 @@ def prompt_text():
             mine += "\n[%s]\n%s\n" % (f, _read(os.path.join(DATA, "memory", f), 2000))
     except OSError: pass
     if mine.strip(): extra += "\n\nThings Kylar told you to remember (newest last):" + mine[:6000]
+    live = getattr(TL, "extra", "")
+    if live: extra += "\n\nLive facts just looked up for this question (use them, say plainly if something looks wrong, and do not invent more):\n" + live
     who = getattr(TL, "who", None)
     if who and who != "owner": extra += "\n\nThe person talking right now is: %s%s. Greet them by name if it fits; only Kylar can change settings or notes." % (who, " (voice not recognized, a guest)" if who == "unknown" else "")
     return base + extra
@@ -499,6 +502,9 @@ class Session:
                     self.pending.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": reply}); self.pending.append({"type": "play_done"})
                     self.ew = "waiting_played"; self.set_state("speaking"); self.hold_until = now() + 600; self.follow_for = 20.0
                 jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "who": "unknown", "asked_who": True}); return
+            dr = direct_reply(text) if text and len(text) >= 3 else None
+            TL.extra = tools.context_for(text) if text and dr is None else ""
+            if TL.extra: trace(self.sid, "tools", used=TL.extra[:80].replace("\n", " "))
             if not text or len(text) < 2:
                 with LOCK:
                     if gen == self.gen:
@@ -506,8 +512,8 @@ class Session:
                         trace(self.sid, "nothing_heard", count=self.blanks)
                         if self.blanks >= 3: out.append({"type": "tone_end", "why": "nothing heard 3 times"}); self.hist = []; self.set_state("idle", "nothing heard 3 times"); self.blanks = 0
                         else: self.begin_follow([])                    # keep the conversation open and keep listening
-            elif memory_command_hit(text):
-                reply = memory_command(text); rid = uuid.uuid4().hex[:10]; mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
+            elif dr is not None:
+                reply = dr; rid = uuid.uuid4().hex[:10]; mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
                 trace(self.sid, "memory", text=text[:120], reply=reply)
                 with LOCK:
                     if gen == self.gen:
@@ -650,6 +656,15 @@ def memory_command(text):
     return ("Done. I moved %d note%s to the archive." % (moved, "" if moved == 1 else "s")) if moved else "I couldn't find a note matching that."
 
 
+def direct_reply(text):
+    """Commands he carries out himself instead of chatting: notes ('remember', 'mark done', 'forget') and home devices ('turn off the kitchen light')."""
+    r = memory_command(text)
+    if r is None:
+        try: r = tools.home_command(text)
+        except Exception: r = None
+    return r
+
+
 def memory_command_hit(text):
     return bool(re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:remember|make a note|take a note|note to self|save this|mark .+ (?:as )?(?:done|complete|completed|finished)\W*$|check off|cross off|forget|remove|delete|take off|i (?:finished|completed) |we (?:finished|completed) |(?:it'?s|that'?s) done)", text, re.I | re.S)) and len(text) > 6
 
@@ -659,7 +674,8 @@ def ask_text(text, want_audio=True, host=None):
     text = (text or "").strip()
     if len(text) < 2: return {"reply": "", "end": True, "followup": False}
     t0 = now()
-    reply = memory_command(text)
+    reply = direct_reply(text)
+    TL.extra = tools.context_for(text) if reply is None else ""
     if reply is not None:
         out = {"reply": reply, "end": False, "followup": False}
         if want_audio:
@@ -764,6 +780,17 @@ class H(http.server.BaseHTTPRequestHandler):
             import urllib.parse
             try: return self._send(200, ask_text(urllib.parse.unquote_plus(q.get("text", "")), q.get("audio", "1") != "0", self.headers.get("Host")))
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
+        if p == "/home": return self._send(200, open(os.path.join(HERE, "home.html"), "rb").read(), "text/html; charset=utf-8")
+        if p == "/api/hub":
+            def rj(n):
+                try: return json.load(open(os.path.expanduser("~/starship/" + n)))
+                except Exception: return {}
+            return self._send(200, {"extra": rj("hub-extra.json"), "alerts": rj("hub-alerts.json")})
+        if p == "/mem":
+            f = q.get("f", "projects.md")
+            if not re.match(r"^[A-Za-z0-9_./-]+\.md$", f) or ".." in f: return self._send(404, {"error": "no"})
+            try: return self._send(200, open(os.path.expanduser("~/starship/memory/" + f), "rb").read(), "text/plain; charset=utf-8")
+            except OSError: return self._send(200, "(not written yet)".encode(), "text/plain; charset=utf-8")
         if p == "/lab": return self._send(200, open(os.path.join(HERE, "lab.html"), "rb").read(), "text/html; charset=utf-8")
         if p == "/conv":
             rows = jl_read("conversations.jsonl")[-60:]; fb = {}

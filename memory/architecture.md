@@ -25,3 +25,6 @@ Memory: Claude <-> repo <-> Jarvis. Status: Pi scripts -> status.json / hub-extr
 
 ## Pi-hole (to-do project, see projects.md)
 Status: pilot not started (unconfirmed what is installed). Plan: confirm it answers; set it as DNS on the router or per-device (iPad first, then phones, then TVs); turn off Private Wi-Fi Address, Private Relay, VPN, Private DNS on devices; name the 11 unnamed devices; then feed its stats into the status bus (gap 4).
+
+## Build status (2026-11-05)
+Gaps 1 (Jarvis tools), 2 (alerts), 3 (front door /home), 4 (Pi-hole stats), 5 (task queue), 6 (daily Claude check, scheduled), 7 (Kalshi digest) are BUILT and tested here. They turn on when Kylar runs `bash ~/starship/tasks/pi_update.sh ha` on the Pi. Details and status per item: changelog.md.

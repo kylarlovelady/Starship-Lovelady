@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lovelady Hub</title>
+<style>:root{--bg:#0b1020;--card:#141c33;--ink:#e8edf8;--mut:#8fa0c4;--ok:#2fbf71;--warn:#ffd166;--bad:#ff5c5c;--line:#26324f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,sans-serif;padding:16px;max-width:760px;margin:auto}
+h1{font-size:22px;margin:4px 0 2px}h2{font-size:15px;margin:0 0 8px;color:var(--mut);font-weight:600;letter-spacing:.04em;text-transform:uppercase}.mut{color:var(--mut)}.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+a.tile{display:block;background:#1a2442;border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--ink);text-decoration:none;min-height:64px}a.tile b{display:block}a.tile span{font-size:13px;color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:5px 10px;border-radius:999px;border:1px solid var(--line);font-size:13px}.ok{border-color:var(--ok);color:var(--ok)}.warn{border-color:var(--warn);color:var(--warn)}.bad{border-color:var(--bad);color:var(--bad)}
+pre{white-space:pre-wrap;font:13px/1.45 ui-monospace,monospace;margin:0;max-height:340px;overflow:auto}button,select{background:#1a2442;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit}</style></head><body>
+<h1>Lovelady Hub</h1><div class="mut small">The front door. Mission: progress and maintain the Pi and the AI voice assistant, then help with the Kalshi AI and other business ideas.</div>
+<div class="card"><h2>Right now</h2><div class="chips" id="chips"><span class="chip">loading...</span></div><div class="small mut" id="alerts" style="margin-top:8px"></div></div>
+<div class="card"><h2>Open</h2><div class="grid" id="tiles"></div></div>
+<div class="card"><h2>Projects and notes</h2><div style="margin-bottom:8px"><select id="f"><option value="projects.md">Project tracker</option><option value="roadmap.md">Roadmap</option><option value="todo.md">To do</option><option value="changelog.md">What Claude did (changelog)</option><option value="architecture.md">How it all connects</option><option value="pi-home-assistant.md">Pi, Home Assistant, Jarvis</option><option value="kalshi-ai.md">Kalshi AI</option><option value="amazon-kdp.md">Amazon KDP</option><option value="business.md">Business</option><option value="family.md">Family</option><option value="truck-project.md">Truck project</option><option value="inbox/pi-status.md">Pi status (live snapshot)</option><option value="inbox/kalshi-data-status.md">Kalshi data coverage</option><option value="inbox/kalshi-digest.md">Kalshi daily digest</option></select></div><pre id="md">loading...</pre></div>
+<script>
+var $=function(i){return document.getElementById(i)},H=location.hostname;
+var T=[['Starship control room','http://'+H+':8080','Crew, rooms, mission board'],['Jarvis (voice page)','/','Talk to him, truck mode'],['Jarvis Lab','/lab','Transcripts, timings, tuning, voices'],['Kalshi Live View','http://'+H+':8095/live.html','Practice agent, what it tests'],['Hub (devices, memory, janitor)','http://'+H+':8081/hub','Devices and panes'],['Pi-hole','http://'+H+':8089/admin','DNS blocking, devices'],['Home Assistant','http://'+H+':8123','Lights, speaker, alerts'],['Replay for Claude','/report?min=60','Voice replay text']];
+$('tiles').innerHTML=T.map(function(t){return '<a class="tile" href="'+t[1]+'"><b>'+t[0]+'</b><span>'+t[2]+'</span></a>'}).join('');
+function chip(t,c){return '<span class="chip '+c+'">'+t+'</span>'}
+fetch('/api/hub').then(function(r){return r.json()}).then(function(d){var x=d.extra||{},s=x.services||{},bad=Object.keys(s).filter(function(k){return s[k]!=='active'}),J=x.jarvis||{},M=x.markets||{},c=[];
+c.push(chip('Pi '+((x.pi||{}).temp||'?')+', mem '+((x.pi||{}).mem||'?')+', disk '+((x.pi||{}).disk||'?'),'ok'));c.push(bad.length?chip('Not running: '+bad.join(', '),'bad'):chip('Services OK','ok'));
+c.push(chip('Jarvis '+(J.turns24||0)+' turns/24h'+(J.first_avg!=null?', first words '+J.first_avg+'s':''),(J.errors||0)?'warn':'ok'));
+c.push(chip('Kalshi data '+(M.data_age==null?'?':(M.data_age<1?Math.round(M.data_age*60)+' min':M.data_age.toFixed(1)+' h'))+' old, live '+JSON.stringify(M.live||{}),(M.data_age!=null&&M.data_age<.5)?'ok':'warn'));
+if(x.pihole)c.push(chip(x.pihole.length>60?x.pihole.slice(0,60)+'...':x.pihole,/did not answer/.test(x.pihole)?'warn':'ok'));
+$('chips').innerHTML=c.join('');var al=(d.alerts||{}).active||[];$('alerts').textContent=al.length?'Open alerts: '+al.join(' | '):'No open alerts.'}).catch(function(){$('chips').innerHTML=chip('No status report yet. Run tasks/status_report.sh on the Pi.','warn')});
+function load(){fetch('/mem?f='+encodeURIComponent($('f').value)).then(function(r){return r.text()}).then(function(t){$('md').textContent=t})}$('f').onchange=load;load();
+</script></body></html>
