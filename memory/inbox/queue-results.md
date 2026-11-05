@@ -1,68 +1,4 @@
-
-## 2026-11-05 01:49:01 tasks/queue/001-diagnose.sh
-```
-== crontab (names only)
-*/3 * * * * ~/crew-update.sh >/dev/null 2>&1
-* * * * * # market-watchdog
-7 * * * * # market-supervisor
-20 */3 * * * # market-lab
-*/30 * * * * bash $HOME/starship/tasks/memory_sync.sh >> $HOME/memory_sync.log 2>&1
-*/5 * * * * # starship-alerts
-10 4 * * * # kalshi-data-sync
-1-59/3 * * * * # task-queue
-== ha dir
-drwxrwxr-x 11 kylarlovelady kylarlovelady 4096 Nov  5 01:47 /home/kylarlovelady/homeassistant
-drwxr-xr-x  5 root          root          4096 Nov  5 01:46 /home/kylarlovelady/homeassistant/custom_components
-== docker
-openwakeword Up 5 days
-whisper Up 5 days (healthy)
-piper Up 5 days (healthy)
-pihole Up 6 hours (healthy)
-homeassistant Up About a minute
-== ha network
-host
-== pihole
-tasks/queue/001-diagnose.sh: line 8: pihole: command not found
-inactive
-{"error":{"key":"bad_request","message":"Bad request","hint":"The API is hosted at pi.hole/api, not pi.hole/admin/api"},"took":5.245208740234375e-06}
-{"error":{"key":"unauthorized","message":"Unauthorized","hint":null},"took":5.53131103515625e-05}
-== services
-market-agent active
-phone-voice active
-tailscaled active
-hub-dashboard active
-hub-watchdog active
-== alerts test (dry)
-alerts: 0 active, 0 sent
-2026-11-02 23:39:38 ISLAND updated: LIVE · $209.25 | +$1.92 this session · 0/0 rounds won · as of 11:39:36 PM
-2026-11-02 23:39:56 SENT to 2 phone(s): Market agent: live ended | LIVE session ended by you. Closing the open bet.
-2026-11-02 23:39:57 ISLAND cleared:  | 
-== jarvis tools
-{"reply": "The Pi is up for 1 week, 3 days, and has a temperature of 40.0\u00b0C, with 58% memory usage and 9% disk space used. All watched services are running smoothly.", "end": false, "followup": false}
-== net watchdog
-/usr/local/bin/hub-watchdog.py
-/usr/local/bin/hub-watchdog.py.bak-du1026-0211
-/usr/local/bin/hub-watchdog.py.bak-hn
-/usr/local/bin/hub-watchdog.py.bak-pihole
-/usr/local/bin/hub-watchdog.py.bak-ts1026-0210
-(exit 0)
-```
-
-## 2026-11-05 01:55:01 tasks/queue/002-fix-settings.sh
-```
-{"ok": true, "settings": {"threshold": 0.6, "paused": false, "private": false, "models": ["/home/kylarlovelady/voice-venv/lib/python3.13/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx"], "follow_quiet": 25.0, "follow_question": 40.0, "voice_id": "Brian", "max_utter": 20.0, "speech_
-== market-data newest files
-total 190112
--rw-r--r-- 1 kylarlovelady kylarlovelady 56782392 Nov  5 01:55 ticks-20261105.jsonl
--rw-r--r-- 1 kylarlovelady kylarlovelady   313092 Nov  5 01:54 state.json
--rw-r--r-- 1 kylarlovelady kylarlovelady  1552060 Nov  5 01:54 snapshots.jsonl
--rw-r--r-- 1 kylarlovelady kylarlovelady 33332209 Nov  5 01:54 trades.jsonl
--rw-r--r-- 1 kylarlovelady kylarlovelady     2224 Nov  5 01:54 kalshi_raw.json
--rw-r--r-- 1 kylarlovelady kylarlovelady      269 Nov  5 01:50 calendar.json
--rw-r--r-- 1 kylarlovelady kylarlovelady     1721 Nov  5 01:50 entry_stats.json
--rw-r--r-- 1 kylarlovelady kylarlovelady      124 Nov  5 01:48 patterns.json
--rw-r--r-- 1 kylarlovelady kylarlovelady   146240 Nov  5 01:47 hindsight.jsonl
--rw-r--r-- 1 kylarlovelady kylarlovelady      971 Nov  5 01:47 exit_rules.json
+ 971 Nov  5 01:47 exit_rules.json
 -rw-r--r-- 1 kylarlovelady kylarlovelady   327922 Nov  5 01:45 run_log.jsonl
 -rw-r--r-- 1 kylarlovelady kylarlovelady   370092 Nov  5 01:45 sim_windows.jsonl
 -rw-r--r-- 1 kylarlovelady kylarlovelady     2451 Nov  5 01:45 learn_report.json
@@ -337,5 +273,179 @@ asked the screen to reload
 1
 index.html:1
 theme.html:1
+(exit 0)
+```
+
+## 2026-11-05 02:31:01 tasks/queue/008-review-12.sh
+```
+TRADE REVIEW, last 12 hours: 711 (strategy, round) results from 28 rounds with full recordings.
+
+EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
+  v_x8220761      15    +253.71   67%  +21.3%
+  v_x44219232     14    +239.11   64%  +25.9%
+  v_x219212       18    +176.34   56%  +14.0%
+  v_x44219231     14    +174.29   57%  +18.9%
+  v_x72222452     15    +156.13   53%  +15.3%
+  v_x28219981     22    +139.91   55%   +9.2%
+  v_x88221262      5    +117.66  100%  +63.8%
+  v_x80218932     11     +82.77   73%  +44.0%
+  v_cut_loose     21     +80.83   62%  +14.7%
+  v_late          10     +79.64   70%  +25.3%
+  v_one_shot      21     +71.13   62%  +45.8%
+  v_x16217722     10     +63.24   60%  +17.9%
+  v_x24220782      2     +55.99  100%  +82.5%
+  v_x64216771     21     +55.33   52%   +3.8%
+  v_hold          21     +54.27   62%   +9.6%
+  v_no_cut        21     +43.05   67%  +10.1%
+  mood            23     +42.12   48%   +5.0%
+  hold            27     +32.59   56%  +12.9%
+  v_x24220781      2     +26.35  100%  +66.6%
+  v_x36215122      7      +4.71   43%   +2.0%
+  v_x88221261      2      +3.16  100%  +29.9%
+  v_x64216772     21      -5.01   52%   -1.7%
+  flow            22      -8.50   45%   -1.5%
+  run             22     -11.61   41%   -2.0%
+  trend           22     -14.71   41%   -3.3%
+  signals         22     -19.50   41%   -2.8%
+  distance        21     -35.65   48%  -11.6%
+  v_x8220762      15     -37.95   47%   -6.7%
+  v_x52220782      2     -42.40    0%  -42.4%
+  v_x28219982     21     -44.61   43%   -5.2%
+  v_cut_tight     21     -46.37   38%  -11.7%
+  v_x52220781      3     -48.97   33%  -48.5%
+  v_adds          21     -55.85   48%  -13.1%
+  v_trail         21     -56.81   43%  -12.1%
+  v_trail_wide    21     -56.81   43%  -12.1%
+  v_x16217721     10     -71.41   40%  -10.7%
+  swing           28    -123.46   36%   -8.9%
+  v_x219211       18    -126.84   28%  -15.5%
+  v_x72222451     15    -135.88   27%  -20.8%
+  v_x36215121     16    -155.78   25%  -22.2%
+  v_x80218931     11    -164.82   18%  -35.8%
+  v_mood_flip     28    -316.60   43%  -14.6%
+  v_flow_flip     28    -473.12   29%  -20.5%
+
+=== 'run': 22 rounds. Total profit -11.61 ===
+1) SIDE: first bet on the winning side in 10 of 22 rounds (45%). Money-weighted: 58% of dollars staked were on the winning side (coin flip = 50%).
+2) TIMING: it makes its first bet a median 1:32 into the round. The cheapest price on the winning side came a median 3:06 in. Median paid 9 cents above that cheapest point when it was on the right side.
+   first bet time -> rounds, profit, side right:  0-1 min: 9, +26, 5 right  |  10+ min: 1, -5, 0 right  |  1-3 min: 7, +6, 4 right  |  3-6 min: 5, -37, 1 right
+3) SELLING (money made or lost by selling versus just holding those contracts to the end):
+   its own odds said sell       3 sells     -52.59  selling HURT (holding would have been better)
+   cut a loss                   5 sells     -12.97  selling HURT (holding would have been better)
+   other                        1 sells      +6.75  selling HELPED
+4) BET SIZE -> rounds, profit, wins:  $25-100: 10, -5, 4  |  under $25: 12, -7, 5
+5) HOUR OF DAY -> rounds, profit:  00h: 3, +11  |  01h: 3, +95  |  14h: 1, -5  |  15h: 3, -3  |  16h: 2, +1  |  17h: 1, -6  |  20h: 3, +5  |  21h: 2, -32  |  22h: 1, -19  |  23h: 3, -59
+6) HINDSIGHT: buying the winning side at its cheapest moment and holding earns an average 65 cents per contract after fees; the best swing (buy low, sell high, any side) averages 65 cents per contract. It is not achievable (nobody knows the cheapest moment); it shows how much room there is.
+
+WORST 5 ROUNDS (when, what it did, what was best):
+  Wed 21:30  -26  bet DOWN at 1:40 @49c ($47) (WRONG SIDE); result UP. best swing UP bought at 1:12 sold at 14:19, +56c/contract;  cheapest winning-side price 42c at 1:12
+  Wed 23:15  -25  bet UP at 0:17 @48c ($46) (WRONG SIDE); result DOWN. best swing DOWN bought at 14:05 sold at 14:45, +85c/contract;  cheapest winning-side price 14c at 14:05
+  Thu 00:00  -21  bet DOWN at 0:15 @48c ($26) (WRONG SIDE); result UP. best swing UP bought at 6:20 sold at 13:50, +62c/contract;  cheapest winning-side price 36c at 6:20
+  Wed 23:30  -19  bet DOWN at 3:20 @47c ($47) (WRONG SIDE); result UP. best swing DOWN bought at 10:28 sold at 14:00, +72c/contract;  cheapest winning-side price 23c at 14:00
+  Wed 22:15  -19  bet UP at 1:32 @48c ($46); result UP. best swing UP bought at 4:40 sold at 14:21, +78c/contract;  cheapest winning-side price 21c at 4:40
+
+BEST 3 ROUNDS:
+  Thu 01:15  +50  bet DOWN at 2:01 @49c ($47); result DOWN
+  Thu 01:00  +30  bet UP at 0:57 @44c ($96); result UP
+  Thu 00:30  +26  bet DOWN at 0:26 @48c ($48); result DOWN
+(exit 0)
+```
+
+## 2026-11-05 02:31:17 tasks/queue/009-review-24.sh
+```
+TRADE REVIEW, last 24 hours: 1282 (strategy, round) results from 71 rounds with full recordings.
+
+EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
+  v_x8220761      15    +253.71   67%  +21.3%
+  v_x44219232     14    +239.11   64%  +25.9%
+  v_x219212       18    +176.34   56%  +14.0%
+  v_x44219231     14    +174.29   57%  +18.9%
+  v_x72222452     15    +156.13   53%  +15.3%
+  v_x88221262      5    +117.66  100%  +63.8%
+  v_x28219981     23     +88.49   52%   +5.5%
+  v_x80218932     11     +82.77   73%  +44.0%
+  v_cut_loose     53     +81.47   51%   +4.4%
+  v_hold          53     +66.51   55%   +4.4%
+  v_x16217722     10     +63.24   60%  +17.9%
+  v_x24220782      2     +55.99  100%  +82.5%
+  v_x64216771     21     +55.33   52%   +3.8%
+  v_x28219982     23     +32.07   48%   +3.5%
+  v_x24220781      2     +26.35  100%  +66.6%
+  v_x36215122      7      +4.71   43%   +2.0%
+  v_x88221261      2      +3.16  100%  +29.9%
+  v_x64216772     21      -5.01   52%   -1.7%
+  distance        53     -18.88   43%   -1.6%
+  v_no_cut        53     -19.13   55%   -1.2%
+  v_x8220762      15     -37.95   47%   -6.7%
+  v_x52220782      2     -42.40    0%  -42.4%
+  v_x52220781      3     -48.97   33%  -48.5%
+  v_x16217721     10     -71.41   40%  -10.7%
+  v_trail         53     -98.51   38%   -3.8%
+  v_trail_wide    53     -98.51   38%   -3.8%
+  v_x219211       18    -126.84   28%  -15.5%
+  v_one_shot      52    -135.62   54%  -19.8%
+  v_x72222451     15    -135.88   27%  -20.8%
+  flow            56    -155.11   36%  -11.5%
+  v_x36215121     16    -155.78   25%  -22.2%
+  v_x80218931     11    -164.82   18%  -35.8%
+  v_late          30    -165.74   47%  -10.8%
+  signals         57    -194.59   33%   -9.4%
+  v_cut_tight     53    -261.88   28%  -13.2%
+  v_adds          53    -326.58   38%  -11.9%
+  trend           60    -362.62   28%  -16.3%
+  v_mood_flip     30    -365.94   40%  -15.5%
+  run             54    -392.53   43%  -34.2%
+  v_flow_flip     30    -394.45   30%  -15.5%
+  hold            70    -536.47   37%  -47.9%
+  swing           71    -584.03   31%  -16.3%
+  mood            55    -599.92   35%  -17.7%
+
+=== 'run': 54 rounds. Total profit -392.53 ===
+1) SIDE: first bet on the winning side in 24 of 54 rounds (44%). Money-weighted: 38% of dollars staked were on the winning side (coin flip = 50%).
+2) TIMING: it makes its first bet a median 2:08 into the round. The cheapest price on the winning side came a median 4:44 in. Median paid 15 cents above that cheapest point when it was on the right side.
+   first bet time -> rounds, profit, side right:  0-1 min: 14, -48, 8 right  |  1-3 min: 18, -44, 8 right  |  10+ min: 4, -127, 1 right  |  3-6 min: 12, -120, 5 right  |  6-10 min: 6, -54, 2 right
+3) SELLING (money made or lost by selling versus just holding those contracts to the end):
+   its own odds said sell       3 sells     -52.59  selling HURT (holding would have been better)
+   cut a loss                   5 sells     -12.97  selling HURT (holding would have been better)
+   other                        1 sells      +6.75  selling HELPED
+4) BET SIZE -> rounds, profit, wins:  $25-100: 19, -389, 5  |  under $25: 35, -4, 18
+5) HOUR OF DAY -> rounds, profit:  00h: 3, +11  |  01h: 3, +95  |  03h: 2, -11  |  04h: 4, -29  |  05h: 4, -64  |  06h: 2, -58  |  07h: 2, -41  |  08h: 3, -182  |  09h: 3, -5  |  10h: 3, +5  |  11h: 3, +12  |  12h: 2, -10  |  13h: 3, +19  |  14h: 2, -23  |  15h: 3, -3  |  16h: 2, +1  |  17h: 1, -6  |  20h: 3, +5  |  21h: 2, -32  |  22h: 1, -19  |  23h: 3, -59
+6) HINDSIGHT: buying the winning side at its cheapest moment and holding earns an average 69 cents per contract after fees; the best swing (buy low, sell high, any side) averages 68 cents per contract. It is not achievable (nobody knows the cheapest moment); it shows how much room there is.
+
+WORST 5 ROUNDS (when, what it did, what was best):
+  Wed 08:45  -84  bet UP at 0:43 @37c ($80) (WRONG SIDE); result DOWN. best swing DOWN bought at 4:50 sold at 12:27, +67c/contract;  cheapest winning-side price 31c at 4:50
+  Wed 08:15  -64  bet UP at 10:14 @46c ($61) (WRONG SIDE); result DOWN. best swing DOWN bought at 11:41 sold at 14:27, +92c/contract;  cheapest winning-side price 7c at 11:41
+  Wed 06:45  -63  bet DOWN at 13:05 @49c ($60) (WRONG SIDE); result UP. best swing UP bought at 9:42 sold at 14:31, +95c/contract;  cheapest winning-side price 4c at 9:42
+  Wed 05:30  -56  bet UP at 3:14 @49c ($53) (WRONG SIDE); result DOWN. best swing DOWN bought at 7:58 sold at 14:54, +67c/contract;  cheapest winning-side price 31c at 7:58
+  Wed 07:45  -46  bet UP at 3:02 @49c ($44) (WRONG SIDE); result DOWN. best swing DOWN bought at 11:46 sold at 14:09, +67c/contract;  cheapest winning-side price 31c at 11:46
+
+BEST 3 ROUNDS:
+  Thu 01:15  +50  bet DOWN at 2:01 @49c ($47); result DOWN
+  Thu 01:00  +30  bet UP at 0:57 @44c ($96); result UP
+  Wed 05:15  +27  bet UP at 6:46 @48c ($25); result UP
+(exit 0)
+```
+
+## 2026-11-05 02:31:32 tasks/queue/010-learn-files.sh
+```
+== learn_report.json
+{"time": 1793864719, "scored": 238, "adopted": false, "signals": {"book": {"n": 161, "right": 81, "pct": 50.3, "low": 39.7, "high": 60.6, "verdict": "no clear edge", "mult": 1.0, "trust": 50.1, "n_eff": 83.5}, "momentum": {"n": 193, "right": 110, "pct": 57.0, "low": 46.9, "high": 65.6, "verdict": "no clear edge", "mult": 1.16, "trust": 55.4, "n_eff": 103.7}, "whales": {"n": 94, "right": 39, "pct": 41.5, "low": 27.8, "high": 54.4, "verdict": "no clear edge", "mult": 0.8, "trust": 43.2, "n_eff": 48.6}, "bigtrades": {"n": 156, "right": 75, "pct": 48.1, "low": 41.3, "high": 61.1, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 94.6}, "news": {"n": 202, "right": 97, "pct": 48.0, "low": 38.0, "high": 56.7, "verdict": "no clear edge", "mult": 0.93, "trust": 47.7, "n_eff": 105.2}, "fng": {"n": 215, "right": 110, "pct": 51.2, "low": 41.7, "high": 60.5, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 104.4}, "funding": {"n": 238, "right": 122, "pct": 51.3, "low": 42.7, "high": 59.9, "verdict": "no clear edge", "mult": 1.03, "trust": 51.2, "n_eff": 126.0}, "trend_h": {"n": 196, "right": 100, "pct": 51.0, "low": 40.9, "high": 59.0, "verdict": "no clear edge", "mult": 1.0, "trust": 50.0, "n_eff": 114.2}, "trend_w": {"n": 189, "right": 91, "pct": 48.1, "low"
+== exit_rules.json
+{"updated": 1793867339, "rounds": 190, "source": "default", "peak": 8, "drop": 4, "enabled": false, "audit": "switched off: over 190 rounds every tested take-profit rule did worse than holding", "table": [{"peak": 20, "drop": 8, "gain": -0.0087, "se": 0.0119, "rounds": 368, "rule": -0.0291, "hold": -0.0203}, {"peak": 20, "drop": 6, "gain": -0.011, "se": 0.012, "rounds": 368, "rule": -0.0314, "hold": -0.0203}, {"peak": 15, "drop": 8, "gain": -0.0146, "se": 0.0138, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 4, "gain": -0.0146, "se": 0.0124, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 2, "gain": -0.0148, "se": 0.0123, "rounds": 368, "rule": -0.0351, "hold": -0.0203}, {"peak": 20, "drop": 3, "gain": -0.0153, "se": 0.0124, "rounds": 368, "rule": -0.0357, "hold": -0.0203}], "note": "no take-profit rule beat holding by a clear margin yet; keeping the starting guess", "exits_checked": 30, "exit_vs_hold": 0.034}
+== entry_stats.json
+{"updated": 1793867284, "rounds": 238, "price": {"1-20": {"n": 742, "rounds": 166, "win": 0.09, "avg": -0.0068}, "20-35": {"n": 625, "rounds": 188, "win": 0.269, "avg": -0.0179}, "35-50": {"n": 747, "rounds": 171, "win": 0.431, "avg": -0.0109}, "50-60": {"n": 538, "rounds": 154, "win": 0.53, "avg": -0.0294}, "60-70": {"n": 469, "rounds": 170, "win": 0.635, "avg": -0.0254}, "70-80": {"n": 395, "rounds": 169, "win": 0.742, "avg": -0.0153}, "80-90": {"n": 353, "rounds": 158, "win": 0.822, "avg": -0.0292}, "90-100": {"n": 465, "rounds": 138, "win": 0.946, "avg": -0.0039}}, "hours": {"0": {"n": 106, "rounds": 12, "avg": 0.0233}, "1": {"n": 105, "rounds": 11, "avg": -0.1425}, "2": {"n": 70, "rounds": 8, "avg": 0.0457}, "3": {"n": 87, "rounds": 8, "avg": -0.0401}, "4": {"n": 119, "rounds": 8, "avg": -0.0665}, "5": {"n": 113, "rounds": 8, "avg": -0.0513}, "6": {"n": 94, "rounds": 8, "avg": -0.0212}, "7": {"n": 94, "rounds": 8, "avg": 0.0209}, "8": {"n": 87, "rounds": 7, "avg": -0.0399}, "9": {"n": 111, "rounds": 8, "avg": -0.0462}, "10": {"n": 95, "rounds": 8, "avg": 0.0081}, "11": {"n": 116, "rounds": 8, "avg": -0.0162}, "12": {"n": 67, "rounds": 7, "avg": 0.0019}, "13": {"n": 88, "rounds": 8, "avg": -0.0311}, "14": {"n": 77, "rounds": 8, "avg": 0.0149}, "15": {"n": 90, "rounds": 8, "av
+== patterns.json
+{"updated": 1793867373, "rounds": 196, "bad": [], "good": [], "note": null, "baseline": {"train": -0.0491, "test": -0.0439}}
+== config (keys with plain values only)
+{'threshold': 12.0, 'min_bet': 5.0, 'cap': 0, 'edge_min': 0.03, 'max_trades': 6.0, 'slice': 0.1, 'min_price': 0.08, 'max_price': 0.92, 'aggression': 50.0, 'floor': 0, 'entry_max': 0.8, 'entry_min': 0.15}
+== real (live) order slippage notes, last 8
+{"t": 1793679463, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV022330-30", "action": "buy", "side": "UP"}
+{"t": 1793681642, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "DOWN"}
+{"t": 1793681702, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "sell", "side": "DOWN"}
+{"t": 1793681918, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "UP"}
+{"t": 1793681966, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030000-00", "action": "buy", "side": "UP"}
+{"t": 1793682188, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030015-15", "action": "buy", "side": "DOWN"}
+{"t": 1793683870, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "buy", "side": "DOWN"}
+{"t": 1793683924, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "sell", "side": "DOWN"}
 (exit 0)
 ```
