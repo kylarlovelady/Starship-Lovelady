@@ -167,3 +167,93 @@ ls: cannot access '/usr/local/bin/hub-dashboard.py': No such file or directory
 == nocursor
 (exit 0)
 ```
+
+## 2026-11-05 02:16:01 tasks/queue/005-hubdash-map.sh
+```
+== files
+2 ./oled-message.json
+1147 ./device-names.json
+1 ./muted
+1416 ./theme.html
+3025 ./hub_api.py
+1654 ./pictures.py
+2003 ./memory_api.py
+7216 ./janitor.html
+1942 ./network_api.py
+8072 ./index.html.bak-ly2
+8992 ./hub.html.bak-ha
+530 ./mute_api.py
+1080 ./theme.html.bak4
+7400 ./hub.html.bak-cr
+2949 ./hub_api.py.bak-names
+138 ./device-names.json.bak-oct26
+3485 ./server.py.bak-ly
+7093 ./hub.html.bak-hl
+4171 ./messages.py
+5404 ./settings_api.py.bak-ly
+3311 ./network.html
+5 ./settings-pin.txt
+7550 ./hub.html.bak-imm
+3650 ./memory.html
+4348 ./crop_api.py
+6640 ./fontcache/Nunito_Sans.png
+7318 ./fontcache/Open_Sans.png
+7094 ./fontcache/Quicksand.png
+5341 ./fontcache/Staatliches.png
+6730 ./fontcache/Roboto.png
+11684 ./fontcache/Great_Vibes.png
+8324 ./fontcache/Gochi_Hand.png
+6928 ./fontcache/Noto_Mono.png
+6087 ./fontcache/Ubuntu_Condensed.png
+7093 ./fontcache/FreeSerif.png
+7511 ./fontcache/Fira_Code.png
+7077 ./fontcache/IBM_Plex_Serif.png
+6940 ./fontcache/Noto_Sans_Mono.png
+7271 ./fontcache/Stardos_Stencil.png
+9774 ./fontcache/Satisfy.png
+10098 ./fontcache/Pacifico.png
+6603 ./fontcache/League_Spartan.png
+8424 ./fontcache/P052.png
+5496 ./fontcache/Saira_Stencil_One.png
+1185 ./fontcache/Press_Start_2P.png
+11363 ./fontcache/Fontdiner_Swanky.png
+6797 ./fontcache/FreeSans.png
+6577 ./fontcache/Nimbus_Sans_Narrow.png
+6933 ./fontcache/Hack.png
+7257 ./fontcache/Allerta_Stencil.png
+6848 ./fontcache/IBM_Plex_Sans_Var.png
+7604 ./fontcache/Caveat.png
+6032 ./fontcache/Roboto_Condensed.png
+7260 ./fontcache/Nimbus_Roman.png
+6861 ./fontcache/Nimbus_Mono_PS.png
+7988 ./fontcache/Luckiest_Guy.png
+8362 ./fontcache/Chewy.png
+7125 ./fontcache/Nimbus_Sans.png
+7700 ./fontcache/Montserrat.png
+6427 ./fontcache/DejaVu_Sans_Mono.png
+== who serves 8080
+    PID COMMAND
+3765271 /home/kylarlovelady/hub-dashboard/.venv/bin/python /home/kylarlovelady/hub-dashboard/server.py
+== clock/weather/date in html (line:text)
+index.html:10:#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
+index.html:12:#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
+index.html:32:<div id="clock">--:--</div><div id="date"></div>
+index.html:109:col('clock',s.clock_color);if(g('clock'))g('clock').style.textShadow=s.clock_color?'0 0 30px '+rgba(s.clock_color,.35):'';
+index.html:110:col('date',s.date_color);col('wx',s.weather_color);
+janitor.html:67: d.trash.forEach(t=>{const r=el('div','row');const b=el('div','b');b.appendChild(el('div','p',t.path));b.appendChild(el('div','w','Moved '+t.date+' · '+t
+settings.html:28:<div class="r"><span>Clock color</span><input type="color" id="clock_color"></div>
+settings.html:29:<div class="r"><span>Date color</span><input type="color" id="date_color"></div>
+settings.html:30:<div class="r"><span>Weather color</span><input type="color" id="weather_color"></div>
+theme.html:9:col('clock',s.clock_color);if(g('clock'))g('clock').style.textShadow=s.clock_color?'0 0 30px '+rgba(s.clock_color,.35):'';
+theme.html:10:col('date',s.date_color);col('wx',s.weather_color);
+== theme storage
+-rw-r--r-- 1 kylarlovelady kylarlovelady 1147 Oct 26 22:14 device-names.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady    2 Oct 19 17:33 oled-message.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady  495 Nov  4 15:02 settings.json
+settings_api.py:14:CFG = BASE / "settings.json"
+settings_api.py:80:    body = await request.json()
+settings_api.py:137:    url = str((await request.json()).get("url", ""))
+settings_api.py:157:    name = str((await request.json()).get("name", ""))
+preview_api.py:74:    b = await request.json()
+(exit 0)
+```
