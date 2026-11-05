@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (04:35)
+- Added to todo.md: Pi home pages cluttered; Starship page not loading.
+
 ## 2026-11-05 (04:30)
 - Filed Kylar's answers: PE pellets (100 lb per shift), KDP under Lovelady LLC with a 1-hour target, how he wants Kalshi help and phone-only alerts, what Jarvis must do to replace Alexa and the build order (pi-home-assistant.md), new open items.
 
