@@ -87,3 +87,34 @@ Traceback (most recent call last):
 FileNotFoundError: [Errno 2] No such file or directory: '/home/kylarlovelady/voice-data/trace.jsonl'
 (exit 0)
 ```
+
+## 2026-11-05 02:04:01 tasks/queue/003-homescreen-look.sh
+```
+== crew-update.sh
+#!/bin/bash
+cd ~/starship && git pull -q --ff-only && cp -f index.html support.js ~/crew-web/
+cp ~/starship/markets/markets.html ~/crew-web/markets.html
+cp ~/starship/markets/live.html ~/crew-web/live.html
+cp ~/starship/markets/report.html ~/crew-web/report.html
+== crew-web
+total 748
+-rw-r--r-- 1 kylarlovelady kylarlovelady 144473 Nov  5 02:03 index.html
+-rw-r--r-- 1 kylarlovelady kylarlovelady 142042 Nov  4 15:13 index.html.bak
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  49563 Nov  5 02:03 live.html
+-rw-r--r-- 1 kylarlovelady kylarlovelady 163913 Nov  5 02:03 market.json
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  14611 Nov  5 02:03 markets.html
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  11664 Nov  5 02:03 report.html
+-rw-r--r-- 1 kylarlovelady kylarlovelady  32318 Nov  5 02:03 report.json
+lrwxrwxrwx 1 kylarlovelady kylarlovelady     43 Oct 30 14:17 status.json -> /home/kylarlovelady/crew
+-rw-r--r-- 1 kylarlovelady kylarlovelady 188749 Nov  5 02:03 support.js
+== size/lines
+  1475 144473 /home/kylarlovelady/crew-web/index.html
+SAME as repo index.html
+== hits (line:text, cut)
+8:<body>
+495:function clockN(x, z, r) {
+503:function clockW(y, z, r) {
+== has glass already?
+0
+(exit 0)
+```
