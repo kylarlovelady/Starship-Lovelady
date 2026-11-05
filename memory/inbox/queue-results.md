@@ -1,12 +1,4 @@
--ts1026-0206
-/home/kylarlovelady/hub-scripts-backup-2026-10-26.tar.gz
-/home/kylarlovelady/hub-voice
-== files mentioning clock+weather
-/home/kylarlovelady/crew-web/index.html
-/home/kylarlovelady/hub-dashboard/theme.html
-/home/kylarlovelady/hub-dashboard/settings.html
-/home/kylarlovelady/hub-dashboard/layout.html
-/home/kylarlovelady/hub-dashboard/preview_api.py
+ew_api.py
 /home/kylarlovelady/hub-dashboard/settings_api.py
 /home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/watchfiles/_rust_notify.abi3.so
 /home/kylarlovelady/hub-dashboard/.venv/lib/python3.13/site-packages/h11/_receivebuffer.py
@@ -483,5 +475,13 @@ http://loveladymainaihub:8081 (tailnet only)
 http://loveladymainaihub.taild703ca.ts.net:8081 (tailnet only)
 |-- / proxy http://127.0.0.1:8080
 
+(exit 0)
+```
+
+## 2026-11-05 02:49:01 tasks/queue/014-maker-study.sh
+```
+rounds used: 0 (from /home/kylarlovelady/market-data, last 3 days)
+
+Reading it: the maker only helps if per-$ profit beats the taker's AFTER filling only on dips (adverse selection shows up as a lower win rate when filled). Fee for maker is assumed; confirm on a first real fill.
 (exit 0)
 ```
