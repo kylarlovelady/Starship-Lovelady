@@ -1,39 +1,4 @@
-beration Serif", "Liberation Mono", "Inter",
-             "Carlito", "Caladea", "Lato", "Roboto", "Open Sans", "Montserrat", "Oswald", "Bitstream Charter",
-             "FreeSerif", "FreeSans", "Noto Sans", "Noto Serif", "Playfair Display", "Merriweather", "Source Sans 3"]
-    def fc(fam, st):
-== engine functions
-14:def spine(pages, paper): return round(pages * SPEC["rate"][paper] + SPEC["board"], 4)
-15:def gutter(p): return 0.375 if p <= 150 else 0.5 if p <= 300 else 0.625 if p <= 500 else 0.75
-16:def cover_size(pages, paper):
-21:def discover():
-30:    def fc(fam, st):
-41:def fn(fam, bold=False):
-77:def merge(base, patch):
-82:def _num(v, lo, hi, d):
-85:def clean_el(e, F):
-98:def clean(b):
-102:    def walk(x, dflt):
-133:def plan(b):
-141:def lum(h):
-145:def contrast(a, b2):
-148:def interior(b, path):
-223:def geometry(b):
-239:def region(g, panel):
-243:def crop_box(iw, ih, rw, rh, zoom, fx, fy):
-250:def _rgb(h): return tuple(int(h[i:i + 2], 16) for i in (1, 3, 5))
-251:def tint_image(im, tint, amt):
-259:def to_srgb(im):
-268:def prep_image(src, cache, rw_in, rh_in, zoom, fx, fy, tint, tint_amt):
-288:def make_texture(kind, w_in, h_in, path, seed=None):
-294:    def noise(cell, sigma=64):
-330:def draw_text(c, x, y, s, f, size, col, foil):
-339:def image_report(b, imgdir):
-352:def _lines(text, font, size, width):
-357:def cover(b, path, guides=False, imgdir=None):
-436:def overflow(b, info):
-453:def png(pdf, out, page=1, dpi=70):
-456:def check(b, cpdf, ipdf, info, imgdir=None):
+nfo, imgdir=None):
 == app routes
 == book.json shape (newest book)
 books-old-1026-0008/process-operator-5079/book.json
@@ -567,5 +532,33 @@ setup.cfg
 card 3: AC44 [MXL AC-44], device 0: USB Audio [USB Audio]
   Subdevices: 0/1
   Subdevice #0: subdevice #0
+(exit 0)
+```
+
+## 2026-11-05 15:13:01 tasks/queue/034-home-mic-setup.sh
+```
+== options present?
+                   [--mic-noise-suppression {0,1,2,3,4}]
+                   [--debug-recording-dir DEBUG_RECORDING_DIR] [--debug]
+  --mic-noise-suppression {0,1,2,3,4}
+  --debug-recording-dir DEBUG_RECORDING_DIR
+== hub-mic.py (gain/level lines)
+6:def stop(*a):
+added: ["--debug-recording-dir '/home/kylarlovelady/voice-data/home-mic' \\", '--mic-noise-suppression 2 \\']
+syntax ok
+== satellite now
+activating
+Nov 05 15:13:08 LoveladyMainAiHub bash[2706041]:     raise CalledProcessError(retcode, cmd)
+Nov 05 15:13:08 LoveladyMainAiHub bash[2706041]: subprocess.CalledProcessError: Command '['/home/kylarlovelady/wyoming-satellite/.venv/bin/python3', '-m', 'wyom
+Nov 05 15:13:08 LoveladyMainAiHub systemd[1]: hub-satellite.service: Main process exited, code=exited, status=1/FAILURE
+Nov 05 15:13:08 LoveladyMainAiHub systemd[1]: hub-satellite.service: Failed with result 'exit-code'.
+# Home speaker mic report (auto, stats only; audio stays on the Pi)
+
+floor = background noise level (16-bit scale, 0 to 32767); speech% = share of the clip louder than 3x the floor; tail quiet = seconds of quiet at the end (end-of-speech needs about 1 s).
+
+No clips yet: the satellite recording folder is empty or recording is not switched on.
+
+## Satellite restarts by the watchdog (last 24 h)
+Nov 05 14:58:19 LoveladyMainAiHub python3[35465]: stuck in listening for 40s, restarting satellite
 (exit 0)
 ```
