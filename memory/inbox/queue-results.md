@@ -1,35 +1,4 @@
-display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
-index.html:14:#temp{font-size:7vw;font-weight:200;color:#e8f4ff}
-index.html:15:#cond{font-size:3vw;color:#e8f4ff}
-index.html:18: box-shadow:0 0 40px rgba(56,232,255,.2);backdrop-filter:blur(12px);
-index.html:21:#status{display:flex;align-items:center;gap:1.2vw;font-size:2vw;letter-spacing:.2em;
-index.html:27:.lbl{font-size:1.7vw;color:var(--dim);text-transform:uppercase;letter-spacing:.15em}
-index.html:28:#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bottom:1.5vh}
-index.html:29:#ai{font-size:3vw;line-height:1.3;min-height:4vw}
-index.html:32: border:1px solid rgba(255,255,255,.6);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7);
-index.html:121:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
-(exit 0)
-```
-
-## 2026-11-05 15:07:01 tasks/queue/031-home-ask-test.sh
-```
-== last 10 text asks (home/Siri) from the log
-23:32:38 secs None | None -> None | times None
-23:32:39 secs 1.2 | Hey, can you hear me? -> Yes, I can hear you. What do you need? | times None
-23:33:05 secs None | None -> None | times None
-23:48:28 secs None | None -> None | times None
-23:48:32 secs 3.7 | What's on my to-do list? -> 1. Redo Kalshi API location verification by Nov 9.
-2. Decide on ElevenLabs renewal by Nov  | times None
-00:56:28 secs 1.1 | say hello -> Hello, Kylar! How's it going? | times {'llm': 1.05}
-01:49:03 secs 2.1 | how is the pi doing -> The Pi is up for 1 week, 3 days, and has a temperature of 40.0°C, with 58% memory usage an | times {'llm': 2.07}
-14:58:54 secs 2.1 | What do you know about Shari? -> I don't have any information on someone named Shari. Would you like to tell me who she is? | times {'llm': 2.08}
-15:00:19 secs 1.5 | What can you tell me about Shari? -> I don't have any details about Shari in my records. If she's someone important, feel free  | times {'llm': 1.55}
-15:00:53 secs 2.2 | Do you know who I am? -> Yes, you're Kylar Lovelady. You work nights at Dow, and you're focused on income projects  | times {'llm': 2.17}
-== live timing test
-What time is it -> 1.2s: {"reply": "I can't check the current time. You can look at your phone or dashboard for that.", "end": false, "followup": false}
-What do you know about Sheree -> 1.0s: {"reply": "I don't have any specific information about Sheree. Could you clarify who she is?", "end": false, "followup": true}
-== HA jarvis_hub warnings (6h)
-== watchdog log (satellite restarts)
+og log (satellite restarts)
 Nov 04 19:42:20 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
 Nov 04 19:43:17 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
 Nov 04 19:44:14 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
@@ -550,5 +519,52 @@ total 2556
 drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
 drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
 -rw-rw-r--  1 kylarlovelady kylarlovelady  366146 Nov  5 17:50 cover-guides.png
+(exit 0)
+```
+
+## 2026-11-05 17:55:02 tasks/queue/046-kdp-build-thin-border.sh
+```
+engine min width patched
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Liberation Serif | interior font: Lato
+== process-operator-a FAILS: none | spine 0.489
+== process-operator-b FAILS: none | spine 0.489
+== process-operator-c FAILS: none | spine 0.489
+== process-operator-e FAILS: none | spine 0.489
+== lab-operator-a FAILS: none | spine 0.489
+== lab-operator-b FAILS: none | spine 0.489
+== lab-operator-c FAILS: none | spine 0.489
+== lab-operator-e FAILS: none | spine 0.489
+sheet done
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 2050871 Nov  5 17:56 /home/kylarlovelady/starship/memory/inbox/kdp-preview/contact-sheet.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+total 2704
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:49 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  381632 Nov  5 17:55 cover-guides.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady 1382931 Nov  5 17:55 cover-hi.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  359835 Nov  5 17:55 cover.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  613909 Nov  5 17:55 front.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:55 page1.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:55 page2.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-b:
+total 2660
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  375111 Nov  5 17:56 cover-guides.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady 1359593 Nov  5 17:56 cover-hi.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  352917 Nov  5 17:56 cover.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  608559 Nov  5 17:56 front.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:56 page1.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:56 page2.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-c:
+total 2668
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  375809 Nov  5 17:56 cover-guides.png
 (exit 0)
 ```
