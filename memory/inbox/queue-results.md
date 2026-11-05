@@ -1,115 +1,4 @@
-s, time, urllib.request
-from pathlib import Path
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
-from settings_api import auth
-
-router = APIRouter()
-PAGE = Path(__file__).parent / "hub.html"
-OUT = Path(os.environ.get("HUB_OUTAGE_DIR", "/var/lib/hub-outage"))
-DEV = Path(os.environ.get("HUB_DEV_FILE", "/var/lib/hub-devices/known.json"))
-MEM = Path(os.environ.get("HUB_MEM_FILE", "/home/kylarlovelady/homeassistant/memory/facts.md"))
-SVC = [("hub-satellite", "Voice satellite"), ("hub-oled", "Small screen"), ("hub-lights", "Lights"),
-       ("hub-dashboard", "Dashboard"), ("hub-watchdog", "Watchdog"), ("hub-devices", "Device alerts"),
-       ("hub-outage", "Outage logger"), ("hub-memlog", "Conversation log")]
-
-def jread(p, default):
-    try:
-        return json.loads(Path(p).read_text())
-    except Exception:
-        return default
-
-def state(unit):
-    try:
-        return subprocess.run(["systemctl", "is-active", unit], capture_output=True, text=True, timeout=5).stdout.strip() or "unknown"
-    except Exception:
-        return "unknown"
-
-def ha_up():
-    try:
-        urllib.request.urlopen("http://127.0.0.1:8123", timeout=3)
-        return True
-    except urllib.error.HTTPError:
-        return True
-    except Exception:
-        return False
-
-def collect():
-    now = time.time()
-    svcs = [{"name": n, "state": state(u)} for u, n in SVC]
-    svcs.append({"name": "Home Assistant", "state": "active" if ha_up() else "down"})
-    recs = []
-    try:
-        for line in (OUT / "outages.jsonl").read_text().splitlines():
-            r = json.loads(line)
-            if r["end"] >= now - 30 * 86400:
-                recs.append(r)
-    except Exception:
-        pass
-    st = jread(OUT / "state.json", {})
-    outages = {"count": len(recs), "total": sum(r["secs"] for r in recs), "last": recs[-1] if recs else None,
-               "since": st.get("since"), "watching": bool(st.get("beat")) and now - st["beat"] < 180}
-    known = jread(DEV, {}); names = jread(PAGE.parent / "device-names.json", {})
-    devs = sorted(({"ip": v.get("ip", ""), "name": names.get(mac) or v.get("name") or "", "vendor": v.get("vendor", ""),
-                    "new": v.get("first_seen", 0) > now - 86400 and v.get("notified", False)} for mac, v in known.items()),
-                  key=lambda d: [int(x) if x.isdigit() else 0 for x in d["ip"].split(".")])
-    try:
-        facts = sum(1 for l in MEM.read_text(encoding="utf-8").splitlines() if l.startswith("- "))
-    except Exception:
-        facts = None
-    try:
-        up = float(Path("/proc/uptime").read_text().split()[0])
-    except Exception:
-        up = None
-    return {"services": svcs, "outages": outages, "devices": devs, "facts": facts, "uptime": up, "now": int(now)}
-
-@router.get("/hub")
-async def hub_page():
-    return HTMLResponse(PAGE.read_text(encoding="utf-8"))
-
-@router.get("/api/status")
-async def status(request: Request):
-    await auth(request)
-    return await asyncio.to_thread(collect)
-== hub.html (tabs and script, trimmed)
-<!doctype html><html><head><meta charset="utf-8"><title>Hub</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hub"><meta name="theme-color" content="#0b1220">
-<style>
-:root{color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;background:#0b1220;color:#e8f4ff;font:16px system-ui,sans-serif;display:flex;flex-direction:column;height:100vh;height:100dvh}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 6px}
-header b{font-size:19px}
-#pin{width:120px;background:#16233a;color:#fff;border:1px solid #2a3b57;border-radius:10px;padding:8px 10px;font-size:16px}
-nav{display:flex;gap:6px;padding:4px 14px 10px;overflow-x:auto}
-nav button,nav a{flex:none;background:#26354f;color:#e8f4ff;border:0;border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;text-decoration:none}
-nav button.on{background:#1c6bff}
-.pane{display:none;flex:1;min-height:0;width:100%;border:0;overflow:auto}
-.pane.on{display:block}
-#status{padding:0 14px 20px}
-.card{background:#101b2e;border:1px solid #1d2a3d;border-radius:14px;padding:12px 14px;margin-bottom:12px}
-.card h3{margin:0 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7f93a8}
-.row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:15px}
-.dot{width:10px;height:10px;border-radius:50%;flex:none;background:#ff4d5e}
-.dot.ok{background:#3dffa0}
-.sub{color:#9fb0c3;font-size:14px}
-.nw{background:#ffb02e;color:#201400;border-radius:6px;font-size:11px;font-weight:700;padding:1px 6px}
-button.act{background:#1c6bff;color:#fff;border:0;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;margin:4px 6px 0 0}
-</style></head><body>
-<header><b>Lovelady Hub</b><input id="pin" type="password" inputmode="numeric" placeholder="PIN"></header>
-<nav><button data-t="status" class="on">Status</button><button data-t="look">Look</button><button data-t="memory">Memory</button><button data-t="janitor">Janitor</button><button data-t="network">Network</button><button data-t="layout">Layout</button><button data-t="crew">Control Room</button><button data-t="markets">Markets</button></nav>
-<main id="status" class="pane on"><div class="card"><div class="sub" id="msg">Enter your PIN above.</div></div></main>
-<iframe id="look" class="pane" data-src="/settings"></iframe>
-<iframe id="memory" class="pane" data-src="/memory"></iframe>
-<iframe id="janitor" class="pane" data-src="/janitor"></iframe><iframe id="network" class="pane" data-src="/network"></iframe><iframe id="layout" class="pane" data-src="/layout"></iframe><iframe id="crew" class="pane" data-src="http://loveladymainaihub.taild703ca.ts.net:8095/"></iframe><iframe id="markets" class="pane" data-src="http://loveladymainaihub.taild703ca.ts.net:8095/live.html"></iframe>
-<scrip(exit 0)
-```
-
-## 2026-11-05 03:01:01 tasks/queue/016-merge-hub.sh
-REFUSED: sudo is not allowed in queue scripts
-
-## 2026-11-05 03:04:01 tasks/queue/017-merge-hub.sh
+1-05 03:04:01 tasks/queue/017-merge-hub.sh
 ```
 merged: True
 data-t="overview" class="on">
@@ -569,4 +458,168 @@ drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Oct 25 23:46 ..
 books-old-1026-0008/process-operator-5079/out:
 total 268
 drwxr-xr-x 2 kylarlovelady kylarlovelad(exit 0)
+```
+
+## 2026-11-05 14:28:02 tasks/queue/026-kdp-interior.sh
+```
+== book.json (current book) keys and sample
+books/new-book-e841/book.json
+name: "New book"
+title: "Process Operator Notebook Journal"
+subtitle: ""
+author: "K.J.Lovelady"
+paper: "white"
+pages: 120
+cover:
+  bg: "#000000"
+  pattern: "none"
+  pattern_color: "#999999"
+  frame: false
+  frame_color: "#000000"
+  font: "DejaVu Sans"
+  text: "#FFD700"
+  barcode_box: false
+  elements:
+    [list of 1]
+      id: "e1"
+      type: "text"
+      panel: "front"
+      x: 0
+      y: 30.0
+      w: 100
+      h: 40.0
+      size: 58.0
+      text: "Process Operator"
+      bold: true
+      align: "center"
+      font: "DejaVu Sans"
+      color: "#FFD700"
+      lh: 1.2
+inside:
+  font: "DejaVu Sans"
+  color: "#444444"
+  page_bg: "#ffffff"
+  style: "lines"
+  line_color: "#b9bec6"
+  line_width: 0.5
+  spacing: 0.3125
+  dash: false
+  top: 0.7
+  bottom: 0.85
+  inner: 0.5
+  outer: 0.4
+  header: "none"
+  header_text: ""
+front:
+  title_page: false
+  owner_page: false
+  owner_heading: ""
+  owner_footer: ""
+  owner_fields:
+    [list of 0]
+  contacts: 0
+  index: 0
+  goals: false
+back:
+  notes_pages: 0
+labels:
+  contacts: "Contacts"
+  index: "Index"
+  goals: "Goals"
+  notes: "Notes"
+listing:
+  description: "A hardcover Process Operator Notebook Journal with 120 numbered, lined pages (6 x 9 inche
+  keywords:
+    [list of 7]
+  categories: ""
+  price: "17.99"
+answers:
+  spine_text: true
+  owner_page: true
+  goals: true
+  contacts: true
+  date_header: true
+  index: true
+  notes_back: true
+  title_page: true
+  listing: true
+chat:
+  [list of 37]
+    role: "user"
+    text: "Ok on the front cover i want \u201cProcess Operator\u201d in yellow gold letters and i wa
+    changes:
+      [list of 0]
+== clean() element types
+def clean(b):
+    d = merge(copy.deepcopy(DEFAULT), {k: v for k, v in b.items() if k not in ("cover",)})
+    d["cover"] = merge(copy.deepcopy(DEFAULT["cover"]), {k: v for k, v in (b.get("cover") or {}).items() if k != "elements"}) if isinstance(b.get("cover"), dict) else copy.deepcopy(DEFAULT["cover"])
+    F = discover()
+    def walk(x, dflt):
+        for k in list(x):
+            if k not in dflt: del x[k]; continue
+            v, dv = x[k], dflt[k]
+            if k in ("answers", "chat", "elements"): continue
+            if isinstance(dv, dict): x[k] = v if isinstance(v, dict) else {}; walk(x[k], dv); continue
+            if k in ENUM and v not in ENUM[k]: x[k] = dv
+            elif k in NUM: x[k] = type(dv)(_num(v, NUM[k][0], NUM[k][1], dv))
+            elif k in ("bg", "text", "color", "page_bg", "line_color", "pattern_color", "frame_color") and not (isinstance(v, str) and HEX.match(v)): x[k] = dv
+            elif k in ("font",) and v not in F: x[k] = dv if dv in F else "Bitstream Vera"
+            elif isinstance(dv, bool): x[k] = bool(v)
+            elif isinstance(dv, str): x[k] = str(v)[:2000 if k == "description" else 300]
+            elif isinstance(dv, list): x[k] = [str(i)[:120] for i in (v if isinstance(v, list) else [])][:12]
+    walk(d, DEFAULT)
+    d["pages"] = int(d["pages"]); d["pages"] += d["pages"] % 2
+    els = []
+    for e in ((b.get("cover") or {}).get("elements", []) if isinstance(b.get("cover"), dict) else [])[:40]:
+        o = clean_el(e, F)
+        if o: els.append(o)
+    used = set(); n = 1
+    for o in els:
+        if not o["id"] or o["id"] in used:
+            while f"e{n}" in used or any(f"e{n}" == q["id"] for q in els): n += 1
+            o["id"] = f"e{n}"
+        used.add(o["id"])
+    d["cover"]["elements"] = els
+    an = b.get("answers"); an = an if isinstance(an, dict) else {}
+    d["answers"] = {str(k)[:40]: bool(v) for k, v in list(an.items())[:80]}
+    d["chat"] = [{"role": "assistant" if m.get("role") == "assistant" else "user", "text": str(m.get("text", ""))[:3000], "changes": [str(c)[:200] for c in (m.get("changes") if isinstance(m.get("chang
+                 for m in (b.get("chat") if isinstance(b.get("chat"), list) else [])[-60:] if isinstance(m, dict)]
+    return d
+== interior()
+def interior(b, path):
+    I = b["inside"]; pages = b["pages"]; W, H = SPEC["trim_w"] * IN, SPEC["trim_h"] * IN
+    c = canvas.Canvas(path, pagesize=(W, H), initialFontName=fn(I["font"])); c.setTitle(b["title"] or b["name"])
+    inner = max(I["inner"], gutter(pages)); outer = I["outer"]
+    kinds = plan(b); fam = I["font"]; col = HexColor(I["color"]); sp = I["spacing"] * IN
+    for n, kind in enumerate(kinds, 1):
+        odd = n % 2 == 1; L = (inner if odd else outer) * IN; R = W - (outer if odd else inner) * IN
+        top = H - I["top"] * IN; bot = I["bottom"] * IN
+        if I["page_bg"].lower() != "#ffffff":
+            c.setFillColor(HexColor(I["page_bg"])); c.rect(0, 0, W, H, fill=1, stroke=0)
+        c.setFillColor(col)
+        def label(t, y, size=11, bold=False, x=L):
+            c.setFont(fn(fam, bold), size); c.drawString(x, y, t)
+        def ruled(y0, y1):
+            c.setStrokeColor(HexColor(I["line_color"])); c.setFillColor(HexColor(I["line_color"])); c.setLineWidth(I["line_width"])
+            if I["dash"]: c.setDash(2, 2)
+            y = y0
+            if I["style"] == "lines":
+                while y >= y1: c.line(L, y, R, y); y -= sp
+            elif I["style"] == "grid":
+                while y >= y1: c.line(L, y, R, y); y -= sp
+                x = L
+                while x <= R + 0.1: c.line(x, y0, x, y + sp); x += sp
+            elif I["style"] == "dots":
+                while y >= y1:
+                    x = L
+                    while x <= R + 0.1: c.circle(x, y, max(.4, I["line_width"] * .8), stroke=0, fill=1); x += sp
+                    y -= sp
+            c.setDash()
+        y0 = top
+        if kind == "title":
+            c.setFont(fn(fam, True), 26)
+            for i, l in enumerate(simpleSplit(b["title"], fn(fam, True), 26, R - L)): c.drawCentredString((L + R) / 2, H * .62 - i * 32, l)
+            c.setFont(fn(fam), 13)
+            if b["subtitle"]: c.drawCentredString((L + R) / 2, H * .62 - 70, b["subtitle"])
+            if b["author"]: c.drawCentredString((L + R) / 2, H *(exit 0)
 ```
