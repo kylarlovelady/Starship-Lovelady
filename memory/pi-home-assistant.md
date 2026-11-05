@@ -11,7 +11,7 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 
 ## Nov 4 events
 - Pi's network dropped about 5:49-9:30 pm (no reboot, power OK, throttled=0x0). tasks/net_watchdog_setup.sh installs a watchdog and persistent logs (needs confirming it was installed).
-- Home screen: added a no-cursor style/script (id="nocursor") to crew-web/index.html (backup index.html.bak). Kylar to confirm the cursor line is gone.
+- Home screen = ~/hub-dashboard (server.py on 127.0.0.1:8080; index.html with #clock/#date/#wx; theme.html + settings.json; settings page has colors/fonts/backgrounds). NOT ~/crew-web/index.html: crew-update.sh overwrites that from the repo every 3 min. 2026-11-05: frosted-glass bubble + no-caret patch applied on the Pi (backups index.html.bak-glass, theme.html.bak-glass; "glass": false in settings.json turns it off). Waiting for Kylar to confirm it looks right and the cursor line is gone.
 - TODO: make clock, weather and date readable on busy backgrounds (text shadow, dim layer, or panel).
 
 ## Home voice assistant (Alexa replacement)
