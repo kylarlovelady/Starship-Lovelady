@@ -18,6 +18,10 @@ if not os.path.exists(FD + "/PlayfairDisplay-Bold.ttf"):
         r = sh(STUDIO + "/.venv/bin/python", "-m", "fontTools.varLib.instancer", var, f"wght={wt}", "--update-name-table", "-o", f"{FD}/PlayfairDisplay-{nm}.ttf")
         print("instance", nm, r.returncode, (r.stderr or r.stdout)[-200:])
     sh("fc-cache", "-f")
+# thin vertical border lines need a width below the engine's old 1% minimum
+_ep = STUDIO + "/engine.py"; _t = open(_ep).read()
+if '_num(e.get("w"), 1, 100, 100)' in _t:
+    shutil.copy(_ep, _ep + ".bak-minw"); open(_ep, "w").write(_t.replace('_num(e.get("w"), 1, 100, 100)', '_num(e.get("w"), 0.05, 100, 100)')); print("engine min width patched")
 import engine
 F = engine.discover()
 print("fonts found:", sorted(F))
