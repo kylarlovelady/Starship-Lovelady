@@ -439,7 +439,16 @@ class H(http.server.BaseHTTPRequestHandler):
             return self._send(200, {"acts": acts + pend, "state": s.state, "level": round(lvl), "paused": SET["paused"]})
         b = self._json()
         if p == "/ask":
-            try: return self._send(200, ask_text(b.get("text", ""), b.get("audio", True), self.headers.get("Host")))
+            try:
+                if b.get("format") == "json": return self._send(200, ask_text(b.get("text", ""), b.get("audio", True), self.headers.get("Host")))
+                # default for the Siri Shortcut: answer comes back as Brian's voice (an audio file)
+                out = ask_text(b.get("text", ""), True, None)
+                rid = (out.get("audio_url") or "").rsplit("/", 1)[-1].replace(".bin", "")
+                if not rid and out.get("reply"):
+                    rid = uuid.uuid4().hex[:10]; tts(out["reply"], os.path.join(REPLIES, rid + ".bin"))
+                if not rid: return self._send(200, {"reply": "", "note": "nothing heard"})
+                data = open(os.path.join(REPLIES, rid + ".bin"), "rb").read()
+                return self._send(200, data, "audio/wav" if data[:4] == b"RIFF" else "audio/mpeg")
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
         if p == "/label":
             if b.get("label") in ("good", "false", "unsure", None):
