@@ -44,5 +44,9 @@
 - Inside paper: CREAM, black-and-white interior (looks premium, easy on the eyes, takes ballpoint, gel pen and pencil; KDP paper is uncoated; felt markers and fountain pens can show through). Lined at about 5/16 in spacing, light grey lines, page numbers bottom corner, owner page first. Cream changes the spine: 0.0025 in per page plus 0.189 = about 0.489 in at 120 pages (confirm with KDP's template).
 - Cover size therefore about 14.065 x 10.418 for 120 pages on cream (confirm).
 
+## Series rule (Kylar, 2026-11-05 14:41)
+- Up to 3 colour schemes per job role at most; start with ONE scheme, add others later. All books must look IDENTICAL except for the job title (same layout, fonts, texture, border, colours per scheme).
+- Candidate schemes shown 14:50 (front cover, textured cloth, double thin border, title top): A navy + gold (#16233F / #D4AF37), B forest + gold (#17382B / #D4AF37), C burgundy + cream (#561C28 / #EBDDB5), D charcoal + silver (#2D333B / #C9CED6), E espresso + tan (#3A2A1F / #D8B77A), F steel blue + white (#1E3A5A / #E8ECF1). Kylar to pick the first scheme.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
