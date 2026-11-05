@@ -35,7 +35,7 @@ def book(slug, l1, l2):
         t("t2", "front", 0, 23, 100, 14, 64, l2, foil="gold"),
         dict(id="r1", type="rect", panel="front", x=22, y=40.5, w=56, h=0.35, size=24, text="", bold=False, align="left", font="", color=GOLD, lh=1.2, foil="", img="", zoom=1, fx=50, fy=50, tint="", tint_amt=100),
         t("sp1", "spine", 0, 0, 100, 10, 17, f"{l1} {l2}", foil="gold"),
-        t("b1", "back", 0, 94, 40, 4, 8, "Lovelady LLC", bold=False, align="left", font=IFONT, color=GOLD),
+        t("b1", "back", 4, 90.5, 40, 4, 8, "Lovelady LLC", bold=False, align="left", font=IFONT, color=GOLD),
     ]
     def line(i, panel, x, y, w, h):
         return dict(id=i, type="rect", panel=panel, x=x, y=y, w=w, h=h, size=24, text="", bold=False, align="left", font="", color=GOLD, lh=1.2, foil="", img="", zoom=1, fx=50, fy=50, tint="", tint_amt=100)
