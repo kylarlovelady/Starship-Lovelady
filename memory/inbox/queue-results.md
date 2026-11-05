@@ -1,16 +1,4 @@
-nstance(b.get("cover"), dict) else [])[:40]:
-        o = clean_el(e, F)
-        if o: els.append(o)
-    used = set(); n = 1
-    for o in els:
-        if not o["id"] or o["id"] in used:
-            while f"e{n}" in used or any(f"e{n}" == q["id"] for q in els): n += 1
-            o["id"] = f"e{n}"
-        used.add(o["id"])
-    d["cover"]["elements"] = els
-    an = b.get("answers"); an = an if isinstance(an, dict) else {}
-    d["answers"] = {str(k)[:40]: bool(v) for k, v in list(an.items())[:80]}
-    d["chat"] = [{"role": "assistant" if m.get("role") == "assistant" else "user", "text": str(m.get("text", ""))[:3000], "changes": [str(c)[:200] for c in (m.get("changes") if isinstance(m.get("chang
+"assistant" else "user", "text": str(m.get("text", ""))[:3000], "changes": [str(c)[:200] for c in (m.get("changes") if isinstance(m.get("chang
                  for m in (b.get("chat") if isinstance(b.get("chat"), list) else [])[-60:] if isinstance(m, dict)]
     return d
 == interior()
@@ -494,3 +482,16 @@ Nov 05 17:10:54 LoveladyMainAiHub bash[3021970]: INFO:root:Waiting for wake word
 
 ## 2026-11-05 17:13:01 tasks/queue/039-home-mic-record-on.sh
 REFUSED: contains a command on the deny list
+
+## 2026-11-05 17:16:01 tasks/queue/040-home-mic-record-on.sh
+```
+recording flag added
+HEALTHY with recording on
+active
+Nov 05 17:16:04 LoveladyMainAiHub bash[3036587]: INFO:root:Recording audio to /home/kylarlovelady/voice-data/home-mic
+Nov 05 17:16:04 LoveladyMainAiHub bash[3036587]: INFO:root:Ready
+Nov 05 17:16:05 LoveladyMainAiHub bash[3036587]: INFO:root:Connected to services
+Nov 05 17:16:14 LoveladyMainAiHub bash[3036587]: INFO:root:Connected to server
+Nov 05 17:16:14 LoveladyMainAiHub bash[3036587]: INFO:root:Waiting for wake word
+(exit 0)
+```
