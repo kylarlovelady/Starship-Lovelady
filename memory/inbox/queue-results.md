@@ -1,11 +1,4 @@
-puts
-books/new-book-e841/out:
-total 260
-drwxr-xr-x 2 kylarlovelady kylarlovelady   4096 Oct 26 01:21 .
-drwxr-xr-x 5 kylarlovelady kylarlovelady   4096 Oct 26 00:55 ..
--rw-r--r-- 1 kylarlovelady kylarlovelady  30148 Oct 26 01:21 061c1c5034_cover_90.png
--rw-r--r-- 1 kylarlovelady kylarlovelady  44959 Oct 26 01:21 061c1c5034_coverg_90.png
--rw-r--r-- 1 kylarlovelady kylarlovelady  45669 Oct 26 01:21 061c1c5034_coverg.pdf
+t 26 01:21 061c1c5034_coverg.pdf
 -rw-r--r-- 1 kylarlovelady kylarlovelady  24982 Oct 26 01:21 061c1c5034_cover.pdf
 -rw-r--r-- 1 kylarlovelady kylarlovelady 101233 Oct 26 01:21 061c1c5034_interior.pdf
 
@@ -561,5 +554,16 @@ active
 Nov 05 15:19:19 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
 Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Ready
 Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Connected to services
+(exit 0)
+```
+
+## 2026-11-05 17:04:01 tasks/queue/037-home-mic-record-only.sh
+```
+recording flag added
+NOT healthy: rolled back
+active
+Nov 05 17:04:39 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 17:04:39 LoveladyMainAiHub bash[3005072]: INFO:root:Ready
+Nov 05 17:04:40 LoveladyMainAiHub bash[3005072]: INFO:root:Connected to services
 (exit 0)
 ```
