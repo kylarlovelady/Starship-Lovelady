@@ -1,31 +1,4 @@
-ainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 15:01:36 LoveladyMainAiHub bash[2674286]: INFO:root:Ready
-Nov 05 15:01:36 LoveladyMainAiHub bash[2674286]: INFO:root:Connected to services
-Nov 05 15:01:48 LoveladyMainAiHub bash[2674286]: INFO:root:Connected to server
-Nov 05 15:01:48 LoveladyMainAiHub bash[2674286]: INFO:root:Waiting for wake word
-== hub-voice log (last 15)
--- No entries --
-== phone-voice errors today
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]: Exception occurred during processing of request from ('127.0.0.1', 40060)
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]: Traceback (most recent call last):
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]: BrokenPipeError: [Errno 32] Broken pipe
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]: During handling of the above exception, another exception occurred:
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]: Traceback (most recent call last):
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]:     except Exception as e: return self._send(500, {"error": str(e)[:200]})
-Nov 05 15:00:53 LoveladyMainAiHub python[692834]: BrokenPipeError: [Errno 32] Broken pipe
-== HA log, jarvis/assist/wake lines
-[36m2026-11-05 14:57:38.136 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=datetime.datetime(2026, 11, 5
-[36m2026-11-05 14:58:52.352 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=datetime.datetime(2026, 11, 5
-[36m2026-11-05 14:58:54.445 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update[0m
-[36m2026-11-05 15:00:18.370 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What can you tell me about Shari?', attachments=None, created=datetime.datetime(2026, 1
-[36m2026-11-05 15:00:19.925 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update[0m
-[36m2026-11-05 15:00:51.274 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' Do you know who I am?', attachments=None, created=datetime.datetime(2026, 11, 5, 21, 0,
-== jarvis trace, last 14 events
-05:54:45 sentence {'sid': 'phes14a5', 'n': 0, 'text': "Sounds good! Glad to chat, and I’ll be ready for tomorrow's fixes.", 'tts_secs': 0.43, 'since
-05:54:45 state {'sid': 'phes14a5', 'frm': 'thinking', 'to': 'speaking', 'why': ''}
-05:54:46 sentence {'sid': 'phes14a5', 'n': 1, 'text': 'Have a great evening!', 'tts_secs': 0.3, 'since_heard': 1.5}
-05:54:46 client {'sid': 'phes14a5', 'what': 'play_start', 'info': ''}
-05:54:50 client {'sid': 'phes14a5', 'what': 'play_end', 'info': ''}
+5', 'what': 'play_end', 'info': ''}
 05:54:50 client {'sid': 'phes14a5', 'what': 'play_start', 'info': ''}
 05:54:52 client {'sid': 'phes14a5', 'what': 'play_end', 'info': ''}
 05:54:52 state {'sid': 'phes14a5', 'frm': 'speaking', 'to': 'follow', 'why': 'he finished talking'}
@@ -524,5 +497,67 @@ drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:34 page1.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:34 page2.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:34 page3.png
+(exit 0)
+```
+
+## 2026-11-05 17:46:01 tasks/queue/044-kdp-build-backtext.sh
+```
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Playfair Display | interior font: Lato
+== process-operator-a cover 14.065 x 10.418 spine 0.489
+  OK Page count 120 (hardcover needs 75 to 550)
+  OK Page count is even
+  OK Cover file 14.065 x 10.418 in, spine 0.489 in
+  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
+  OK Inside margin 0.500 in (KDP minimum 0.375)
+  OK All cover text inside the safe zone and clear of the barcode area
+  OK Inside text contrast 15.9:1
+  OK Picture on the full: sharp (300 dpi)
+  OK cover PDF fonts embedded
+  OK interior PDF fonts embedded
+  OK Author / pen name set
+  OK Title set
+  OK Title + subtitle length OK
+  WARN Book description not written
+  WARN 0 of 7 keywords
+  WARN Price not set
+  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
+== lab-operator-a cover 14.065 x 10.418 spine 0.489
+  OK Page count 120 (hardcover needs 75 to 550)
+  OK Page count is even
+  OK Cover file 14.065 x 10.418 in, spine 0.489 in
+  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
+  OK Inside margin 0.500 in (KDP minimum 0.375)
+  OK All cover text inside the safe zone and clear of the barcode area
+  OK Inside text contrast 15.9:1
+  OK Picture on the full: sharp (300 dpi)
+  OK cover PDF fonts embedded
+  OK interior PDF fonts embedded
+  OK Author / pen name set
+  OK Title set
+  OK Title + subtitle length OK
+  WARN Book description not written
+  WARN 0 of 7 keywords
+  WARN Price not set
+  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+total 2000
+drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
+drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1017733 Nov  5 17:46 cover-guides.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1000401 Nov  5 17:46 cover.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:46 page1.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:46 page2.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
+total 1992
+drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
+drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1015236 Nov  5 17:46 cover-guides.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  998588 Nov  5 17:46 cover.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:46 page1.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:46 page2.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
 (exit 0)
 ```
