@@ -4,6 +4,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 ## 2026-11-05 (daily check, 06:20 Central)
 - Read repo memory and inbox. No Jarvis voice notes to file (0 note files). Pi snapshot (pi-status.md, 06:00 sync, 20 min old): all services active, no failed units, 40.6C, disk 9%, no throttling; containers up (Pi-hole up 10 h, Home Assistant up 4 h). Jarvis last 24 h: 71 turns, 0 errors, first words avg 1.6 s (slowest 4.2 s), 9 hang-ups by you, 2 by quiet timeout; 0 voices enrolled. Kalshi data fresh to 04:19 (practice only, live OFF); digest shows most strategies positive over 24 h but the 05:07 report shows a bad last 4 rounds for the top ones. Queue 018: Starship page on :8095 is up and serves 200. Nothing in todo.md dated today or tomorrow. Wrote memory/brief.md and updated projects.md. Status: memory only, nothing run on the Pi.
 
+## 2026-11-05 (14:00)
+- Read the KDP studio on the Pi (what it can do and its 6x9 hardcover spec, not yet verified with KDP) and recorded it in amazon-kdp.md with tonight's goal (2 books in review).
+
 ## 2026-11-05 (13:54)
 - Kylar did the Fresh start on the practice wallet (screenshot: $1,000.00, 0 rounds, strategy Auto). New record for the run wallet starts about 1:53 pm Central under cap 25 and the hold-to-end Auto rule.
 
