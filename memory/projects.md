@@ -13,7 +13,7 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | Amazon KDP | in progress | Record what is being published and results | amazon-kdp.md |
 | Freeze-drying business | idea | Pick containers, label template | projects/freeze-drying.md |
 | 3D printing | idea | Fill in details | projects/3d-printing.md |
-| Truck / vehicle projects | not started | Kylar to list vehicles and jobs | truck-project.md |
+| Truck / vehicle projects | in progress | Pick first job per vehicle: Expedition sensors + radio, F-250 SIM + dyno tune; confirm engines | truck-project.md |
 | Pi-hole (DNS blocking + device visibility) | in progress (pilot not started) | Confirm it answers; pilot on iPad then phones then TVs; name devices; feed stats into the status bus | architecture.md |
 | Everything working together (tools for Jarvis, one alert channel, one front door, task queue, daily Claude check) | built, waiting for install on the Pi | Kylar runs `bash ~/starship/tasks/pi_update.sh ha`; then check alerts arrive and Jarvis tools answer | architecture.md |
 | Home screen readability (clock/weather/date on busy backgrounds) | idea | Add a soft panel/shadow behind the clock | pi-home-assistant.md |
