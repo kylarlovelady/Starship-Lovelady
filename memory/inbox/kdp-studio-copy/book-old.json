@@ -1,0 +1,69 @@
+{
+ "name": "Process Operator",
+ "title": "Process Operator",
+ "subtitle": "Lined Journal & Logbook",
+ "tagline": "Notes. Shifts. Ideas.",
+ "author": "",
+ "paper": "cream",
+ "pages": 120,
+ "cover": {
+  "bg": "#26313d",
+  "accent": "#ff7a2f",
+  "text": "#ffffff",
+  "title_font": "DejaVu Sans",
+  "body_font": "DejaVu Sans",
+  "title_size": 0,
+  "align": "left",
+  "pattern": "lines",
+  "frame": false,
+  "footer": "{pages} LINED PAGES",
+  "back_head": "DAILY LOG  \u2022  NOTES  \u2022  IDEAS",
+  "back_text": "A simple lined journal for the {title}. Numbered pages make it easy to log shifts, jot notes, track tasks and keep a record you can look back on.",
+  "back_bullets": [],
+  "barcode_box": true
+ },
+ "inside": {
+  "font": "DejaVu Sans",
+  "color": "#444444",
+  "page_bg": "#ffffff",
+  "style": "lines",
+  "line_color": "#b9bec6",
+  "line_width": 0.5,
+  "spacing": 0.3125,
+  "dash": false,
+  "top": 0.7,
+  "bottom": 0.85,
+  "inner": 0.5,
+  "outer": 0.4,
+  "header": "none",
+  "header_text": "",
+  "num_pos": "center",
+  "num_style": "plain",
+  "num_size": 9
+ },
+ "front": {
+  "title_page": false,
+  "owner_page": true,
+  "owner_fields": [
+   "Name",
+   "Company",
+   "Phone",
+   "Email"
+  ],
+  "contacts": 0,
+  "index": 0,
+  "goals": false
+ },
+ "back": {
+  "notes_pages": 0
+ },
+ "listing": {
+  "description": "",
+  "keywords": [],
+  "categories": "",
+  "price": ""
+ },
+ "answers": {
+  "author": false
+ }
+}

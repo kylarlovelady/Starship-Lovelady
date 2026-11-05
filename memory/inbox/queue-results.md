@@ -1,46 +1,4 @@
-1-05 03:04:01 tasks/queue/017-merge-hub.sh
-```
-merged: True
-data-t="overview" class="on">
-(hub.html is read fresh on every request, no restart needed)
-(exit 0)
-```
-
-## 2026-11-05 05:01:02 tasks/queue/018-starship-check.sh
-```
-== listener
-LISTEN 0      5                             100.105.140.126:8095       0.0.0.0:*   
-== server process
-kylarlo+ 2711573  0.0  0.2 328576 21536 ?        Ss   Oct30   0:37 /usr/bin/python3 -m http.server 8095 --bind 100.105.140.126 --directory /home/kylarlovelady/crew-web
-== files in crew-web
-total 800
-drwxr-xr-x  2 kylarlovelady kylarlovelady   4096 Nov  5 05:00 .
-drwx------ 36 kylarlovelady kylarlovelady   4096 Nov  5 04:28 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady   3280 Nov  5 05:00 crew.json
--rw-rw-r--  1 kylarlovelady kylarlovelady     42 Nov  5 05:00 hub-alerts.json
--rw-rw-r--  1 kylarlovelady kylarlovelady   1022 Nov  5 05:00 hub-extra.json
--rw-r--r--  1 kylarlovelady kylarlovelady 147057 Nov  5 03:27 index.html
--rw-r--r--  1 kylarlovelady kylarlovelady 142042 Nov  4 15:13 index.html.bak
--rw-rw-r--  1 kylarlovelady kylarlovelady  49563 Nov  5 05:00 live.html
--rw-r--r--  1 kylarlovelady kylarlovelady 189303 Nov  5 05:00 market.json
--rw-rw-r--  1 kylarlovelady kylarlovelady  14611 Nov  5 05:00 markets.html
--rw-rw-r--  1 kylarlovelady kylarlovelady  11664 Nov  5 05:00 report.html
--rw-r--r--  1 kylarlovelady kylarlovelady  38121 Nov  5 04:59 report.json
-lrwxrwxrwx  1 kylarlovelady kylarlovelady     43 Oct 30 14:17 status.json -> /home/kylarlovelady/crew-status/status.json
--rw-r--r--  1 kylarlovelady kylarlovelady 188749 Nov  5 03:27 support.js
-== fetch
-index 200 147057b
-crew.json 200
-== index.html matches repo?
-same
-== crew-update log
-(exit 0)
-```
-
-## 2026-11-05 12:40:02 tasks/queue/019-kalshi-full.sh
-```
-=== maker study (3 days)
-rounds used: 69 (from /home/kylarlovelady/market-data, last 3 days)
+arket-data, last 3 days)
 
 entry at about 1 min in: 138 orders per method
   TAKER  profit per contract -0.022  per $ staked -4.1%   (win rate 50%)
@@ -622,4 +580,28 @@ def interior(b, path):
             c.setFont(fn(fam), 13)
             if b["subtitle"]: c.drawCentredString((L + R) / 2, H * .62 - 70, b["subtitle"])
             if b["author"]: c.drawCentredString((L + R) / 2, H *(exit 0)
+```
+
+## 2026-11-05 15:01:01 tasks/queue/027-kdp-fonts.sh
+```
+studio fonts (13):
+Bitstream Vera, Caladea, Carlito, DejaVu Sans, DejaVu Serif, FreeSans, FreeSerif, Lato, Liberation Mono, Liberation Sans, Liberation Serif, Open Sans, Roboto
+== other fonts on the system
+Abril Fatface;Allerta Stencil;Allura;Audiowide;Bangers;Bebas Neue,Bebas Neue Bold;Bebas Neue,Bebas Neue Book;Bebas Neue,Bebas Neue Light;Bebas Neue,Bebas Neue Regular;Bebas Neue,Bebas Neue Thin;Black Ops One;Boogaloo;Bubblegum Sans;Bungee;Butcherman;C059;Caladea;Cantarell;Carlito;Caveat;Chelsea Market;Chewy;Cinzel;Comfortaa;Comfortaa,Comfortaa Light;Creepster;D050000L;DejaVu Math TeX Gyre;DejaVu Sans;DejaVu Sans,DejaVu Sans Condensed;DejaVu Sans,DejaVu Sans Light;DejaVu Sans Mono;DejaVu Serif;DejaVu Serif,DejaVu Serif Condensed;Droid Sans Fallback;Eater;Fira Code;Fira Code,Fira Code Light;Fira Code,Fira Code Medium;Fira Code,Fira Code Retina;Fira Code,Fira Code SemiBold;Fontdiner Swanky;FreeMono;FreeSans;FreeSerif;Frijole;GFS Didot Classic;Gochi Hand;Great Vibes;Griffy;Hack;IBM Plex Mono;IBM Plex Mono,IBM Plex Mono ExtLt;IBM Plex Mono,IBM Plex Mono Light;IBM Plex Mono,IBM Plex Mono Medm;IBM Plex Mono,IBM Plex Mono SmBld;IBM Plex Mono,IBM Plex Mono Text;IBM Plex Mono,IBM Plex Mono Thin;IBM Plex Sans;IBM Plex Sans Arabic;
+
+== can reach GitHub raw?
+200
+(exit 0)
+```
+
+## 2026-11-05 15:01:02 tasks/queue/028-kdp-copy-engine.sh
+```
+total 88
+drwxrwxr-x 2 kylarlovelady kylarlovelady  4096 Nov  5 15:01 .
+drwxrwxr-x 3 kylarlovelady kylarlovelady  4096 Nov  5 15:01 ..
+-rw-r--r-- 1 kylarlovelady kylarlovelady 25292 Nov  5 15:01 app.py
+-rw-r--r-- 1 kylarlovelady kylarlovelady  9588 Nov  5 15:01 book-current.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady  1411 Nov  5 15:01 book-old.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady 33061 Nov  5 15:01 engine.py
+(exit 0)
 ```
