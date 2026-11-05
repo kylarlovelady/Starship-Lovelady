@@ -24,5 +24,12 @@
 - Canva: fine for cover artwork or icons; export as PNG at 300 dpi and import into the studio so the spine, wrap and safe zones stay exact. Do not build the whole cover in Canva unless it matches the KDP template size.
 - Sources: kdp.amazon.com help GDTKFJPNQCBTMRV6; kdpprintcover.com 6x9 hardcover guide.
 
+## Design brief (Kylar, 2026-11-05 14:24)
+- HARDCOVER notebooks (not logbooks): lined pages, every page numbered. Page 1: "This notebook belongs to" with lines for Name, Phone, Email, Company.
+- First two titles: Process Operator, then Lab Operator. Published under Lovelady LLC. Goal: both in review by the time he gets off work (about 4:30 am Fri 2026-11-06).
+- Look: official, professional, durable, for blue-collar workers. NO pictures or illustrations. A textured look over the whole book is fine, nothing else decorative.
+- Title: bold, large, near the top of the front cover with real presence, like the lettering on a Bible cover (name front and center toward the top).
+- Draft colours: Process Operator deep navy with brushed silver; Lab Operator dark forest green with gold or cream. Fonts: condensed industrial title (Oswald if installed), clean sans for small print. Check with Kylar before final.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
