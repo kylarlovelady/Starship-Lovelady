@@ -15,7 +15,7 @@ Engine: 6.7L Power Stroke diesel (confirmed by Kylar 2026-11-05).
 - Interior plastics wrapped in black tooled leather (planned).
 - Keep in mind: tires and wheels this size affect speedometer, gearing and brakes; the tune should account for tire size.
 
-## Vehicle 2: Sheree's 2022 Ford Expedition
+## Vehicle 2: Sharee's 2022 Ford Expedition
 - Ready Lift 3 in kit with Icon A-arms in front, bigger wheels and tires, cold air intake (Kylar installed).
 - 5 Star tuner bought with premade tunes for her lift and tires. Kylar plugged it in and felt no change; unsure the tune loaded. To check: whether the tuner reported a successful write, and whether it can read back the tune. (Claude cannot confirm the tuner holds HP Tuners files; check the tuner's own screen or its maker.)
 - Front bull bar installed; the front sensors were moved onto it and now show faults. Options: (a) a brush guard or bumper made to hold the sensors in the factory spot, (b) relocate them correctly, (c) disable them with a tune or module setting. (a) is the cleanest. Do not leave the faults: they can affect driver-assist features.
@@ -31,7 +31,7 @@ Engine: 6.7L Power Stroke diesel (confirmed by Kylar 2026-11-05).
 
 ## Priorities (Kylar, 2026-11-05) and safety
 - Lives in South Texas (Texas rules: safety inspection yearly; emissions testing applies in some counties only, check the county before F-150 parts).
-- Do first: Sheree's Expedition, and the F-250 suspension.
+- Do first: Sharee's Expedition, and the F-250 suspension.
 - SAFETY: the F-250's pitman arm is loose on the spline gear and the front left makes noise. A loose pitman arm is a steering failure risk. Do not drive it until the nut is torqued to spec (look up the exact torque and socket for a 2020 F-250; it needs a very large socket and a long breaker bar or impact). Also check the spline for wear: if it is worn or the arm has been moving, the arm or sector shaft may need replacing. Have the front end inspected at the same time (front left noise could be ball joint, track bar, bushing or shock).
 - Quick shop option: many tire shops or a friend with an impact can torque it.
 

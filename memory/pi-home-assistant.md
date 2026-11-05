@@ -53,7 +53,7 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 ## What Jarvis must do to replace Alexa (Kylar, 2026-11-05)
 - Today the family uses Alexa for: alarms, timers, lights on/off, thermostat, Spotify music (Kylar's account). Jarvis is not used yet because it is not reliable enough.
 - Wants: answer any question reliably; know the family and feel like a family member; "do anything" once devices are plugged in.
-- Biggest complaints from Kylar and Sheree: gets hung up on, does not hear them, slow replies, talks over them, cuts them off, stops listening mid-conversation, wakes from TV/ambient noise/other people talking. Fix these BEFORE adding more devices.
+- Biggest complaints from Kylar and Sharee: gets hung up on, does not hear them, slow replies, talks over them, cuts them off, stops listening mid-conversation, wakes from TV/ambient noise/other people talking. Fix these BEFORE adding more devices.
 - Build order after the voice works: lights (done), timers and alarms and reminders (one-time and repeating), thermostat (needs the thermostat's Home Assistant integration; ask which model), Spotify (Home Assistant Spotify integration), then wider devices.
 - Satellite Pis (3 bedrooms) do everything the main Pi does except the screen (maybe added later). Kylar is also interested in sensors and add-ons for the main Pi.
 - Time: Kylar's available time varies a lot with work (hours some shifts, none other days), so Claude should do as much as possible on its own and leave short, clear steps for him.

@@ -135,14 +135,14 @@ def times_get(): return dict(getattr(TL, "t", {}))
 
 
 def load_pron():
-    p = {"Kylar": "Kyler", "Sheree": "Shuh-ree", "Sharee": "Shuh-ree"}
+    p = {"Kylar": "Kyler", "Sharee": "Sheree"}   # spelled Kylar and Sharee; spoken "Kyler" and "Sheree"
     try: p.update(json.load(open(os.path.join(DATA, "pronunciations.json"))))
     except Exception: pass
     return p
-NAME_FIX = re.compile(r"\b(shari|sharee|sherry|sheri|sherri|shery|sharie|sheeri|shuri)(?=\b|'s)", re.I)
+NAME_FIX = re.compile(r"\b(shari|sheree|sherry|sheri|sherri|shery|sharie|sheeri|shuri|shuree|sharry)(?=\b|'s)", re.I)
 def fix_names(text):
-    """Speech recognition hears Kylar's wife Sheree (shuh-ree) as Shari, Sherry and so on: normalise to Sheree so Jarvis knows who is meant."""
-    return NAME_FIX.sub("Sheree", text or "")
+    """Speech recognition hears Kylar's wife Sharee (said "sheree") as Shari, Sherry and so on: normalise to Sharee so Jarvis knows who is meant."""
+    return NAME_FIX.sub("Sharee", text or "")
 def apply_pron(text):
     for k, v in load_pron().items():
         if k: text = re.sub(r"\b%s\b" % re.escape(k), v, text, flags=re.I)
@@ -216,7 +216,7 @@ TOPICS = [
     ("pi-home-assistant", r"\bpi\b|home assistant|tailscale|router|wifi|wi-fi|jarvis|voice|hub|screen"),
     ("amazon-kdp", r"kdp|amazon|book|publish"),
     ("truck-project", r"truck|tacoma|vehicle|car\b|engine|tires?|lift|parts?"),
-    ("family", r"wife|girlfriend|kids?|son|daughter|mom|dad|family|birthday|dinner"),
+    ("family", r"wife|sharee|warren|girlfriend|kids?|son|daughter|mom|dad|family|birthday|dinner"),
     ("business", r"business|invoice|client|customer|sales|revenue|llc"),
     ("todo", r"to-?do|remind|need to|don.t forget|deadline|by (monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow)"),
 ]

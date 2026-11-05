@@ -1,6 +1,6 @@
 # Starship Lovelady: instructions for every Claude conversation on this repo
 
-Owner: Kylar Lovelady ("Kyler"), Central time, iPhone. He wants action over warnings ("its my money and i know my risks"). Mission: progress and maintain the Pi and the AI voice assistant, then help with the Kalshi AI and other business ideas.
+Owner: Kylar Lovelady (spelled KYLAR, said "Kyler"). His wife is spelled SHAREE and said "sheree" (never Sheree, Shari or Sherry; Kylar corrected this 2026-11-05), Central time, iPhone. He wants action over warnings ("its my money and i know my risks"). Mission: progress and maintain the Pi and the AI voice assistant, then help with the Kalshi AI and other business ideas.
 
 ## Shared memory (same files for every conversation, Jarvis on the phone, and Jarvis at home)
 1. At the start: read `memory/README.md`, then `memory/projects.md` and `memory/roadmap.md`, then only the topic files that matter. Also look in `memory/inbox/` (Jarvis's notes, and `pi-status.md`, the Pi's latest health snapshot) and file anything new into the right topic file.
