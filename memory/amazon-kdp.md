@@ -1,3 +1,5 @@
 # Amazon KDP
-- KDP identity verification must be finished before 2026-11-08.
-- (Nothing else recorded yet.)
+- KDP identity verification: DONE (Kylar confirmed Nov 1).
+- Priority #2 income project after the Kalshi agent. A Pi service `hub-kdp` exists (details not recorded here).
+- Printable/template digital products could share the KDP pipeline.
+- (Add what is being published, schedule and results here.)

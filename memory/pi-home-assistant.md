@@ -1,15 +1,38 @@
 # Pi, Home Assistant, Jarvis (voice)
-Updated 2026-11-04.
-- Hardware: Raspberry Pi 5 (8 GB), Raspberry Pi OS 13, hostname LoveladyMainAiHub. Kylar uses the Easy SSH app (phone) or PowerShell `ssh` over Tailscale (laptop).
-- Repo on the Pi: ~/starship. Cron `crew-update` pulls it about every 3 minutes. Home screen page: ~/crew-web/index.html (Chromium kiosk at http://localhost:8080). Not stored in the repo.
-- Tailscale: machine name loveladymainaihub, HTTPS certificates enabled 2026-11-04. Voice page: https://loveladymainaihub.taild703ca.ts.net/
-- 2026-11-04: Pi's network dropped about 5:49-9:30 pm (no reboot, power OK). tasks/net_watchdog_setup.sh installs a watchdog and persistent logs.
-- Home screen fix 2026-11-04: added a no-cursor style/script (id="nocursor") to crew-web/index.html (backup index.html.bak).
-- TODO: make the clock, weather and date easier to read on busy backgrounds (shadow, dim layer, or panel).
+Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched backup).
 
-## Jarvis (voice assistant)
-- Server: voice/phone_voice.py, service `phone-voice` on port 8099. Keys live in ~/voice-data/keys.env on the Pi (reused from Home Assistant). Voice: ElevenLabs "Brian". Transcription: OpenAI. Brain: gpt-4o-mini.
-- iPhone Shortcut "Jarvis": Record audio -> POST https://.../ask (File body) -> Play Sound. Back Tap runs it. Tap-to-finish for long talk; a 6 s hands-free duplicate for Siri/car.
-- Web page version (wake word "hey jarvis") built but not tested on the phone yet. iPhone web pages cannot listen with the screen locked.
-- Not built: voice ID, AirPods/home-mic direction, echo cancellation, home-speaker routing.
-- Kylar wants to use Jarvis in the car, hands-free only.
+## The Pi and access
+- Raspberry Pi 5 (8 GB), Raspberry Pi OS 13, hostname LoveladyMainAiHub (Tailscale name loveladymainaihub). Terminal: Easy SSH app on the phone (paste works), PowerShell `ssh` over Tailscale on the laptop. Termius expired Nov 1; Raspberry Pi Connect (connect.raspberrypi.com) is a backup.
+- Repo ~/starship (GitHub kylarlovelady/Starship-Lovelady). Cron `crew-update` pulls about every 3 minutes, so starship/markets changes need no pasting.
+- Pages over Tailscale: Hub http://loveladymainaihub.taild703ca.ts.net:8081/hub , Home Assistant :8123 (HA 2026.10.2, HACS), Markets/Live View :8095, Pi-hole :8089. Home screen kiosk: Chromium at http://localhost:8080 serving ~/crew-web/index.html (not in the repo).
+- Pi services: hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-memsum (timer), hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog, hub-janitor (timer), plus market-agent and phone-voice. Docker: homeassistant, piper, whisper, openwakeword. Scripts in /usr/local/bin/hub-*.py. Case lights/OLED: /opt/pironman5.
+- Working rules: commands in code boxes, one at a time (a multi-line paste once removed the whisper container); back up before changes; never put passwords or keys in chat or notes; mic stays muted until Kylar says.
+- Hardening done: fail2ban, auto updates, two services closed. SSH still allows password login (fail2ban guards it). Bitwarden set up (2-step done Nov 1).
+
+## Nov 4 events
+- Pi's network dropped about 5:49-9:30 pm (no reboot, power OK, throttled=0x0). tasks/net_watchdog_setup.sh installs a watchdog and persistent logs (needs confirming it was installed).
+- Home screen: added a no-cursor style/script (id="nocursor") to crew-web/index.html (backup index.html.bak). Kylar to confirm the cursor line is gone.
+- TODO: make clock, weather and date readable on busy backgrounds (text shadow, dim layer, or panel).
+
+## Home voice assistant (Alexa replacement)
+- Pipeline (Assist pipeline "Jarvis"): wake word openWakeWord (Docker port 10400, threshold 0.7, hey_jarvis) -> Wyoming satellite -> speech-to-text (local Whisper now; switching to OpenAI Whisper/gpt-4o-transcribe) -> OpenAI Conversation gpt-4o-mini with the family prompt -> ElevenLabs voice Brian. Piper/Whisper local kept as fallback. Keep a copy of any prompt before editing.
+- Problems: wakes by itself when unmuted (false wake words), talks over him, sometimes does not hear him, less smooth than Alexa. Likely causes: hears its own voice (needs echo cancellation), wake-word threshold/model. His partner is getting annoyed, so this is a priority at home.
+- Hardware: MXL AC-44 USB boundary mic (poor fit, no echo cancellation as far as known), USB Pebble speaker. A Sonic XVF3800-class mic is the planned upgrade, only one, last, after checking echo handling. Later: custom wake word "Penelope" and a female voice; a push-to-talk button.
+- Home Assistant has NO devices connected yet; Alexa still controls cameras, door locks, thermostat, air quality reader. Plan: add devices one at a time, keep Alexa until each works.
+- What Kylar wants: knows him, his family and schedule; speaks only when asked; answers like Claude/ChatGPT; controls the house; good memory; blunt and honest; ignores the TV; never talks over him; sounds human.
+- At home next: unmute and test Hey Jarvis; switch Assist STT to OpenAI Whisper; router address reservations (Pi 192.168.1.106; router 192.168.1.1, Advanced > Network > DHCP Server); turn off Private Wi-Fi Address, Private Relay, VPN, Private DNS on iPad/phones; name 11 unnamed devices; Pi-hole pilot on the iPad, then phones, then TVs; Hub Web Activity tab after that.
+- Costs: OpenAI prepaid about $10-15 a month; ElevenLabs Starter $6 a month, renews Nov 26 (decision reminder Nov 24 noon). Two OpenAI keys and one ElevenLabs key exist; after a couple of days check each OpenAI key's "Last used" date at platform.openai.com and delete only the unused one.
+
+## Jarvis on the phone (built Nov 4)
+- Server voice/phone_voice.py, service `phone-voice` on 8099, https://loveladymainaihub.taild703ca.ts.net/ . Keys in ~/voice-data/keys.env (reused from Home Assistant). Voice Brian; transcription OpenAI; brain gpt-4o-mini; reads these memory files.
+- iPhone Shortcut "Jarvis": Record audio -> POST https://.../ask (File body) -> Play Sound. Back Tap runs it. Tap-to-finish for long talk; a 6 s copy for hands-free Siri/car. Tested working Nov 4 (Brian understood Kylar well after switching to OpenAI transcription).
+- Web page (wake word hey jarvis) built, untested on the phone. iPhone web pages can't listen when the screen is locked.
+- Wanted but not built: voice ID with "who am I speaking with?" and trust levels (family voices; strangers get nothing important), reply only to the device that heard the voice, AirPods/home-mic direction, echo cancellation, wake-word trigger log with good/false marks (built in the web page).
+- Phone mode rule: replies play on the phone/AirPods only, never the home speakers.
+
+## Starship / Control Room
+- Control Room is live in the Lovelady Hub (Status, Appearance, Control Room tabs). Ideas: real data in popups, more life aboard, test live mode on the phone. Portrait rooms are small; landscape is best.
+
+## Other
+- Janitor: moves files to ~/.janitor/trash (57 items); empty around Nov 2 if nothing broke; 5 .bak files need sudo. Device names live in ~/hub-dashboard/device-names.json (key = MAC). ntfy pushes never reach the iPhone; plan: Home Assistant Companion app notifications (Pushover as fallback).
+- Phone/iPad location tracking dropped. Phone/iPad wifi connect/disconnect alerts stay off.

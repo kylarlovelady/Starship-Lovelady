@@ -201,10 +201,15 @@ def prompt_text():
     repo = os.path.expanduser("~/starship/memory")
     mem = ""
     try:
-        for f in sorted(os.listdir(repo)):
-            if f.endswith(".md") and f not in ("README.md", "_archive.md"): mem += "\n## %s\n%s\n" % (f, _read(os.path.join(repo, f), 2500))
-    except OSError: mem = _read("~/starship/BUILD_MEMORY.md", 5000)
-    if mem.strip(): extra += "\n\nShared memory notes (written with Claude, the coding assistant; trust as background, they may be slightly out of date):" + mem[:12000]
+        for root, dirs, files in os.walk(repo):
+            dirs[:] = sorted(d for d in dirs if d != "inbox")
+            for f in sorted(files):
+                if f.endswith(".md") and f not in ("README.md", "_archive.md"):
+                    pth = os.path.join(root, f)
+                    mem += "\n## %s\n%s\n" % (os.path.relpath(pth, repo), _read(pth, 4500))
+    except OSError: mem = ""
+    if not mem.strip(): mem = _read("~/starship/BUILD_MEMORY.md", 5000)
+    if mem.strip(): extra += "\n\nShared memory notes (written with Claude, the coding assistant; trust as background, they may be slightly out of date):" + mem[:18000]
     mine = ""
     try:
         for f in sorted(os.listdir(os.path.join(DATA, "memory"))):

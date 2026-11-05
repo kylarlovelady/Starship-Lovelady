@@ -12,6 +12,7 @@ One topic per file. Read this index first, then only the files that matter for t
 | todo.md | things to do with dates; check things off by moving them to _archive.md |
 | truck-project.md | the truck and other vehicle projects: parts, steps, notes |
 | _archive.md | removed or finished items. Nothing is permanently deleted |
+| projects/ | one file per big project or topic (freeze-drying.md, 3d-printing.md, ...). New big project = new file here (or a folder with notes.md if it grows) and a one-line pointer in the topic file it relates to |
 | inbox/ | raw notes Jarvis saved by voice on the Pi (jarvis-<topic>.md). Claude files them into the right topic file |
 
 ## Rules (same for Claude and Jarvis)
