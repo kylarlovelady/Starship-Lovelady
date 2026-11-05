@@ -1,130 +1,4 @@
-t 26 01:21 061c1c5034_coverg.pdf
--rw-r--r-- 1 kylarlovelady kylarlovelady  24982 Oct 26 01:21 061c1c5034_cover.pdf
--rw-r--r-- 1 kylarlovelady kylarlovelady 101233 Oct 26 01:21 061c1c5034_interior.pdf
-
-books-old-1026-0008/new-journal-fcd0/out:
-total 268
-drwxr-xr-x 2 kylarlovelady kylarlovelady   4096 Oct 25 23:46 .
-drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Oct 25 23:46 ..
--rw-r--r-- 1 kylarlovelady kylarlovelady  51221 Oct 25 23:46 3d06037250_coverg_80.png
--rw-r--r-- 1 kylarlovelady kylarlovelady  44357 Oct 25 23:46 3d06037250_coverg.pdf
--rw-r--r-- 1 kylarlovelady kylarlovelady  44143 Oct 25 23:46 3d06037250_cover.pdf
--rw-r--r-- 1 kylarlovelady kylarlovelady 121995 Oct 25 23:46 3d06037250_interior.pdf
-
-books-old-1026-0008/process-operator-5079/out:
-total 268
-drwxr-xr-x 2 kylarlovelady kylarlovelad(exit 0)
-```
-
-## 2026-11-05 14:28:02 tasks/queue/026-kdp-interior.sh
-```
-== book.json (current book) keys and sample
-books/new-book-e841/book.json
-name: "New book"
-title: "Process Operator Notebook Journal"
-subtitle: ""
-author: "K.J.Lovelady"
-paper: "white"
-pages: 120
-cover:
-  bg: "#000000"
-  pattern: "none"
-  pattern_color: "#999999"
-  frame: false
-  frame_color: "#000000"
-  font: "DejaVu Sans"
-  text: "#FFD700"
-  barcode_box: false
-  elements:
-    [list of 1]
-      id: "e1"
-      type: "text"
-      panel: "front"
-      x: 0
-      y: 30.0
-      w: 100
-      h: 40.0
-      size: 58.0
-      text: "Process Operator"
-      bold: true
-      align: "center"
-      font: "DejaVu Sans"
-      color: "#FFD700"
-      lh: 1.2
-inside:
-  font: "DejaVu Sans"
-  color: "#444444"
-  page_bg: "#ffffff"
-  style: "lines"
-  line_color: "#b9bec6"
-  line_width: 0.5
-  spacing: 0.3125
-  dash: false
-  top: 0.7
-  bottom: 0.85
-  inner: 0.5
-  outer: 0.4
-  header: "none"
-  header_text: ""
-front:
-  title_page: false
-  owner_page: false
-  owner_heading: ""
-  owner_footer: ""
-  owner_fields:
-    [list of 0]
-  contacts: 0
-  index: 0
-  goals: false
-back:
-  notes_pages: 0
-labels:
-  contacts: "Contacts"
-  index: "Index"
-  goals: "Goals"
-  notes: "Notes"
-listing:
-  description: "A hardcover Process Operator Notebook Journal with 120 numbered, lined pages (6 x 9 inche
-  keywords:
-    [list of 7]
-  categories: ""
-  price: "17.99"
-answers:
-  spine_text: true
-  owner_page: true
-  goals: true
-  contacts: true
-  date_header: true
-  index: true
-  notes_back: true
-  title_page: true
-  listing: true
-chat:
-  [list of 37]
-    role: "user"
-    text: "Ok on the front cover i want \u201cProcess Operator\u201d in yellow gold letters and i wa
-    changes:
-      [list of 0]
-== clean() element types
-def clean(b):
-    d = merge(copy.deepcopy(DEFAULT), {k: v for k, v in b.items() if k not in ("cover",)})
-    d["cover"] = merge(copy.deepcopy(DEFAULT["cover"]), {k: v for k, v in (b.get("cover") or {}).items() if k != "elements"}) if isinstance(b.get("cover"), dict) else copy.deepcopy(DEFAULT["cover"])
-    F = discover()
-    def walk(x, dflt):
-        for k in list(x):
-            if k not in dflt: del x[k]; continue
-            v, dv = x[k], dflt[k]
-            if k in ("answers", "chat", "elements"): continue
-            if isinstance(dv, dict): x[k] = v if isinstance(v, dict) else {}; walk(x[k], dv); continue
-            if k in ENUM and v not in ENUM[k]: x[k] = dv
-            elif k in NUM: x[k] = type(dv)(_num(v, NUM[k][0], NUM[k][1], dv))
-            elif k in ("bg", "text", "color", "page_bg", "line_color", "pattern_color", "frame_color") and not (isinstance(v, str) and HEX.match(v)): x[k] = dv
-            elif k in ("font",) and v not in F: x[k] = dv if dv in F else "Bitstream Vera"
-            elif isinstance(dv, bool): x[k] = bool(v)
-            elif isinstance(dv, str): x[k] = str(v)[:2000 if k == "description" else 300]
-            elif isinstance(dv, list): x[k] = [str(i)[:120] for i in (v if isinstance(v, list) else [])][:12]
-    walk(d, DEFAULT)
-    d["pages"] = int(d["pages"]); d["pages"] += d["pages"] % 2
+; d["pages"] += d["pages"] % 2
     els = []
     for e in ((b.get("cover") or {}).get("elements", []) if isinstance(b.get("cover"), dict) else [])[:40]:
         o = clean_el(e, F)
@@ -565,5 +439,57 @@ active
 Nov 05 17:04:39 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
 Nov 05 17:04:39 LoveladyMainAiHub bash[3005072]: INFO:root:Ready
 Nov 05 17:04:40 LoveladyMainAiHub bash[3005072]: INFO:root:Connected to services
+(exit 0)
+```
+
+## 2026-11-05 17:10:01 tasks/queue/038-home-mic-record-diagnose.sh
+```
+4:--name 'main hub' \
+#!/bin/bash
+cd ~/wyoming-satellite
+script/run \
+--name 'main hub' \
+--debug-recording-dir '/home/kylarlovelady/voice-data/home-mic' \
+--uri 'tcp://127.0.0.1:10700' \
+--mic-command '/home/kylarlovelady/hub-mic.py plughw:3,0' \
+--snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
+--wake-uri 'tcp://127.0.0.1:10400' \
+--wake-word-name 'hey_jarvis' \
+--detect-command 'bash -c "echo idle > /tmp/hub-state"' \
+--detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
+--stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
+--transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
+--synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
+--tts-start-command 'bash -c "echo speaking > /tmp/hub-state"' \
+--tts-stop-command 'bash -c "echo idle > /tmp/hub-state; curl -s -m 2 -X POST -d done http://127.0.0.1:8080/event/done > /dev/null"' \
+--error-command 'bash -c "echo idle > /tmp/hub-state"'
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]: Traceback (most recent call last):
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:   File "/home/kylarlovelady/wyoming-satellite/script/run", line 12, in <module>
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:     subprocess.check_call([context.env_exe, "-m", "wyoming_satellite"] + sys.argv[1:])
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:     ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:   File "/usr/lib/python3.13/subprocess.py", line 419, in check_call
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:     raise CalledProcessError(retcode, cmd)
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]: subprocess.CalledProcessError: Command '['/home/kylarlovelady/wyoming-satellite/.venv/bin/python3', '-m', 'wyoming_satellite', '--name', 'main hub', '-
+Nov 05 17:10:01 LoveladyMainAiHub bash[3005067]: /home/kylarlovelady/wyoming-satellite/run-hub.sh: line 19: unexpected EOF while looking for matching `"'
+Nov 05 17:10:01 LoveladyMainAiHub systemd[1]: hub-satellite.service: Main process exited, code=exited, status=1/FAILURE
+Nov 05 17:10:01 LoveladyMainAiHub systemd[1]: hub-satellite.service: Failed with result 'exit-code'.
+Nov 05 17:10:01 LoveladyMainAiHub systemd[1]: hub-satellite.service: Consumed 2.431s CPU time.
+Nov 05 17:10:05 LoveladyMainAiHub systemd[1]: hub-satellite.service: Scheduled restart job, restart counter is at 5.
+Nov 05 17:10:05 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 17:10:05 LoveladyMainAiHub bash[3020155]: INFO:root:Recording audio to /home/kylarlovelady/voice-data/home-mic
+Nov 05 17:10:05 LoveladyMainAiHub bash[3020155]: INFO:root:Ready
+Nov 05 17:10:05 LoveladyMainAiHub bash[3020155]: INFO:root:Connected to services
+Nov 05 17:10:14 LoveladyMainAiHub bash[3020155]: INFO:root:Connected to server
+Nov 05 17:10:14 LoveladyMainAiHub bash[3020155]: INFO:root:Waiting for wake word
+total 8
+drwxrwxr-x 2 kylarlovelady kylarlovelady 4096 Nov  5 17:10 .
+drwx------ 5 kylarlovelady kylarlovelady 4096 Nov  5 15:13 ..
+-rw-r--r-- 1 kylarlovelady kylarlovelady    0 Nov  5 15:19 965988847919528-wake.wav
+-rw-r--r-- 1 kylarlovelady kylarlovelady    0 Nov  5 17:04 972288312998766-wake.wav
+-rw-r--r-- 1 kylarlovelady kylarlovelady    0 Nov  5 17:10 972648755382530-wake.wav
+active
+Nov 05 17:10:45 LoveladyMainAiHub bash[3021970]: INFO:root:Connected to services
+Nov 05 17:10:54 LoveladyMainAiHub bash[3021970]: INFO:root:Connected to server
+Nov 05 17:10:54 LoveladyMainAiHub bash[3021970]: INFO:root:Waiting for wake word
 (exit 0)
 ```
