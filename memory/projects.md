@@ -13,6 +13,8 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | Freeze-drying business | idea | Pick containers, label template | projects/freeze-drying.md |
 | 3D printing | idea | Fill in details | projects/3d-printing.md |
 | Truck / vehicle projects | not started | Kylar to list vehicles and jobs | truck-project.md |
+| Pi-hole (DNS blocking + device visibility) | in progress (pilot not started) | Confirm it answers; pilot on iPad then phones then TVs; name devices; feed stats into the status bus | architecture.md |
+| Everything working together (tools for Jarvis, one alert channel, one front door, task queue, daily Claude check) | in progress | Build order in architecture.md | architecture.md |
 | Home screen readability (clock/weather/date on busy backgrounds) | idea | Add a soft panel/shadow behind the clock | pi-home-assistant.md |
 
 ## Done

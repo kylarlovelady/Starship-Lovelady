@@ -12,6 +12,7 @@ One topic per file. Read this index first, then only the files that matter for t
 | todo.md | things to do with dates; check things off by moving them to _archive.md |
 | truck-project.md | the truck and other vehicle projects: parts, steps, notes |
 | projects.md | THE TRACKER: every project, its status (idea / in progress / stalled / done), next step, last touched. Keep it current; finish what is started |
+| architecture.md | how the Pi, Jarvis, Home Assistant, Starship, Kalshi agent, Pi-hole and Claude connect, and the build order for making them work together |
 | roadmap.md | the Starship's missions in order, and what must be true before moving to the next one |
 | _archive.md | dropped items only (Kylar said drop it, or it was wrong). Nothing is permanently deleted |
 | projects/ | one file per big project or topic (freeze-drying.md, 3d-printing.md, ...). New big project = new file here (or a folder with notes.md if it grows) and a one-line pointer in the topic file it relates to |

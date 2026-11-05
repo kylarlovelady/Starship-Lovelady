@@ -2,6 +2,7 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- Pi-hole: confirm it is answering, pilot on the iPad, then phones, then TVs; turn off Private Wi-Fi Address/Private Relay/VPN/Private DNS on devices; name the 11 unnamed devices; then feed its stats into Starship/Jarvis (see architecture.md).
 - On the Pi: `cd ~/starship && git pull -q; sudo systemctl restart phone-voice; bash ~/starship/tasks/kalshi_data_sync.sh install; bash ~/starship/tasks/ha_jarvis_install.sh` then add the Jarvis Hub integration in Home Assistant (steps printed).
 - 2026-11-09: redo Kalshi API location verification (kalshi.com Profile, API keys); do weekly.
 - 2026-11-24 noon: ElevenLabs decision (renews Nov 26).
