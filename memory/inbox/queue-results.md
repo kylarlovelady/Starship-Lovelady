@@ -1,6 +1,4 @@
-w;bottom:4vh;padding:2.5vh 3vw;border-radius:22px;
- background:rgba(10,20,34,.88);border:1px solid rgba(56,232,255,.4);
- box-shadow:0 0 40px rgba(56,232,255,.2);backdrop-filter:blur(12px);
+er:blur(12px);
  transform:translateY(130%);opacity:0;transition:transform .45s ease,opacity .45s ease}
 #panel.show{transform:none;opacity:1}
 #status{display:flex;align-items:center;gap:1.2vw;font-size:2vw;letter-spacing:.2em;
@@ -470,3 +468,11 @@ button.act{background:#1c6bff;color:#fff;border:0;border-radius:12px;padding:10p
 
 ## 2026-11-05 03:01:01 tasks/queue/016-merge-hub.sh
 REFUSED: sudo is not allowed in queue scripts
+
+## 2026-11-05 03:04:01 tasks/queue/017-merge-hub.sh
+```
+merged: True
+data-t="overview" class="on">
+(hub.html is read fresh on every request, no restart needed)
+(exit 0)
+```
