@@ -2,7 +2,7 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 week, 3 days, 16 hours, 0 minutes; temp 42.2'C; throttled flags 0x0 (0x0 is clean); memory 56%; disk 9%
+- up 1 week, 3 days, 16 hours, 1 minute; temp 38.9'C; throttled flags 0x0 (0x0 is clean); memory 57%; disk 9%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
@@ -11,7 +11,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 7 hours (healthy); homeassistant Up About an hour
 
 ## Sync and schedule
-- Pi repo copy at: 8b3d32a 2 minutes ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: ca1c986 53 seconds ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
