@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (03:05)
+- Kylar ran pi_update.sh (restart Jarvis OK). Added "iPhone Shortcuts" to todo.md Open.
+
 ## 2026-11-05 (03:30)
 - Safe now shows real money: real Kalshi cash (read-only from the agent, unknown while Kalshi is in maintenance), practice wallet balance/profit, Jarvis usage. OpenAI dollar spend still not measured. (crew_report.py wallet block + index.html.)
 - ONE SITE: the Lovelady Hub (:8081/hub) is now the single website. Queue 016 adds an Overview tab (first, default) to Hub that embeds the Jarvis front door (/home?embed=1: right-now chips incl. wallets, alerts, Jarvis/Lab/Replay/Pi-hole/HA/KDP links, notes viewer). Duplicates removed from it (Starship, Live View, Hub tiles, services chip; those are Hub tabs). Visiting Jarvis /home directly now redirects to the Hub (/home?old=1 keeps the old page). /api/hub also returns crew.json. Needs: pull, `sudo` restart of phone-voice (bash ~/starship/tasks/pi_update.sh) and queue 016 (auto). hub.html backup: hub.html.bak-merge. Status: built, not yet on Pi.
