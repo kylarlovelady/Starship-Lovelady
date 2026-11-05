@@ -33,3 +33,14 @@ Gaps 1 (Jarvis tools), 2 (alerts), 3 (front door /home), 4 (Pi-hole stats), 5 (t
 - Why Kylar built the Starship: the Captain and crew should hold the project discussions and do the work (diagnose, fix, file notes), not a human-driven chat doing it by hand.
 - Honest state today: the crew rooms, lights and agents on the Starship page are mostly a visual shell (some rows now show real data). What actually runs: the 3-minute task queue, the 5-minute alert checker, the 30-minute notes sync, the daily 6:17 am Claude check, Jarvis tools, and shared memory files. The "Captain" is not yet a running agent; Claude chats are still doing the investigating.
 - Build: (1) Captain intake: Kylar talks to the Captain (Jarvis on the Pi or the Starship page), which writes tasks into memory/todo.md and projects.md; (2) crew roles (Mechanic: Pi and Jarvis health; Trainer: voice quality; Librarian: files; Security: network; Kalshi analyst) each with a standing job and a daily report; (3) a scheduled Claude run acts as the Captain: reads todo and inbox, runs queue diagnostics, applies safe fixes, writes the decision log and brief; changes that touch the Pi go through the queue or ask Kylar; (4) approvals appear in the Starship paper tray.
+
+## Captain operating rules (Kylar, voice call 2026-11-05)
+- Kylar calls this conversation "the Captain" ("Captain, report"). The Captain's Office on the Starship holds all decisions and info. Captain can see everything except passwords.
+- Consult Kylar before: money decisions, anything permanent or hard to undo, anything that changes how the family uses Jarvis. Everything else the Captain decides and logs.
+- Routine work goes to crew (small model); judgment goes to a strong model. All agents run on Anthropic.
+- Budget ceiling: under $100/month for crew + Kalshi team combined, with a weekly cost report.
+- Kalshi team: routine, developer, skeptic. Practice money only until Kylar says otherwise.
+- One Jarvis: phone and home share settings, memory and access. Jarvis voice louder by default, plus a volume slider shared by both.
+- The Starship eventually replaces the Hub page; keep the Hub until every tab lives in the Starship. PIN and Pi controls carry over unchanged. Characters walk between rooms because of real tasks.
+- Standard: "it has to work" (beat Alexa on a test checklist before calling home Jarvis done).
+- Build order: home mic recording -> noise suppression -> Hub-to-Starship map (Kylar approves) -> Captain on the Starship -> Kalshi team -> crew daily jobs.

@@ -10,6 +10,7 @@ One topic per file. Read this index first, then only the files that matter for t
 | amazon-kdp.md | Amazon KDP publishing work |
 | business.md | business ideas, tasks, numbers (no account passwords) |
 | todo.md | things to do with dates; check things off by moving them to _archive.md |
+| buy-list.md | things to buy per project; bought items stay with the date |
 | truck-project.md | the truck and other vehicle projects: parts, steps, notes |
 | projects.md | THE TRACKER: every project, its status (idea / in progress / stalled / done), next step, last touched. Keep it current; finish what is started |
 | changelog.md | what Claude changed and when, with status (built / installed / confirmed). Add an entry every time something changes |
