@@ -3,7 +3,6 @@ Open items on top. When finished, move the line to Done with the date (never del
 
 ## Open
 - Home screen: confirm the frosted bubble looks right and the cursor line is gone (revert: copy index.html.bak-glass back in ~/hub-dashboard). Tell Claude if you want it bigger/smaller/clearer.
-- Pi: run `bash ~/starship/tasks/net_watchdog_setup.sh` (needs root, so Claude cannot do it through the queue).
 - Pi-hole: confirm it is answering, pilot on the iPad, then phones, then TVs; turn off Private Wi-Fi Address/Private Relay/VPN/Private DNS on devices; name the 11 unnamed devices; then feed its stats into Starship/Jarvis (see architecture.md).
 - On the Pi: `cd ~/starship && git pull -q; bash ~/starship/tasks/pi_update.sh ha` (installs alerts, Kalshi sync, task queue, restarts Jarvis, installs the home-speaker add-on), then add the Jarvis Hub integration in Home Assistant (steps print at the end).
 - 2026-11-09: redo Kalshi API location verification (kalshi.com Profile, API keys); do weekly.
@@ -19,6 +18,7 @@ Open items on top. When finished, move the line to Done with the date (never del
 - Run `bash ~/starship/tasks/memory_sync.sh` once after the update so pi-status.md appears in the repo.
 
 ## Done
+- 2026-11-05: Network watchdog installed on the Pi (root cron every 2 min, log /var/log/net_watchdog.log, persistent journal). Confirmed by Kylar.
 - 2026-11-05: Jarvis voice server live on the Pi with Brian voice, Siri Shortcut working.
 - 2026-11-05: Shared memory split into topic files; Hub Notes migrated.
 - 2026-11-05: Pi can push notes to the repo (deploy key) and syncs every 30 min.

@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (02:24)
+- Network watchdog INSTALLED on the Pi (confirmed by Kylar's screenshot): checks internet every 2 min, restarts NetworkManager after 3 fails and tailscaled after 6, logs to /var/log/net_watchdog.log, persistent journal on. Moved to Done in todo.md.
+
 ## 2026-11-05 (late night, home screen)
 - Found where the home screen lives: ~/hub-dashboard (server.py on 127.0.0.1:8080, page index.html with #clock, #date, #wx; theme in theme.html + settings.json), NOT the repo's index.html. crew-update.sh copies the repo index.html over ~/crew-web/index.html every 3 minutes, which also wiped the earlier no-cursor edit (that was applied to the wrong file).
 - Built tasks/queue/007-glass-bubble.sh: frosted-glass bubble behind clock/date/weather (iOS look, tint adapts to dark or light text), no text caret, backups *.bak-glass, safe to run twice; "glass": false in settings.json turns it off. Tested here on a mock page with a busy background. Status: APPLIED on the Pi 02:22 (queue confirmed patched index.html and theme.html, screen asked to reload); waiting for Kylar to confirm how it looks.
