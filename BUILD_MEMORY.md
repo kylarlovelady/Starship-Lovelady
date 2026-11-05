@@ -14,6 +14,7 @@ Owner: Kylar ("Kyler"), America/Chicago, iPhone. Pi 5 "LoveladyMainAiHub". Shell
 - Live View: http://loveladymainaihub.taild703ca.ts.net:8095/live.html ; control server port 8097.
 - Rules: BTC only; nothing taken off the table (no strategy/signal retired); only hard rules are $5 minimum bet and no selling a winner unless profit >= $5 after fees; loss cuts are flexible (size, time left, distance to target).
 - Honest status: no signal has beaten price + fees yet. Check tasks/verify.sh output and markets/review.py.
+- Nov 4: Pi network dropped ~5:49-9:30pm (no reboot, power OK). tasks/net_watchdog_setup.sh installs a watchdog + persistent logs.
 - Cron: crew-update, market-lab (every 3 h), supervisor hourly (also runs innovate.py).
 
 ## Voice assistant (voice/, README there)
