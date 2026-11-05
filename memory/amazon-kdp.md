@@ -17,5 +17,12 @@
 - Open questions: hardcover or paperback? which two job roles first? page count? Is there a book.json already filled in for a first title?
 - Rules to remember (KDP help): tick the Low-content box if it qualifies; title must match the cover; no generic keywords like journal or notebook stuffed into the title; keep the barcode area (about 2 x 1.2 in) clear; gutter margin grows with page count; bleed adds 0.125 in on top, bottom and outside edges; disclose AI-generated content in KDP's setup questions.
 
+## Hardcover spec check (Claude, 2026-11-05 14:20)
+- Kylar: books must be HARDCOVER. Wants help with design (colors, fonts, wording) and is open to Canva.
+- Studio numbers vs published: trim 6x9, wrap 0.591, hinge 0.197, cover height 10.418 (9 + 2 x 0.709), safe margin 0.635, hinge keep-out 0.4, barcode box 2 x 1.2 in at 0.76 from bottom and 0.25 from hinge, 75 to 550 pages, 300 dpi, PDF with fonts embedded: all match KDP's help page and third-party tables. Spine width is the one value that sources disagree on (about 0.002252 in per page for white plus 0.189 base). KDP's own cover calculator is the authority: after entering the page count in KDP, download the template and compare its size to the studio's cover PDF before uploading.
+- Hardcover has no Standard Color (Premium Color only); a hardcover over about 120 pages gets headbands.
+- Canva: fine for cover artwork or icons; export as PNG at 300 dpi and import into the studio so the spine, wrap and safe zones stay exact. Do not build the whole cover in Canva unless it matches the KDP template size.
+- Sources: kdp.amazon.com help GDTKFJPNQCBTMRV6; kdpprintcover.com 6x9 hardcover guide.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
