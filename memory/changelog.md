@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (02:45)
+- Kalshi review (12 h, 24 h, learned files, signal grades, stake check) read from the Pi through the queue and recorded in kalshi-ai.md with recommendations (waiting for Kylar's go). Confirmed the $50 cap holds. Jarvis Hub integration in Home Assistant confirmed done by Kylar.
+- Found the real URLs: Starship page is :8095 (not :8080, which is the home-screen clock). Fixed the /home front door tile and pi-home-assistant.md.
+
 ## 2026-11-05 (02:24)
 - Network watchdog INSTALLED on the Pi (confirmed by Kylar's screenshot): checks internet every 2 min, restarts NetworkManager after 3 fails and tailscaled after 6, logs to /var/log/net_watchdog.log, persistent journal on. Moved to Done in todo.md.
 

@@ -4,7 +4,7 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | Project | Status | Next step | File |
 |---|---|---|---|
 | Jarvis voice assistant (phone) | in progress | Truck test with the replay log; tune speed, hang-ups, voice ID | pi-home-assistant.md |
-| Jarvis at home (Home Assistant speaker) | in progress | Add-on installed and loaded by Home Assistant; Kylar adds the "Jarvis Hub" integration and picks it as the conversation agent; then echo/false-wake fixes at home | pi-home-assistant.md |
+| Jarvis at home (Home Assistant speaker) | in progress | Add-on installed; Jarvis Hub integration added in Home Assistant (Kylar, 2026-11-05); test at home, then echo/false-wake fixes | pi-home-assistant.md |
 | Shared memory (Claude, Jarvis, Pi) | in progress | Run for a week; daily Claude check to file inbox notes | README.md |
 | Pi health and network | in progress | Net watchdog installed 2026-11-05; at-home tasks (router reservations, Pi-hole pilot) | pi-home-assistant.md |
 | Starship control room page | in progress | Replace sample crew rows with real data | pi-home-assistant.md |
