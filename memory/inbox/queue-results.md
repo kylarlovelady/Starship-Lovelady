@@ -1,6 +1,4 @@
-eight:200;color:#e8f4ff}
-#cond{font-size:3vw;color:#e8f4ff}
-#panel{position:fixed;left:5vw;right:5vw;bottom:4vh;padding:2.5vh 3vw;border-radius:22px;
+w;bottom:4vh;padding:2.5vh 3vw;border-radius:22px;
  background:rgba(10,20,34,.88);border:1px solid rgba(56,232,255,.4);
  box-shadow:0 0 40px rgba(56,232,255,.2);backdrop-filter:blur(12px);
  transform:translateY(130%);opacity:0;transition:transform .45s ease,opacity .45s ease}
@@ -469,3 +467,6 @@ button.act{background:#1c6bff;color:#fff;border:0;border-radius:12px;padding:10p
 <iframe id="janitor" class="pane" data-src="/janitor"></iframe><iframe id="network" class="pane" data-src="/network"></iframe><iframe id="layout" class="pane" data-src="/layout"></iframe><iframe id="crew" class="pane" data-src="http://loveladymainaihub.taild703ca.ts.net:8095/"></iframe><iframe id="markets" class="pane" data-src="http://loveladymainaihub.taild703ca.ts.net:8095/live.html"></iframe>
 <scrip(exit 0)
 ```
+
+## 2026-11-05 03:01:01 tasks/queue/016-merge-hub.sh
+REFUSED: sudo is not allowed in queue scripts
