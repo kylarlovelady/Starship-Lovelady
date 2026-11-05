@@ -19,3 +19,6 @@ locked. So Phase 1 is a web page (Add to Home Screen) kept open with the screen 
     bash ~/starship/tasks/voice_setup.sh      # installs, asks for keys (hidden), starts the service, puts it on Tailscale HTTPS, prints the phone URL
     bash ~/starship/tasks/voice_probe.sh      # read-only inventory of the Pi's voice stack
 Data: ~/voice-data (events.jsonl, labels.jsonl, conversations.jsonl, clips/, replies/, settings.json, keys.env chmod 600). Clips older than 21 days are deleted. Private mode keeps no clips.
+
+## Siri Shortcut door (Nov 4)
+`POST /ask {"text": "...", "audio": true}` (or `GET /ask?text=...`) returns `{reply, end, followup, audio_url}`. Keeps a running conversation for 3 minutes of quiet. Used by an iPhone Shortcut named "Jarvis" ("Hey Siri, Jarvis"): Dictate Text -> POST /ask -> Speak Text or play audio_url. Works locked, in a pocket, with AirPods. Needs Tailscale connected on the phone.

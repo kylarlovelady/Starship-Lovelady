@@ -360,6 +360,34 @@ def state_json(sid=None):
 
 
 # ------------------------------------------------------------------ HTTP
+SIRI = {"hist": [], "t": 0.0}
+SIRI_LOCK = threading.Lock()
+
+
+def ask_text(text, want_audio=True, host=None):
+    """Text in, answer out, for the Siri Shortcut. Keeps a short running conversation (resets after 3 minutes of quiet)."""
+    text = (text or "").strip()
+    if len(text) < 2: return {"reply": "", "end": True, "followup": False}
+    t0 = now()
+    with SIRI_LOCK:
+        if t0 - SIRI["t"] > 180: SIRI["hist"] = []
+        if END_RE.search(text):
+            SIRI["hist"] = []; SIRI["t"] = t0
+            jl_append("conversations.jsonl", {"t": t0, "sid": "siri", "who": "owner", "heard": text, "reply": "(ended)"})
+            return {"reply": "Okay.", "end": True, "followup": False}
+        SIRI["hist"].append({"role": "user", "content": text})
+        reply = chat(SIRI["hist"]); SIRI["hist"].append({"role": "assistant", "content": reply}); SIRI["t"] = now()
+    out = {"reply": reply, "end": False, "followup": reply.rstrip().endswith("?")}
+    if want_audio:
+        try:
+            rid = uuid.uuid4().hex[:10]; tts(reply, os.path.join(REPLIES, rid + ".bin"))
+            out["audio_url"] = "https://%s/reply/%s.bin" % (host, rid) if host else "/reply/%s.bin" % rid
+        except Exception as e:
+            print("siri tts error:", repr(e), flush=True); out["audio_error"] = str(e)[:120]
+    jl_append("conversations.jsonl", {"t": now(), "sid": "siri", "who": "owner", "heard": text, "reply": reply, "secs": round(now() - t0, 1)})
+    return out
+
+
 class H(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     def log_message(self, *a): pass
@@ -379,6 +407,10 @@ class H(http.server.BaseHTTPRequestHandler):
         q = dict(x.split("=", 1) for x in (self.path.split("?")[1].split("&") if "?" in self.path else []) if "=" in x)
         if p in ("/", "/index.html"):
             return self._send(200, open(os.path.join(HERE, "phone.html"), "rb").read(), "text/html; charset=utf-8")
+        if p == "/ask":
+            import urllib.parse
+            try: return self._send(200, ask_text(urllib.parse.unquote_plus(q.get("text", "")), q.get("audio", "1") != "0", self.headers.get("Host")))
+            except Exception as e: return self._send(500, {"error": str(e)[:200]})
         if p == "/state": return self._send(200, state_json(q.get("sid")))
         m = re.match(r"^/clip/([0-9a-f]+)\.wav$", p)
         if m:
@@ -406,6 +438,9 @@ class H(http.server.BaseHTTPRequestHandler):
                 lvl = rms(pcm)
             return self._send(200, {"acts": acts + pend, "state": s.state, "level": round(lvl), "paused": SET["paused"]})
         b = self._json()
+        if p == "/ask":
+            try: return self._send(200, ask_text(b.get("text", ""), b.get("audio", True), self.headers.get("Host")))
+            except Exception as e: return self._send(500, {"error": str(e)[:200]})
         if p == "/label":
             if b.get("label") in ("good", "false", "unsure", None):
                 with LOCK: jl_append("labels.jsonl", {"id": b.get("id"), "label": b.get("label"), "t": now()})

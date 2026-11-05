@@ -20,6 +20,7 @@ Owner: Kylar ("Kyler"), America/Chicago, iPhone. Pi 5 "LoveladyMainAiHub". Shell
 ## Voice assistant (voice/, README there)
 - Built Nov 4: web page on phone (Add to Home Screen, screen on, charging), served by Tailscale HTTPS; service `phone-voice` port 8099; data ~/voice-data.
 - Setup: `bash ~/starship/tasks/voice_setup.sh`. Wake-word model installed OK on Nov 4. Still waiting on OpenAI + ElevenLabs keys (Kylar must create new keys: platform.openai.com/api-keys, elevenlabs.io profile > API Keys; stored only in ~/voice-data/keys.env).
+- Siri Shortcut path: POST /ask on the voice server (built Nov 4); iPhone Shortcut "Jarvis" to be made by Kylar.
 - Not built: voice ID/trust levels, AirPods/home-mic direction, echo cancellation, home speaker routing. iPhone web page cannot listen while locked.
 
 ## Dates
