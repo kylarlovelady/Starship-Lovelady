@@ -23,3 +23,6 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 
 ## Parked
 - More agents on other markets (options, stocks, commodities) only after the Kalshi agent shows a real edge; share the method, not the bets. Other coins on hold. Mempool tracker for big transfers only.
+
+## Done
+(Finished items go here with the date, newest first. Never delete.)

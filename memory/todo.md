@@ -1,5 +1,7 @@
 # To do
-Done items move to _archive.md.
+Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
+
+## Open
 - 2026-11-09: redo Kalshi API location verification (kalshi.com Profile, API keys); do weekly.
 - 2026-11-24 noon: ElevenLabs decision (renews Nov 26).
 - Pi: confirm net watchdog installed; confirm home screen cursor line is gone.
@@ -11,3 +13,10 @@ Done items move to _archive.md.
 - Tell Claude about the truck/vehicle projects so truck-project.md can be filled in.
 - Starship: replace sample rows on the crew board/decision log with real data; make the HA speaker pipeline use shared memory (or route it through phone-voice); optional daily Claude check that files inbox notes and writes a morning brief.
 - Run `bash ~/starship/tasks/memory_sync.sh` once after the update so pi-status.md appears in the repo.
+
+## Done
+- 2026-11-05: Jarvis voice server live on the Pi with Brian voice, Siri Shortcut working.
+- 2026-11-05: Shared memory split into topic files; Hub Notes migrated.
+- 2026-11-05: Pi can push notes to the repo (deploy key) and syncs every 30 min.
+- 2026-11-01: KDP identity verification.
+- 2026-11-01: Bitwarden 2-step login and recovery code.

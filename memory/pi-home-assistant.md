@@ -44,3 +44,6 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 ## Other
 - Janitor: moves files to ~/.janitor/trash (57 items); empty around Nov 2 if nothing broke; 5 .bak files need sudo. Device names live in ~/hub-dashboard/device-names.json (key = MAC). ntfy pushes never reach the iPhone; plan: Home Assistant Companion app notifications (Pushover as fallback).
 - Phone/iPad location tracking dropped. Phone/iPad wifi connect/disconnect alerts stay off.
+
+## Done
+(Finished items go here with the date, newest first. Never delete.)

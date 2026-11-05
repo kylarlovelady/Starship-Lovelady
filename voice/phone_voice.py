@@ -506,6 +506,14 @@ class Session:
                         trace(self.sid, "nothing_heard", count=self.blanks)
                         if self.blanks >= 3: out.append({"type": "tone_end", "why": "nothing heard 3 times"}); self.hist = []; self.set_state("idle", "nothing heard 3 times"); self.blanks = 0
                         else: self.begin_follow([])                    # keep the conversation open and keep listening
+            elif memory_command_hit(text):
+                reply = memory_command(text); rid = uuid.uuid4().hex[:10]; mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
+                trace(self.sid, "memory", text=text[:120], reply=reply)
+                with LOCK:
+                    if gen == self.gen:
+                        self.pending.append({"type": "say", "text": text}); self.pending.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": reply, "seq": 0}); self.pending.append({"type": "play_done"})
+                        self.ew = "waiting_played"; self.set_state("speaking", "saved a note"); self.hold_until = now() + 600; self.follow_for = float(SET["follow_quiet"])
+                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "who": who, "memory_action": True})
             elif END_RE.search(text) and len(text.split()) <= 7:
                 with LOCK:
                     if gen == self.gen: out.append({"type": "say", "text": text}); out.append({"type": "tone_end", "why": "you ended it"}); self.hist = []; self.set_state("idle")
@@ -610,33 +618,49 @@ SIRI = {"hist": [], "t": 0.0}
 SIRI_LOCK = threading.Lock()
 
 
+def memory_command(text):
+    """'remember that ...', 'mark ... done', 'forget ...' typed or spoken. Returns Jarvis's reply, or None if it was not a memory command.
+    Nothing is deleted: done items are kept with a date, forgotten items go to _archive.md."""
+    mem = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:remember|make a note|take a note|note to self|save this)(?: that| this)?[:, ]*(.+)$", text, re.I | re.S)
+    dn = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:mark|check off|cross off|set)\s+(.+?)\s+(?:as\s+)?(?:done|complete|completed|finished)\W*$", text, re.I | re.S) or \
+         re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:i (?:finished|completed)|we (?:finished|completed)|(?:it'?s|that'?s) done)[:, ]*(.*)$", text, re.I | re.S)
+    fg = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:forget|remove|delete|take off)(?: that| the note| the reminder)?(?: about)?[:, ]*(.+)$", text, re.I | re.S)
+    if not ((mem and len(mem.group(1).strip()) > 2) or (dn and len(dn.group(1).strip()) > 2) or (fg and len(fg.group(1).strip()) > 2)): return None
+    mdir = os.path.join(DATA, "memory"); os.makedirs(mdir, exist_ok=True)
+    if mem:
+        topic = route_topic(mem.group(1))
+        with LOCK, open(os.path.join(mdir, topic + ".md"), "a", encoding="utf-8") as f: f.write("- %s: %s\n" % (time.strftime("%Y-%m-%d"), mem.group(1).strip()))
+        return "Got it. I saved that under %s." % topic.replace("-", " ")
+    if dn:
+        what = dn.group(1).strip(); topic = route_topic(what)
+        with LOCK, open(os.path.join(mdir, topic + ".md"), "a", encoding="utf-8") as f: f.write("- %s DONE: %s\n" % (time.strftime("%Y-%m-%d"), what))
+        return "Marked done under %s. I kept it in the history." % topic.replace("-", " ")
+    words = [w for w in re.findall(r"[a-z0-9']+", fg.group(1).lower()) if len(w) > 2]
+    moved = 0
+    with LOCK:
+        for fn in os.listdir(mdir):
+            path = os.path.join(mdir, fn)
+            if not fn.endswith(".md") or fn == "_archive.md": continue
+            lines = open(path, encoding="utf-8").read().splitlines(); keep = []
+            for ln in lines:
+                if words and sum(w in ln.lower() for w in words) >= max(1, (len(words) + 1) // 2) and moved < 3:
+                    open(os.path.join(mdir, "_archive.md"), "a", encoding="utf-8").write("- archived %s from %s: %s\n" % (time.strftime("%Y-%m-%d"), fn, ln)); moved += 1
+                else: keep.append(ln)
+            open(path, "w", encoding="utf-8").write("\n".join(keep) + ("\n" if keep else ""))
+    return ("Done. I moved %d note%s to the archive." % (moved, "" if moved == 1 else "s")) if moved else "I couldn't find a note matching that."
+
+
+def memory_command_hit(text):
+    return bool(re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:remember|make a note|take a note|note to self|save this|mark .+ (?:as )?(?:done|complete|completed|finished)\W*$|check off|cross off|forget|remove|delete|take off|i (?:finished|completed) |we (?:finished|completed) |(?:it'?s|that'?s) done)", text, re.I | re.S)) and len(text) > 6
+
+
 def ask_text(text, want_audio=True, host=None):
     """Text in, answer out, for the Siri Shortcut. Keeps a short running conversation (resets after 3 minutes of quiet)."""
     text = (text or "").strip()
     if len(text) < 2: return {"reply": "", "end": True, "followup": False}
     t0 = now()
-    mem = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:remember|make a note|take a note|note to self|save this)(?: that| this)?[:, ]*(.+)$", text, re.I | re.S)
-    fg = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:forget|remove|delete|take off)(?: that| the note| the reminder)?(?: about)?[:, ]*(.+)$", text, re.I | re.S)
-    if (mem and len(mem.group(1).strip()) > 2) or (fg and len(fg.group(1).strip()) > 2):
-        mdir = os.path.join(DATA, "memory"); os.makedirs(mdir, exist_ok=True)
-        if mem:
-            topic = route_topic(mem.group(1))
-            with LOCK, open(os.path.join(mdir, topic + ".md"), "a", encoding="utf-8") as f: f.write("- %s: %s\n" % (time.strftime("%Y-%m-%d"), mem.group(1).strip()))
-            reply = "Got it. I saved that under %s." % topic.replace("-", " ")
-        else:
-            words = [w for w in re.findall(r"[a-z0-9']+", fg.group(1).lower()) if len(w) > 2]
-            moved = 0
-            with LOCK:
-                for fn in os.listdir(mdir):
-                    path = os.path.join(mdir, fn)
-                    if not fn.endswith(".md") or fn == "_archive.md": continue
-                    lines = open(path, encoding="utf-8").read().splitlines(); keep = []
-                    for ln in lines:
-                        if words and sum(w in ln.lower() for w in words) >= max(1, (len(words) + 1) // 2) and moved < 3:
-                            open(os.path.join(mdir, "_archive.md"), "a", encoding="utf-8").write("- archived %s from %s: %s\n" % (time.strftime("%Y-%m-%d"), fn, ln)); moved += 1
-                        else: keep.append(ln)
-                    open(path, "w", encoding="utf-8").write("\n".join(keep) + ("\n" if keep else ""))
-            reply = ("Done. I moved %d note%s to the archive." % (moved, "" if moved == 1 else "s")) if moved else "I couldn't find a note matching that."
+    reply = memory_command(text)
+    if reply is not None:
         out = {"reply": reply, "end": False, "followup": False}
         if want_audio:
             try:

@@ -4,3 +4,6 @@
 - Long-term hope behind the income projects: his wife can stay home with the babies while he keeps a day job for the insurance.
 - His wife has a strong design eye (house plans idea).
 - Voice ID (planned): Jarvis learns the family's voices (Kylar, Sheree, Warren). Voiceprints (audio data) stay on the Pi, not in this repo. Voices change as Warren grows, so keep updating them; when unsure, ask who is speaking.
+
+## Done
+(Finished items go here with the date, newest first. Never delete.)
