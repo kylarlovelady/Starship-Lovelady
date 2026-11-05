@@ -24,7 +24,10 @@ Engine: 6.7L Power Stroke diesel (confirmed by Kylar 2026-11-05).
 
 ## Vehicle 3: 2003 Ford F-150 crew cab Lariat (white)
 - Engine: 5.4L V8 (confirmed by Kylar 2026-11-05; the earlier "5.7" was a mix-up).
-- Idea: performance parts and general repairs, maybe a drag truck. Not decided. First step: pick the goal (daily, drag, or both), then check the condition.
+- GOAL (Kylar 2026-11-05): drives it to work, street legal, as fast and "nasty" as possible with NO engine swap and NO transmission swap. Opening up the engine and replacing internals is fine.
+- Rules for the build: keep it street legal (emissions equipment and inspection rules for his state to check before buying parts), keep it reliable enough for daily work drives.
+- First steps: baseline (compression and leak-down test, check oil use, trans condition, rear gear ratio, brakes and tires), then pick a power level and budget. Budget and state/inspection rules: Kylar to tell us.
+- Typical path for a 5.4 on its own block and trans, to be researched before buying: tune, intake and headers, cams, heads, forced induction (supercharger or turbo), strengthened transmission and torque converter, rear gears, stronger rear axle, brakes and cooling.
 
 ## Done
 (Finished items go here with the date, newest first. Never delete.)

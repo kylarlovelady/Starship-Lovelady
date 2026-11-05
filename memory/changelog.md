@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-05 (03:45)
+- truck-project.md: recorded the F-150 goal (street legal daily to work, max power, no engine or trans swap).
+
 ## 2026-11-05 (03:40)
 - truck-project.md: confirmed F-250 is a 6.7 Power Stroke and the white 2003 F-150 is a 5.4.
 
