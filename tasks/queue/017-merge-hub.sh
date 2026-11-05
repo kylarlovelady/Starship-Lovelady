@@ -12,4 +12,4 @@ s=s.replace('<main id="status" class="pane on">','<iframe id="overview" class="p
 open(p,"w",encoding="utf-8").write(s); print("merged:", 'id="overview"' in s and 'data-t="overview"' in s)
 PY
 grep -o 'data-t="overview"[^>]*>' hub.html | head -2
-sudo -n true 2>/dev/null; echo "(hub.html is read fresh on every request, no restart needed)"
+echo "(hub.html is read fresh on every request, no restart needed)"
