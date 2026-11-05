@@ -37,8 +37,16 @@ def book(slug, l1, l2):
         t("sp1", "spine", 0, 0, 100, 10, 17, f"{l1} {l2}", foil="gold"),
         t("b1", "back", 0, 94, 40, 4, 8, "Lovelady LLC", bold=False, align="left", font=IFONT, color=GOLD),
     ]
+    def line(i, panel, x, y, w, h):
+        return dict(id=i, type="rect", panel=panel, x=x, y=y, w=w, h=h, size=24, text="", bold=False, align="left", font="", color=GOLD, lh=1.2, foil="", img="", zoom=1, fx=50, fy=50, tint="", tint_amt=100)
+    for pn, pf in (("front", "f"), ("back", "k")):
+        for ins, tag in ((0, "o"), (1.6, "i")):
+            wv, hv = 0.30, 0.22
+            iw, ih = ins, ins * 0.72
+            els += [line(f"{pf}{tag}1", pn, iw, ih, 100 - 2 * iw, hv), line(f"{pf}{tag}2", pn, iw, 100 - ih - hv, 100 - 2 * iw, hv),
+                    line(f"{pf}{tag}3", pn, iw, ih, wv, 100 - 2 * ih), line(f"{pf}{tag}4", pn, 100 - iw - wv, ih, wv, 100 - 2 * ih)]
     return {"name": slug, "title": f"{l1} {l2}", "subtitle": "", "author": "Lovelady LLC", "paper": "cream", "pages": 120,
-        "cover": {"bg": NAVY, "pattern": "none", "pattern_color": "#999999", "frame": True, "frame_color": GOLD, "font": TFONT, "text": GOLD, "barcode_box": True, "elements": els},
+        "cover": {"bg": NAVY, "pattern": "none", "pattern_color": "#999999", "frame": False, "frame_color": GOLD, "font": TFONT, "text": GOLD, "barcode_box": True, "elements": els},
         "inside": {"font": IFONT, "color": "#222222", "page_bg": "#ffffff", "style": "lines", "line_color": "#8f8f8f", "line_width": 0.5, "spacing": 0.3125, "dash": False,
                    "top": 0.7, "bottom": 0.85, "inner": 0.5, "outer": 0.4, "header": "none", "header_text": "", "num_pos": "center", "num_style": "plain", "num_size": 9},
         "front": {"title_page": False, "owner_page": True, "owner_heading": "This notebook belongs to", "owner_footer": "If found, please return to the owner.", "owner_fields": ["Name", "Phone", "Email", "Company"], "contacts": 0, "index": 0, "goals": False},
