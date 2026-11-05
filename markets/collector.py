@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.3 restart: unproven cap really 25 (the saved default 50 was overriding the sim); Auto wallet needs 40+ rounds and a positive record (else holds to the end); nothing is retired (restart marker)
+# v8.4 restart: unproven cap really 25 (saved default 50 overrode it); Auto wallet = hold-to-end unless a variant beats it 1.5x over 80+ rounds, kept 6 h (it was hopping between lucky variants every round); nothing is retired (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

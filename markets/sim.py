@@ -50,7 +50,7 @@ STRATS = {
 # so the scoreboard shows which response (hold, trail, cut tight or loose, add or not, wait to buy) actually earns the most after fees.
 ODDS_MARGIN = 0.04      # sell on its own odds only if selling beats holding by this much (selling on a 1c edge lost money in the 24h review)
 UNPROVEN_CAP = 25.0     # no strategy may put more than this into one round until the evidence earns it (0 = off); lift with config "unproven_cap". Was 50; bets over $25 lost, under $25 broke even (24 h review 2026-11-05)
-AUTO_MIN_ROUNDS = 40    # rounds a strategy needs before the Auto wallet may follow it
+AUTO_MIN_ROUNDS = 80    # rounds a strategy needs before the Auto wallet may follow it
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
@@ -236,14 +236,21 @@ def auto_pick(sim):
     of a few rounds cannot win it). Until one earns that, hold to the end (the cheapest way to take part: no sell fee, no second spread). Changed 2026-11-05:
     before, it followed whichever strategy looked best after only 20 rounds, which with ~40 variants in the race mostly picks luck."""
     base = "v_hold" if "v_hold" in sim["acc"] else ("hold" if "hold" in sim["acc"] else ("distance" if "distance" in sim["acc"] else (next(iter(sim["acc"])) if sim["acc"] else "swing")))
-    best, bv, found = base, 0.0, False
-    for n, a in sim["acc"].items():
-        if n not in STRATS:
-            continue
-        if a["windows"] >= AUTO_MIN_ROUNDS:
-            v = a["pnl"] / (a["windows"] + float(AUTO_MIN_ROUNDS))
-            if v > bv:
-                best, bv, found = n, v, True
+    # base (hold) is the default. A variant must beat the base clearly (1.5x per round, and positive) over a long record, and once chosen it is kept for at
+    # least 6 hours unless something beats it by 25%: with ~40 variants the "best" one changes every round and hopping between them is just chasing luck.
+    def val(n):
+        a = sim["acc"].get(n)
+        return None if not a or a["windows"] < AUTO_MIN_ROUNDS else a["pnl"] / (a["windows"] + float(AUTO_MIN_ROUNDS))
+    bval = val(base); best, bv, found = base, max(bval or 0.0, 0.0), False
+    for n in sim["acc"]:
+        if n not in STRATS or n == base: continue
+        v = val(n)
+        if bval is not None and v is not None and v > 0 and v > bv * 1.5 and v > (bv if found else 0.0):
+            best, bv, found = n, v, True
+    cur, last = sim.get("auto_pick"), (sim.get("autolog") or [{}])[-1].get("t", 0)
+    if cur and cur != best and cur in STRATS and (time.time() - last < 6 * 3600 or not found or (val(cur) is not None and val(cur) * 1.25 >= bv)):
+        if val(cur) is not None and val(cur) > 0 or cur == base:
+            best = cur
     pick = sim.get("auto_pick")
     if pick != best:
         sim.setdefault("autolog", []).append({"t": int(time.time()), "from": pick, "to": best,
