@@ -171,15 +171,46 @@ def _read(path, limit):
     except OSError: return ""
 
 
+TOPICS = [
+    ("kalshi-ai", r"kalshi|bet|market|bitcoin|btc|trade|trading|strategy"),
+    ("pi-home-assistant", r"\bpi\b|home assistant|tailscale|router|wifi|wi-fi|jarvis|voice|hub|screen"),
+    ("amazon-kdp", r"kdp|amazon|book|publish"),
+    ("truck-project", r"truck|tacoma|vehicle|car\b|engine|tires?|lift|parts?"),
+    ("family", r"wife|girlfriend|kids?|son|daughter|mom|dad|family|birthday|dinner"),
+    ("business", r"business|invoice|client|customer|sales|revenue|llc"),
+    ("todo", r"to-?do|remind|need to|don.t forget|deadline|by (monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow)"),
+]
+
+
+def route_topic(text):
+    for name, rx in TOPICS:
+        if re.search(rx, text, re.I): return name
+    return "todo"
+
+
+def _read(path, limit):
+    try: return open(os.path.expanduser(path), encoding="utf-8", errors="ignore").read().strip()[:limit]
+    except OSError: return ""
+
+
 def prompt_text():
     base = _read(os.path.join(DATA, "prompt.txt"), 4000) or (
         "You are Jarvis, the Lovelady family's home assistant, talking to the owner (Kylar) through his phone and earbuds, often while driving. Be blunt and honest, say when you do not know, "
         "keep answers short enough to listen to, and ask a short question back only when you really need the answer.")
-    shared = _read("~/starship/BUILD_MEMORY.md", 6000)
-    notes = _read(os.path.join(DATA, "memory.md"), 4000)
     extra = ""
-    if shared: extra += "\n\nShared project memory (written with Claude, the coding assistant; trust it as background, it may be a little out of date):\n" + shared
-    if notes: extra += "\n\nThings Kylar told you to remember:\n" + notes
+    repo = os.path.expanduser("~/starship/memory")
+    mem = ""
+    try:
+        for f in sorted(os.listdir(repo)):
+            if f.endswith(".md") and f not in ("README.md", "_archive.md"): mem += "\n## %s\n%s\n" % (f, _read(os.path.join(repo, f), 2500))
+    except OSError: mem = _read("~/starship/BUILD_MEMORY.md", 5000)
+    if mem.strip(): extra += "\n\nShared memory notes (written with Claude, the coding assistant; trust as background, they may be slightly out of date):" + mem[:12000]
+    mine = ""
+    try:
+        for f in sorted(os.listdir(os.path.join(DATA, "memory"))):
+            mine += "\n[%s]\n%s\n" % (f, _read(os.path.join(DATA, "memory", f), 2000))
+    except OSError: pass
+    if mine.strip(): extra += "\n\nThings Kylar told you to remember (newest last):" + mine[:6000]
     return base + extra
 
 
@@ -416,17 +447,34 @@ def ask_text(text, want_audio=True, host=None):
     if len(text) < 2: return {"reply": "", "end": True, "followup": False}
     t0 = now()
     mem = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:remember|make a note|take a note|note to self|save this)(?: that| this)?[:, ]*(.+)$", text, re.I | re.S)
-    if mem and len(mem.group(1).strip()) > 2:
-        with LOCK:
-            with open(os.path.join(DATA, "memory.md"), "a", encoding="utf-8") as f: f.write("- %s: %s\n" % (time.strftime("%Y-%m-%d"), mem.group(1).strip()))
-        reply = "Got it. I'll remember that."
+    fg = re.match(r"^\W*(?:jarvis[, ]+)?(?:please[, ]+)?(?:forget|remove|delete|take off)(?: that| the note| the reminder)?(?: about)?[:, ]*(.+)$", text, re.I | re.S)
+    if (mem and len(mem.group(1).strip()) > 2) or (fg and len(fg.group(1).strip()) > 2):
+        mdir = os.path.join(DATA, "memory"); os.makedirs(mdir, exist_ok=True)
+        if mem:
+            topic = route_topic(mem.group(1))
+            with LOCK, open(os.path.join(mdir, topic + ".md"), "a", encoding="utf-8") as f: f.write("- %s: %s\n" % (time.strftime("%Y-%m-%d"), mem.group(1).strip()))
+            reply = "Got it. I saved that under %s." % topic.replace("-", " ")
+        else:
+            words = [w for w in re.findall(r"[a-z0-9']+", fg.group(1).lower()) if len(w) > 2]
+            moved = 0
+            with LOCK:
+                for fn in os.listdir(mdir):
+                    path = os.path.join(mdir, fn)
+                    if not fn.endswith(".md") or fn == "_archive.md": continue
+                    lines = open(path, encoding="utf-8").read().splitlines(); keep = []
+                    for ln in lines:
+                        if words and sum(w in ln.lower() for w in words) >= max(1, (len(words) + 1) // 2) and moved < 3:
+                            open(os.path.join(mdir, "_archive.md"), "a", encoding="utf-8").write("- archived %s from %s: %s\n" % (time.strftime("%Y-%m-%d"), fn, ln)); moved += 1
+                        else: keep.append(ln)
+                    open(path, "w", encoding="utf-8").write("\n".join(keep) + ("\n" if keep else ""))
+            reply = ("Done. I moved %d note%s to the archive." % (moved, "" if moved == 1 else "s")) if moved else "I couldn't find a note matching that."
         out = {"reply": reply, "end": False, "followup": False}
         if want_audio:
             try:
                 rid = uuid.uuid4().hex[:10]; tts(reply, os.path.join(REPLIES, rid + ".bin"))
                 out["audio_url"] = "https://%s/reply/%s.bin" % (host, rid) if host else "/reply/%s.bin" % rid
             except Exception as e: out["audio_error"] = str(e)[:120]
-        jl_append("conversations.jsonl", {"t": t0, "sid": "siri", "who": "owner", "heard": text, "reply": reply, "saved_note": True})
+        jl_append("conversations.jsonl", {"t": t0, "sid": "siri", "who": "owner", "heard": text, "reply": reply, "memory_action": True})
         return out
     with SIRI_LOCK:
         if t0 - SIRI["t"] > 180: SIRI["hist"] = []

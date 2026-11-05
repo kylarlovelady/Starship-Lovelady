@@ -1,13 +1,13 @@
 #!/bin/bash
-# Copies Jarvis's notes (~/voice-data/memory.md) into the repo (memory/jarvis_notes.md) and pushes, so Claude can read them.
-# Safe to run any time. If the Pi has no GitHub push access this prints how it failed and changes nothing else.
+# Copies Jarvis's voice notes (~/voice-data/memory/*.md) into the repo (memory/inbox/jarvis-<topic>.md) and pushes,
+# so Claude can read them and file them. Safe to run any time. If the Pi has no GitHub push access it says so.
 set -e
 cd ~/starship
-mkdir -p memory
-[ -f ~/voice-data/memory.md ] || { echo "no notes yet"; exit 0; }
-cp ~/voice-data/memory.md memory/jarvis_notes.md
-git add memory/jarvis_notes.md
+[ -d ~/voice-data/memory ] || { echo "no voice notes yet"; exit 0; }
+mkdir -p memory/inbox
+for f in ~/voice-data/memory/*.md; do cp "$f" "memory/inbox/jarvis-$(basename "$f")"; done
+git add memory/inbox
 git diff --cached --quiet && { echo "notes unchanged"; exit 0; }
-git commit -qm "Jarvis notes sync"
+git commit -qm "Jarvis voice notes sync"
 git pull -q --rebase 2>/dev/null || true
-git push -q && echo "notes pushed to the repo" || echo "push failed (Pi has no GitHub push access yet)"
+git push -q && echo "notes pushed to the repo" || echo "push failed (the Pi has no GitHub push access yet)"
