@@ -1,17 +1,4 @@
- winning-side price 31c at 7:58
-  Wed 07:45  -46  bet UP at 3:02 @49c ($44) (WRONG SIDE); result DOWN. best swing DOWN bought at 11:46 sold at 14:09, +67c/contract;  cheapest winning-side price 31c at 11:46
-
-BEST 3 ROUNDS:
-  Thu 01:15  +50  bet DOWN at 2:01 @49c ($47); result DOWN
-  Thu 01:00  +30  bet UP at 0:57 @44c ($96); result UP
-  Wed 05:15  +27  bet UP at 6:46 @48c ($25); result UP
-(exit 0)
-```
-
-## 2026-11-05 02:31:32 tasks/queue/010-learn-files.sh
-```
-== learn_report.json
-{"time": 1793864719, "scored": 238, "adopted": false, "signals": {"book": {"n": 161, "right": 81, "pct": 50.3, "low": 39.7, "high": 60.6, "verdict": "no clear edge", "mult": 1.0, "trust": 50.1, "n_eff": 83.5}, "momentum": {"n": 193, "right": 110, "pct": 57.0, "low": 46.9, "high": 65.6, "verdict": "no clear edge", "mult": 1.16, "trust": 55.4, "n_eff": 103.7}, "whales": {"n": 94, "right": 39, "pct": 41.5, "low": 27.8, "high": 54.4, "verdict": "no clear edge", "mult": 0.8, "trust": 43.2, "n_eff": 48.6}, "bigtrades": {"n": 156, "right": 75, "pct": 48.1, "low": 41.3, "high": 61.1, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 94.6}, "news": {"n": 202, "right": 97, "pct": 48.0, "low": 38.0, "high": 56.7, "verdict": "no clear edge", "mult": 0.93, "trust": 47.7, "n_eff": 105.2}, "fng": {"n": 215, "right": 110, "pct": 51.2, "low": 41.7, "high": 60.5, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 104.4}, "funding": {"n": 238, "right": 122, "pct": 51.3, "low": 42.7, "high": 59.9, "verdict": "no clear edge", "mult": 1.03, "trust": 51.2, "n_eff": 126.0}, "trend_h": {"n": 196, "right": 100, "pct": 51.0, "low": 40.9, "high": 59.0, "verdict": "no clear edge", "mult": 1.0, "trust": 50.0, "n_eff": 114.2}, "trend_w": {"n": 189, "right": 91, "pct": 48.1, "low"
+ 156, "right": 75, "pct": 48.1, "low": 41.3, "high": 61.1, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 94.6}, "news": {"n": 202, "right": 97, "pct": 48.0, "low": 38.0, "high": 56.7, "verdict": "no clear edge", "mult": 0.93, "trust": 47.7, "n_eff": 105.2}, "fng": {"n": 215, "right": 110, "pct": 51.2, "low": 41.7, "high": 60.5, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 104.4}, "funding": {"n": 238, "right": 122, "pct": 51.3, "low": 42.7, "high": 59.9, "verdict": "no clear edge", "mult": 1.03, "trust": 51.2, "n_eff": 126.0}, "trend_h": {"n": 196, "right": 100, "pct": 51.0, "low": 40.9, "high": 59.0, "verdict": "no clear edge", "mult": 1.0, "trust": 50.0, "n_eff": 114.2}, "trend_w": {"n": 189, "right": 91, "pct": 48.1, "low"
 == exit_rules.json
 {"updated": 1793867339, "rounds": 190, "source": "default", "peak": 8, "drop": 4, "enabled": false, "audit": "switched off: over 190 rounds every tested take-profit rule did worse than holding", "table": [{"peak": 20, "drop": 8, "gain": -0.0087, "se": 0.0119, "rounds": 368, "rule": -0.0291, "hold": -0.0203}, {"peak": 20, "drop": 6, "gain": -0.011, "se": 0.012, "rounds": 368, "rule": -0.0314, "hold": -0.0203}, {"peak": 15, "drop": 8, "gain": -0.0146, "se": 0.0138, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 4, "gain": -0.0146, "se": 0.0124, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 2, "gain": -0.0148, "se": 0.0123, "rounds": 368, "rule": -0.0351, "hold": -0.0203}, {"peak": 20, "drop": 3, "gain": -0.0153, "se": 0.0124, "rounds": 368, "rule": -0.0357, "hold": -0.0203}], "note": "no take-profit rule beat holding by a clear margin yet; keeping the starting guess", "exits_checked": 30, "exit_vs_hold": 0.034}
 == entry_stats.json
@@ -500,5 +487,21 @@ last 5 rounds:
   11-05 01:00  no   staked 18.95   pnl  -20.00 (held)
 THE AGENT'S live rounds (not yours): 4 rounds, -2.58 after fees
 saved to ~/market-data/my_trades.json
+(exit 0)
+```
+
+## 2026-11-05 12:49:01 tasks/queue/021-kalshi-state.sh
+```
+== collector process
+ 710034 Mon Nov  2 22:27:17 2026 /usr/bin/python3 /home/kylarlovelady/starship/markets/collector.py
+== repo head on Pi
+367c7df 3 minutes ago queue 021: is the new Kalshi code running
+== config files (numbers only)
+-- config.json
+{'weights': {'book': 0.25, 'momentum': 0.2, 'whales': 0.2, 'bigtrades': 0.15, 'news': 0.1, 'fng': 0.05, 'funding': 0.05}, 'threshold': 12.0, 'min_bet': 5.0, 'cap': 0, 'edge_min': 0.03, 'max_trades': 6.0, 'slice': 0.1, 'min_price': 0.08, 'max_price': 0.92, 'aggression': 50.0, 'floor': 0, 'entry_max': 0.8, 'entry_min': 0.15}
+== auto log and pick
+auto_pick: None
+cap shown: None None None
+run keys: ['added', 'autolog', 'bal', 'curve', 'equity', 'events', 'halt', 'id', 'in_round', 'inflight', 'k_age', 'label', 'live', 'now', 'pnl', 'pos', 'refills', 'round_cash', 'rounds', 'slip_avg', 'start', 'started', 'status', 'stopped', 'strategy', 'trades', 'using', 'warn', 'windows', 'wins']
 (exit 0)
 ```
