@@ -130,6 +130,42 @@ def stt(pcm):
     return (json.loads(r).get("text") or "").strip()
 
 
+def sniff_audio(b):
+    """Guess the audio type from the first bytes: returns (extension, mime)."""
+    if b[:4] == b"RIFF": return "wav", "audio/wav"
+    if b[4:8] == b"ftyp": return "m4a", "audio/mp4"
+    if b[:3] == b"ID3" or b[:2] in (b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"): return "mp3", "audio/mpeg"
+    if b[:4] == b"caff": return "caf", "audio/x-caf"
+    if b[:4] == b"OggS": return "ogg", "audio/ogg"
+    return "m4a", "audio/mp4"
+
+
+def stt_file(data):
+    if MOCK: return os.environ.get("VOICE_MOCK_TEXT", "what time is it")
+    key = load_keys().get("OPENAI_API_KEY")
+    if not key: raise RuntimeError("no OPENAI_API_KEY in %s/keys.env" % DATA)
+    ext, mime = sniff_audio(data)
+    boundary = uuid.uuid4().hex; parts = []
+    def field(n, v): parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n" % (boundary, n, v)).encode())
+    field("model", "gpt-4o-mini-transcribe"); field("language", "en")
+    parts.append(("--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"u.%s\"\r\nContent-Type: %s\r\n\r\n" % (boundary, ext, mime)).encode() + data + b"\r\n")
+    parts.append(("--%s--\r\n" % boundary).encode())
+    r = _post("https://api.openai.com/v1/audio/transcriptions", {"Authorization": "Bearer " + key, "Content-Type": "multipart/form-data; boundary=" + boundary}, b"".join(parts))
+    return (json.loads(r).get("text") or "").strip()
+
+
+def audio_from_body(ctype, raw):
+    """The Shortcut may send the recording as a raw file or as a multipart form. Return the audio bytes."""
+    m = re.search(r"boundary=([^;]+)", ctype or "")
+    if m and "multipart" in (ctype or "").lower():
+        bd = ("--" + m.group(1).strip('"')).encode()
+        for part in raw.split(bd):
+            if b"filename=" in part[:400] and b"\r\n\r\n" in part:
+                body = part.split(b"\r\n\r\n", 1)[1]
+                return body[:-2] if body.endswith(b"\r\n") else body
+    return raw
+
+
 def prompt_text():
     try: return open(os.path.join(DATA, "prompt.txt")).read().strip()
     except OSError:
@@ -437,9 +473,15 @@ class H(http.server.BaseHTTPRequestHandler):
                 pend, s.pending = s.pending, []
                 lvl = rms(pcm)
             return self._send(200, {"acts": acts + pend, "state": s.state, "level": round(lvl), "paused": SET["paused"]})
-        b = self._json()
         if p == "/ask":
+            n = int(self.headers.get("Content-Length") or 0); raw = self.rfile.read(n); ct = self.headers.get("Content-Type", "")
             try:
+                if "json" in ct.lower() or raw[:1] == b"{":
+                    try: b = json.loads(raw or b"{}")
+                    except ValueError: b = {}
+                else:
+                    b = {"text": stt_file(audio_from_body(ct, raw))}
+                    jl_append("conversations.jsonl", {"t": now(), "sid": "siri", "heard_raw": b["text"]})
                 if b.get("format") == "json": return self._send(200, ask_text(b.get("text", ""), b.get("audio", True), self.headers.get("Host")))
                 # default for the Siri Shortcut: answer comes back as Brian's voice (an audio file)
                 out = ask_text(b.get("text", ""), True, None)
@@ -450,6 +492,7 @@ class H(http.server.BaseHTTPRequestHandler):
                 data = open(os.path.join(REPLIES, rid + ".bin"), "rb").read()
                 return self._send(200, data, "audio/wav" if data[:4] == b"RIFF" else "audio/mpeg")
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
+        b = self._json()
         if p == "/label":
             if b.get("label") in ("good", "false", "unsure", None):
                 with LOCK: jl_append("labels.jsonl", {"id": b.get("id"), "label": b.get("label"), "t": now()})
