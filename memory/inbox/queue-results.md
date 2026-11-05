@@ -1,6 +1,4 @@
- 156, "right": 75, "pct": 48.1, "low": 41.3, "high": 61.1, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 94.6}, "news": {"n": 202, "right": 97, "pct": 48.0, "low": 38.0, "high": 56.7, "verdict": "no clear edge", "mult": 0.93, "trust": 47.7, "n_eff": 105.2}, "fng": {"n": 215, "right": 110, "pct": 51.2, "low": 41.7, "high": 60.5, "verdict": "no clear edge", "mult": 1.03, "trust": 51.0, "n_eff": 104.4}, "funding": {"n": 238, "right": 122, "pct": 51.3, "low": 42.7, "high": 59.9, "verdict": "no clear edge", "mult": 1.03, "trust": 51.2, "n_eff": 126.0}, "trend_h": {"n": 196, "right": 100, "pct": 51.0, "low": 40.9, "high": 59.0, "verdict": "no clear edge", "mult": 1.0, "trust": 50.0, "n_eff": 114.2}, "trend_w": {"n": 189, "right": 91, "pct": 48.1, "low"
-== exit_rules.json
-{"updated": 1793867339, "rounds": 190, "source": "default", "peak": 8, "drop": 4, "enabled": false, "audit": "switched off: over 190 rounds every tested take-profit rule did worse than holding", "table": [{"peak": 20, "drop": 8, "gain": -0.0087, "se": 0.0119, "rounds": 368, "rule": -0.0291, "hold": -0.0203}, {"peak": 20, "drop": 6, "gain": -0.011, "se": 0.012, "rounds": 368, "rule": -0.0314, "hold": -0.0203}, {"peak": 15, "drop": 8, "gain": -0.0146, "se": 0.0138, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 4, "gain": -0.0146, "se": 0.0124, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 2, "gain": -0.0148, "se": 0.0123, "rounds": 368, "rule": -0.0351, "hold": -0.0203}, {"peak": 20, "drop": 3, "gain": -0.0153, "se": 0.0124, "rounds": 368, "rule": -0.0357, "hold": -0.0203}], "note": "no take-profit rule beat holding by a clear margin yet; keeping the starting guess", "exits_checked": 30, "exit_vs_hold": 0.034}
+"se": 0.0138, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 4, "gain": -0.0146, "se": 0.0124, "rounds": 368, "rule": -0.0349, "hold": -0.0203}, {"peak": 20, "drop": 2, "gain": -0.0148, "se": 0.0123, "rounds": 368, "rule": -0.0351, "hold": -0.0203}, {"peak": 20, "drop": 3, "gain": -0.0153, "se": 0.0124, "rounds": 368, "rule": -0.0357, "hold": -0.0203}], "note": "no take-profit rule beat holding by a clear margin yet; keeping the starting guess", "exits_checked": 30, "exit_vs_hold": 0.034}
 == entry_stats.json
 {"updated": 1793867284, "rounds": 238, "price": {"1-20": {"n": 742, "rounds": 166, "win": 0.09, "avg": -0.0068}, "20-35": {"n": 625, "rounds": 188, "win": 0.269, "avg": -0.0179}, "35-50": {"n": 747, "rounds": 171, "win": 0.431, "avg": -0.0109}, "50-60": {"n": 538, "rounds": 154, "win": 0.53, "avg": -0.0294}, "60-70": {"n": 469, "rounds": 170, "win": 0.635, "avg": -0.0254}, "70-80": {"n": 395, "rounds": 169, "win": 0.742, "avg": -0.0153}, "80-90": {"n": 353, "rounds": 158, "win": 0.822, "avg": -0.0292}, "90-100": {"n": 465, "rounds": 138, "win": 0.946, "avg": -0.0039}}, "hours": {"0": {"n": 106, "rounds": 12, "avg": 0.0233}, "1": {"n": 105, "rounds": 11, "avg": -0.1425}, "2": {"n": 70, "rounds": 8, "avg": 0.0457}, "3": {"n": 87, "rounds": 8, "avg": -0.0401}, "4": {"n": 119, "rounds": 8, "avg": -0.0665}, "5": {"n": 113, "rounds": 8, "avg": -0.0513}, "6": {"n": 94, "rounds": 8, "avg": -0.0212}, "7": {"n": 94, "rounds": 8, "avg": 0.0209}, "8": {"n": 87, "rounds": 7, "avg": -0.0399}, "9": {"n": 111, "rounds": 8, "avg": -0.0462}, "10": {"n": 95, "rounds": 8, "avg": 0.0081}, "11": {"n": 116, "rounds": 8, "avg": -0.0162}, "12": {"n": 67, "rounds": 7, "avg": 0.0019}, "13": {"n": 88, "rounds": 8, "avg": -0.0311}, "14": {"n": 77, "rounds": 8, "avg": 0.0149}, "15": {"n": 90, "rounds": 8, "av
 == patterns.json
@@ -503,5 +501,25 @@ saved to ~/market-data/my_trades.json
 auto_pick: None
 cap shown: None None None
 run keys: ['added', 'autolog', 'bal', 'curve', 'equity', 'events', 'halt', 'id', 'in_round', 'inflight', 'k_age', 'label', 'live', 'now', 'pnl', 'pos', 'refills', 'round_cash', 'rounds', 'slip_avg', 'start', 'started', 'status', 'stopped', 'strategy', 'trades', 'using', 'warn', 'windows', 'wins']
+(exit 0)
+```
+
+## 2026-11-05 12:52:01 tasks/queue/022-run-state.sh
+```
+strategy: auto | using: v_x88221261 | status: running | halt: None
+autolog {'t': 1793892614, 'from': 'v_x8220761', 'to': 'v_x44219232', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+autolog {'t': 1793893513, 'from': 'v_x44219232', 'to': 'v_x72222451', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+autolog {'t': 1793894413, 'from': 'v_x72222451', 'to': 'v_x44219232', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+autolog {'t': 1793895312, 'from': 'v_x44219232', 'to': 'v_x64216771', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+autolog {'t': 1793899823, 'from': 'v_x64216771', 'to': 'v_x52220781', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+autolog {'t': 1793902514, 'from': 'v_x52220781', 'to': 'v_x88221261', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+cap in config shown: None
+11:15 49.96 -41.19
+11:30 49.9 -31.85
+11:45 0.0 0.0
+12:00 49.77 -22.12
+12:15 20.73 -11.13
+12:30 49.83 -14.72
+Mon Nov  2 22:27:17 2026 /usr/bin/python3 /home/kylarlovelady/starship/markets/collector.py
 (exit 0)
 ```
