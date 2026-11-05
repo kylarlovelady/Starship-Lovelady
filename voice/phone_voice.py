@@ -135,7 +135,7 @@ def times_get(): return dict(getattr(TL, "t", {}))
 
 
 def load_pron():
-    p = {"Kylar": "Kyler"}
+    p = {"Kylar": "Kyler", "Sheree": "Shuh-ree", "Sharee": "Shuh-ree"}
     try: p.update(json.load(open(os.path.join(DATA, "pronunciations.json"))))
     except Exception: pass
     return p
