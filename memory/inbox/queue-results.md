@@ -1,61 +1,4 @@
-"status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5400", "client_order_id": "1ab386c5-dfb6-42c2-a759-a0b764994f79", "fill_count": "1.00", "order_id": "01a19e02-ff58-7c
-{"t": 1793652361, "action": "sell", "side": "UP", "ticker": "KXBTC15M-26NOV021600-00", "book_side": "ask", "count": 1, "price": 0.54, "status": 201, "reply": {"average_fee_paid": "0.0174", "average_fill_price": "0.5500", "client_order_id": "d174effe-9f14-4d4e-87ef-78e666d416c1", "fill_count": "1.00", "order_id": "01a19e03-0728-7
-{"t": 1793683924, "kind": "order", "action": "sell", "side": "DOWN", "ticker": "KXBTC15M-26NOV030045-45", "book_side": "bid", "count": 18, "price": 0.38, "quote_ask": 0.35, "quote_bid": 0.34, "status": 201, "reply": {"average_fee_paid": "0.0159", "average_fill_price": "0.3500", "client_order_id": "3036302b-8f89-4e26-b607-b0c9294
-{"t": 1793683924, "kind": "slip", "slip_cents": 0.0, "ticker": "KXBTC15M-26NOV030045-45", "action": "sell", "side": "DOWN"}
-
-=== my real trades
-fills downloaded: 439
-fills that were YOUR own: 429, fills from the agent's live sessions: 10
-rounds traded: 107   won: 49 (46%)   total after fees: -2201.25   fees: 423.82
-avg stake per round: $106.34   avg win: +93.25   avg loss: -116.73
-first buy in the first 2 minutes: 70 of 107 rounds   avg first buy 145s into the round
-avg buy price: 47 cents
-took profit early (sold before close): 38 rounds, avg -47.90, won 61%
-held to the end: 69 rounds, avg -5.52, won 38%
-avg time of first sale: 387s into the round
-date range: 10-31 00:30 to 11-05 01:00
-sold early at a profit: 23 rounds, avg +100.21   sold early at a loss (cut loser): 15 rounds, avg -275.00
-stake under $10  14 rounds  won  50%  total    +26.00
-stake $10-50     53 rounds  won  42%  total   -343.91
-stake $50-150    21 rounds  won  52%  total   -179.99
-stake over $150  19 rounds  won  47%  total  -1703.35
-first buy first minute   55 rounds  won  51%  total  -1736.64
-first buy minutes 2-3    21 rounds  won  29%  total   -687.50
-first buy after minute 3 29 rounds  won  45%  total   +213.53
-last 5 rounds:
-  11-04 23:45  yes  staked 48.4    pnl  -50.00 (held)
-  11-05 00:00  yes  staked 96.29   pnl +131.41 (sold early)
-  11-05 00:15  no   staked 47.47   pnl  -50.00 (held)
-  11-05 00:30  no   staked 19.4    pnl  +25.20 (sold early)
-  11-05 01:00  no   staked 18.95   pnl  -20.00 (held)
-THE AGENT'S live rounds (not yours): 4 rounds, -2.58 after fees
-saved to ~/market-data/my_trades.json
-(exit 0)
-```
-
-## 2026-11-05 12:49:01 tasks/queue/021-kalshi-state.sh
-```
-== collector process
- 710034 Mon Nov  2 22:27:17 2026 /usr/bin/python3 /home/kylarlovelady/starship/markets/collector.py
-== repo head on Pi
-367c7df 3 minutes ago queue 021: is the new Kalshi code running
-== config files (numbers only)
--- config.json
-{'weights': {'book': 0.25, 'momentum': 0.2, 'whales': 0.2, 'bigtrades': 0.15, 'news': 0.1, 'fng': 0.05, 'funding': 0.05}, 'threshold': 12.0, 'min_bet': 5.0, 'cap': 0, 'edge_min': 0.03, 'max_trades': 6.0, 'slice': 0.1, 'min_price': 0.08, 'max_price': 0.92, 'aggression': 50.0, 'floor': 0, 'entry_max': 0.8, 'entry_min': 0.15}
-== auto log and pick
-auto_pick: None
-cap shown: None None None
-run keys: ['added', 'autolog', 'bal', 'curve', 'equity', 'events', 'halt', 'id', 'in_round', 'inflight', 'k_age', 'label', 'live', 'now', 'pnl', 'pos', 'refills', 'round_cash', 'rounds', 'slip_avg', 'start', 'started', 'status', 'stopped', 'strategy', 'trades', 'using', 'warn', 'windows', 'wins']
-(exit 0)
-```
-
-## 2026-11-05 12:52:01 tasks/queue/022-run-state.sh
-```
-strategy: auto | using: v_x88221261 | status: running | halt: None
-autolog {'t': 1793892614, 'from': 'v_x8220761', 'to': 'v_x44219232', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
-autolog {'t': 1793893513, 'from': 'v_x44219232', 'to': 'v_x72222451', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
-autolog {'t': 1793894413, 'from': 'v_x72222451', 'to': 'v_x44219232', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
-autolog {'t': 1793895312, 'from': 'v_x44219232', 'to': 'v_x64216771', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
+to': 'v_x64216771', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
 autolog {'t': 1793899823, 'from': 'v_x64216771', 'to': 'v_x52220781', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
 autolog {'t': 1793902514, 'from': 'v_x52220781', 'to': 'v_x88221261', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
 cap in config shown: None
@@ -574,5 +517,57 @@ index.html:28:#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bot
 index.html:29:#ai{font-size:3vw;line-height:1.3;min-height:4vw}
 index.html:32: border:1px solid rgba(255,255,255,.6);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7);
 index.html:121:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
+(exit 0)
+```
+
+## 2026-11-05 15:07:01 tasks/queue/031-home-ask-test.sh
+```
+== last 10 text asks (home/Siri) from the log
+23:32:38 secs None | None -> None | times None
+23:32:39 secs 1.2 | Hey, can you hear me? -> Yes, I can hear you. What do you need? | times None
+23:33:05 secs None | None -> None | times None
+23:48:28 secs None | None -> None | times None
+23:48:32 secs 3.7 | What's on my to-do list? -> 1. Redo Kalshi API location verification by Nov 9.
+2. Decide on ElevenLabs renewal by Nov  | times None
+00:56:28 secs 1.1 | say hello -> Hello, Kylar! How's it going? | times {'llm': 1.05}
+01:49:03 secs 2.1 | how is the pi doing -> The Pi is up for 1 week, 3 days, and has a temperature of 40.0°C, with 58% memory usage an | times {'llm': 2.07}
+14:58:54 secs 2.1 | What do you know about Shari? -> I don't have any information on someone named Shari. Would you like to tell me who she is? | times {'llm': 2.08}
+15:00:19 secs 1.5 | What can you tell me about Shari? -> I don't have any details about Shari in my records. If she's someone important, feel free  | times {'llm': 1.55}
+15:00:53 secs 2.2 | Do you know who I am? -> Yes, you're Kylar Lovelady. You work nights at Dow, and you're focused on income projects  | times {'llm': 2.17}
+== live timing test
+What time is it -> 1.2s: {"reply": "I can't check the current time. You can look at your phone or dashboard for that.", "end": false, "followup": false}
+What do you know about Sheree -> 1.0s: {"reply": "I don't have any specific information about Sheree. Could you clarify who she is?", "end": false, "followup": true}
+== HA jarvis_hub warnings (6h)
+== watchdog log (satellite restarts)
+Nov 04 19:42:20 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:43:17 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:44:14 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:45:10 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:46:07 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:47:04 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:48:00 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:48:57 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:49:51 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 04 19:50:15 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
+Nov 05 14:58:19 LoveladyMainAiHub python3[35465]: stuck in listening for 40s, restarting satellite
+Nov 05 15:01:35 LoveladyMainAiHub python3[35465]: stuck in listening for 44s, restarting satellite
+(exit 0)
+```
+
+## 2026-11-05 15:07:03 tasks/queue/032-home-timeline.sh
+```
+== satellite unit
+ExecStart=/bin/bash /home/kylarlovelady/wyoming-satellite/run-hub.sh
+Restart=always
+RestartSec=3
+== watchdog unit
+ExecStart=/usr/bin/python3 /usr/local/bin/hub-watchdog.py
+== HA voice pipeline events (last 90 min)
+2026-11-05 14:57:38.136 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=date
+2026-11-05 14:58:52.352 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=date
+2026-11-05 14:58:54.445 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update
+2026-11-05 15:00:18.370 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What can you tell me about Shari?', attachments=None, created=
+2026-11-05 15:00:19.925 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update
+2026-11-05 15:00:51.274 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' Do you know who I am?', attachments=None, created=datetime.dat
 (exit 0)
 ```
