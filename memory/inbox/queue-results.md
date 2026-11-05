@@ -1,116 +1,4 @@
-to': 'v_x64216771', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
-autolog {'t': 1793899823, 'from': 'v_x64216771', 'to': 'v_x52220781', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
-autolog {'t': 1793902514, 'from': 'v_x52220781', 'to': 'v_x88221261', 'why': 'Best positive record so far per round after fees (40+ rounds each).'}
-cap in config shown: None
-11:15 49.96 -41.19
-11:30 49.9 -31.85
-11:45 0.0 0.0
-12:00 49.77 -22.12
-12:15 20.73 -11.13
-12:30 49.83 -14.72
-Mon Nov  2 22:27:17 2026 /usr/bin/python3 /home/kylarlovelady/starship/markets/collector.py
-(exit 0)
-```
-
-## 2026-11-05 13:22:01 tasks/queue/023-verify-kalshi.sh
-```
-# v8.4 restart: unproven cap really 25 (saved default 50 ove
-Pi repo: fefb480 2 minutes ago
-using: v_hold | status: running
-autolog 11:30 v_x52220781 - Best positive record so far per round after fees (40+ rounds each).
-autolog 12:15 v_x88221261 - Best positive record so far per round after fees (40+ rounds each).
-autolog 12:54 v_hold - No strategy has a proven positive record over 80+ rounds yet, so it holds to the end (leas
-12:00 staked 49.77 pnl -22.12
-12:15 staked 20.73 pnl -11.13
-12:30 staked 49.83 pnl -14.72
-12:45 staked 24.91 pnl -24.91
-13:00 staked 0.0 pnl 0.0
-(exit 0)
-```
-
-## 2026-11-05 13:52:01 tasks/queue/024-kdp-look.sh
-```
-== top
-total 120
-drwxrwxr-x  8 kylarlovelady kylarlovelady  4096 Oct 26 00:54 .
-drwx------ 36 kylarlovelady kylarlovelady  4096 Nov  5 04:28 ..
--rw-r--r--  1 kylarlovelady kylarlovelady 25292 Oct 26 00:54 app.py
-drwxrwxr-x  2 kylarlovelady kylarlovelady  4096 Oct 26 00:08 backup-1026-0008
-drwxrwxr-x  2 kylarlovelady kylarlovelady  4096 Oct 26 00:54 backup-v2-1026-0054
-drwxrwxr-x  3 kylarlovelady kylarlovelady  4096 Oct 26 00:12 books
-drwxrwxr-x  4 kylarlovelady kylarlovelady  4096 Oct 25 23:46 books-old-1026-0008
--rw-r--r--  1 kylarlovelady kylarlovelady 33061 Oct 26 00:54 engine.py
--rw-r--r--  1 kylarlovelady kylarlovelady 15534 Oct 26 00:54 index.html
--rw-------  1 kylarlovelady kylarlovelady     5 Oct 25 23:44 pin.txt
-drwxr-xr-x  2 kylarlovelady kylarlovelady  4096 Oct 26 00:54 __pycache__
--rw-------  1 kylarlovelady kylarlovelady   182 Oct 26 00:18 settings.json
-drwxrwxr-x  5 kylarlovelady kylarlovelady  4096 Oct 25 23:44 .venv
-== tree (depth 3, no venv)
-.
-./books
-./books/new-book-e841
-./books/new-book-e841/history
-./books/new-book-e841/out
-./books/new-book-e841/book.json
-./books/new-book-e841/img
-./pin.txt
-./books-old-1026-0008
-./books-old-1026-0008/process-operator-5079
-./books-old-1026-0008/process-operator-5079/out
-./books-old-1026-0008/process-operator-5079/book.json
-./books-old-1026-0008/new-journal-fcd0
-./books-old-1026-0008/new-journal-fcd0/out
-./books-old-1026-0008/new-journal-fcd0/book.json
-./app.py
-./engine.py
-./__pycache__
-./backup-v2-1026-0054
-./backup-v2-1026-0054/app.py
-./backup-v2-1026-0054/engine.py
-./backup-v2-1026-0054/index.html
-./settings.json
-./backup-1026-0008
-./backup-1026-0008/app.py
-./backup-1026-0008/engine.py
-./backup-1026-0008/index.html
-./index.html
-== sizes
-27M	.
-== README / notes
-== app routes
-(exit 0)
-```
-
-## 2026-11-05 13:55:01 tasks/queue/025-kdp-engine.sh
-```
-== engine.py head
-"""KDP Studio engine: 6x9 hardcover spec, fonts, cover + interior renderer, checks."""
-import os, re, copy, subprocess, hashlib, json, io, random
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.utils import simpleSplit
-from reportlab.lib.colors import HexColor, Color
-IN = 72.0
-# ---- KDP 6x9 hardcover spec (VERIFY with KDP cover calculator before first upload) ----
-SPEC = dict(trim_w=6.0, trim_h=9.0, wrap=0.591, wrap_v=0.709, hinge=0.197, board=0.189,
-            rate={"white": 0.002252, "cream": 0.0025}, min_pages=75, max_pages=550,
-            safe_edge=0.635, hinge_keep=0.4, bc_w=2.0, bc_h=1.2, bc_bottom=0.76, bc_side=0.25,
-            verified=False)
-def spine(pages, paper): return round(pages * SPEC["rate"][paper] + SPEC["board"], 4)
-def gutter(p): return 0.375 if p <= 150 else 0.5 if p <= 300 else 0.625 if p <= 500 else 0.75
-def cover_size(pages, paper):
-    s = spine(pages, paper)
-    return (2 * SPEC["wrap"] + 2 * SPEC["trim_w"] + 2 * SPEC["hinge"] + s, SPEC["trim_h"] + 2 * SPEC["wrap_v"], s)
-# ---- fonts ----
-_F = {}
-def discover():
-    if _F: return _F
-    import reportlab
-    vd = os.path.join(os.path.dirname(reportlab.__file__), "fonts")
-    _F["Bitstream Vera"] = {k: os.path.join(vd, f) for k, f in
-        (("r", "Vera.ttf"), ("b", "VeraBd.ttf"), ("i", "VeraIt.ttf"))}
-    cands = ["DejaVu Sans", "DejaVu Serif", "Liberation Sans", "Liberation Serif", "Liberation Mono", "Inter",
+beration Serif", "Liberation Mono", "Inter",
              "Carlito", "Caladea", "Lato", "Roboto", "Open Sans", "Montserrat", "Oswald", "Bitstream Charter",
              "FreeSerif", "FreeSans", "Noto Sans", "Noto Serif", "Playfair Display", "Merriweather", "Source Sans 3"]
     def fc(fam, st):
@@ -569,5 +457,115 @@ ExecStart=/usr/bin/python3 /usr/local/bin/hub-watchdog.py
 2026-11-05 15:00:18.370 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What can you tell me about Shari?', attachments=None, created=
 2026-11-05 15:00:19.925 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update
 2026-11-05 15:00:51.274 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' Do you know who I am?', attachments=None, created=datetime.dat
+(exit 0)
+```
+
+## 2026-11-05 15:10:01 tasks/queue/033-satellite-settings.sh
+```
+== run-hub.sh
+#!/bin/bash
+cd ~/wyoming-satellite
+script/run \
+--name 'main hub' \
+--uri 'tcp://127.0.0.1:10700' \
+--mic-command '/home/kylarlovelady/hub-mic.py plughw:3,0' \
+--snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
+--wake-uri 'tcp://127.0.0.1:10400' \
+--wake-word-name 'hey_jarvis' \
+--detect-command 'bash -c "echo idle > /tmp/hub-state"' \
+--detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
+--stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
+--transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
+--synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
+--tts-start-command 'bash -c "echo speaking > /tmp/hub-state"' \
+--tts-stop-command 'bash -c "echo idle > /tmp/hub-state; curl -s -m 2 -X POST -d done http://127.0.0.1:8080/event/done > /dev/null"' \
+--error-command 'bash -c "echo idle > /tmp/hub-state"'
+== wyoming-satellite version / options
+CHANGELOG.md
+docker
+docker-compose.yml
+Dockerfile
+docs
+etc
+examples
+installer
+LICENSE.md
+mypy.ini
+pylintrc
+pyproject.toml
+README.md
+run-hub.sh
+run-hub.sh.bak
+run-hub.sh.bak2
+run-hub.sh.bak-alexa
+run-hub.sh.bak-lock
+script
+setup.cfg
+  --mic-uri MIC_URI     URI of Wyoming microphone service
+  --mic-command MIC_COMMAND
+  --mic-command-rate MIC_COMMAND_RATE
+  --mic-command-width MIC_COMMAND_WIDTH
+  --mic-command-channels MIC_COMMAND_CHANNELS
+  --mic-command-samples-per-chunk MIC_COMMAND_SAMPLES_PER_CHUNK
+  --mic-volume-multiplier MIC_VOLUME_MULTIPLIER
+  --mic-noise-suppression {0,1,2,3,4}
+  --mic-auto-gain {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31}
+  --mic-seconds-to-mute-after-awake-wav MIC_SECONDS_TO_MUTE_AFTER_AWAKE_WAV
+  --mic-no-mute-during-awake-wav
+  --mic-channel-index MIC_CHANNEL_INDEX
+  --snd-uri SND_URI     URI of Wyoming sound service
+  --snd-command SND_COMMAND
+  --snd-command-rate SND_COMMAND_RATE
+  --snd-command-width SND_COMMAND_WIDTH
+  --snd-command-channels SND_COMMAND_CHANNELS
+  --snd-volume-multiplier SND_VOLUME_MULTIPLIER
+  --wake-uri WAKE_URI   URI of Wyoming wake word detection service
+  --wake-word-name name [pipeline ...]
+  --wake-command WAKE_COMMAND
+  --wake-command-rate WAKE_COMMAND_RATE
+  --wake-command-width WAKE_COMMAND_WIDTH
+  --wake-command-channels WAKE_COMMAND_CHANNELS
+  --wake-refractory-seconds WAKE_REFRACTORY_SECONDS
+  --vad                 Wait for speech before streaming audio
+  --vad-threshold VAD_THRESHOLD
+  --vad-trigger-level VAD_TRIGGER_LEVEL
+  --vad-buffer-seconds VAD_BUFFER_SECONDS
+  --vad-wake-word-timeout VAD_WAKE_WORD_TIMEOUT
+  --timer-started-command TIMER_STARTED_COMMAND
+  --timer-updated-command TIMER_UPDATED_COMMAND
+  --timer-cancelled-command, --timer-canceled-command TIMER_CANCELLED_COMMAND
+  --timer-finished-command TIMER_FINISHED_COMMAND
+  --awake-wav AWAKE_WAV
+  --done-wav DONE_WAV   WAV file to play when voice command is done
+  --timer-finished-wav TIMER_FINISHED_WAV
+  --timer-finished-wav-repeat repeat delay
+  --no-zeroconf         Disable discovery over zeroconf
+  --debug-recording-dir DEBUG_RECORDING_DIR
+== watchdog: stuck rule
+4:STATE = "/tmp/hub-state"
+6:LIMITS = {"listening": 40, "thinking": 60, "speaking": 120}
+9:last_restart = 0
+34:            log("restarting " + svc)
+35:            run("systemctl", "restart", svc)
+38:        r = run("docker", "inspect", "-f", "{{.State.Running}} {{if .State.Health}}{{.State.Health.Status}}{{end}}", c)
+46:            log("restarting unhealthy " + c)
+47:            run("docker", "restart", c)
+50:        state = open(STATE).read().strip()
+51:        age = now - os.stat(STATE).st_mtime
+52:        if state in LIMITS and age > LIMITS[state] and now - last_restart > 60:
+53:            problems.append("stuck " + state)
+54:            log("stuck in %s for %ds, restarting satellite" % (state, age))
+55:            run("systemctl", "restart", "hub-satellite")
+56:            open(STATE, "w").write("idle")
+57:            last_restart = now
+62:        if run("docker", "inspect", "-f", "{{.State.Running}}", "pihole").stdout.strip() == "true":
+70:                    log("pihole dns dead, restarting")
+71:                    run("docker", "restart", "pihole")
+88:    time.sleep(10)
+== mic device and level
+**** List of CAPTURE Hardware Devices ****
+card 3: AC44 [MXL AC-44], device 0: USB Audio [USB Audio]
+  Subdevices: 0/1
+  Subdevice #0: subdevice #0
 (exit 0)
 ```
