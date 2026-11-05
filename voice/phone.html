@@ -15,12 +15,16 @@ button.on{background:var(--acc);border-color:var(--acc);color:#fff}button.bad{bo
 #st{font-size:22px;font-weight:700}#meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:10px}#meter i{display:block;height:100%;width:0;background:var(--grn);transition:width .15s}
 .ev{border-top:1px solid var(--line);padding:10px 0}.ev:first-child{border-top:0}.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;border:1px solid var(--line)}
 input[type=range]{width:100%}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:3px 4px;text-align:right}th:first-child,td:first-child{text-align:left}
+body.truck .card:not(.main),body.truck h1,body.truck .mut.small:not(#sub),body.truck #hint,body.truck #missed,body.truck #priv,body.truck #apply,body.truck a{display:none!important}
+body.truck #st{font-size:44px;text-align:center;margin:10px 0}body.truck #sub{font-size:20px;text-align:center}body.truck #meter{height:14px}
+body.truck #stop{min-height:140px!important;font-size:34px!important}body.truck #pause,body.truck #end{min-height:90px;font-size:22px;flex:1}
+body.truck #reply{display:block!important}body.truck #ans{font-size:22px}
 </style></head><body>
 <h1>Phone Voice</h1><div class="mut small">Listens for its name through this phone. Answers only here: nothing plays on the home speakers or shows on the Pi.</div>
-<div class="card"><div id="st">Not listening</div><div id="sub" class="mut small">Tap Start, then leave this page open with the screen on (plug in the phone).</div><div id="meter"><i></i></div>
+<div class="card main"><div id="st">Not listening</div><div id="sub" class="mut small">Tap Start, then leave this page open with the screen on (plug in the phone).</div><div id="meter"><i></i></div>
 <div style="margin-top:12px"><button class="go" id="start">Start listening</button></div>
 <div style="margin-top:10px"><button id="stop" style="width:100%;min-height:64px;font-size:20px;font-weight:800;background:#7a1c24;border-color:#e5484d">STOP TALKING</button></div>
-<div class="row" style="margin-top:10px"><button id="pause">Pause</button><button id="missed">I said it, it missed</button><button id="end">End chat</button></div>
+<div class="row" style="margin-top:10px"><button id="truck">Truck mode</button><button id="pause">Pause</button><button id="missed">I said it, it missed</button><button id="end">End chat</button></div>
 <div class="small mut" id="hint" style="margin-top:8px"></div></div>
 <div id="reply" class="card" style="display:none"><h2>Last conversation</h2><div id="said" class="small mut"></div><div id="ans"></div></div>
 <div class="card"><h2>Tune the wake word</h2>
@@ -62,6 +66,13 @@ function pump(){
   var all=new Int16Array(n),o=0;parts.forEach(function(a){all.set(a,o);o+=a.length});queued-=n;
   fetch('/audio?sid='+SID,{method:'POST',body:all.buffer}).then(function(r){return r.json()}).then(function(j){failing=0;onReply(j);sending=false;pump()}).catch(function(){failing++;sending=false;if(queued>16000*8){queue=[];queued=0}status('Reconnecting...','Lost the connection to the Pi. Retrying.');setTimeout(pump,Math.min(5000,500*failing))})
 }
+var pq=[],pdone=false,playing=false;
+function playNext(){
+  if(playing)return;
+  if(!pq.length){if(pdone){pdone=false;api('/played')}return}
+  playing=true;var u=pq.shift();player.onended=function(){playing=false;playNext()};player.onerror=function(){playing=false;playNext()};player.src=u;player.play().catch(function(){playing=false;playNext()})
+}
+function stopAudio(){pq=[];pdone=false;playing=false;try{player.onended=null;player.onerror=null;player.pause();player.removeAttribute('src');player.load()}catch(e){}}
 function onReply(j){
   paused=!!j.paused;$('pause').textContent=paused?'Resume':'Pause';$('pause').className=paused?'on':'';
   var lv=Math.min(1,(j.level||0)/6000);$('meter').firstChild.style.width=(lv*100)+'%';
@@ -69,8 +80,10 @@ function onReply(j){
   (j.acts||[]).forEach(function(a){
     if(a.type==='trigger'){beep([880,1175],.09,.18);status('Heard its name','Score '+a.score)}
     else if(a.type==='chime'){}
-    else if(a.type==='say'){$('reply').style.display='';$('said').textContent='You: '+a.text}
-    else if(a.type==='play'){$('reply').style.display='';$('ans').textContent=a.text;status('Speaking','');player.src=a.url;player.onended=function(){api('/played')};player.onerror=function(){api('/played')};player.play().catch(function(){api('/played')})}
+    else if(a.type==='say'){$('reply').style.display='';$('said').textContent='You: '+a.text;$('ans').textContent='';pq=[];pdone=false;playing=false}
+    else if(a.type==='play'){$('reply').style.display='';$('ans').textContent=(pq.length||playing?$('ans').textContent+' ':'')+a.text;status('Speaking','');pq.push(a.url);playNext()}
+    else if(a.type==='play_done'){pdone=true;playNext()}
+    else if(a.type==='stop_audio'){stopAudio()}
     else if(a.type==='tone_end'){beep([660,440],.14,.1);status('Listening','Conversation closed ('+(a.why||'')+'). Say its name to start again.')}
     else if(a.type==='error'){status('Problem',a.text)}
     else if(a.type==='event'){refresh()}
@@ -100,5 +113,6 @@ $('th').onchange=function(){api('/settings',{threshold:Number(this.value)}).then
 $('apply').onclick=function(){if(S&&S.tuning.recommended!=null)api('/settings',{threshold:S.tuning.recommended}).then(refresh)};
 $('priv').onclick=function(){api('/settings',{private:!(S&&S.settings.private)}).then(refresh)};
 refresh();setInterval(refresh,15000);
-$('stop').onclick=function(){try{player.onended=null;player.pause();player.removeAttribute('src');player.load()}catch(e){}api('/end');status('Stopped','Say its name when you want him again.')};
+$('stop').onclick=function(){stopAudio();api('/end');status('Stopped','Say its name when you want him again.')};
+(function(){var on=false;try{on=localStorage.getItem('truck')==='1'}catch(e){}function ap(){document.body.classList.toggle('truck',on);$('truck').textContent=on?'Exit truck mode':'Truck mode';$('truck').className=on?'on':''}ap();$('truck').onclick=function(){on=!on;try{localStorage.setItem('truck',on?'1':'0')}catch(e){}ap()}})();
 </script></body></html>

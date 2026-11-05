@@ -39,7 +39,7 @@ def jl_read(name):
 
 
 # ------------------------------------------------------------------ settings
-DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5"}
+DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5", "silence_end": 1.0, "barge_in": True, "stream": True}
 def load_settings():
     s = dict(DEFAULTS)
     try: s.update(json.load(open(os.path.join(DATA, "settings.json"))))
@@ -256,6 +256,39 @@ def chat(history):
     return json.loads(r)["choices"][0]["message"]["content"].strip()
 
 
+def chat_stream(history):
+    """Yield the answer in pieces as OpenAI writes it, so speech can start before the whole answer exists."""
+    if MOCK:
+        for w in os.environ.get("VOICE_MOCK_REPLY", "It is a mock reply. It has two sentences. Anything else?").split(" "): yield w + " "
+        return
+    key = load_keys().get("OPENAI_API_KEY")
+    body = json.dumps({"model": "gpt-4o-mini", "messages": [{"role": "system", "content": prompt_text()}] + history[-12:], "max_tokens": int(SET.get("max_tokens", 150)), "stream": True}).encode()
+    req = urllib.request.Request("https://api.openai.com/v1/chat/completions", data=body, headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"}, method="POST")
+    with urllib.request.urlopen(req, timeout=60) as r:
+        for line in r:
+            line = line.decode("utf-8", "ignore").strip()
+            if not line.startswith("data:"): continue
+            d = line[5:].strip()
+            if d == "[DONE]": break
+            try: piece = json.loads(d)["choices"][0]["delta"].get("content") or ""
+            except (ValueError, KeyError, IndexError): continue
+            if piece: yield piece
+
+
+SENT_END = re.compile(r"(?<=[.!?])\s+")
+def sentences(pieces, first_min=14, min_len=40):
+    """Group streamed text into speakable sentences. The first one goes out as early as possible."""
+    buf = ""; n = 0
+    for p in pieces:
+        buf += p
+        while True:
+            m = SENT_END.search(buf, first_min if n == 0 else min_len)
+            if not m: break
+            out, buf = buf[:m.start() + 1].strip(), buf[m.end():]
+            if out: n += 1; yield out
+    if buf.strip(): yield buf.strip()
+
+
 @timed("tts")
 def tts(text, path):
     if MOCK:
@@ -283,7 +316,7 @@ class Session:
         self.hist = []; self.state = "idle"; self.t_state = now(); self.floor = 300.0
         self.ep = None; self.pending = []; self.scores = []; self.heard = 0.0; self.started = now(); self.last_seen = now()
         self.utt = []; self.speech_t = None; self.last_voice = now(); self.hold_until = 0.0; self.follow_for = 10.0
-        self.ew = None; self.discard_until = 0.0
+        self.ew = None; self.discard_until = 0.0; self.gen = 0
 
     def det_ok(self):
         if self.det is None: self.det = DET
@@ -311,6 +344,10 @@ class Session:
             if r < self.floor * 2: self.floor = 0.98 * self.floor + 0.02 * max(r, 50.0)
             self.wake(fr, acts)
         elif self.state == "speaking":
+            if SET.get("barge_in", True) and self.det_ok():
+                sc = self.det.predict(fr); s_ = max(sc.values()) if sc else 0.0
+                if s_ >= SET["threshold"] and t - self.t_state > 0.8:
+                    self.barge(acts, round(s_, 3)); return
             if (t >= self.hold_until and self.ew == "played") or t - self.t_state > 90:
                 self.begin_follow(acts)
         elif self.state in ("listening", "follow"):
@@ -334,6 +371,14 @@ class Session:
             ep["quiet"] += 1
             if ep["quiet"] >= 6: self.close_ep()
 
+    def barge(self, acts, score):
+        """He said its name while it was talking: stop at once and listen."""
+        self.gen += 1; self.ew = None
+        self.pending = [a for a in self.pending if a.get("type") not in ("play", "play_done", "say")]
+        acts.append({"type": "stop_audio"}); acts.append({"type": "trigger", "id": "barge", "score": score})
+        with LOCK: jl_append("events.jsonl", {"id": uuid.uuid4().hex[:10], "t": now(), "peak": score, "model": "-", "triggered": True, "threshold": SET["threshold"], "clip": None, "kind": "barge", "sid": self.sid})
+        self.on_trigger({"live": True}, acts)
+
     def close_ep(self):
         ep, self.ep = self.ep, None
         if not ep: return
@@ -347,6 +392,7 @@ class Session:
         self.pending.append(dict(rec, type="event"))
 
     def on_trigger(self, ep, acts):
+        self.gen += 1
         self.utt = []; self.speech_t = None; self.last_voice = now() + 0.6; self.follow_for = 6.0; self.discard_until = now() + 0.5
         self.set_state("listening")
         acts.append({"type": "chime"})
@@ -367,10 +413,11 @@ class Session:
             limit = self.follow_for
             if t - self.t_state > limit:                      # nobody spoke: close the conversation with a soft tone
                 self.close_conv(acts, "quiet")
-        elif silent_for > 1.0 or utter > SET["max_utter"]:
+        elif silent_for > float(SET.get("silence_end", 1.0)) or utter > SET["max_utter"]:
             self.respond(np.concatenate(self.utt), acts)
 
     def close_conv(self, acts, why):
+        self.gen += 1; self.pending = [a for a in self.pending if a.get("type") not in ("play", "play_done", "say")]
         if self.ep: self.close_ep()
         acts.append({"type": "tone_end", "why": why}); self.hist = []; self.set_state("idle")
         if self.det and hasattr(self.det, "reset"): self.det.reset()
@@ -382,9 +429,9 @@ class Session:
 
     def respond(self, pcm, acts):
         self.set_state("thinking")
-        threading.Thread(target=self._think, args=(pcm,), daemon=True).start()
+        threading.Thread(target=self._think, args=(pcm, self.gen), daemon=True).start()
 
-    def _think(self, pcm):
+    def _think(self, pcm, gen):
         out = []; times_reset()
         try:
             who, conf = speaker_check(pcm)
@@ -392,22 +439,41 @@ class Session:
             t0 = now()
             jl_append("conversations.jsonl", {"t": t0, "sid": self.sid, "who": who, "who_conf": conf, "heard": text})
             if not text or len(text) < 2:
-                with LOCK: out.append({"type": "tone_end", "why": "nothing heard"}); self.hist = []; self.set_state("idle")
+                with LOCK:
+                    if gen == self.gen: out.append({"type": "tone_end", "why": "nothing heard"}); self.hist = []; self.set_state("idle")
             elif END_RE.search(text):
-                with LOCK: out.append({"type": "say", "text": text}); out.append({"type": "tone_end", "why": "you ended it"}); self.hist = []; self.set_state("idle")
+                with LOCK:
+                    if gen == self.gen: out.append({"type": "say", "text": text}); out.append({"type": "tone_end", "why": "you ended it"}); self.hist = []; self.set_state("idle")
             else:
                 self.hist.append({"role": "user", "content": text})
-                reply = chat(self.hist); self.hist.append({"role": "assistant", "content": reply})
-                rid = uuid.uuid4().hex[:10]; ext = "mp3"
-                mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
-                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "secs": round(now() - t0, 1), "times": times_get()})
+                parts = []; first = None; tl0 = now()
+                if SET.get("stream", True): gen_text = sentences(chat_stream(self.hist))
+                else: gen_text = iter(sentences(iter([chat(self.hist)])))
+                for sent in gen_text:
+                    if gen != self.gen: return
+                    rid = uuid.uuid4().hex[:10]; mime = tts(sent, os.path.join(REPLIES, rid + ".bin"))
+                    with LOCK:
+                        if gen != self.gen: return
+                        if not parts:
+                            self.pending.append({"type": "say", "text": text}); self.ew = "waiting_played"; self.set_state("speaking"); self.hold_until = now() + 600
+                            first = round(now() - t0, 2)
+                        self.pending.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": sent, "seq": len(parts)})
+                    parts.append(sent)
+                reply = " ".join(parts)
+                if not parts:
+                    with LOCK:
+                        if gen == self.gen: self.pending.append({"type": "tone_end", "why": "no answer"}); self.set_state("idle")
+                    return
+                self.hist.append({"role": "assistant", "content": reply})
+                tm = times_get(); tm["first_audio"] = first; tm["llm"] = round(now() - tl0, 2)
+                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "secs": round(now() - t0, 1), "times": tm})
                 self.follow_for = float(SET["follow_question"] if reply.rstrip().endswith("?") else SET["follow_quiet"])
                 with LOCK:
-                    out.append({"type": "say", "text": text}); out.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": reply})
-                    self.ew = "waiting_played"; self.set_state("speaking"); self.hold_until = now() + 600
+                    if gen == self.gen: self.pending.append({"type": "play_done"})
         except Exception as e:
             print("conversation error:", repr(e), flush=True)
-            with LOCK: out.append({"type": "error", "text": str(e)[:160]}); out.append({"type": "tone_end", "why": "error"}); self.set_state("idle")
+            with LOCK:
+                if gen == self.gen: self.pending.extend([{"type": "error", "text": str(e)[:160]}, {"type": "tone_end", "why": "error"}]); self.set_state("idle")
         with LOCK: self.pending.extend(out)
 
     def played(self):
@@ -530,6 +596,27 @@ def ask_text(text, want_audio=True, host=None):
     return out
 
 
+def tips_for(rows):
+    """Plain-English suggestions from the tags Kylar tapped and the timings logged."""
+    tags = {}
+    for r in rows:
+        for t in r.get("tags", []): tags[t] = tags.get(t, 0) + 1
+    tips = []; tot = []
+    for r in rows:
+        tm = r.get("times") or {}
+        v = tm.get("first_audio") if tm.get("first_audio") is not None else sum(tm.get(k, 0) for k in ("stt", "llm", "tts"))
+        if tm: tot.append(v)
+    avg = sum(tot) / len(tot) if tot else 0
+    if tot and avg > 4: tips.append("Answers take %.1f s on average to start. Use the Flash voice model, shorten the reply length, and keep streaming on." % avg)
+    if tags.get("too slow", 0) >= 2: tips.append("You tagged 'too slow' %d times. Lower the reply length and use Flash; check the 'hear' time if the recording or Wi-Fi is the slow part." % tags["too slow"])
+    if tags.get("too long", 0) >= 1: tips.append("He talked too long %d time(s). Lower the reply length; say 'be brief' to him and ask him to remember it." % tags["too long"])
+    if tags.get("misheard", 0) >= 2: tips.append("He misheard you %d times. Try AirPods or a mounted phone closer to you, and lower the pause before he decides you're done if he cuts you off." % tags["misheard"])
+    if tags.get("bad pronunciation", 0) >= 1: tips.append("Add the word he said wrong to the Pronunciations box, spelled the way it should sound.")
+    if tags.get("wrong answer", 0) >= 2: tips.append("Wrong answers: tell him the correct fact and say 'remember that' so it goes in his notes.")
+    if tags.get("good", 0) >= 3 and not tips: tips.append("Looks good so far. Keep tagging so the suggestions stay accurate.")
+    return tips
+
+
 class H(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     def log_message(self, *a): pass
@@ -558,7 +645,7 @@ class H(http.server.BaseHTTPRequestHandler):
             rows = jl_read("conversations.jsonl")[-60:]; fb = {}
             for f in jl_read("feedback.jsonl"): fb.setdefault(round(f.get("t", 0), 1), []).append(f.get("tag"))
             for r in rows: r["tags"] = fb.get(round(r.get("t", 0), 1), [])
-            return self._send(200, {"rows": rows[::-1], "settings": {k: SET.get(k) for k in ("speech_speed", "max_tokens", "tts_model", "follow_quiet", "follow_question")}, "pron": load_pron()})
+            return self._send(200, {"rows": rows[::-1], "settings": {k: SET.get(k) for k in ("speech_speed", "max_tokens", "tts_model", "follow_quiet", "follow_question", "silence_end", "barge_in")}, "pron": load_pron(), "tips": tips_for(rows)})
         if p == "/state": return self._send(200, state_json(q.get("sid")))
         m = re.match(r"^/clip/([0-9a-f]+)\.wav$", p)
         if m:
@@ -623,7 +710,7 @@ class H(http.server.BaseHTTPRequestHandler):
             session(q.get("sid", "x")).played(); return self._send(200, {"ok": True})
         if p == "/settings":
             with LOCK:
-                for k in ("threshold", "paused", "private", "follow_quiet", "follow_question", "speech_speed", "max_tokens", "tts_model"):
+                for k in ("threshold", "paused", "private", "follow_quiet", "follow_question", "speech_speed", "max_tokens", "tts_model", "silence_end", "barge_in", "stream"):
                     if k in b:
                         SET[k] = type(DEFAULTS[k])(b[k]) if not isinstance(DEFAULTS[k], bool) else bool(b[k])
                 SET["threshold"] = min(0.99, max(0.1, float(SET["threshold"]))); save_settings()

@@ -17,7 +17,12 @@ select{font:inherit;background:#0c1328;color:var(--tx);border:1px solid var(--li
 <div class="row"><span>Talking speed</span><b id="spv">1.00</b></div><input type="range" id="sp" min="0.7" max="1.2" step="0.05" value="1">
 <div class="row" style="margin-top:10px"><span>Reply length (max words ~)</span><b id="mtv">150</b></div><input type="range" id="mt" min="40" max="300" step="10" value="150">
 <div class="row" style="margin-top:10px"><span>Voice model</span><select id="md"><option value="eleven_flash_v2_5">Flash (fastest)</option><option value="eleven_turbo_v2_5">Turbo (a bit richer)</option></select></div>
+<div class="row" style="margin-top:10px"><span>Wait for me after an answer</span><b id="fqv">10</b></div><input type="range" id="fq" min="4" max="60" step="1" value="10">
+<div class="row" style="margin-top:10px"><span>Wait for me after he asks a question</span><b id="fqqv">20</b></div><input type="range" id="fqq" min="6" max="90" step="1" value="20">
+<div class="row" style="margin-top:10px"><span>Pause before he decides I'm done talking</span><b id="sev">1.0</b></div><input type="range" id="se" min="0.5" max="2.5" step="0.1" value="1">
+<div class="row" style="margin-top:10px"><span>Say his name to interrupt him</span><button id="bg">on</button></div>
 <div class="small mut" style="margin-top:8px" id="saved"></div></div>
+<div class="card"><h2>Suggestions from your tags and timings</h2><div id="tips" class="small mut">Tag a few conversations first.</div></div>
 <div class="card"><h2>Pronunciations (word = how to say it)</h2><textarea id="pr" spellcheck="false"></textarea><div class="row" style="margin-top:8px"><button id="prs">Save pronunciations</button><span class="small mut">Example: Kylar = Kyler</span></div></div>
 <div class="card"><h2>Recent conversations (newest first)</h2><div id="list" class="small mut">Loading…</div></div>
 </div>
@@ -25,17 +30,17 @@ select{font:inherit;background:#0c1328;color:var(--tx);border:1px solid var(--li
 var $=function(i){return document.getElementById(i)},DATA=null;
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function post(p,b){return fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json()})}
-function setv(){var s={speech_speed:+$('sp').value,max_tokens:+$('mt').value,tts_model:$('md').value};$('spv').textContent=(+$('sp').value).toFixed(2);$('mtv').textContent=$('mt').value;
+var BG=true;function setv(){var s={speech_speed:+$('sp').value,max_tokens:+$('mt').value,tts_model:$('md').value,follow_quiet:+$('fq').value,follow_question:+$('fqq').value,silence_end:+$('se').value,barge_in:BG};$('fqv').textContent=$('fq').value;$('fqqv').textContent=$('fqq').value;$('sev').textContent=(+$('se').value).toFixed(1);$('bg').textContent=BG?'on':'off';$('bg').className=BG?'on':'';$('spv').textContent=(+$('sp').value).toFixed(2);$('mtv').textContent=$('mt').value;
  post('/settings',s).then(function(){$('saved').textContent='Saved. Applies to his next answer.'})}
-['sp','mt'].forEach(function(i){$(i).oninput=function(){$('spv').textContent=(+$('sp').value).toFixed(2);$('mtv').textContent=$('mt').value};$(i).onchange=setv});$('md').onchange=setv;
+['sp','mt','fq','fqq','se'].forEach(function(i){$(i).oninput=function(){$('spv').textContent=(+$('sp').value).toFixed(2);$('mtv').textContent=$('mt').value;$('fqv').textContent=$('fq').value;$('fqqv').textContent=$('fqq').value;$('sev').textContent=(+$('se').value).toFixed(1)};$(i).onchange=setv});$('bg').onclick=function(){BG=!BG;setv()};$('md').onchange=setv;
 $('prs').onclick=function(){var m={};$('pr').value.split('\n').forEach(function(l){var p=l.split('=');if(p.length>=2&&p[0].trim())m[p[0].trim()]=p.slice(1).join('=').trim()});post('/pron',{map:m}).then(function(){$('saved').textContent='Pronunciations saved.'})};
 var TAGS=[['too slow','Too slow'],['misheard','Misheard me'],['too long','Talked too long'],['bad pronunciation','Said a word wrong'],['wrong answer','Wrong answer'],['good','Good']];
 function tag(t,x,el){post('/feedback',{t:t,tag:x}).then(function(){el.classList.add('on')})}
 function load(){fetch('/conv').then(function(r){return r.json()}).then(function(d){
- var s=d.settings;$('sp').value=s.speech_speed;$('mt').value=s.max_tokens;$('md').value=s.tts_model;$('spv').textContent=(+s.speech_speed).toFixed(2);$('mtv').textContent=s.max_tokens;
+ var s=d.settings;$('sp').value=s.speech_speed;$('fq').value=s.follow_quiet;$('fqq').value=s.follow_question;$('se').value=s.silence_end;BG=s.barge_in!==false;$('fqv').textContent=s.follow_quiet;$('fqqv').textContent=s.follow_question;$('sev').textContent=(+s.silence_end).toFixed(1);$('bg').textContent=BG?'on':'off';$('bg').className=BG?'on':'';$('tips').innerHTML=(d.tips&&d.tips.length)?d.tips.map(function(x){return '<div style="padding:6px 0">&bull; '+esc(x)+'</div>'}).join(''):'No suggestions yet. Tag a few conversations.';$('mt').value=s.max_tokens;$('md').value=s.tts_model;$('spv').textContent=(+s.speech_speed).toFixed(2);$('mtv').textContent=s.max_tokens;
  var pr='';for(var k in d.pron)pr+=k+' = '+d.pron[k]+'\n';if(document.activeElement!==$('pr'))$('pr').value=pr;
  $('list').innerHTML=d.rows.length?d.rows.map(function(r,i){var tm=r.times||{},tot=(tm.stt||0)+(tm.llm||0)+(tm.tts||0);
-  var tt=r.times?'<span class="t '+(tot>5?'slow':'ok')+'">'+tot.toFixed(1)+'s to answer</span><span class="t">hear '+(tm.stt||0)+'s</span><span class="t">think '+(tm.llm||0)+'s</span><span class="t">voice '+(tm.tts||0)+'s</span>':'';
+  var tt=r.times?'<span class="t '+(tot>5?'slow':'ok')+'">'+tot.toFixed(1)+'s to answer</span><span class="t">hear '+(tm.stt||0)+'s</span><span class="t">think '+(tm.llm||0)+'s</span><span class="t">voice '+(tm.tts||0)+'s</span>'+(tm.first_audio!=null?'<span class="t '+(tm.first_audio>3?'slow':'ok')+'">first words after '+tm.first_audio+'s</span>':''):'';
   return '<div class="c"><div class="mut">'+new Date(r.t*1000).toLocaleString([], {hour:'numeric',minute:'2-digit',month:'short',day:'numeric'})+' · '+esc(r.sid==='siri'?'Shortcut':'Page')+'</div>'+
   (r.heard?'<div class="you">You: '+esc(r.heard)+'</div>':'')+(r.reply?'<div class="him">Jarvis: '+esc(r.reply)+'</div>':'')+'<div style="margin-top:6px">'+tt+'</div>'+
   '<div class="tags">'+TAGS.map(function(g){var on=(r.tags||[]).indexOf(g[0])>=0;return '<button class="'+(on?'on':'')+'" onclick="tag('+r.t+',\''+g[0]+'\',this)">'+g[1]+'</button>'}).join('')+'</div></div>'}).join(''):'No conversations yet.'})}
