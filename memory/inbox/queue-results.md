@@ -1,32 +1,4 @@
-nfo, imgdir=None):
-== app routes
-== book.json shape (newest book)
-books-old-1026-0008/process-operator-5079/book.json
-   name : "Process Operator"
-   title : "Process Operator"
-   subtitle : "Lined Journal & Logbook"
-   tagline : "Notes. Shifts. Ideas."
-   author : ""
-   paper : "cream"
-   pages : 120
-   cover : {"bg": "#26313d", "accent": "#ff7a2f", "text": "#ffffff", "title_font": "DejaVu Sans", "body_font": "DejaVu Sa
-   inside : {"font": "DejaVu Sans", "color": "#444444", "page_bg": "#ffffff", "style": "lines", "line_color": "#b9bec6", "
-   front : {"title_page": false, "owner_page": true, "owner_fields": ["Name", "Company", "Phone", "Email"], "contacts": 0
-   back : {"notes_pages": 0}
-   listing : {"description": "", "keywords": [], "categories": "", "price": ""}
-   answers : {"author": false}
-books/new-book-e841/book.json
-   name : "New book"
-   title : "Process Operator Notebook Journal"
-   subtitle : ""
-   author : "K.J.Lovelady"
-   paper : "white"
-   pages : 120
-   cover : {"bg": "#000000", "pattern": "none", "pattern_color": "#999999", "frame": false, "frame_color": "#000000", "fo
-   inside : {"font": "DejaVu Sans", "color": "#444444", "page_bg": "#ffffff", "style": "lines", "line_color": "#b9bec6", "
-   front : {"title_page": false, "owner_page": false, "owner_heading": "", "owner_footer": "", "owner_fields": [], "conta
-   back : {"notes_pages": 0}
-   labels : {"contacts": "Contacts", "index": "Index", "goals": "Goals", "notes": "Notes"}
+s": "Notes"}
    listing : {"description": "A hardcover Process Operator Notebook Journal with 120 numbered, lined pages (6 x 9 inches). 
    answers : {"spine_text": true, "owner_page": true, "goals": true, "contacts": true, "date_header": true, "index": true, 
    chat : [{"role": "user", "text": "Ok on the front cover i want \u201cProcess Operator\u201d in yellow gold letters an
@@ -560,5 +532,27 @@ No clips yet: the satellite recording folder is empty or recording is not switch
 
 ## Satellite restarts by the watchdog (last 24 h)
 Nov 05 14:58:19 LoveladyMainAiHub python3[35465]: stuck in listening for 40s, restarting satellite
+(exit 0)
+```
+
+## 2026-11-05 15:16:01 tasks/queue/035-satellite-rollback.sh
+```
+== why it failed (last error lines)
+Nov 05 15:15:57 LoveladyMainAiHub bash[2713529]: Extras for webrtc are not installed
+Nov 05 15:15:57 LoveladyMainAiHub bash[2713529]:     import webrtc_noise_gain  # noqa: F401
+Nov 05 15:15:57 LoveladyMainAiHub bash[2713529]: ModuleNotFoundError: No module named 'webrtc_noise_gain'
+Nov 05 15:16:01 LoveladyMainAiHub bash[2713669]:     raise CalledProcessError(retcode, cmd)
+Nov 05 15:16:01 LoveladyMainAiHub bash[2713669]: subprocess.CalledProcessError: Command '['/home/kylarlovelady/wyoming-satellite/.venv/bin/python3', '-m', 'wyoming_satellite', '--name', 'main hub', '--debug-recording-dir
+Nov 05 15:16:01 LoveladyMainAiHub bash[2713670]: Extras for webrtc are not installed
+Nov 05 15:16:01 LoveladyMainAiHub bash[2713670]:     import webrtc_noise_gain  # noqa: F401
+Nov 05 15:16:01 LoveladyMainAiHub bash[2713670]: ModuleNotFoundError: No module named 'webrtc_noise_gain'
+restored working run-hub.sh
+== satellite now
+active
+Nov 05 15:16:04 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+Nov 05 15:16:04 LoveladyMainAiHub bash[2713975]: INFO:root:Ready
+Nov 05 15:16:04 LoveladyMainAiHub bash[2713975]: INFO:root:Connected to services
+Nov 05 15:16:06 LoveladyMainAiHub bash[2713975]: INFO:root:Connected to server
+Nov 05 15:16:06 LoveladyMainAiHub bash[2713975]: INFO:root:Waiting for wake word
 (exit 0)
 ```
