@@ -52,6 +52,10 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - Live alerts go to Kylar's phone only. Wish: the live wallet shown in the iPhone Dynamic Island so he can watch it grow. (Claude note: a Dynamic Island / Live Activity needs a small native iPhone app; Shortcuts and widgets cannot do it. Options: lock-screen/home widget, notification updates, or a small app built later. Put under iPhone Shortcuts research.)
 - Goal beyond this bot: Kylar wants to learn how to predict markets so he can place better bets on other markets too. Claude should explain what the data shows in plain words (why each signal works or fails), not only report results.
 
+## Stake sizing idea (Kylar, 2026-11-05 13:48)
+- When indicators are strong and the chance of being right is higher, buy more to win more; stay small when it is a coin flip.
+- Claude's note: right idea, but only works if high-confidence calls really win more often than low-confidence ones. Kylar's real big stakes lost (over $150: -$1,703), so the rule is: the $25 cap lifts in steps ONLY when a confidence bucket proves a higher win rate on rounds it has not seen. Plan: log each round's confidence, measure win rate per bucket after fees (calibration), then set a stake ladder (for example $5 / $10 / $25 / more) from the evidence. Not built yet.
+
 ## Parked
 - More agents on other markets (options, stocks, commodities) only after the Kalshi agent shows a real edge; share the method, not the bets. Other coins on hold. Mempool tracker for big transfers only.
 

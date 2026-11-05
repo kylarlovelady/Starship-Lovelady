@@ -2,6 +2,7 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- Kalshi stake ladder: measure win rate per confidence bucket on unseen rounds, then raise stakes only where it is proven (kalshi-ai.md, Kylar's idea 2026-11-05).
 - Pi home pages are sloppy and cluttered, and the Starship page is not loading (reported by Kylar 2026-11-05 04:26). Claude to: find why Starship fails (likely my crew.json/overview changes or the :8095 server), clean up and simplify the Hub tabs and Overview, then confirm by screenshot. Check first thing.
 - Jarvis replaces Alexa: alarms, timers, thermostat, Spotify, any question. Order: fix hear/hang-up/talk-over/false wake first, then reminders and timers, thermostat, Spotify (pi-home-assistant.md).
 - Poly pellets: research products and equipment (business.md).
