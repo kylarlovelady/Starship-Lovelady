@@ -56,6 +56,9 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - When indicators are strong and the chance of being right is higher, buy more to win more; stay small when it is a coin flip.
 - Claude's note: right idea, but only works if high-confidence calls really win more often than low-confidence ones. Kylar's real big stakes lost (over $150: -$1,703), so the rule is: the $25 cap lifts in steps ONLY when a confidence bucket proves a higher win rate on rounds it has not seen. Plan: log each round's confidence, measure win rate per bucket after fees (calibration), then set a stake ladder (for example $5 / $10 / $25 / more) from the evidence. Not built yet.
 
+## Decision 2026-11-05 13:52 (Kylar)
+- Do NOT wipe the agent's memory or history. Keep everything and let it ride under the new rules (cap 25, hold-to-end default, stable Auto pick); it never takes options off the table and will re-test old ideas on its own. Wallet got a Fresh start (keeps what it learned). Claude may still audit learned settings later if Kylar asks.
+
 ## Parked
 - More agents on other markets (options, stocks, commodities) only after the Kalshi agent shows a real edge; share the method, not the bets. Other coins on hold. Mempool tracker for big transfers only.
 
