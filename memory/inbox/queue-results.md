@@ -1,58 +1,4 @@
-ght;IBM Plex Mono,IBM Plex Mono Medm;IBM Plex Mono,IBM Plex Mono SmBld;IBM Plex Mono,IBM Plex Mono Text;IBM Plex Mono,IBM Plex Mono Thin;IBM Plex Sans;IBM Plex Sans Arabic;
-
-== can reach GitHub raw?
-200
-(exit 0)
-```
-
-## 2026-11-05 15:01:02 tasks/queue/028-kdp-copy-engine.sh
-```
-total 88
-drwxrwxr-x 2 kylarlovelady kylarlovelady  4096 Nov  5 15:01 .
-drwxrwxr-x 3 kylarlovelady kylarlovelady  4096 Nov  5 15:01 ..
--rw-r--r-- 1 kylarlovelady kylarlovelady 25292 Nov  5 15:01 app.py
--rw-r--r-- 1 kylarlovelady kylarlovelady  9588 Nov  5 15:01 book-current.json
--rw-r--r-- 1 kylarlovelady kylarlovelady  1411 Nov  5 15:01 book-old.json
--rw-r--r-- 1 kylarlovelady kylarlovelady 33061 Nov  5 15:01 engine.py
-(exit 0)
-```
-
-## 2026-11-05 15:04:01 tasks/queue/029-home-voice-diag.sh
-```
-== services
-hub-satellite: active
-hub-voice: active
-phone-voice: active
-hub-dashboard: active
-hub-watchdog: active
-== containers
-openwakeword Up 6 days
-whisper Up 6 days (healthy)
-piper Up 6 days (healthy)
-pihole Up 19 hours (healthy)
-homeassistant Up 13 hours
-== hub-satellite log (last 25)
-Nov 05 14:56:55 LoveladyMainAiHub bash[2546920]: WARNING:root:Mic service disconnected
-Nov 05 14:57:38 LoveladyMainAiHub bash[2546920]: INFO:root:Waiting for wake word
-Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: Stopping hub-satellite.service - Wyoming satellite (main hub)...
-Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: hub-satellite.service: Deactivated successfully.
-Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: Stopped hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: hub-satellite.service: Consumed 1h 31min 37.976s CPU time.
-Nov 05 14:58:19 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 14:58:19 LoveladyMainAiHub bash[2665352]: INFO:root:Ready
-Nov 05 14:58:20 LoveladyMainAiHub bash[2665352]: INFO:root:Connected to services
-Nov 05 14:58:32 LoveladyMainAiHub bash[2665352]: INFO:root:Connected to server
-Nov 05 14:58:32 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
-Nov 05 14:58:52 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
-Nov 05 14:58:55 LoveladyMainAiHub bash[2666912]: Playing raw data 'stdin' : Signed 16 bit Little Endian, Rate 22050 Hz, Mono
-Nov 05 15:00:18 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
-Nov 05 15:00:20 LoveladyMainAiHub bash[2670871]: Playing raw data 'stdin' : Signed 16 bit Little Endian, Rate 22050 Hz, Mono
-Nov 05 15:00:51 LoveladyMainAiHub bash[2665352]: INFO:root:Waiting for wake word
-Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: Stopping hub-satellite.service - Wyoming satellite (main hub)...
-Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: hub-satellite.service: Deactivated successfully.
-Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: Stopped hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: hub-satellite.service: Consumed 2.083s CPU time.
-Nov 05 15:01:35 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+ainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
 Nov 05 15:01:36 LoveladyMainAiHub bash[2674286]: INFO:root:Ready
 Nov 05 15:01:36 LoveladyMainAiHub bash[2674286]: INFO:root:Connected to services
 Nov 05 15:01:48 LoveladyMainAiHub bash[2674286]: INFO:root:Connected to server
@@ -516,5 +462,67 @@ drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:22 ..
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:22 page1.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:22 page2.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:22 page3.png
+(exit 0)
+```
+
+## 2026-11-05 17:34:01 tasks/queue/042-kdp-build-border.sh
+```
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Playfair Display | interior font: Lato
+== process-operator-a cover 14.065 x 10.418 spine 0.489
+  OK Page count 120 (hardcover needs 75 to 550)
+  OK Page count is even
+  OK Cover file 14.065 x 10.418 in, spine 0.489 in
+  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
+  OK Inside margin 0.500 in (KDP minimum 0.375)
+  OK All cover text inside the safe zone and clear of the barcode area
+  OK Inside text contrast 15.9:1
+  OK Picture on the full: sharp (300 dpi)
+  OK cover PDF fonts embedded
+  OK interior PDF fonts embedded
+  OK Author / pen name set
+  OK Title set
+  OK Title + subtitle length OK
+  WARN Book description not written
+  WARN 0 of 7 keywords
+  WARN Price not set
+  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
+== lab-operator-a cover 14.065 x 10.418 spine 0.489
+  OK Page count 120 (hardcover needs 75 to 550)
+  OK Page count is even
+  OK Cover file 14.065 x 10.418 in, spine 0.489 in
+  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
+  OK Inside margin 0.500 in (KDP minimum 0.375)
+  OK All cover text inside the safe zone and clear of the barcode area
+  OK Inside text contrast 15.9:1
+  OK Picture on the full: sharp (300 dpi)
+  OK cover PDF fonts embedded
+  OK interior PDF fonts embedded
+  OK Author / pen name set
+  OK Title set
+  OK Title + subtitle length OK
+  WARN Book description not written
+  WARN 0 of 7 keywords
+  WARN Price not set
+  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+total 2000
+drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
+drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1017671 Nov  5 17:34 cover-guides.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1000394 Nov  5 17:34 cover.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:34 page1.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:34 page2.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:34 page3.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
+total 1992
+drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
+drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 1015213 Nov  5 17:34 cover-guides.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  998636 Nov  5 17:34 cover.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:34 page1.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:34 page2.png
+-rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:34 page3.png
 (exit 0)
 ```
