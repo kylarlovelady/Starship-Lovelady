@@ -1,6 +1,4 @@
-; d["pages"] += d["pages"] % 2
-    els = []
-    for e in ((b.get("cover") or {}).get("elements", []) if isinstance(b.get("cover"), dict) else [])[:40]:
+nstance(b.get("cover"), dict) else [])[:40]:
         o = clean_el(e, F)
         if o: els.append(o)
     used = set(); n = 1
@@ -493,3 +491,6 @@ Nov 05 17:10:54 LoveladyMainAiHub bash[3021970]: INFO:root:Connected to server
 Nov 05 17:10:54 LoveladyMainAiHub bash[3021970]: INFO:root:Waiting for wake word
 (exit 0)
 ```
+
+## 2026-11-05 17:13:01 tasks/queue/039-home-mic-record-on.sh
+REFUSED: contains a command on the deny list

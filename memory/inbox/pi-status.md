@@ -2,7 +2,7 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 week, 4 days, 6 hours, 11 minutes; temp 44.4'C; throttled flags 0x0 (0x0 is clean); memory 60%; disk 10%
+- up 1 week, 4 days, 6 hours, 13 minutes; temp 40.6'C; throttled flags 0x0 (0x0 is clean); memory 59%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
@@ -11,13 +11,13 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - containers: openwakeword Up 6 days; whisper Up 6 days (healthy); piper Up 6 days (healthy); pihole Up 21 hours (healthy); homeassistant Up 15 hours
 
 ## Sync and schedule
-- Pi repo copy at: cdf095f 5 minutes ago: Queue 038: diagnose home mic recording health check (always rolls back)
+- Pi repo copy at: d1debca 2 minutes ago: Queue 039: keep home mic recording on (fixed health check)
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (4 min ago), first lines:
+- supervisor report (6 min ago), first lines:
     MARKET AGENT PROGRESS  Thu 05 Nov 17:07
     
     1. ALIVE
