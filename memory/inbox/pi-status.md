@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 week, 3 days, 14 hours, 36 minutes; temp 40.0'C; throttled flags 0x0 (0x0 is clean); memory 58%; disk 9%
+- up 1 week, 3 days, 14 hours, 49 minutes; temp 38.9'C; throttled flags 0x0 (0x0 is clean); memory 57%; disk 9%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 6 hours (healthy); homeassistant Up 9 days
+- containers: openwakeword Up 5 days; whisper Up 5 days (healthy); piper Up 5 days (healthy); pihole Up 6 hours (healthy); homeassistant Up 2 minutes
 
 ## Sync and schedule
-- Pi repo copy at: 4781a23 2 minutes ago: Jarvis tools + device control, one alert channel, /home front door, task queue, daily Kalshi digest, daily Claude check, pi_update.sh, changelog
+- Pi repo copy at: a8fbcf9 4 minutes ago: HA installer uses sudo for root-owned config; first task-queue diagnostic; changelog
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): e.sh, g.py, r.py, b.py, c.sh, k.py, c.sh, r.sh
 
 ## Markets agent (practice money)
 - data last written: no file; live flags: {}
-- supervisor report (29 min ago), first lines:
+- supervisor report (42 min ago), first lines:
     MARKET AGENT PROGRESS  Thu 05 Nov 01:07
     
     1. ALIVE
