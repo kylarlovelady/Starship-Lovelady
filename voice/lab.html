@@ -23,6 +23,15 @@ select{font:inherit;background:#0c1328;color:var(--tx);border:1px solid var(--li
 <div class="row" style="margin-top:10px"><span>Say his name to interrupt him</span><button id="bg">on</button></div>
 <div class="small mut" style="margin-top:8px" id="saved"></div></div>
 <div class="card"><h2>Suggestions from your tags and timings</h2><div id="tips" class="small mut">Tag a few conversations first.</div></div>
+<div class="card"><h2>Voices (who is talking)</h2>
+<div id="vl" class="small mut">No voices enrolled yet.</div>
+<div class="row" style="margin-top:10px"><input id="vn" placeholder="Name (e.g. Sheree)" style="flex:1;min-width:120px;font:inherit;background:#0c1328;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:9px"><select id="vlev"><option value="family">family</option><option value="guest">guest</option><option value="owner">owner</option></select></div>
+<div class="small mut" style="margin-top:8px">The person reads this out loud, normal voice, about 20 seconds: <i>"Hey Jarvis, what's the weather like today? Remind me to call the shop tomorrow morning. I think we should have tacos for dinner and then watch a movie together. Can you turn the volume down a little? Thanks, that's all for now."</i></div>
+<div class="row" style="margin-top:8px"><button id="ven">Record 20 seconds</button><button id="vtest">Test: who is this? (5 s)</button></div>
+<div id="vres" class="small" style="margin-top:8px"></div>
+<div class="row" style="margin-top:12px"><span>Match strictness (lower = stricter)</span><b id="vtv">3.0</b></div><input type="range" id="vt" min="1" max="12" step="0.5" value="3">
+<div class="row" style="margin-top:10px"><span>Ask "who am I talking to?" when he doesn't know a voice</span><button id="au">off</button></div>
+<div class="small mut" style="margin-top:8px">This voice recognition is basic: it separates different kinds of voices (adult, child, male, female) well and similar voices less well. Use the test button to see how it does on your family, and keep strictness where family members are recognized but strangers are not. It labels who is talking; it does not unlock anything.</div></div>
 <div class="card"><h2>Pronunciations (word = how to say it)</h2><textarea id="pr" spellcheck="false"></textarea><div class="row" style="margin-top:8px"><button id="prs">Save pronunciations</button><span class="small mut">Example: Kylar = Kyler</span></div></div>
 <div class="card"><h2>Recent conversations (newest first)</h2><div id="list" class="small mut">Loading…</div></div>
 </div>
@@ -45,4 +54,19 @@ function load(){fetch('/conv').then(function(r){return r.json()}).then(function(
   (r.heard?'<div class="you">You: '+esc(r.heard)+'</div>':'')+(r.reply?'<div class="him">Jarvis: '+esc(r.reply)+'</div>':'')+'<div style="margin-top:6px">'+tt+'</div>'+
   '<div class="tags">'+TAGS.map(function(g){var on=(r.tags||[]).indexOf(g[0])>=0;return '<button class="'+(on?'on':'')+'" onclick="tag('+r.t+',\''+g[0]+'\',this)">'+g[1]+'</button>'}).join('')+'</div></div>'}).join(''):'No conversations yet.'})}
 load();setInterval(load,15000);
+
+var AU=false;
+function to16k(chunks,sr){var n=0;chunks.forEach(function(c){n+=c.length});var f=new Float32Array(n),o=0;chunks.forEach(function(c){f.set(c,o);o+=c.length});var r=sr/16000,m=Math.floor(n/r),out=new Int16Array(m);for(var i=0;i<m;i++){var p=i*r,a=Math.floor(p),b=Math.min(n-1,a+1),w=p-a,v=f[a]*(1-w)+f[b]*w;out[i]=Math.max(-32768,Math.min(32767,v*32767))}return out}
+function rec(secs,tick){return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}}).then(function(st){var ctx=new (window.AudioContext||window.webkitAudioContext)(),src=ctx.createMediaStreamSource(st),pr=ctx.createScriptProcessor(4096,1,1),ch=[];pr.onaudioprocess=function(e){ch.push(new Float32Array(e.inputBuffer.getChannelData(0)))};src.connect(pr);pr.connect(ctx.destination);return new Promise(function(res){var t0=Date.now(),iv=setInterval(function(){var el=(Date.now()-t0)/1000;if(tick)tick(Math.min(secs,el));if(el>=secs){clearInterval(iv);pr.disconnect();src.disconnect();st.getTracks().forEach(function(t){t.stop()});var sr=ctx.sampleRate;ctx.close();res(to16k(ch,sr))}},200)})})}
+function drawVoices(d){$('vt').value=d.threshold;$('vtv').textContent=(+d.threshold).toFixed(1);AU=!!d.ask_unknown;$('au').textContent=AU?'on':'off';$('au').className=AU?'on':'';
+ $('vl').innerHTML=d.voices.length?d.voices.map(function(v){return '<div class="row" style="padding:6px 0;border-top:1px solid var(--line)"><span><b>'+esc(v.name)+'</b> <span class="mut">'+v.pieces+' samples</span></span><span><select onchange="vlevel(\''+esc(v.name)+'\',this.value)"><option '+(v.level==='owner'?'selected':'')+'>owner</option><option '+(v.level==='family'?'selected':'')+'>family</option><option '+(v.level==='guest'?'selected':'')+'>guest</option></select> <button onclick="vdel(\''+esc(v.name)+'\')">Remove</button></span></div>'}).join(''):'No voices enrolled yet.'}
+function loadVoices(){fetch('/voices').then(function(r){return r.json()}).then(drawVoices)}
+function vlevel(n,l){post('/voices/level',{name:n,level:l}).then(function(){loadVoices()})}
+function vdel(n){if(confirm('Remove '+n+"'s voice?"))post('/voices/delete',{name:n}).then(function(){loadVoices()})}
+$('ven').onclick=function(){var nm=$('vn').value.trim();if(!nm){$('vres').textContent='Type a name first.';return}$('ven').disabled=true;
+ rec(20,function(t){$('vres').textContent='Recording '+nm+'... '+Math.round(t)+' / 20 s. Keep talking.'}).then(function(pcm){$('vres').textContent='Saving...';return fetch('/enroll?name='+encodeURIComponent(nm)+'&level='+$('vlev').value,{method:'POST',body:pcm.buffer}).then(function(r){return r.json()})}).then(function(j){$('vres').textContent=j.msg;$('ven').disabled=false;loadVoices()}).catch(function(e){$('vres').textContent='Could not record: '+e;$('ven').disabled=false})};
+$('vtest').onclick=function(){$('vtest').disabled=true;rec(5,function(t){$('vres').textContent='Say something... '+Math.round(t)+' / 5 s'}).then(function(pcm){return fetch('/whois',{method:'POST',body:pcm.buffer}).then(function(r){return r.json()})}).then(function(j){$('vres').innerHTML=j.ok?('Best match: <b>'+esc(j.best)+'</b> ('+(j.accepted?'accepted':'too far, he would call this unknown')+'). Distances: '+j.ranked.map(function(x){return esc(x[0])+' '+x[1]}).join(', ')):esc(j.msg);$('vtest').disabled=false}).catch(function(e){$('vres').textContent='Could not record: '+e;$('vtest').disabled=false})};
+$('vt').onchange=function(){$('vtv').textContent=(+$('vt').value).toFixed(1);post('/settings',{voice_threshold:+$('vt').value})};$('vt').oninput=function(){$('vtv').textContent=(+$('vt').value).toFixed(1)};
+$('au').onclick=function(){AU=!AU;$('au').textContent=AU?'on':'off';$('au').className=AU?'on':'';post('/settings',{ask_unknown:AU})};
+loadVoices();
 </script></body></html>

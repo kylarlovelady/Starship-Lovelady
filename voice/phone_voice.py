@@ -7,8 +7,10 @@ Phase 2: conversation. After the wake word it records one utterance, transcribes
 Phase 3 (voice ID) plugs into speaker_check() below; until a voiceprint model is installed everything is treated as the owner and logged as "unverified".
 Audio is kept only as short clips around wake-word candidates (never continuous). Stdlib + numpy; openwakeword/onnxruntime for the real detector.
   python3 phone_voice.py [port=8099]"""
-import http.server, io, json, math, os, re, socketserver, struct, sys, threading, time, urllib.request, uuid, wave
+import urllib.parse, http.server, io, json, math, os, re, socketserver, struct, sys, threading, time, urllib.request, uuid, wave
 import numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import voiceid
 
 DATA = os.environ.get("VOICE_DIR", os.path.join(os.path.expanduser("~"), "voice-data"))
 CLIPS = os.path.join(DATA, "clips")
@@ -39,7 +41,7 @@ def jl_read(name):
 
 
 # ------------------------------------------------------------------ settings
-DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5", "silence_end": 1.0, "barge_in": True, "stream": True}
+DEFAULTS = {"threshold": 0.6, "paused": False, "private": False, "models": ["hey_jarvis"], "follow_quiet": 10.0, "follow_question": 20.0, "voice_id": "Brian", "max_utter": 20.0, "speech_speed": 1.0, "max_tokens": 150, "tts_model": "eleven_flash_v2_5", "silence_end": 1.0, "barge_in": True, "stream": True, "voice_threshold": 3.0, "ask_unknown": False}
 def load_settings():
     s = dict(DEFAULTS)
     try: s.update(json.load(open(os.path.join(DATA, "settings.json"))))
@@ -244,6 +246,8 @@ def prompt_text():
             mine += "\n[%s]\n%s\n" % (f, _read(os.path.join(DATA, "memory", f), 2000))
     except OSError: pass
     if mine.strip(): extra += "\n\nThings Kylar told you to remember (newest last):" + mine[:6000]
+    who = getattr(TL, "who", None)
+    if who and who != "owner": extra += "\n\nThe person talking right now is: %s%s. Greet them by name if it fits; only Kylar can change settings or notes." % (who, " (voice not recognized, a guest)" if who == "unknown" else "")
     return base + extra
 
 
@@ -301,9 +305,27 @@ def tts(text, path):
     open(path, "wb").write(audio); return "audio/mpeg"
 
 
+_VB = None
+def voicebook():
+    global _VB
+    if _VB is None: _VB = voiceid.VoiceBook(os.path.join(DATA, "voiceid", "voices.json"))
+    return _VB
+
+
 def speaker_check(pcm):
-    """Phase 3 hook: returns (who, confidence). With no voiceprint model installed everyone is 'owner (unverified)'."""
-    return ("owner", None)
+    """Returns (who, distance). who is a name, 'unknown' (voices enrolled but nobody matches), or 'owner' (no voices enrolled yet: treated as Kylar)."""
+    vb = voicebook()
+    if not vb.v: return ("owner", None)
+    name, d, rank = vb.identify(pcm)
+    if name is None: return ("owner", None)
+    if d <= float(SET.get("voice_threshold", 3.0)): return (name, round(d, 2))
+    return ("unknown", round(d, 2))
+
+
+def speaker_level(who):
+    if who == "owner": return "owner"
+    if who == "unknown": return "guest"
+    return voicebook().v.get(who, {}).get("level", "guest")
 
 
 END_RE = re.compile(r"\b(that'?s all|that is all|goodbye|good bye|never ?mind|stop listening|thanks,? that'?s it|we'?re done)\b", re.I)
@@ -316,7 +338,7 @@ class Session:
         self.hist = []; self.state = "idle"; self.t_state = now(); self.floor = 300.0
         self.ep = None; self.pending = []; self.scores = []; self.heard = 0.0; self.started = now(); self.last_seen = now()
         self.utt = []; self.speech_t = None; self.last_voice = now(); self.hold_until = 0.0; self.follow_for = 10.0
-        self.ew = None; self.discard_until = 0.0; self.gen = 0
+        self.ew = None; self.discard_until = 0.0; self.gen = 0; self.ask_pcm = None
 
     def det_ok(self):
         if self.det is None: self.det = DET
@@ -434,10 +456,28 @@ class Session:
     def _think(self, pcm, gen):
         out = []; times_reset()
         try:
-            who, conf = speaker_check(pcm)
+            who, conf = speaker_check(pcm); TL.who = who
             text = stt(pcm)
             t0 = now()
             jl_append("conversations.jsonl", {"t": t0, "sid": self.sid, "who": who, "who_conf": conf, "heard": text})
+            if getattr(self, "ask_pcm", None) is not None and text:
+                m = re.search(r"(?:this is|it'?s|i'?m|i am|my name is|name'?s)?\s*([A-Z][a-zA-Z'-]{1,20})\b", text.strip())
+                name = (m.group(1) if m else "").strip().title(); apcm = self.ask_pcm; self.ask_pcm = None
+                if name and name.lower() not in ("yes", "no", "nobody", "none", "nothing"):
+                    ok, msg = voicebook().enroll(name, np.concatenate([apcm, pcm]) if len(apcm) + len(pcm) > 8 * SR else apcm, "guest")
+                    reply = ("Nice to meet you, %s. I'll recognize you as a guest. Kylar can change that." % name) if ok else ("Nice to meet you, %s. I need a longer sample to remember your voice, so I will ask again later." % name)
+                    rid = uuid.uuid4().hex[:10]; mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
+                    with LOCK:
+                        self.pending.append({"type": "say", "text": text}); self.pending.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": reply}); self.pending.append({"type": "play_done"})
+                        self.ew = "waiting_played"; self.set_state("speaking"); self.hold_until = now() + 600
+                    jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "who": name, "enroll": ok}); return
+            if who == "unknown" and SET.get("ask_unknown") and text and len(pcm) >= 2 * SR and getattr(self, "ask_pcm", None) is None:
+                self.ask_pcm = pcm; reply = "I don't recognize your voice. Who am I talking to?"
+                rid = uuid.uuid4().hex[:10]; mime = tts(reply, os.path.join(REPLIES, rid + ".bin"))
+                with LOCK:
+                    self.pending.append({"type": "play", "url": "/reply/%s.bin" % rid, "mime": mime, "text": reply}); self.pending.append({"type": "play_done"})
+                    self.ew = "waiting_played"; self.set_state("speaking"); self.hold_until = now() + 600; self.follow_for = 20.0
+                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "who": "unknown", "asked_who": True}); return
             if not text or len(text) < 2:
                 with LOCK:
                     if gen == self.gen: out.append({"type": "tone_end", "why": "nothing heard"}); self.hist = []; self.set_state("idle")
@@ -466,7 +506,7 @@ class Session:
                     return
                 self.hist.append({"role": "assistant", "content": reply})
                 tm = times_get(); tm["first_audio"] = first; tm["llm"] = round(now() - tl0, 2)
-                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "secs": round(now() - t0, 1), "times": tm})
+                jl_append("conversations.jsonl", {"t": now(), "sid": self.sid, "heard": text, "reply": reply, "secs": round(now() - t0, 1), "times": tm, "who": who})
                 self.follow_for = float(SET["follow_question"] if reply.rstrip().endswith("?") else SET["follow_quiet"])
                 with LOCK:
                     if gen == self.gen: self.pending.append({"type": "play_done"})
@@ -646,6 +686,7 @@ class H(http.server.BaseHTTPRequestHandler):
             for f in jl_read("feedback.jsonl"): fb.setdefault(round(f.get("t", 0), 1), []).append(f.get("tag"))
             for r in rows: r["tags"] = fb.get(round(r.get("t", 0), 1), [])
             return self._send(200, {"rows": rows[::-1], "settings": {k: SET.get(k) for k in ("speech_speed", "max_tokens", "tts_model", "follow_quiet", "follow_question", "silence_end", "barge_in")}, "pron": load_pron(), "tips": tips_for(rows)})
+        if p == "/voices": return self._send(200, {"voices": voicebook().listing(), "threshold": SET.get("voice_threshold"), "ask_unknown": SET.get("ask_unknown")})
         if p == "/state": return self._send(200, state_json(q.get("sid")))
         m = re.match(r"^/clip/([0-9a-f]+)\.wav$", p)
         if m:
@@ -672,6 +713,16 @@ class H(http.server.BaseHTTPRequestHandler):
                 pend, s.pending = s.pending, []
                 lvl = rms(pcm)
             return self._send(200, {"acts": acts + pend, "state": s.state, "level": round(lvl), "paused": SET["paused"]})
+        if p in ("/enroll", "/whois"):
+            n = int(self.headers.get("Content-Length") or 0); raw = self.rfile.read(n)
+            pcm = np.frombuffer(raw[: len(raw) // 2 * 2], dtype="<i2")
+            if p == "/whois":
+                name, d, rank = voicebook().identify(pcm)
+                if name is None: return self._send(200, {"ok": False, "msg": "Not enough speech, or no voices enrolled yet."})
+                return self._send(200, {"ok": True, "best": name, "distance": round(d, 2), "accepted": d <= float(SET.get("voice_threshold", 3.0)), "ranked": [[a, round(b, 2)] for a, b in rank]})
+            nm = urllib.parse.unquote_plus(q.get("name", "")).strip()[:30]
+            if not nm: return self._send(200, {"ok": False, "msg": "Type a name first."})
+            ok, msg = voicebook().enroll(nm, pcm, q.get("level", "guest")); return self._send(200, {"ok": ok, "msg": msg, "voices": voicebook().listing()})
         if p == "/ask":
             n = int(self.headers.get("Content-Length") or 0); raw = self.rfile.read(n); ct = self.headers.get("Content-Type", ""); times_reset()
             try:
@@ -692,6 +743,10 @@ class H(http.server.BaseHTTPRequestHandler):
                 return self._send(200, data, "audio/wav" if data[:4] == b"RIFF" else "audio/mpeg")
             except Exception as e: return self._send(500, {"error": str(e)[:200]})
         b = self._json()
+        if p == "/voices/delete":
+            voicebook().delete(str(b.get("name", ""))); return self._send(200, {"ok": True, "voices": voicebook().listing()})
+        if p == "/voices/level":
+            voicebook().set_level(str(b.get("name", "")), str(b.get("level", ""))); return self._send(200, {"ok": True, "voices": voicebook().listing()})
         if p == "/feedback":
             with LOCK: jl_append("feedback.jsonl", {"t": b.get("t"), "tag": str(b.get("tag", ""))[:40], "at": now()})
             return self._send(200, {"ok": True})
@@ -710,7 +765,7 @@ class H(http.server.BaseHTTPRequestHandler):
             session(q.get("sid", "x")).played(); return self._send(200, {"ok": True})
         if p == "/settings":
             with LOCK:
-                for k in ("threshold", "paused", "private", "follow_quiet", "follow_question", "speech_speed", "max_tokens", "tts_model", "silence_end", "barge_in", "stream"):
+                for k in ("threshold", "paused", "private", "follow_quiet", "follow_question", "speech_speed", "max_tokens", "tts_model", "silence_end", "barge_in", "stream", "voice_threshold", "ask_unknown"):
                     if k in b:
                         SET[k] = type(DEFAULTS[k])(b[k]) if not isinstance(DEFAULTS[k], bool) else bool(b[k])
                 SET["threshold"] = min(0.99, max(0.1, float(SET["threshold"]))); save_settings()
