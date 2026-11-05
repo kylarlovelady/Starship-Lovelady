@@ -48,5 +48,10 @@
 - Up to 3 colour schemes per job role at most; start with ONE scheme, add others later. All books must look IDENTICAL except for the job title (same layout, fonts, texture, border, colours per scheme).
 - Candidate schemes shown 14:50 (front cover, textured cloth, double thin border, title top): A navy + gold (#16233F / #D4AF37), B forest + gold (#17382B / #D4AF37), C burgundy + cream (#561C28 / #EBDDB5), D charcoal + silver (#2D333B / #C9CED6), E espresso + tan (#3A2A1F / #D8B77A), F steel blue + white (#1E3A5A / #E8ECF1). Kylar to pick the first scheme.
 
+## Updated series rule (Kylar, 2026-11-05 14:46): 4 colour schemes per job title
+- Changed from max 3. Kylar ticked A, B, C and E: A navy + gold, B forest + gold, C burgundy + cream, E espresso + tan. Every job title gets all four; books are identical except the job title. 2 titles x 4 schemes = 8 books.
+- Tonight (goal: 2 books in review by about 4:30 am Fri): Process Operator in A and Lab Operator in A (same look, only the title differs); add B, C, E afterwards.
+- RISK to check: KDP can treat books with the same interior as duplicates. Check KDP's content guidelines on duplicate content before publishing all four colours of the same interior; one safe way is to differ the interior slightly (title on the owner page, a role-specific line) and the title/ISBN, and to publish one per role first.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
