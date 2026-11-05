@@ -15,9 +15,14 @@ def rows(p):
             for l in f:
                 try: r = json.loads(l)
                 except ValueError: continue
-                k = r.get("k") or {}
-                if k.get("ticker") and k.get("yes_bid") is not None and k.get("yes_ask") is not None and r.get("left") is not None:
-                    yield k["ticker"], r["t"], r["left"], k["yes_bid"] / 100.0, k["yes_ask"] / 100.0
+                ob = r.get("ob") or {}                       # the live order book is the trusted source (as in evidence.py)
+                yl, nl = ob.get("yes_dollars") or ob.get("yes"), ob.get("no_dollars") or ob.get("no")
+                if not yl or not nl or r.get("left") is None or r.get("t") is None: continue
+                try:
+                    yb = max(float(x[0]) for x in yl); nb = max(float(x[0]) for x in nl)
+                except (TypeError, ValueError, IndexError): continue
+                yb = yb if yb <= 1.0 else yb / 100.0; nb = nb if nb <= 1.0 else nb / 100.0
+                yield int(r["t"] + r["left"]), r["t"], r["left"], yb, 1.0 - nb
     except OSError: return
 rounds = collections.defaultdict(list)
 cut = time.time() - days * 86400
@@ -31,8 +36,8 @@ for tk, seq in rounds.items():
     seq.sort(key=lambda x: -x[0])                      # by time remaining, newest last
     if len(seq) < 600 or seq[0][0] < 800: continue     # need most of the 15 minutes
     last = seq[-1]
-    if last[0] > 20: continue
-    up = 1 if last[1] >= 0.90 else 0 if last[2] <= 0.10 else None   # result from the final quote
+    if last[0] > 40: continue
+    up = 1 if last[1] >= 0.85 else 0 if last[2] <= 0.15 else None   # result from the final quote
     if up is None: continue
     n_rounds += 1
     for t0 in (840, 780, 720):                         # about 1, 2, 3 minutes in
