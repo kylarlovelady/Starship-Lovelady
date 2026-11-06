@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Pi-hole: Kylar's iPhone confirmed blocking (with Tailscale ON)
+- What: 44 blocked in first test; cnn.com ad/tracker domains (tremorhub, rubiconproject, pubmatic) blocked for 192.168.1.142 with Tailscale on. Normal sites load.
+- Where: memory/pi-home-assistant.md
+- Status: done for iPhone. Next: Sharee's phone, iPad, 4 TVs after Pi hardening items.
+
 ## 2026-11-06 15:45 Pi-hole: first device connected; hardening note filed
 - What: Kylar's iPhone (192.168.1.142) now queries Pi-hole (confirmed by his Network table screenshot). Filed HARDEN THE PI in todo.md (power, NVMe boot, Ethernet instead of Wi-Fi, auto-restart watchdog, backup DNS, one reserved address, reboot test). Noted the Pi has two addresses on wlan0.
 - Status: phone connected; blocking test next, then Tailscale back on with DNS check, then Sharee's phone.
