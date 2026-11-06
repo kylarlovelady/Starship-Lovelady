@@ -8,6 +8,8 @@ idea. Nothing built. Open questions to ask Kylar: which carrier and phones, wher
 - A homemade AMPLIFIER (an active booster made from parts) is not allowed in the US: the FCC only permits consumer boosters that are certified and registered with the carrier, because a bad home-built amplifier can jam towers and knock out service (and 911 calls) for a whole area. Carriers can trace interference and fines are possible. Please do not build the active amplifier part.
 - Passive builds (no amplification) are fine and often get most of the benefit when there is some signal outside.
 
+- MEXICO (buddy lives there, asked 2026-11-05 23:56): not confirmed. Telecom equipment there must be homologated (IFT seal; the regulator IFT was replaced by a new telecom authority in 2025) and the cell frequencies are licensed to the carriers, so a homemade active amplifier is very likely not allowed there either (same interference risk). A web search did not find a rule specifically about boosters; Kylar or the buddy should ask the carrier (e.g. Telcel, AT&T Mexico) or check with the telecom regulator before building any amplifier. Passive antenna routes below stay the safe choice in both countries.
+
 ## Legal DIY routes to look at first (Claude can detail the one Kylar picks)
 1. Outdoor high-gain directional antenna (Yagi or panel) on a mast, pointed at the nearest tower, a low-loss coax run inside, and a cell phone/hotspot or a cellular router with external antenna ports. Making the antenna and mast is a real DIY job and legal.
 2. Cellular router/hotspot with external antenna connectors (placed in the best spot, Wi-Fi inside the house) plus Wi-Fi calling on the phones.
