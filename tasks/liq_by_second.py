@@ -31,10 +31,10 @@ for p in sorted(glob.glob(D + "/ticks-*.jsonl*")):
                 opp = nb if fav_y else yb
                 rows[tk][s] = sum(q * (1 - p) for p, q in opp if 1 - p <= 0.99 + 1e-9)    # dollars of favourite you could buy at <=99c
     except OSError: continue
-L = ["# Liquidity before the close (auto): dollars buyable on the favourite at 99c or less", "", "Rounds seen: %d. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable. Seconds with no row count as nothing buyable." % len(rounds), "", "| s before close | rounds with data | any | full ($1,000) | median $ buyable |", "|---|---|---|---|---|"]
+L = ["# Liquidity before the close (auto): dollars buyable on the favourite at 99c or less", "", "Rounds seen: %d. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable. Only seconds that have a recorded book row are counted (percent is of those rows); no row = the book was missing or one-sided." % len(rounds), "", "| s before close | rounds with a book row | any | full ($1,000) | median $ buyable |", "|---|---|---|---|---|"]
 for s in list(range(0, 21)) + [25, 30, 40]:
-    vals = [rows[t].get(s, 0.0) for t in rows]
-    if not vals: continue
-    vs = sorted(vals); n = len(vs)
-    L.append("| %d | %d | %.0f%% | %.0f%% | $%.0f |" % (s, n, 100 * sum(v >= 25 for v in vs) / n, 100 * sum(v >= 1000 for v in vs) / n, vs[n // 2]))
+    present = [rows[t][s] for t in rows if s in rows[t]]
+    if not present: continue
+    vs = sorted(present); n = len(vs)
+    L.append("| %d | %d of %d | %.0f%% | %.0f%% | $%.0f |" % (s, n, len(rows), 100 * sum(v >= 25 for v in vs) / n, 100 * sum(v >= 1000 for v in vs) / n, vs[n // 2]))
 open(OUT, "w").write("\n".join(L) + "\n"); print("\n".join(L))
