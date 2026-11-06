@@ -85,3 +85,4 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 
 ## Done
 - 2026-11-05 21:46 Process Operator, scheme A (navy), hardcover: SUBMITTED to KDP, status "In review", list price $18.99 USD (royalty about $4.30 per book; printing $7.09, 60% rate). Used the refined owner page (tasks/kdp_owner.py), AI-content question answered Yes (layout/design), no ISBN, no barcode box (KDP added its own), Non-Classifiable, low-content ticked. Review takes up to 72 hours. Next: Lab Operator A with the same steps, then B, C, E one at a time after A is accepted (duplicate-content plan above).
+- 2026-11-05 22:25 Process Operator B (forest green) hardcover submitted too, In review at $18.99. Note: book 1 (navy) shows its title as "Process operator" (lowercase o) in KDP, B shows "Process Operator"; fix the navy title only after it is approved (editing during review restarts the review). Next: C burgundy and E espresso covers, then Lab Operator A/B/C/E.

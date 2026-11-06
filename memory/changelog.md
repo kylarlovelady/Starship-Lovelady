@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 22:25 KDP: Process Operator B (forest green) submitted, In review, $18.99. Next C and E covers (queue 061).
 - 2026-11-05 22:20 KDP: replaced the guessed keywords in amazon-kdp.md with the exact 7 Kylar entered (from his screenshot), including Blue collar gifts for women.
 - 2026-11-05 22:10 KDP: saved the reusable description, keywords and listing settings in amazon-kdp.md (Reusable listing text) for every colour and title.
 - 2026-11-05 21:46 KDP: Process Operator A hardcover submitted by Kylar, status In review, $18.99. Notes in amazon-kdp.md (Done section) and projects.md.
