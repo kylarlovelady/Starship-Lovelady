@@ -1,7 +1,4 @@
-## 2026-11-06 02:58:02 tasks/queue/071-oracle-study.sh
-```
-
-## 2026-11-06 03:01:01 tasks/queue/071-oracle-study.sh
+acle-study.sh
 ```
 
 ## 2026-11-06 03:04:02 tasks/queue/071-oracle-study.sh
@@ -553,5 +550,11 @@ Rounds with a full recording and a real result: **450**.
 
 - Pays about 10 to 1 when it hits, so results swing hard: a few wins decide everything. Trust only a 90% range that stays above zero AND the same sign in both halves and on most days.
 - Practice only; nothing changes in the agent. If it holds, the next step is a small forward test as its own practice strategy, small stakes.
+(exit 0)
+```
+
+## 2026-11-06 15:16:01 tasks/queue/083-series-catalog.sh
+```
+started; progress so far:
 (exit 0)
 ```
