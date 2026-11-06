@@ -69,7 +69,7 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - Buy a large favourite (he suggested $1,000) in the last seconds before a 15-minute BTC round stops accepting orders, when a comeback looks impossible; accept a small payout (about 1.15x, roughly $150) for a very high hit rate.
 - Claude's maths: at about 87c a $1,000 bet wins about $150 and loses $1,000, so it needs about 90%+ wins after the 7%·p(1-p) fee. Risks: settlement uses a last-minute average (not one tick), thin book at 90c+ (partial fills, slippage), Kylar's real trades over $150 stake lost about $1,700.
 - Plan: replay test on the per-second ticks in ~/market-data (practice only): for entries in the last 20 to 60 s, bucket by price and distance from the strike (in recent volatility), count real win rate vs price + fee, include fill depth from the order book. Add as a sim variant (v_snipe) only if the replay shows an edge; stake ladder only after it proves itself; live stays OFF until Kylar says.
-- Status: idea filed, test not built yet (after KDP upload).
+- Status 2026-11-05 19:40: built as practice-only reaction test v_snipe in markets/sim.py (v8.5): distance entry, first bet only 13+ min into the round (last ~2 min), one bet, entry cap raised to 97c for this test only (global ENTRY_MAX 80c and MAX_PRICE 92c unchanged), hold to the end, $25 UNPROVEN_CAP still applies. Gets its own pretend $1,000 account beside the others. Replay test on recorded ticks still to do. Collector restarts after the Pi pulls.
 
 ## Done
 (Finished items go here with the date, newest first. Never delete.)

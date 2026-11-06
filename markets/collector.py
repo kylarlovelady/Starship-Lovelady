@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.4 restart: unproven cap really 25 (saved default 50 overrode it); Auto wallet = hold-to-end unless a variant beats it 1.5x over 80+ rounds, kept 6 h (it was hopping between lucky variants every round); nothing is retired (restart marker)
+# v8.5 restart: new practice-only reaction test v_snipe (one late favourite buy in the last 2 minutes, up to 97c, hold to end); ENTRY_MAX and MAX_PRICE can now be overridden per test (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
