@@ -18,7 +18,7 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | Pi-hole (DNS blocking + device visibility) | in progress (pilot not started) | Confirm it answers; pilot on iPad then phones then TVs; name devices; feed stats into the status bus | architecture.md |
 | Everything working together (tools for Jarvis, one alert channel, one front door, task queue, daily Claude check) | built, waiting for install on the Pi | Kylar runs `bash ~/starship/tasks/pi_update.sh ha`; then check alerts arrive and Jarvis tools answer | architecture.md |
 | Home screen readability (clock/weather/date on busy backgrounds) | idea | Add a soft panel/shadow behind the clock | pi-home-assistant.md |
-| Galaxy Note 20 Ultra (old phone) as a Starship device | idea | Options: Starship terminal (Tailscale + home-screen page), camera/sensor node feeding the Pi (and the Hailo-8), Jarvis satellite, test rig for the cell Wi-Fi unit. Kylar picks; check if bootloader is locked (US Snapdragon = locked) before any Linux install | todo.md |
+| Galaxy Note 20 Ultra (old phone) as a Starship device | idea | Options: Starship terminal (Tailscale + home-screen page), camera/sensor node feeding the Pi (and the Hailo-8), Jarvis satellite, test rig for the cell Wi-Fi unit. Kylar wants it as a Pi/Starship comms device and maybe an off-grid 'doomsday' comms unit (phone is AT&T, holds a charge). Plan: phase 1 Tailscale + Starship page terminal; phase 2 Meshtastic LoRa radio + offline maps/Wikipedia. Check if bootloader is locked (US Snapdragon = locked) before any Linux install | todo.md |
 
 ## Done
 - 2026-11-05: Built Jarvis tools, alert channel, front door /home, task queue, daily Claude check, Kalshi digest (see changelog.md).

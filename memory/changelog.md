@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 04:25 Note 20 Ultra plan
+- What: Kylar's phone is AT&T, holds a charge; he wants a Starship comms terminal and maybe an off-grid comms unit. Plan filed in projects.md (phase 1 Tailscale terminal, phase 2 Meshtastic + offline kit).
+- Status: waiting for Kylar to install Tailscale on it.
+
 ## 2026-11-06 04:00 Oracle study result + Note 20 Ultra idea filed
 - What: read oracle-study.md (300 rounds); no proven signal yet, details in kalshi-ai.md. Filed the Galaxy Note 20 Ultra repurpose idea in projects.md and todo.md.
 - Status: study done; walk-forward test is the next step.
