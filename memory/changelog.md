@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 To-do added: Starship mouse navigation on desktop/laptop
+- Where: memory/todo.md (Open)
+- Status: not started.
+
 ## 2026-11-06 TV cleanup notes, iPad DNS set, one-step-at-a-time rule
 - What: CLAUDE.md now says give one step at a time (Kylar asked by voice); TV cleanup recorded in home-network.md; iPad DNS saved, Pi-hole shows 5 clients, 648 blocked (5.4%).
 - Status: iPad address to confirm.
