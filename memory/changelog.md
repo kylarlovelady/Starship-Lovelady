@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 14:50 Kalshi reverse-engineering research + pricing study (queue 078)
+- What: searched GitHub, Kalshi help and contract terms; notes in kalshi-ai.md. Wrote markets/implied_vol_study.py (implied vs realized volatility by time left, calibration by price bucket, spreads) and queued it as 078.
+- Status: queued; results to memory/inbox/implied-vol-study.md.
+
 ## 2026-11-06 14:25 Sniper switched OFF; back to experimenting (Kylar's call)
 - What: markets/sniper.py now only runs when the file ~/market-data/sniper.on exists (it does not, so no new sniper bets); its settle thread still settles any open bet; all its files and the reports are kept. collector.py marker bumped to v9.3 so the Pi restarts the agent after the next pull. Queue 077 reads run.json and review.py to see what the experiments are doing.
 - Why: after 72 rounds it bet 3 times (3 wins, wallet $1,219 practice) because nobody sells the winning side near the close; Kylar chose to go back to testing all strategies side by side.
