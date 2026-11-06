@@ -1,5 +1,5 @@
 # Project tracker
-One line per project. Status: idea / in progress / stalled / done. Finish what is started: when something stalls, say why and what unblocks it. Updated 2026-11-05 (daily check 06:20 Central). Nothing stalled over 3 days; everything here was started this week.
+One line per project. Status: idea / in progress / stalled / done. Finish what is started: when something stalls, say why and what unblocks it. Updated 2026-11-06 (daily check 06:20 Central). Nothing stalled over 3 days; everything here was started this week. Only waiting-on-Kylar items: KDP review result, SIM choice for the cell Wi-Fi unit, Note 20 model number.
 
 | Project | Status | Next step | File |
 |---|---|---|---|
