@@ -1,0 +1,18 @@
+{
+  "_note": "LOCKED SERIES SPEC (Kylar, 2026-11-05). Every book: hardcover 6x9, 120 cream pages, matte, no bleed, same layout; only the job title and the cover colour change. Edit here to add a title or colour, then run tasks/kdp_build.py.",
+  "lettering": "#CDB360",
+  "schemes": {
+    "a": {"name": "Navy", "bg": "#18233D"},
+    "b": {"name": "Forest green", "bg": "#1F372A"},
+    "c": {"name": "Burgundy", "bg": "#4D1E28"},
+    "e": {"name": "Orchid purple", "bg": "#5B2A6E"}
+  },
+  "titles": {
+    "process-operator": {"lines": ["PROCESS", "OPERATOR"], "role": "process operators", "log_words": "handoffs", "keyword_job": "Plant operator gifts"},
+    "lab-operator": {"lines": ["LAB", "OPERATOR"], "role": "lab operators", "log_words": "samples, results", "keyword_job": "Lab technician gifts"}
+  },
+  "price_usd": "18.99",
+  "settings": {"format": "Hardcover", "trim": "6 x 9 in", "pages": 120, "paper": "cream", "bleed": "no bleed", "finish": "matte", "isbn": "publish without an ISBN", "barcode_box": false, "low_content": true, "category": "Non-Classifiable", "ai_generated_content": "Yes (layout and design built with software)", "author": "Lovelady LLC", "subtitle": ""},
+  "description_template": "A durable hardcover notebook for {role}: 120 numbered, lined pages (6 x 9 in) on cream paper, with an owner page for name, phone, email and company. Keep shift notes, readings, {log_words}, checklists and daily logs in one place built to hold up on the job.",
+  "keywords": ["Notebook for work", "Hardcover lined notebook", "Tradesman notebook", "Work notebook for men", "Blue collar gifts", "{keyword_job}", "Blue collar gifts for women"]
+}

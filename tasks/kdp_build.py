@@ -32,8 +32,9 @@ from reportlab.pdfbase import pdfmetrics
 from PIL import Image, ImageChops, ImageFilter
 IN = 72.0
 # Kylar's approved look (his reference picture, 2026-11-05): flat colour + fine grain, flat (not metallic) lettering, CAPS, thin double border, short rule.
-SCHEMES = {"a": ("#18233D", "#CDB360"), "b": ("#1F372A", "#CDB360"), "c": ("#4D1E28", "#CDB360"), "e": ("#5B2A6E", "#CDB360")}   # e was espresso, replaced 2026-11-05 23:17 by orchid purple (Kylar: a more feminine fourth colour)
-TITLES = {"process-operator": ("PROCESS", "OPERATOR"), "lab-operator": ("LAB", "OPERATOR")}
+SERIES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "kdp_series.json")))   # locked series spec: colours, titles, lettering
+SCHEMES = {k: (v["bg"], SERIES["lettering"]) for k, v in SERIES["schemes"].items()}
+TITLES = {k: tuple(v["lines"]) for k, v in SERIES["titles"].items()}
 def grain(path, w_in, h_in, bg):
     dpi = 300; w, h = int(w_in * dpi), int(h_in * dpi)
     base = Image.new("RGB", (w, h), bg)
@@ -46,7 +47,7 @@ def book(slug, l1, l2, bg, fg):
     b0 = engine.clean({"pages": 120, "paper": "cream"}); g = engine.geometry(b0); W, H = g["W"], g["H"]
     tw, th = engine.SPEC["trim_w"] * IN, engine.SPEC["trim_h"] * IN; wv = engine.SPEC["wrap_v"] * IN
     fn_ = engine.fn(TFONT, True)
-    size = 0.78 * tw / (pdfmetrics.stringWidth("OPERATOR", fn_, 100) / 100.0)
+    size = 0.78 * tw / (max(pdfmetrics.stringWidth(l1, fn_, 100), pdfmetrics.stringWidth(l2, fn_, 100)) / 100.0)   # the longer line spans 78% of the cover width
     px = lambda v: v / W * 100; py = lambda v: v / H * 100
     els = [el(id="tx1", type="image", img="linen01.jpg", bold=False, font="", color="")]
     fx0, fw = g["fx0"], tw
@@ -68,10 +69,12 @@ def book(slug, l1, l2, bg, fg):
         "front": {"title_page": False, "owner_page": True, "owner_heading": "This notebook belongs to", "owner_footer": "If found, please return to the owner.", "owner_fields": ["Name", "Phone", "Email", "Company"], "contacts": 0, "index": 0, "goals": False},
         "back": {"notes_pages": 0}, "labels": {}, "listing": {"description": "", "keywords": [], "categories": "", "price": ""}, "answers": {}, "chat": []}
 fronts = {}
-ONLY = sys.argv[1:]   # optional: scheme letters to build, e.g. `kdp_build.py e` (then the contact sheet is skipped)
+CHECK = "--check" in sys.argv   # prints the plan and exits without building
+ONLY = [a for a in sys.argv[1:] if a != "--check"]   # optional: scheme letters to build, e.g. `kdp_build.py e` (then the contact sheet is skipped)
 for tk, (l1, l2) in TITLES.items():
     for sk, (bg, fg) in SCHEMES.items():
         if ONLY and sk not in ONLY: continue
+        if CHECK: print("would build", tk, sk, bg, fg); continue
         slug = f"{tk}-{sk}"; d = f"{STUDIO}/books/{slug}"; os.makedirs(d + "/img", exist_ok=True); os.makedirs(d + "/out", exist_ok=True)
         b = engine.clean(book(slug, l1, l2, bg, fg))
         cw, ch, sp = engine.cover_size(b["pages"], b["paper"])
@@ -89,7 +92,7 @@ for tk, (l1, l2) in TITLES.items():
         fronts[slug].save(o + "/front.png")
         bad = [c for c in chk if c["level"] == "fail"]
         print("==", slug, "FAILS:", [c["text"][:100] for c in bad] or "none", "| spine", sp)
-if ONLY: print("partial build, no contact sheet"); sys.exit(0)
+if CHECK or ONLY: print("partial build or check, no contact sheet"); sys.exit(0)
 sheet = Image.new("RGB", (4 * 460, 2 * 700), "#e8e8e8")
 for i, slug in enumerate([f"{t}-{k}" for t in TITLES for k in SCHEMES]):
     f = fronts[slug].resize((440, 660)); sheet.paste(f, ((i % 4) * 460 + 10, (i // 4) * 700 + 20))

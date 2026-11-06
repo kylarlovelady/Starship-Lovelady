@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 23:30 KDP series locked: new tasks/kdp_series.json (colours, titles, lettering, price, settings, description + keywords) read by kdp_build.py; new tasks/kdp_listing.py prints paste-ready listing text per title; kdp_build sizes the title by its longer line, has --check and scheme-letter partial builds. Checked on the Pi by queue 063. Documented in amazon-kdp.md.
 - 2026-11-05 23:20 KDP: scheme E espresso replaced by orchid purple #5B2A6E (Kylar picked option 1 of 6 mockups); kdp_build.py takes scheme letters for partial builds; built process-operator-e and lab-operator-e (queue 062) with the refined owner page.
 - 2026-11-05 22:40 Pi sync fix: the Pi's pulls kept failing silently because it rewrites tracked report files (snipe-autopsy.md every ~5 min) and a pull with local edits is refused; memory_sync.sh now pulls with --autostash, and Kylar sets git config --global rebase.autoStash true once on the Pi so every cron pull is safe. This was why queue jobs and the z-rule deploy lagged.
 - 2026-11-05 22:25 KDP: Process Operator B (forest green) submitted, In review, $18.99. Next C and E covers (queue 061).
