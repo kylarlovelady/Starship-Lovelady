@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 15:10 More ideas, stricter maker study, wallet back to Auto (queues 079, 080)
+- What: researched fees (taker 7%, maker 1.75%, rounded up per trade), the Volume Incentive Program, cross-venue arbitrage and an arxiv market-making paper; ideas listed in kalshi-ai.md. Wrote markets/maker_study2.py (fills need a real tape trade). Queue 077 showed the practice wallet still followed v_snipe, so queue 079 sets run.json strategy back to auto (backup kept; live untouched).
+- Status: queued (078, 079, 080); results to memory/inbox/ and queue-results.md.
+
 ## 2026-11-06 14:50 Kalshi reverse-engineering research + pricing study (queue 078)
 - What: searched GitHub, Kalshi help and contract terms; notes in kalshi-ai.md. Wrote markets/implied_vol_study.py (implied vs realized volatility by time left, calibration by price bucket, spreads) and queued it as 078.
 - Status: queued; results to memory/inbox/implied-vol-study.md.
