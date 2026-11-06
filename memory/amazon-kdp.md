@@ -71,5 +71,8 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 - Biggest lever not used: title/subtitle words rank harder than the 7 keywords. Kylar chose no subtitle; a subtitle like "Hardcover Lined Notebook with Numbered Pages" would add the top phrases (needs a cover change; his call).
 - Re-test after 2 to 4 weeks with sales/click data; change one thing at a time and log it here.
 
+## ISBN decision (2026-11-05 19:12)
+- KDP's low-content hardcover setup offers "Publish without an ISBN" or "Add your own ISBN" (no free ISBN). Chosen: without. KDP likely prints no barcode, so the white barcode box was removed from the covers (queue 050); 'Lovelady LLC' stays on the back bottom-left. Confirm in KDP's previewer. Print options: cream paper, 6x9, no bleed, matte cover finish.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)

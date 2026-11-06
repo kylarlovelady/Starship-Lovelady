@@ -62,7 +62,7 @@ def book(slug, l1, l2, bg, fg):
     els.append(el(id="sp1", panel="spine", x=0, y=0, w=100, h=10, size=15, text=f"{l1} {l2}"))
     els.append(el(id="b1", panel="back", x=2, y=96.8, w=40, h=4, size=8, text="Lovelady LLC", bold=False, align="left", font=IFONT))
     return {"name": slug, "title": f"{l1.title()} {l2.title()}", "subtitle": "", "author": "Lovelady LLC", "paper": "cream", "pages": 120,
-        "cover": {"bg": bg, "pattern": "none", "pattern_color": "#999999", "frame": False, "frame_color": fg, "font": TFONT, "text": fg, "barcode_box": True, "elements": els},
+        "cover": {"bg": bg, "pattern": "none", "pattern_color": "#999999", "frame": False, "frame_color": fg, "font": TFONT, "text": fg, "barcode_box": False, "elements": els},
         "inside": {"font": IFONT, "color": "#222222", "page_bg": "#ffffff", "style": "lines", "line_color": "#8f8f8f", "line_width": 0.5, "spacing": 0.3125, "dash": False,
                    "top": 0.7, "bottom": 0.85, "inner": 0.5, "outer": 0.4, "header": "none", "header_text": "", "num_pos": "center", "num_style": "plain", "num_size": 9},
         "front": {"title_page": False, "owner_page": True, "owner_heading": "This notebook belongs to", "owner_footer": "If found, please return to the owner.", "owner_fields": ["Name", "Phone", "Email", "Company"], "contacts": 0, "index": 0, "goals": False},
