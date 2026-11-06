@@ -1,56 +1,4 @@
-ment there is nothing to buy below 99c.
-
-## 4. Our own z-rule: first moment the model's side is z standard deviations from the target
-
-| z | rounds | median s before close | median ask | share with an ask under 99c | median $ buyable | win rate | profit per $ (ask under 99c only) |
-|---|---|---|---|---|---|---|---|
-| 2.0 | 262 | 278 | 0.940 | 82% | $8757 | 90.8% | +0.9% (216 bets) |
-| 2.5 | 254 | 187 | 0.963 | 61% | $4892 | 94.1% | +1.0% (156 bets) |
-| 3.0 | 252 | 135 | 0.972 | 46% | $0 | 95.2% | +1.9% (116 bets) |
-| 3.5 | 246 | 122 | 0.975 | 39% | $0 | 95.5% | +1.4% (96 bets) |
-| 4.0 | 242 | 89 | 0.981 | 32% | $0 | 96.7% | +2.3% (78 bets) |
-
-Win = real settled result when known, otherwise the average of the last 60 Coinbase prices vs the target (stand-in for Kalshi's average).
-(exit 0)
-```
-
-## 2026-11-05 21:31:01 tasks/queue/059-send-interior.sh
-```
-(exit 0)
-```
-
-## 2026-11-05 22:04:02 tasks/queue/060-send-cover-b.sh
-```
-(exit 0)
-```
-
-## 2026-11-05 22:58:02 tasks/queue/061-send-covers-ce.sh
-```
-(exit 0)
-```
-
-## 2026-11-05 23:19:01 tasks/queue/062-build-orchid.sh
-```
-orchid build started in the background
-(exit 0)
-```
-
-## 2026-11-05 23:25:01 tasks/queue/063-kdp-series-check.sh
-```
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Liberation Serif | interior font: Lato
-would build process-operator a #18233D #CDB360
-would build process-operator b #1F372A #CDB360
-would build process-operator c #4D1E28 #CDB360
-would build process-operator e #5B2A6E #CDB360
-would build lab-operator a #18233D #CDB360
-would build lab-operator b #1F372A #CDB360
-would build lab-operator c #4D1E28 #CDB360
-would build lab-operator e #5B2A6E #CDB360
-partial build or check, no contact sheet
-== Process Operator
-Title: Process Operator | Author: Lovelady LLC | no subtitle | price $18.99
-Description: A durable hardcover notebook for process operators: 120 numbered, lined pages (6 x 9 in) on cream paper, with an owner page for name, phone, email and company. Keep shift notes, readings, handoffs, checklists and daily logs in one place built to hold up on the job.
+ company. Keep shift notes, readings, handoffs, checklists and daily logs in one place built to hold up on the job.
 Keywords: Notebook for work; Hardcover lined notebook; Tradesman notebook; Work notebook for men; Blue collar gifts; Plant operator gifts; Blue collar gifts for women
 Colours: Navy (A), Forest green (B), Burgundy (C), Orchid purple (E)
 
@@ -557,5 +505,38 @@ FTL version is v6.8 (Latest: v6.8)
 
 nameserver 100.100.100.100
 nameserver fd7a:115c:a1e0::53
+(exit 0)
+```
+
+## 2026-11-06 14:04:02 tasks/queue/076-kalshi-series-probe.sh
+```
+crypto series: 294
+  KXCRYPTOLEAD15M | Coin Race 15 minutes | fifteen_min
+  KXDOGE15M | DOGE 15 min | fifteen_min
+  KXBTC15M | BTC 15 min | fifteen_min
+  KXBNB15M | BNB 15 min | fifteen_min
+  KXZEC15M | Zcash 15min | fifteen_min
+  KXETH15M | ETH 15 min | fifteen_min
+  KXADA15M | Cardano 15 Minute | fifteen_min
+  KXBCH15M | Bitcoin Cash 15 Minute | fifteen_min
+  KXTON15M | TON 15m | fifteen_min
+  KXCRYPTOCOMP15M | Crypto Comparison 15 minute | fifteen_min
+  KXXRP15M | XRP 15 min | fifteen_min
+  KXHYPE15M | HYPE 15 min | fifteen_min
+  KXSOL15M | SOL 15 min | fifteen_min
+  KXNEAR15M | NEAR 15m | fifteen_min
+KXBTC15M KXBTC15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 75760.07 yes 0.7500 0.7600 vol 967396.49 oi None
+KXETH15M KXETH15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 2232 yes 0.4900 0.5000 vol 16503.71 oi None
+KXSOL15M KXSOL15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 90.0337 yes 0.7200 0.7400 vol 25736.54 oi None
+KXXRP15M KXXRP15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 1.1845 yes 0.3800 0.3900 vol 15625.78 oi None
+KXDOGE15M KXDOGE15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 0.072809 yes 0.6600 0.6700 vol 5688.57 oi None
+KXBTCD KXBTCD-26NOV0616-T89299.99 close 2026-11-06T21:00:00Z strike 89299.99 yes 0.0000 0.0100 vol 0.00 oi None
+KXBTCD KXBTCD-26NOV0616-T89199.99 close 2026-11-06T21:00:00Z strike 89199.99 yes 0.0000 0.0100 vol 0.00 oi None
+KXETHD KXETHD-26NOV0616-T3144.99 close 2026-11-06T21:00:00Z strike 3144.99 yes 0.0000 0.0100 vol 0.00 oi None
+KXETHD KXETHD-26NOV0616-T3139.99 close 2026-11-06T21:00:00Z strike 3139.99 yes 0.0000 0.0100 vol 0.00 oi None
+KXBTC KXBTC-26NOV0616-T89299.99 close 2026-11-06T21:00:00Z strike 89299.99 yes 0.0000 0.0100 vol 0.00 oi None
+KXBTC KXBTC-26NOV0616-T70700 close 2026-11-06T21:00:00Z strike 70700 yes 0.0000 0.0100 vol 0.00 oi None
+KXETH KXETH-26NOV0616-T3144.99 close 2026-11-06T21:00:00Z strike 3144.99 yes 0.0000 0.0100 vol 0.00 oi None
+KXETH KXETH-26NOV0616-T1655 close 2026-11-06T21:00:00Z strike 1655 yes 0.0000 0.0100 vol 0.00 oi None
 (exit 0)
 ```
