@@ -8,7 +8,7 @@ Last updated 2026-11-06. Addresses can change if a device is not reserved in the
 | Kylar's iPhone | 192.168.1.142 | DNS set manually to 192.168.1.107; Tailscale on works fine |
 | Sharee's iPhone | 192.168.1.228 | DNS set manually to 192.168.1.107 |
 | iPad | to add | not done yet |
-| Living room TV (Sony Google TV, Wi-Fi "Lovelady") | 192.168.1.130 | was DHCP; switching to Static with DNS 192.168.1.107 (in progress 2026-11-06) |
+| Living room TV (Sony Google TV, Wi-Fi "Lovelady") | 192.168.1.130 | DONE 2026-11-06: Static IP, gateway 192.168.1.1, DNS 192.168.1.107, no DNS 2. Confirmed in Pi-hole (logs.netflix.com blocked). YouTube may bypass Pi-hole (not tested) |
 | TV 2, 3, 4 | to add | after Pi hardening |
 
 DNS setting used everywhere: Manual, one server, 192.168.1.107. Pi-hole dashboard is on the Pi (port 80, /admin). See pi-home-assistant.md for rollout notes and todo.md "HARDEN THE PI".
