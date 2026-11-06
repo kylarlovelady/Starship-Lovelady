@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 20:10 Recorder v8.6: new per-second 'ks' field = Kalshi market STATUS, close/expiration times, can_close_early, early_close_condition and prices for the current market and the just-ended one (120 s after), to learn when/why a round stops taking orders. Collector marker bumped; takes effect after the Pi pull + restart. Mock-tested locally. Status: pushed, awaiting confirmation on the Pi.
 - 2026-11-05 20:00 Sniping study run (queue 052 / paste): no edge at the end of rounds (about -3% to -6% per $ overall; 95-99c bucket about 0%), $1,000 would not fill at 90-94c. Findings in kalshi-ai.md; raw in memory/inbox/snipe-study.md. v_snipe (practice, $25) keeps running to collect forward data.
 - 2026-11-05 19:40 Kalshi v8.5: added practice-only v_snipe (late favourite buy, last 2 min, up to 97c, hold to end; cap 25) in sim.py; ENTRY_MAX/MAX_PRICE overridable per test; collector restart marker bumped. Syntax-checked and imported locally. Status: pushed, awaiting Pi pull + restart confirmation. Wallet fresh start (queue 051 / button) still to be confirmed.
 - 2026-11-05 19:25 Filed Kylar's SNIPING idea (late big favourite bet) in kalshi-ai.md with the maths and a replay-test plan (practice only). Status: idea, test not built.

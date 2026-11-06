@@ -176,6 +176,36 @@ def f_book(get_ticker):
     return go
 
 
+def f_kstat(get_ticker):
+    """STATUS of the current market AND of the one that just ended (kept for 120 s after it leaves the open list), straight from Kalshi's market record:
+    status (open/closed/settled), close and expiration times, can_close_early and its condition, prices and result. Lets us see exactly when and why a round stops accepting orders."""
+    state = {"cur": None, "prev": None, "prev_t": 0.0}
+    KEYS = ("status", "close_time", "expiration_time", "expected_expiration_time", "latest_expiration_time", "can_close_early", "early_close_condition",
+            "yes_bid_dollars", "yes_ask_dollars", "no_bid_dollars", "no_ask_dollars", "result", "last_price_dollars", "floor_strike", "volume_fp", "settlement_value_dollars")
+    def one(tk):
+        m = (_get("https://api.elections.kalshi.com/trade-api/v2/markets/%s" % tk, 3) or {}).get("market") or {}
+        o = {k: m.get(k) for k in KEYS if m.get(k) is not None}
+        o["tk"] = tk
+        return o
+    def go():
+        tk = get_ticker(); now = time.time(); out = {}
+        if tk and tk != state["cur"]:
+            if state["cur"]:
+                state["prev"], state["prev_t"] = state["cur"], now
+            state["cur"] = tk
+        if state["cur"]:
+            out["cur"] = one(state["cur"])
+        if state["prev"] and now - state["prev_t"] < 120:
+            try:
+                out["prev"] = one(state["prev"])
+            except Exception:
+                pass
+        if not out:
+            raise ValueError("no ticker")
+        return out
+    return go
+
+
 # ---------- file handling ----------
 def _path(d, day):
     return os.path.join(d, "ticks-%s.jsonl" % day)
@@ -212,6 +242,8 @@ def build_row(now, feeds, shared):
             pass
     if feeds["book"].val:
         row["ob"] = feeds["book"].val
+    if feeds.get("kstat") and feeds["kstat"].val:
+        row["ks"] = feeds["kstat"].val
     x = {n: feeds[n].val for n in ("kraken", "bybit") if feeds[n].val is not None}
     if x:
         row["x"] = x
@@ -251,7 +283,9 @@ def run(d, stop=None):
         "liq": Feed("liq", 5, f_liq),
         "flow": Feed("flow", 3, f_flow),
         "oi": Feed("oi", 30, f_oi),
+        "kstat": Feed("kstat", 1, None),
     }
+    feeds["kstat"].fn = f_kstat(lambda: holder["ticker"])
     feeds["kalshi"].fn = f_kalshi(None)
     feeds["book"].fn = f_book(lambda: holder["ticker"])
     feeds["ktrades"].fn = f_ktrades(lambda: holder["ticker"])
