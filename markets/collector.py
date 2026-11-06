@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v9.1 restart: sniper logs a ROUND summary (max z per round) and every z-rule round that did not buy, with the reason
+# v9.2 restart: sniper claims each round once across processes (no double bets or false MISSED after a restart)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

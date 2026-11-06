@@ -19,6 +19,14 @@ def save(s):
     tmp = _path("snipe.json.tmp"); json.dump(s, open(tmp, "w")); os.replace(tmp, _path("snipe.json"))
 def log(rec):
     with open(_path("snipe_log.jsonl"), "a") as f: f.write(json.dumps(rec, separators=(",", ":")) + "\n")
+def claim(tk, tag="bet"):
+    """cross-process once-only marker (two agent processes can overlap for a moment after a restart): True only for the first caller"""
+    try:
+        d = _path("snipe_claims"); os.makedirs(d, exist_ok=True)
+        fd = os.open(os.path.join(d, "%s.%s" % (tk, tag)), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.close(fd); return True
+    except FileExistsError: return False
+    except Exception: return True
+def seen(tk, tag="bet"): return os.path.exists(os.path.join(_path("snipe_claims"), "%s.%s" % (tk, tag)))
 def fee_c(p): return 0.07 * p * (1 - p)
 def levels(x, scale):
     out = []
@@ -59,6 +67,7 @@ def fetch_status(tk):
     return {k: m.get(k) for k in ("status", "close_time", "can_close_early", "early_close_condition", "yes_bid_dollars", "yes_ask_dollars", "no_bid_dollars", "no_ask_dollars") if m.get(k) is not None}
 def fire(tk, ce, strike, px, ob, t_req, t_resp, status, side_seen, mode="close", maxpx=None, force_side=None, extra=None):
     left = ce - t_resp                       # seconds before the close when the book answer came back (the order would land about now)
+    if mode == "close" and not claim(tk, "round"): return "DUP"
     s = load(); s["rounds"] += 1
     yl, nl = ob.get("yes_dollars") or ob.get("yes"), ob.get("no_dollars") or ob.get("no")
     both = list(yl or []) + list(nl or [])
@@ -88,6 +97,8 @@ def fire(tk, ce, strike, px, ob, t_req, t_resp, status, side_seen, mode="close",
         if mode == "z": return "NOASK"
         s["skips"] += 1; save(s)
         log(dict(base, result="SKIP", side=side, why="nothing to buy at or below %.1fc (best ask %s)" % (maxpx * 100, round(asks[0][0], 3) if asks else None))); return
+    if not claim(tk):
+        return "DUP"          # another process already traded this round
     s["bal"] -= cost; s["bets"] += 1; s["staked"] += cost
     s["pending"].append({"ticker": tk, "close": ce, "side": side, "c": c_tot, "cost": round(cost, 4), "t": int(time.time())})
     save(s)
@@ -122,7 +133,9 @@ def watch_loop():
             left = c["ce"] - time.time()
             if left > 300: time.sleep(min(1.0, max(0.05, left - 300))); continue
             if left < -3:
-                _ST["fired"].add(c["tk"]); s = load(); s["rounds"] += 1; s["misses"] += 1; save(s)
+                _ST["fired"].add(c["tk"])
+                if seen(c["tk"], "round") or seen(c["tk"]) or not claim(c["tk"], "miss"): continue
+                s = load(); s["rounds"] += 1; s["misses"] += 1; save(s)
                 log({"t": int(time.time()), "ticker": c["tk"], "result": "MISSED", "why": "no book reply landed with %.1f s or less to go; last status %s" % (FIRE_LEFT, last_status)}); continue
             if left > 9:
                 if time.time() - z_t < 1.0: time.sleep(0.1); continue
