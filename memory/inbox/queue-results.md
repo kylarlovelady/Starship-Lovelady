@@ -1,14 +1,4 @@
-$27.15, 99.9th $51.52, biggest $146.20.
-- So in 60 s BTC typically wanders about $52 (std), and in 10 s about $21; the sqrt-of-time rule is what the z formula below uses.
-
-## 2. Does Kalshi close rounds early?
-
-- Recorder status rows since 20:13: 5034; rows where can_close_early was true: 5034.
-- Rounds whose reported close_time CHANGED during the round: 0 of 8. Rounds seen with a non-active status more than 3 s before the 15:00 close: 7 [('KXBTC15M-26NOV052045-45', 'finalized', 866), ('KXBTC15M-26NOV052100-00', 'finalized', 855), ('KXBTC15M-26NOV052115-15', 'finalized', 862), ('KXBTC15M-26NOV052130-30', 'finalized', 857), ('KXBTC15M-26NOV052145-45', 'finalized', 861)]
-
-## 3. When does the favourite stop being buyable below 99c?
-
-- Last second with an ask under 99c, seconds before the close: median 90, 10th percentile 30, 90th percentile 233 (271 rounds). After that moment there is nothing to buy below 99c.
+ment there is nothing to buy below 99c.
 
 ## 4. Our own z-rule: first moment the model's side is z standard deviations from the target
 
@@ -538,5 +528,34 @@ Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or
 
 ## 2026-11-06 13:01:02 tasks/queue/074-send-cover-a.sh
 ```
+(exit 0)
+```
+
+## 2026-11-06 13:52:02 tasks/queue/075-pihole-check.sh
+```
+== container
+pihole Up 11 hours (healthy) 
+== pi address
+192.168.1.107 100.105.140.126 172.17.0.1 fd7a:115c:a1e0::2f4c:8c7f 
+== normal lookup via pihole
+tasks/queue/075-pihole-check.sh: line 6: dig: command not found
+== ad domain via pihole (blocked answers 0.0.0.0 or ::)
+tasks/queue/075-pihole-check.sh: line 7: dig: command not found
+== same ad domain via 1.1.1.1 (real address)
+tasks/queue/075-pihole-check.sh: line 8: dig: command not found
+== pihole version
+Core version is v6.5 (Latest: v6.5)
+Web version is v6.6.1 (Latest: v6.6.1)
+FTL version is v6.8 (Latest: v6.8)
+== pihole status
+  [✓] FTL is listening on port 53
+     [✓] UDP (IPv4)
+     [✓] TCP (IPv4)
+     [✓] UDP (IPv6)
+     [✓] TCP (IPv6)
+== what the Pi itself uses for DNS
+
+nameserver 100.100.100.100
+nameserver fd7a:115c:a1e0::53
 (exit 0)
 ```
