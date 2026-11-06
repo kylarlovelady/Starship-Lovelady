@@ -5,6 +5,7 @@ Updated 2026-11-04 (imported from Hub Notes, Nov 2 voice call).
 - 3D printing idea: projects/3d-printing.md.
 - Parked ideas: options-trading agent via a broker API on paper money first; house plans and 3D home models (his wife has a strong design eye; start with concept plans and 3D walkthroughs, local code needs a licensed pro for finals); Home Assistant install service; AI phone answering for small businesses; printable/template digital products sharing the KDP pipeline; 3D model packs; packaging the market dashboard or home assistant for others.
 - Declined (do not revisit): the AI cam-performer idea and an unrestricted AI.
+- Idea 2026-11-06: livestream cam on the chicken and rabbit coops with donate-to-feed treats (details in projects/coop-cam-stream.md).
 
 ## Update 2026-11-05 (Kylar)
 - Order now: 1) Kalshi betting, 2) Amazon KDP shortly after. Trucks are hobbies, not business. What comes after KDP is undecided.
