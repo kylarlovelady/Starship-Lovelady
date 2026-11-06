@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 16:00 All 15-minute markets catalogued; predictability study queued (083)
+- What: new memory/projects/kalshi-15m-markets.md lists every 15-minute crypto series found; new markets/series_catalog.py (read-only) pulls each series' settled rounds and 1-minute candles and compares favourite-right rate, Brier score, spreads, volume, round-to-round memory, calibration and BTC lead/lag; queued as 083 (runs about 30 min in the background, then syncs).
+- Status: queued; BTC-only rule unchanged (this is data only).
+
 ## 2026-11-06 15:55 Forward tests read: longshot rejected, maker inconclusive
 - What: queue 082 (450 rounds): longshot rule has no edge (ranges span zero, older half positive and newer half negative). Queue 081: every maker order skipped because the spread is under 2c; only 28 rounds have a tape. Notes in kalshi-ai.md.
 - Status: nothing changed in the agent. Next: maker study v3 (post at the bid with queue position) once 150+ rounds have a tape.
