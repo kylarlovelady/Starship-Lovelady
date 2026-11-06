@@ -2,7 +2,7 @@
 
 - Wallet $1219.08 (started $1000). Rounds 73: bought 3 (won 3, lost 0), skipped 69, missed 1. Profit $219.09 on $3116.92 staked. Busts 0.
 - Average share of the wallet that actually filled: 100%. Seconds left when the book came back: avg 183.47 (min 1.06, max 299.84). Kalshi answer time avg 172 ms.
-- Z-rule: 57 rounds seen, z reached the trigger in 48 of them; biggest |z| per round: median 14.2, best 68.1.
+- Z-rule: 58 rounds seen, z reached the trigger in 49 of them; biggest |z| per round: median 14.9, best 68.1.
 - Z-rule reached the trigger but did not buy in 46 rounds (reasons: z reached the trigger but nothing for sale at or below 98.5c; z reached the trigger but one side of the book was empty).
 
 ## Problems (lost / missed / skipped), newest last
