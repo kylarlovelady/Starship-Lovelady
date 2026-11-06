@@ -32,7 +32,7 @@ from reportlab.pdfbase import pdfmetrics
 from PIL import Image, ImageChops, ImageFilter
 IN = 72.0
 # Kylar's approved look (his reference picture, 2026-11-05): flat colour + fine grain, flat (not metallic) lettering, CAPS, thin double border, short rule.
-SCHEMES = {"a": ("#18233D", "#CDB360"), "b": ("#1F372A", "#CDB360"), "c": ("#4D1E28", "#CDB360"), "e": ("#36291E", "#CDB360")}
+SCHEMES = {"a": ("#18233D", "#CDB360"), "b": ("#1F372A", "#CDB360"), "c": ("#4D1E28", "#CDB360"), "e": ("#5B2A6E", "#CDB360")}   # e was espresso, replaced 2026-11-05 23:17 by orchid purple (Kylar: a more feminine fourth colour)
 TITLES = {"process-operator": ("PROCESS", "OPERATOR"), "lab-operator": ("LAB", "OPERATOR")}
 def grain(path, w_in, h_in, bg):
     dpi = 300; w, h = int(w_in * dpi), int(h_in * dpi)
@@ -68,8 +68,10 @@ def book(slug, l1, l2, bg, fg):
         "front": {"title_page": False, "owner_page": True, "owner_heading": "This notebook belongs to", "owner_footer": "If found, please return to the owner.", "owner_fields": ["Name", "Phone", "Email", "Company"], "contacts": 0, "index": 0, "goals": False},
         "back": {"notes_pages": 0}, "labels": {}, "listing": {"description": "", "keywords": [], "categories": "", "price": ""}, "answers": {}, "chat": []}
 fronts = {}
+ONLY = sys.argv[1:]   # optional: scheme letters to build, e.g. `kdp_build.py e` (then the contact sheet is skipped)
 for tk, (l1, l2) in TITLES.items():
     for sk, (bg, fg) in SCHEMES.items():
+        if ONLY and sk not in ONLY: continue
         slug = f"{tk}-{sk}"; d = f"{STUDIO}/books/{slug}"; os.makedirs(d + "/img", exist_ok=True); os.makedirs(d + "/out", exist_ok=True)
         b = engine.clean(book(slug, l1, l2, bg, fg))
         cw, ch, sp = engine.cover_size(b["pages"], b["paper"])
@@ -87,6 +89,7 @@ for tk, (l1, l2) in TITLES.items():
         fronts[slug].save(o + "/front.png")
         bad = [c for c in chk if c["level"] == "fail"]
         print("==", slug, "FAILS:", [c["text"][:100] for c in bad] or "none", "| spine", sp)
+if ONLY: print("partial build, no contact sheet"); sys.exit(0)
 sheet = Image.new("RGB", (4 * 460, 2 * 700), "#e8e8e8")
 for i, slug in enumerate([f"{t}-{k}" for t in TITLES for k in SCHEMES]):
     f = fronts[slug].resize((440, 660)); sheet.paste(f, ((i % 4) * 460 + 10, (i // 4) * 700 + 20))
