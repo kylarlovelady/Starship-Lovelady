@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 14:25 Sniper switched OFF; back to experimenting (Kylar's call)
+- What: markets/sniper.py now only runs when the file ~/market-data/sniper.on exists (it does not, so no new sniper bets); its settle thread still settles any open bet; all its files and the reports are kept. collector.py marker bumped to v9.3 so the Pi restarts the agent after the next pull. Queue 077 reads run.json and review.py to see what the experiments are doing.
+- Why: after 72 rounds it bet 3 times (3 wins, wallet $1,219 practice) because nobody sells the winning side near the close; Kylar chose to go back to testing all strategies side by side.
+- Status: pushed; the Pi restarts the agent itself after its next pull.
+
 ## 2026-11-06 14:10 Kalshi series probe queued (076)
 - What: read-only probe of which short-term crypto series Kalshi lists and how liquid they are (idea: the sniper only gets about 3 bets per 72 BTC rounds, so more series would mean more bets).
 - Status: queued.

@@ -34,8 +34,12 @@ def levels(x, scale):
         try: out.append((float(a[0]) / scale, float(a[1])))
         except Exception: pass
     return out
+def enabled():
+    """OFF by default since 2026-11-06 (Kylar: stop the sniper, go back to experimenting with every strategy). To turn it on again: create the file ~/market-data/sniper.on and restart the agent (bump the marker in collector.py line 2). All its records stay."""
+    return os.path.exists(_path("sniper.on"))
 def hook(row):
     """Called by the recorder each second: only tells the sniper which round is live, its close time and the target. Never raises."""
+    if not enabled(): return
     try:
         k = row.get("k") or {}; tk = k.get("ticker")
         if not tk: return
@@ -201,7 +205,7 @@ def settle_loop():
         except Exception: pass
 def start():
     if _ST["thread"]: return
-    threading.Thread(target=watch_loop, daemon=True, name="sniper-watch").start()
+    if enabled(): threading.Thread(target=watch_loop, daemon=True, name="sniper-watch").start()   # no new bets while off; the settle thread below still settles any open one
     th = threading.Thread(target=settle_loop, daemon=True, name="sniper-settle"); th.start(); _ST["thread"] = th
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "reset":

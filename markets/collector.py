@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v9.2 restart: sniper claims each round once across processes (no double bets or false MISSED after a restart)
+# v9.3 restart: sniper switched OFF (Kylar 2026-11-06); all strategies back to experimenting
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
