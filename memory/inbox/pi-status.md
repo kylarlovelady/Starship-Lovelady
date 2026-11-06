@@ -2,7 +2,7 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 week, 4 days, 13 hours, 31 minutes; temp 41.7'C; throttled flags 0x0 (0x0 is clean); memory 61%; disk 10%
+- up 1 week, 4 days, 13 hours, 34 minutes; temp 42.2'C; throttled flags 0x0 (0x0 is clean); memory 61%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
@@ -11,13 +11,13 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - containers: openwakeword Up 6 days; whisper Up 6 days (healthy); piper Up 6 days (healthy); pihole Up 29 hours (healthy); homeassistant Up 23 hours
 
 ## Sync and schedule
-- Pi repo copy at: 07baa5d 59 seconds ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: b954619 3 minutes ago: queue 066: more diagnostics
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (23 min ago), first lines:
+- supervisor report (27 min ago), first lines:
     MARKET AGENT PROGRESS  Fri 06 Nov 00:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_x24220781  +136.64 over   83 rounds, wins 48%   (+0.94 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 71; errors: 0; ignored blips: 10; last activity: 10.6 h ago
+- turns: 71; errors: 0; ignored blips: 10; last activity: 10.7 h ago
 - hang-ups: you ended it x9, quiet x2
 - time to first words: avg 1.6s, slowest 4.2s over 69 answers
 

@@ -1,49 +1,4 @@
-69 Nov  5 17:34 page2.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:34 page3.png
-(exit 0)
-```
-
-## 2026-11-05 17:46:01 tasks/queue/044-kdp-build-backtext.sh
-```
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Playfair Display | interior font: Lato
-== process-operator-a cover 14.065 x 10.418 spine 0.489
-  OK Page count 120 (hardcover needs 75 to 550)
-  OK Page count is even
-  OK Cover file 14.065 x 10.418 in, spine 0.489 in
-  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
-  OK Inside margin 0.500 in (KDP minimum 0.375)
-  OK All cover text inside the safe zone and clear of the barcode area
-  OK Inside text contrast 15.9:1
-  OK Picture on the full: sharp (300 dpi)
-  OK cover PDF fonts embedded
-  OK interior PDF fonts embedded
-  OK Author / pen name set
-  OK Title set
-  OK Title + subtitle length OK
-  WARN Book description not written
-  WARN 0 of 7 keywords
-  WARN Price not set
-  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
-== lab-operator-a cover 14.065 x 10.418 spine 0.489
-  OK Page count 120 (hardcover needs 75 to 550)
-  OK Page count is even
-  OK Cover file 14.065 x 10.418 in, spine 0.489 in
-  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
-  OK Inside margin 0.500 in (KDP minimum 0.375)
-  OK All cover text inside the safe zone and clear of the barcode area
-  OK Inside text contrast 15.9:1
-  OK Picture on the full: sharp (300 dpi)
-  OK cover PDF fonts embedded
-  OK interior PDF fonts embedded
-  OK Author / pen name set
-  OK Title set
-  OK Title + subtitle length OK
-  WARN Book description not written
-  WARN 0 of 7 keywords
-  WARN Price not set
-  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
 total 2000
 drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
 drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
@@ -597,5 +552,29 @@ drwxrwxr-x 2 kylarlovelady kylarlovelady  4096 Oct 20 21:15 fontcache
 37:<div id="bubble"><div id="clock">--:--</div><div id="date"></div>
 40:<div class="lbl">You</div><div id="you"></div><div class="lbl">Alexa</div><div id="ai"></div><img id="pic" alt=""></div>
 121:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
+(exit 0)
+```
+
+## 2026-11-06 00:34:02 tasks/queue/066-diag-5-7b.sh
+```
+== log lines for the 01:00 (00:00 local) round
+{"t":1793944799,"ticker":"KXBTC15M-26NOV060100-00","left_at_book":0.97,"book_ms":346,"status":{"status":"active","close_time":"2026-11-06T06:00:00Z","can_close_early":true,"yes_bid_dollars":"0.9990","yes_ask_dollars":"1.0000","no_bid_dollars":"0.0000","no_ask_dollars":"0.0010"},"px":75585.38,"strike":75529.93,"result":"SKIP","why":"one side of the book is empty (nobody to buy from): yes levels 10,
+{"t":1793944806,"ticker":"KXBTC15M-26NOV060100-00","result":"MISSED","why":"no book reply landed with 1.3 s or less to go; last status None"}
+== agent journal 23:57 to 00:03
+== tick coverage 23:59:00 to 00:00:10 (rows per second)
+seconds with a row: 78 of 80; last row (left, ticker, has book): (590, 'KXBTC15M-26NOV060130-30', True)
+== font in index.html
+8: font-family:"Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex;
+10:#clock{font-size:15vw;font-weight:200;letter-spacing:.02em;color:var(--cyan);
+12:#date{font-size:2.6vw;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4vh}
+13:#wx{display:flex;gap:4vw;align-items:baseline;font-size:2.4vw;color:var(--dim)}
+14:#temp{font-size:7vw;font-weight:200;color:#e8f4ff}
+15:#cond{font-size:3vw;color:#e8f4ff}
+21:#status{display:flex;align-items:center;gap:1.2vw;font-size:2vw;letter-spacing:.2em;
+27:.lbl{font-size:1.7vw;color:var(--dim);text-transform:uppercase;letter-spacing:.15em}
+28:#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bottom:1.5vh}
+29:#ai{font-size:3vw;line-height:1.3;min-height:4vw}
+83:#mutebtn{position:fixed;right:18px;bottom:18px;padding:12px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;font:600 16px sans-serif;letter-spacing:.08em;cursor:pointer;z-index:9999;}
+113:b.fontFamily=s.font?'"'+s.font+'",system-ui,sans-serif':'';
 (exit 0)
 ```
