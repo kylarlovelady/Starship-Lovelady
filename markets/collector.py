@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.7 restart: practice-only v_snipe_all (whole wallet on the favourite in the last 15 s) + v_snipe; recorder logs market status per second (restart marker)
+# v8.8 restart: the all-in sniping test is now displayed as "$1K-Snipe" (key v_snipe_all unchanged); v_snipe practice test; recorder logs market status per second (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

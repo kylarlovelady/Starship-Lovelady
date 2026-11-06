@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 20:20 Renamed the all-in sniping test's display name to "$1K-Snipe" (key v_snipe_all unchanged so data stays linked); collector marker v8.8.
 - 2026-11-05 20:15 avg_lock_study ran (queue 053): inconclusive, only 19 usable rounds; findings in kalshi-ai.md. Plan: rerun after 24-48 h of new data.
 - 2026-11-05 20:25 Kalshi v8.7: added practice-only v_snipe_all (whole wallet on the favourite, last 15 s, hold; ALL_IN + CAP overrides in sim.py), collector marker bumped; syntax-checked and unit-tested size()/stage(). Status: pushed, awaiting Pi pull + restart and first rounds. Live mode untouched (OFF).
 - 2026-11-05 20:10 Recorder v8.6: new per-second 'ks' field = Kalshi market STATUS, close/expiration times, can_close_early, early_close_condition and prices for the current market and the just-ended one (120 s after), to learn when/why a round stops taking orders. Collector marker bumped; takes effect after the Pi pull + restart. Mock-tested locally. Status: pushed, awaiting confirmation on the Pi.

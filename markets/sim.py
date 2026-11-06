@@ -70,7 +70,7 @@ VARIANTS = {
     # SNIPING (Kylar, 2026-11-05): one favourite buy in the last ~2 minutes (13+ min into the 15), price allowed up to 97c, hold to the end. Practice only; the cap stays at UNPROVEN_CAP.
     "v_snipe": ("Reaction test: SNIPE one late favourite buy (last 2 min, up to 97\u00a2), hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 780, "MAX_TRADES": 1, "ENTRY_MAX": 0.97, "MAX_PRICE": 0.97}),
     # SNIPING ALL-IN (Kylar, 2026-11-05 19:41): the whole $1,000 wallet on the favourite in the last ~15 s of every round, hold to the end. Practice only. Whatever the book cannot fill stays in cash.
-    "v_snipe_all": ("Reaction test: SNIPE ALL-IN, whole wallet on the favourite in the last 15 s, hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 885, "MAX_TRADES": 3, "STAGE_GAP": 2, "ENTRY_MAX": 0.995, "MAX_PRICE": 0.995, "ALL_IN": 1, "CAP": 1e9}),
+    "v_snipe_all": ("$1K-Snipe: whole wallet on the favourite in the last 15 s, hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 885, "MAX_TRADES": 3, "STAGE_GAP": 2, "ENTRY_MAX": 0.995, "MAX_PRICE": 0.995, "ALL_IN": 1, "CAP": 1e9}),
 }
 STRATS.update({k: v[0] for k, v in VARIANTS.items()})
 _STATIC_V = set(VARIANTS)
