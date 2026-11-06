@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 14:10 Kalshi series probe queued (076)
+- What: read-only probe of which short-term crypto series Kalshi lists and how liquid they are (idea: the sniper only gets about 3 bets per 72 BTC rounds, so more series would mean more bets).
+- Status: queued.
+
 ## 2026-11-06 14:00 To-do added: Pi screen saver
 - What: added 'fix the Pi screen saver' to memory/todo.md Open (details still needed from Kylar).
 - Status: noted, not started.
