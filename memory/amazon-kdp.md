@@ -64,5 +64,12 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 - KDP form: title exactly as on the cover (PROCESS OPERATOR is entered as "Process Operator"), no subtitle, author/contact Lovelady LLC; tick Low-content book; AI-content disclosure answer per what is true (cover and layout built with software; text is original); upload interior PDF and cover PDF from ~/kdp-studio/books/<name>/out/ (interior.pdf, cover.pdf); preview in KDP's previewer before submit. Kylar does the upload (his account).
 - Duplicate-content risk: KDP may flag several books with the same interior and title under one account. Safest plan: publish scheme A for both titles first, see them accepted, then add B, C, E one at a time and slightly different (e.g. colour named in the series line is NOT allowed in the title; vary interior by header or notes pages if flagged). Not confirmed from KDP's pages: check the Content Guidelines in the KDP dashboard before adding colours.
 
+## Keyword plan v2 (2026-11-05 18:40, replaces the 7 keywords in the listing pack above)
+- Method (from KDP keyword guides, vappingo.com): build 20-30 candidates, filter for relevance then specificity, pick 7 with DIFFERENT intents, do not repeat words already in the title ("Process Operator" is already indexed), no singular/plural twins, no competitor/brand/Kindle Unlimited/bestseller/award terms, only what the book really is.
+- Limit: Claude cannot see Amazon search volume or competition from here. Check each phrase in Amazon's search bar (autocomplete) and look at the top results; keep phrases that autocomplete and where top books are similar notebooks.
+- Process Operator v2 (7): (1) chemical plant operator notebook (2) refinery operator gift (3) shift work notebook for operators (4) numbered pages hardcover notebook (5) industrial worker gift for men (6) oil and gas plant notebook (7) operator gift lined journal.
+- Lab Operator v2 (7): (1) laboratory technician notebook (2) chemical lab operator gift (3) plant laboratory notebook (4) numbered pages hardcover notebook (5) QC lab technician gift (6) lab work notebook for men (7) lab analyst lined journal.
+- Re-test after 2 to 4 weeks with sales/click data; change one thing at a time and log it here.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
