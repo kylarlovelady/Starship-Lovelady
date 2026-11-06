@@ -54,7 +54,7 @@
 - RISK to check: KDP can treat books with the same interior as duplicates. Check KDP's content guidelines on duplicate content before publishing all four colours of the same interior; one safe way is to differ the interior slightly (title on the owner page, a role-specific line) and the title/ISBN, and to publish one per role first.
 
 ## Look approved (Kylar, 2026-11-05 17:45)
-- Kylar approved the reference look: flat yellowish lettering (NO metallic foil), CAPS serif title, fine-grain flat cover colour, thin double border, short rule under title. Colours: A #18233D + #CDB360, B #1F372A + #CDB360, C #4D1E28 + #EFD9BE, E #36291E + #D3BC8E. Supersedes the Playfair/gold-foil version (queue 041-044).
+- Kylar approved the reference look: flat yellowish lettering (NO metallic foil), CAPS serif title, fine-grain flat cover colour, thin double border, short rule under title. Colours: backgrounds A #18233D, B #1F372A, C #4D1E28, E #36291E; lettering and borders the SAME yellow #CDB360 on all four (Kylar, 18:02). Supersedes the Playfair/gold-foil version (queue 041-044).
 - Built 8 books by tasks/kdp_build.py (queue 046). Next: verify cover size with KDP's cover calculator for 120 cream pages, write descriptions/keywords/prices, check KDP duplicate-content rules, Kylar uploads.
 
 ## Listing pack and upload steps (drafted 2026-11-05 18:05)

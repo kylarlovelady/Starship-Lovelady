@@ -32,7 +32,7 @@ from reportlab.pdfbase import pdfmetrics
 from PIL import Image, ImageChops, ImageFilter
 IN = 72.0
 # Kylar's approved look (his reference picture, 2026-11-05): flat colour + fine grain, flat (not metallic) lettering, CAPS, thin double border, short rule.
-SCHEMES = {"a": ("#18233D", "#CDB360"), "b": ("#1F372A", "#CDB360"), "c": ("#4D1E28", "#EFD9BE"), "e": ("#36291E", "#D3BC8E")}
+SCHEMES = {"a": ("#18233D", "#CDB360"), "b": ("#1F372A", "#CDB360"), "c": ("#4D1E28", "#CDB360"), "e": ("#36291E", "#CDB360")}
 TITLES = {"process-operator": ("PROCESS", "OPERATOR"), "lab-operator": ("LAB", "OPERATOR")}
 def grain(path, w_in, h_in, bg):
     dpi = 300; w, h = int(w_in * dpi), int(h_in * dpi)
