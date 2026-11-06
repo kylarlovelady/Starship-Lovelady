@@ -35,6 +35,10 @@ out["files"] = {"memory_files": len(mem), "jarvis_notes": len(glob.glob(os.path.
 arch = rd(os.path.join(R, "memory", "_archive.md")); out["dropped"] = len([l for l in arch.splitlines() if l.startswith("- ")])
 todo = rd(os.path.join(R, "memory", "todo.md")); op = todo.split("## Done")[0]
 out["todo_open"] = len([l for l in op.splitlines() if l.startswith("- ")]); out["todo_done"] = len([l for l in todo.split("## Done")[-1].splitlines() if l.startswith("- ")]) if "## Done" in todo else 0
+# Captain's briefing: the top open items (first lines of todo.md Open), and what is waiting on Kylar
+_op = [l[2:].strip() for l in op.splitlines() if l.startswith("- ")]
+out["todo_top"] = [re.sub(r"`", "", x)[:120] for x in _op[:5]]
+out["waiting_on_kylar"] = [re.sub(r"`", "", x)[:120] for x in _op if re.search(r"kylar (to|says|picks|reports|sends|decides)|waiting on (him|kylar)|needs (his|kylar)|tell claude", x, re.I)][:4]
 out["rules"] = len(re.findall(r"^\d+\. ", rd(os.path.join(R, "CLAUDE.md")), re.M))
 # wallet Jarvis/the agent can use: practice wallet from market.json, real Kalshi cash from the agent (read-only)
 wl = {}
