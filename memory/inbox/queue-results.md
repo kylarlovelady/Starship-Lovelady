@@ -1,11 +1,3 @@
-e word
-(exit 0)
-```
-
-## 2026-11-05 17:22:01 tasks/queue/041-kdp-build-scheme-a.sh
-```
-font download: 0 300724 
-
 instance Bold 0 ont /home/kylarlovelady/.local/share/fonts/PlayfairDisplay-Bold.ttf
 Attempting to fix OTLOffsetOverflowError ('GPOS', 'LookupIndex:', 4, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
 
@@ -640,5 +632,11 @@ Win = real settled result when known, otherwise the average of the last 60 Coinb
 
 ## 2026-11-05 22:58:02 tasks/queue/061-send-covers-ce.sh
 ```
+(exit 0)
+```
+
+## 2026-11-05 23:19:01 tasks/queue/062-build-orchid.sh
+```
+orchid build started in the background
 (exit 0)
 ```
