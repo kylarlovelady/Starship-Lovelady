@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 4 minutes; temp 41.1'C; throttled flags 0x0 (0x0 is clean); memory 30%; disk 10%
+- up 15 minutes; temp 40.0'C; throttled flags 0x0 (0x0 is clean); memory 28%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 3 minutes; whisper Up 3 minutes (healthy); piper Up 3 minutes (healthy); pihole Up 3 minutes (healthy); homeassistant Up 3 minutes
+- containers: openwakeword Up 15 minutes; whisper Up 15 minutes (healthy); piper Up 15 minutes (healthy); pihole Up 15 minutes (healthy); homeassistant Up 15 minutes
 
 ## Sync and schedule
-- Pi repo copy at: 0ba3ebb 43 seconds ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: f8d1fa3 12 minutes ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (11 min ago), first lines:
+- supervisor report (23 min ago), first lines:
     MARKET AGENT PROGRESS  Fri 06 Nov 03:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_hold     +106.69 over  203 rounds, wins 42%   (-9.49 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 71; errors: 0; ignored blips: 10; last activity: 13.4 h ago
+- turns: 71; errors: 0; ignored blips: 10; last activity: 13.6 h ago
 - hang-ups: you ended it x9, quiet x2
 - time to first words: avg 1.6s, slowest 4.2s over 69 answers
 
