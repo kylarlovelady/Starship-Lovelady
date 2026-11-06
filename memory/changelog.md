@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 06:15 Voice notes saved
+- What: wrote the whole voice chat into the repo: projects/field-deck.md (decisions, module list, doomsday kit, repair plan), new projects/offline-brain.md, family.md (home West Columbia, work Clute), 3d-printing.md (ASA note).
+- Status: filed. Open: model number, DeWalt/alligator-clip supply photo, ham license yes/no, separate doomsday radios or built in.
+
 ## 2026-11-06 04:55 Field Deck plan expanded
 - What: field-deck.md now has the 25 to 50 mile mesh goal, Alexa devices, Qi/magnet charging idea and a build order; new projects/parts-inventory.md for photo-identified parts.
 - Status: waiting on Kylar's model number, terrain/range target, 3D printer, charger details and part photos.
