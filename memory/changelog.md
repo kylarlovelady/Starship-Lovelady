@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 04:55 Field Deck plan expanded
+- What: field-deck.md now has the 25 to 50 mile mesh goal, Alexa devices, Qi/magnet charging idea and a build order; new projects/parts-inventory.md for photo-identified parts.
+- Status: waiting on Kylar's model number, terrain/range target, 3D printer, charger details and part photos.
+
 ## 2026-11-06 04:40 Starship Field Deck project filed
 - What: new memory/projects/field-deck.md (Note 20 Ultra + mesh radio + Linux terminal + module case); projects.md row now points to it.
 - Status: idea, waiting on model number, mesh range need and 3D printer answer.
