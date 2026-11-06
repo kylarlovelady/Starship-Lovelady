@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 16:35 15-minute markets study read; made it accumulate nightly (queue 084)
+- What: read inbox/market-catalog.md (9 coins x 280 rounds). Findings in projects/kalshi-15m-markets.md: alts are decided 1 to 4 points earlier than BTC but are thin (BTC 36 to 1,000x deeper) and calibrated; round-to-round memory and BTC lead/lag look interesting but are the same rounds repeated in every series. Rewrote series_catalog.py to cache every round (history/series15m.jsonl) and added tasks/series_catalog_daily.sh (cron 4:40 am) and tasks/lag1_btc.py (lag-1 check on about 2,800 BTC rounds).
+- Status: queue 084 installs the cron and starts the 14-day catch-up now. BTC-only rule unchanged.
+
 ## 2026-11-06 16:00 All 15-minute markets catalogued; predictability study queued (083)
 - What: new memory/projects/kalshi-15m-markets.md lists every 15-minute crypto series found; new markets/series_catalog.py (read-only) pulls each series' settled rounds and 1-minute candles and compares favourite-right rate, Brier score, spreads, volume, round-to-round memory, calibration and BTC lead/lag; queued as 083 (runs about 30 min in the background, then syncs).
 - Status: queued; BTC-only rule unchanged (this is data only).

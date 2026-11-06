@@ -8,6 +8,7 @@ For each Up/Down series (BTC, ETH, SOL, XRP, DOGE, BNB, ...): rounds, volume per
   - memory in the results: P(UP | previous round UP) vs P(UP | previous round DOWN).
   - lead/lag: does BTC's price 5 minutes out tell us something about this coin's outcome that the coin's own price does not?
 Multi-outcome series (Coin Race, Crypto Comparison) are listed but not analysed.
+Accumulates: every settled round it has seen is cached in ~/market-data/history/series15m.jsonl (prices 10/7/5/3/2 minutes before the close), so each run only fetches NEW rounds and the sample keeps growing. Runs nightly (tasks/series_catalog_daily.sh install).
 Run: python3 series_catalog.py [days=3] [budget_minutes=40]. Output: ~/starship/memory/inbox/market-catalog.md"""
 import collections, json, math, os, statistics, sys, time, urllib.error
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -15,6 +16,8 @@ import backfill as B
 BASE = B.BASE
 OUT = os.environ.get("OUTF", os.path.expanduser("~/starship/memory/inbox/market-catalog.md"))
 CHECK = (7, 5, 3, 2)            # minutes before the close
+STORE = (10, 7, 5, 3, 2)
+CACHE = os.environ.get("CACHE", os.path.expanduser("~/market-data/history/series15m.jsonl"))
 SKIP = ("CRYPTOLEAD", "CRYPTOCOMP")
 
 
@@ -116,90 +119,128 @@ def fmt(x, f="%.2f"):
     return "-" if x is None else f % x
 
 
+def load_cache():
+    C = collections.defaultdict(dict)
+    try:
+        for ln in open(CACHE):
+            try:
+                r = json.loads(ln); C[r["s"]][r["tk"]] = r
+            except (ValueError, KeyError):
+                pass
+    except OSError:
+        pass
+    return C
+
+
+def pts_of(recs, k):
+    return [(r["m"][str(k)][0], r["r"], r["m"][str(k)][1]) for r in recs if str(k) in r["m"]]
+
+
+def pair_up(recs):
+    """(previous result, this result) for rounds exactly 15 minutes apart"""
+    by = {r["c"]: r["r"] for r in recs}
+    return [(by[c - 900], by[c], c) for c in sorted(by) if (c - 900) in by]
+
+
 def main():
     days = float(sys.argv[1]) if len(sys.argv) > 1 else 3
     budget = float(sys.argv[2]) * 60 if len(sys.argv) > 2 else 2400
     t_end = time.time() + budget
     ser = list_series()
-    L = ["# Kalshi 15-minute crypto series: catalogue and predictability (last %g days)" % days, "", "Generated %s. Read-only; from Kalshi's settled rounds and 1-minute candles." % time.strftime("%Y-%m-%d %H:%M"), "",
-         "## Catalogue (what exists right now)", "", "| series | title | open round volume | bid / ask now | strike | resolves on |", "|---|---|---|---|---|---|"]
+    L = ["# Kalshi 15-minute crypto series: catalogue and predictability", "", "Generated %s. Read-only; from Kalshi's settled rounds and 1-minute candles, cached and growing (each run adds the new rounds)." % time.strftime("%Y-%m-%d %H:%M"), "",
+         "## Catalogue (what exists right now; volume = contracts traded so far in the open round)", "", "| series | title | open round volume | bid / ask now | strike | resolves on |", "|---|---|---|---|---|---|"]
     cat = {}
-    for s in ser:
-        t = s["ticker"]; mk = open_market(t); time.sleep(0.12)
-        src = ", ".join(x.get("name", "") for x in (s.get("settlement_sources") or []))[:40]
+    for s_ in ser:
+        t = s_["ticker"]; mk = open_market(t); time.sleep(0.12)
+        src = ", ".join(x.get("name", "") for x in (s_.get("settlement_sources") or []))[:40]
         cat[t] = mk
-        L.append("| %s | %s | %s | %s / %s | %s | %s |" % (t, (s.get("title") or "")[:34], mk.get("volume_fp") if mk else "-", mk.get("yes_bid_dollars") if mk else "-", mk.get("yes_ask_dollars") if mk else "-",
+        L.append("| %s | %s | %s | %s / %s | %s | %s |" % (t, (s_.get("title") or "")[:34], mk.get("volume_fp") if mk else "-", mk.get("yes_bid_dollars") if mk else "-", mk.get("yes_ask_dollars") if mk else "-",
                  (mk.get("floor_strike") or mk.get("cap_strike") or "-") if mk else "-", src or "-"))
     first = next((cat[t] for t in cat if cat[t] and "BTC" in t), None)
     if first and first.get("rules_primary"):
-        L += ["", "Rule text on a BTC round (Kalshi): " + first["rules_primary"][:400].replace("\n", " "), ""]
-    L += ["Multi-outcome series (%s) are listed but not analysed here." % ", ".join(s["ticker"] for s in ser if any(k in s["ticker"] for k in SKIP)), ""]
+        L += ["", "Rule text on a BTC round (Kalshi): " + first["rules_primary"][:420].replace("\n", " "), ""]
+    L += ["Multi-outcome series (%s) are listed but not analysed here." % ", ".join(s_["ticker"] for s_ in ser if any(k in s_["ticker"] for k in SKIP)), ""]
     open(OUT, "w").write("\n".join(L) + "\n")
-    per = {}; btc = {}
-    for s in ser:
-        t = s["ticker"]
-        if any(k in t for k in SKIP):
-            continue
-        if time.time() > t_end:
-            L.append("(out of time before %s)" % t); break
-        try:
-            st = settled(t, days, 290)
-        except Exception as e:
-            L.append("(%s: could not list settled rounds: %s)" % (t, str(e)[:60])); continue
-        rr = []
-        for close, tk, res, strike in st:
-            if time.time() > t_end:
-                break
-            rows = candles(t, tk, close); time.sleep(0.12)
-            if rows:
-                rr.append((close, res, rows))
-        per[t] = analyse(rr)
-        per[t]["rounds"] = rr
-        if t == "KXBTC15M":
-            btc = {c: mid_at(rows, c, 5) for c, res, rows in rr}
-        print("%s: %d rounds" % (t, len(rr)), flush=True)
-    # ---------------- results ----------------
+    C = load_cache(); added = collections.Counter()
+    os.makedirs(os.path.dirname(CACHE), exist_ok=True)
+    with open(CACHE, "a") as cf:
+        for s_ in ser:
+            t = s_["ticker"]
+            if any(k in t for k in SKIP) or time.time() > t_end:
+                continue
+            try:
+                st = settled(t, days, 1500)
+            except Exception as e:
+                L.append("(%s: could not list settled rounds: %s)" % (t, str(e)[:60])); continue
+            for close, tk, res, strike in st:
+                if time.time() > t_end:
+                    break
+                if tk in C[t]:
+                    continue
+                rows = candles(t, tk, close); time.sleep(0.12)
+                m = {}
+                for k in STORE:
+                    x = mid_at(rows, close, k)
+                    if x:
+                        m[str(k)] = [round(x[0], 4), round(x[1], 4)]
+                rec = {"s": t, "tk": tk, "c": close, "r": res, "m": m}
+                cf.write(json.dumps(rec) + "\n"); cf.flush(); C[t][tk] = rec; added[t] += 1
+            print("%s: +%d new, %d total" % (t, added[t], len(C[t])), flush=True)
+    per = {t: sorted([r for r in C[t].values() if r["m"]], key=lambda r: r["c"]) for t in C if C[t]}
+    per = {t: v for t, v in per.items() if v}
     L += ["## Predictability (higher favourite-right EARLIER and lower Brier = decided earlier = more predictable)", "",
-          "| series | rounds | median volume per round | UP share | spread at 5 min | spread at 2 min | fav-right 7 min | 5 min | 3 min | 2 min | Brier 5 min | Brier 3 min |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
-    for t, m in per.items():
-        sp5 = statistics.median([x[2] for x in m[5]]) if m[5] else None; sp2 = statistics.median([x[2] for x in m[2]]) if m[2] else None
-        L.append("| %s | %d | %.0f | %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (t, m["n"], m["vol"], fmt(m["up"] * 100 if m["up"] is not None else None, "%.0f%%"),
-                 fmt(sp5 * 100 if sp5 is not None else None, "%.1fc"), fmt(sp2 * 100 if sp2 is not None else None, "%.1fc"),
-                 *[("%s (%d)" % (fmt(fav_right(m[k])[1] * 100 if fav_right(m[k])[1] is not None else None, "%.0f%%"), fav_right(m[k])[0])) for k in CHECK], fmt(brier(m[5]), "%.3f"), fmt(brier(m[3]), "%.3f")))
-    L += ["", "## Memory: does the previous round's result tell us anything? (P(UP) after an UP round vs after a DOWN round)", "", "| series | after UP (n) | after DOWN (n) |", "|---|---|---|"]
-    for t, m in per.items():
-        a, pa, b, pb = m["mem"]
-        L.append("| %s | %s (%d) | %s (%d) |" % (t, fmt(pa * 100 if pa is not None else None, "%.0f%%"), a, fmt(pb * 100 if pb is not None else None, "%.0f%%"), b))
-    L += ["", "## Calibration at 5 minutes out (did the favourite win as often as its price said?)", "", "| series | price bucket (YES mid) | rounds | YES won | avg mid | gap |", "|---|---|---|---|---|---|"]
-    for t, m in per.items():
+          "| series | rounds cached | span (days) | UP share | fav-right 7 min | 5 min | 3 min | 2 min | Brier 5 min | Brier 3 min | open round volume now |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+    for t, v in per.items():
+        span = (v[-1]["c"] - v[0]["c"]) / 86400.0
+        row = [fav_right(pts_of(v, k)) for k in CHECK]
+        L.append("| %s | %d | %.1f | %.0f%% | %s | %s | %s | %s | %s | %s | %s |" % (t, len(v), span, 100.0 * sum(r["r"] for r in v) / len(v),
+                 *["%s (%d)" % (fmt(x[1] * 100 if x[1] is not None else None, "%.0f%%"), x[0]) for x in row], fmt(brier(pts_of(v, 5)), "%.3f"), fmt(brier(pts_of(v, 3)), "%.3f"), (cat.get(t) or {}).get("volume_fp") or "-"))
+    L += ["", "## Memory: P(UP) after an UP round vs after a DOWN round (rounds exactly 15 minutes apart; older half / newer half in brackets)", "", "| series | after UP (n) | after DOWN (n) | older half: up / down | newer half: up / down |", "|---|---|---|---|---|"]
+    for t, v in per.items():
+        pr = pair_up(v)
+        def rate(x, want): 
+            q = [b for a, b, c in x if a == want]; return (sum(q) / len(q) if q else None, len(q))
+        mid_c = sorted(c for a, b, c in pr)[len(pr) // 2] if pr else 0
+        o = [x for x in pr if x[2] < mid_c]; n_ = [x for x in pr if x[2] >= mid_c]
+        a1, a0 = rate(pr, 1), rate(pr, 0)
+        f = lambda r: fmt(r[0] * 100 if r[0] is not None else None, "%.0f%%")
+        L.append("| %s | %s (%d) | %s (%d) | %s / %s | %s / %s |" % (t, f(a1), a1[1], f(a0), a0[1], f(rate(o, 1)), f(rate(o, 0)), f(rate(n_, 1)), f(rate(n_, 0))))
+    L += ["", "## Calibration at 5 minutes out (did the price mean what it said?)", "", "| series | price bucket (YES mid) | rounds | YES won | avg mid | gap |", "|---|---|---|---|---|---|"]
+    for t, v in per.items():
         bk = collections.defaultdict(list)
-        for mid, res, sp in m[5]:
+        for mid, res, sp in pts_of(v, 5):
             bk[min(int(mid * 5), 4)].append((mid, res))
         for k in sorted(bk):
-            v = bk[k]
-            if len(v) >= 8:
-                w = sum(x[1] for x in v) / len(v); am = sum(x[0] for x in v) / len(v)
-                L.append("| %s | %d-%dc | %d | %.0f%% | %.0fc | %+.0fc |" % (t, k * 20, k * 20 + 20, len(v), 100 * w, 100 * am, 100 * (w - am)))
-    # lead/lag: BTC's mid 5 minutes out vs the other coin's outcome beyond its own price
-    L += ["", "## Lead / lag: does BTC's 5-minute price tell us about this coin beyond the coin's own price? (rounds where the coin's own mid was 20-80c)", "",
-          "| series | rounds | outcome minus own mid when BTC mid >= 70c (n) | when BTC mid <= 30c (n) |", "|---|---|---|---|"]
-    for t, m in per.items():
+            q = bk[k]
+            if len(q) >= 8:
+                w = sum(x[1] for x in q) / len(q); am = sum(x[0] for x in q) / len(q)
+                L.append("| %s | %d-%dc | %d | %.0f%% | %.0fc | %+.0fc |" % (t, k * 20, k * 20 + 20, len(q), 100 * w, 100 * am, 100 * (w - am)))
+    btc = {r["c"]: r["m"]["5"][0] for r in per.get("KXBTC15M", []) if "5" in r["m"]}
+    L += ["", "## Lead / lag: does BTC's 5-minute price tell us about this coin beyond the coin's own price? (own mid 20-80c; older / newer half in brackets)", "",
+          "| series | rounds | outcome minus own mid when BTC mid >= 70c (n) | when BTC mid <= 30c (n) | older half: high / low | newer half: high / low |", "|---|---|---|---|---|---|"]
+    for t, v in per.items():
         if t == "KXBTC15M" or not btc:
             continue
-        hi, lo = [], []
-        for c, res, rows in m["rounds"]:
-            x = mid_at(rows, c, 5); b = None
-            for bc in (c, c + 1, c - 1):
-                if bc in btc and btc[bc]:
-                    b = btc[bc][0]; break
-            if x is None or b is None or not (0.2 <= x[0] <= 0.8):
+        rows_ = []
+        for r in v:
+            if "5" not in r["m"] or r["c"] not in btc or not (0.2 <= r["m"]["5"][0] <= 0.8):
                 continue
-            (hi if b >= 0.7 else lo if b <= 0.3 else []).append(res - x[0])
-        L.append("| %s | %d | %s (%d) | %s (%d) |" % (t, len(hi) + len(lo), fmt(100 * sum(hi) / len(hi) if hi else None, "%+.0fc"), len(hi), fmt(100 * sum(lo) / len(lo) if lo else None, "%+.0fc"), len(lo)))
+            b = btc[r["c"]]
+            rows_.append((r["c"], "hi" if b >= 0.7 else "lo" if b <= 0.3 else "mid", r["r"] - r["m"]["5"][0]))
+        if not rows_:
+            continue
+        cm = sorted(x[0] for x in rows_)[len(rows_) // 2]
+        def avg(q, tag):
+            z = [x[2] for x in q if x[1] == tag]; return (sum(z) / len(z) if z else None, len(z))
+        g = lambda a: fmt(a[0] * 100 if a[0] is not None else None, "%+.0fc")
+        h, l_ = avg(rows_, "hi"), avg(rows_, "lo")
+        ro = [x for x in rows_ if x[0] < cm]; rn = [x for x in rows_ if x[0] >= cm]
+        L.append("| %s | %d | %s (%d) | %s (%d) | %s / %s | %s / %s |" % (t, len(rows_), g(h), h[1], g(l_), l_[1], g(avg(ro, "hi")), g(avg(ro, "lo")), g(avg(rn, "hi")), g(avg(rn, "lo"))))
     L += ["", "## How to read this", "",
-          "- 'More predictable' has two meanings: (1) the round is decided earlier (high favourite-right rate and low Brier early), which is good for a safe-late-bet style but the market already prices it; (2) the market mis-prices it (calibration gap, memory, lead/lag), which is the only thing that makes money.",
-          "- A thin market (low volume) may look predictable only because its quotes are wide and stale, and a $1,000 bet would move it. Volume and spread are shown for that reason.",
-          "- About 290 rounds per series: gaps under about 10c per bucket, or differences of a few percent, are noise. Anything that looks good gets the same older-half / newer-half and bootstrap test as the longshot idea before it is believed.",
+          "- 'More predictable' has two meanings: (1) decided earlier (high favourite-right rate and low Brier early); the market already prices that, so it is not money by itself; (2) mis-priced (calibration gap, memory, lead/lag), which is the only thing that makes money.",
+          "- All the coins move together with BTC, so ten series agreeing is NOT ten independent confirmations: the same market-wide moves show up in every one. Judge by the older-half / newer-half columns and by sample size.",
+          "- Thin markets: compare the open-round volume column; a $1,000 bet would move the thin ones.",
+          "- Gaps under about 10c per bucket, or a few percent in the memory table, are noise at these sizes. Anything that holds up gets the bootstrap and older/newer test before it is believed.",
           "- Practice only. Standing rule is BTC only for real trading; this study is data, not a change to what the agent bets on."]
     open(OUT, "w").write("\n".join(L) + "\n")
     print("done", OUT)
