@@ -1,6 +1,4 @@
-kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
-total 2000
-drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
+4096 Nov  5 17:30 .
 drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
 -rw-rw-r-- 1 kylarlovelady kylarlovelady 1017733 Nov  5 17:46 cover-guides.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady 1000401 Nov  5 17:46 cover.png
@@ -576,5 +574,12 @@ seconds with a row: 78 of 80; last row (left, ticker, has book): (590, 'KXBTC15M
 29:#ai{font-size:3vw;line-height:1.3;min-height:4vw}
 83:#mutebtn{position:fixed;right:18px;bottom:18px;padding:12px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;font:600 16px sans-serif;letter-spacing:.08em;cursor:pointer;z-index:9999;}
 113:b.fontFamily=s.font?'"'+s.font+'",system-ui,sans-serif':'';
+(exit 0)
+```
+
+## 2026-11-06 00:37:01 tasks/queue/067-popup-font.sh
+```
+patched: pop-up text now uses the normal font
+1
 (exit 0)
 ```
