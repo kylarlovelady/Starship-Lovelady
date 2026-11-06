@@ -54,6 +54,7 @@ AUTO_MIN_ROUNDS = 80    # rounds a strategy needs before the Auto wallet may fol
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
+ALL_IN = 0              # reaction test only: bet the WHOLE wallet on the favourite, every round, no edge test, no staging (sniping test); the book depth still limits the fill
 VARIANTS = {
     "v_hold": ("Reaction test: never sell early, hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0}),
     "v_trail": ("Reaction test: trail the profit (up 30\u00a2, sell if it falls 10\u00a2)", "distance", {"EXIT_P": 30.0, "EXIT_D": 10.0}),
@@ -68,6 +69,8 @@ VARIANTS = {
     "v_late": ("Reaction test: wait 5 minutes before the first bet", "distance", {"ENTRY_AFTER": 300}),
     # SNIPING (Kylar, 2026-11-05): one favourite buy in the last ~2 minutes (13+ min into the 15), price allowed up to 97c, hold to the end. Practice only; the cap stays at UNPROVEN_CAP.
     "v_snipe": ("Reaction test: SNIPE one late favourite buy (last 2 min, up to 97\u00a2), hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 780, "MAX_TRADES": 1, "ENTRY_MAX": 0.97, "MAX_PRICE": 0.97}),
+    # SNIPING ALL-IN (Kylar, 2026-11-05 19:41): the whole $1,000 wallet on the favourite in the last ~15 s of every round, hold to the end. Practice only. Whatever the book cannot fill stays in cash.
+    "v_snipe_all": ("Reaction test: SNIPE ALL-IN, whole wallet on the favourite in the last 15 s, hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 885, "MAX_TRADES": 3, "STAGE_GAP": 2, "ENTRY_MAX": 0.995, "MAX_PRICE": 0.995, "ALL_IN": 1, "CAP": 1e9}),
 }
 STRATS.update({k: v[0] for k, v in VARIANTS.items()})
 _STATIC_V = set(VARIANTS)
@@ -453,6 +456,8 @@ def conv_mult(sigs, side, edge):
 
 def size(edge, bal, pos_cost, mult=1.0, ref=None):
     ref = ref or START
+    if ALL_IN:
+        return max(0.0, bal)                                  # sniping all-in test: the whole wallet; the book depth and the cash left decide the fill
     mult *= max(0.35, min(1.0, (bal + pos_cost) / ref))     # a shrinking wallet bets smaller, so it lasts more rounds
     if mult <= 0:
         return 0.0
@@ -465,6 +470,8 @@ def size(edge, bal, pos_cost, mult=1.0, ref=None):
 
 def stage(dollars, pname, first):
     """Build a position in steps: the first buy of a round is only a share of the intended size."""
+    if ALL_IN:
+        return dollars
     if first and pname != "hold" and dollars > FLOOR:
         return max(FLOOR, dollars * STAGE_FIRST)
     return dollars
@@ -936,7 +943,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
@@ -1013,12 +1020,14 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
             act, why = swing_step(a, w, now, window_len - left, left, price, (bid + ask) / 2.0, ask, bid, pm, sigs, score, sim, why)
         elif w["first"] is None and w["trades"] == 0 and window_len - left < ENTRY_AFTER:
             act = "waiting"; why += " Waiting %d s before the first bet (reaction test)." % int(ENTRY_AFTER - (window_len - left))
-        elif w["first"] is None and w["trades"] == 0 and (MIN_BET > 0 or max(eU, eD) > EDGE_MIN):   # min bet above 0 = must bet every round
+        elif w["first"] is None and w["trades"] == 0 and (MIN_BET > 0 or ALL_IN or max(eU, eD) > EDGE_MIN):   # min bet above 0 = must bet every round
             s = "UP" if p >= 0.5 else "DOWN"
             e = side_p(s) - ask_s(s) - fee(ask_s(s))
             if MIN_BET <= 0:
                 s = "UP" if eU >= eD else "DOWN"; e = max(eU, eD)
-            cm, cwhy = conv_mult(sigs, s, e) if gate else (1.0, "")
+            if ALL_IN:
+                s = "UP" if (ask + bid) / 2.0 >= 0.5 else "DOWN"; e = 1.0      # the market's favourite; no edge test
+            cm, cwhy = conv_mult(sigs, s, e) if (gate and not ALL_IN) else (1.0, "")
             if gate and cm == 0.0 and MIN_BET <= 0:
                 act = "waiting"; why += " Sitting out: not enough agreement between its sources (" + cwhy + ")."
             else:

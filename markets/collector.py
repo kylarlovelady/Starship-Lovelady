@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.6 restart: recorder now logs each market's STATUS every second (and the just-ended round for 120 s) to learn when and why Kalshi stops taking orders; also v_snipe practice test (restart marker)
+# v8.7 restart: practice-only v_snipe_all (whole wallet on the favourite in the last 15 s) + v_snipe; recorder logs market status per second (restart marker)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
