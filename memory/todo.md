@@ -2,6 +2,7 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- 2026-11-06 PI SCREEN SAVER: fix the screen saver on the Pi's home screen (kiosk Chromium at http://localhost:8080, ~/hub-dashboard). Kylar did not say what it does wrong yet (blanks, never blanks, or wrong look): ask him, then check the display's screen-blanking/DPMS settings and the kiosk launch flags on the Pi.
 - 2026-11-06 Kalshi $1K-Snipe: let the z-rule collect rounds; investigate every loss; first MISSED round at 00:00:06 (no book reply with 1.3 s left, status None, likely the v9.1 restart) to check; decide z threshold later (kalshi-ai.md).
 - 2026-11-06 KDP: navy A and green B IN REVIEW; Kylar reports the result; then burgundy C, orchid E, Lab Operator (amazon-kdp.md, kdp_series.json).
 - 2026-11-06 Cell Wi-Fi unit for Kylar (Verizon, truck/house/work, own data SIM, antenna ports): waiting on his SIM choice (separate prepaid vs connected-device line) and the hotspot tests (force LTE, check hotspot data use); then unit #2 for the buddy in Mexico (projects/cell-booster.md).

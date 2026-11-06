@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 14:00 To-do added: Pi screen saver
+- What: added 'fix the Pi screen saver' to memory/todo.md Open (details still needed from Kylar).
+- Status: noted, not started.
+
 ## 2026-11-06 13:55 Pi-hole work started (at home)
 - What: queued tasks/queue/075-pihole-check.sh (read-only: container, DNS answering, blocking test). Plan: confirm it answers, reserve the Pi address at the router, pilot on the iPad only, then phones, then TVs.
 - Status: queued; results in memory/inbox/queue-results.md.
