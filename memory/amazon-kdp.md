@@ -74,6 +74,12 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 ## ISBN decision (2026-11-05 19:12)
 - KDP's low-content hardcover setup offers "Publish without an ISBN" or "Add your own ISBN" (no free ISBN). Chosen: without. KDP likely prints no barcode, so the white barcode box was removed from the covers (queue 050); 'Lovelady LLC' stays on the back bottom-left. Confirm in KDP's previewer. Print options: cream paper, 6x9, no bleed, matte cover finish.
 
+## Reusable listing text (saved 2026-11-05 22:10, use for every colour and title)
+- Description, Process Operator (all colours): "A durable hardcover notebook for process operators: 120 numbered, lined pages (6 x 9 in) on cream paper, with an owner page for name, phone, email and company. Keep shift notes, readings, handoffs, checklists and daily logs in one place built to hold up on the job."
+- Description, Lab Operator: same with "lab operators" and "samples, results" in place of "handoffs".
+- Keywords (7) used for book 1, Process Operator A (Kylar's final choice was his own list built from the suggested 7; confirm if it differed): Notebook for work; Hardcover lined notebook; Blue collar gifts; Plant operator gifts; Tradesman notebook; Work notebook for men; Notebook with numbered pages.
+- Settings reused for every book: Hardcover, title as on the cover ("Process Operator"), no subtitle, author Lovelady LLC, Non-Classifiable, Low-content ticked, no ISBN, AI-generated content Yes (layout/design), Cream paper, no bleed, matte, 6x9, price $18.99 USD (about $4.30 royalty), interior.pdf with the refined owner page (same file for every colour of a title), cover.pdf per colour.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
 
