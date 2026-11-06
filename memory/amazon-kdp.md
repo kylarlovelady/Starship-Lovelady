@@ -76,3 +76,6 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
+
+## Done
+- 2026-11-05 21:46 Process Operator, scheme A (navy), hardcover: SUBMITTED to KDP, status "In review", list price $18.99 USD (royalty about $4.30 per book; printing $7.09, 60% rate). Used the refined owner page (tasks/kdp_owner.py), AI-content question answered Yes (layout/design), no ISBN, no barcode box (KDP added its own), Non-Classifiable, low-content ticked. Review takes up to 72 hours. Next: Lab Operator A with the same steps, then B, C, E one at a time after A is accepted (duplicate-content plan above).
