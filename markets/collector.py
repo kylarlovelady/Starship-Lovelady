@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.8 restart: the all-in sniping test is now displayed as "$1K-Snipe" (key v_snipe_all unchanged); v_snipe practice test; recorder logs market status per second (restart marker)
+# v8.9 restart: $1K-Snipe is now its own 1-second sniper (sniper.py); wallet pick no longer forced back to Auto on restart
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
@@ -1206,7 +1206,7 @@ def main():
         exit_learn.start(DIR)
         try:                                              # the pretend wallet follows Auto (the best proven strategy); a live session is never touched
             rp_ = os.path.join(DIR, "run.json"); r_ = load(rp_, {})
-            if r_.get("active") and not r_.get("live") and r_.get("strategy") != "auto":
+            if r_.get("active") and not r_.get("live") and not r_.get("strategy"):      # only fill in a missing pick; never override what Kylar chose
                 r_["strategy"] = "auto"; save_atomic(rp_, r_)
         except Exception:
             pass

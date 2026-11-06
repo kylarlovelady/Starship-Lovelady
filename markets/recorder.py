@@ -304,6 +304,10 @@ def run(d, stop=None):
         feeds["ktrades"].poll(t0)
         try:
             row = build_row(t0, feeds, SHARED)
+            try:
+                import sniper; sniper.hook(row)
+            except Exception:
+                pass
             day = time.strftime("%Y%m%d", time.localtime(t0))
             with open(_path(d, day), "a") as fh:
                 fh.write(json.dumps(row, separators=(",", ":")) + "\n")
@@ -316,6 +320,10 @@ def run(d, stop=None):
 
 
 def start(d):
+    try:
+        import sniper; sniper.start()
+    except Exception:
+        pass
     th = threading.Thread(target=run, args=(d,), daemon=True, name="recorder")
     th.start()
     return th
