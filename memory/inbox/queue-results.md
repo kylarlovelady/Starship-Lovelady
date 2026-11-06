@@ -1,12 +1,4 @@
-ady kylarlovelady  343754 Nov  5 17:50 cover.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  578551 Nov  5 17:50 front.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:50 page1.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:50 page2.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-c:
-total 2556
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+wxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
 -rw-rw-r--  1 kylarlovelady kylarlovelady  366146 Nov  5 17:50 cover-guides.png
 (exit 0)
 ```
@@ -622,5 +614,23 @@ Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
 hef: File does not exist: /usr/share/hailo-models/resnet_v1_50_h8.hef
 Run with --help for more information.
 12
+(exit 0)
+```
+
+## 2026-11-06 01:28:01 tasks/queue/070-hailo-bench.sh
+```
+
+=======
+Summary
+=======
+FPS     (hw_only)                 = 283.044
+        (streaming)               = 282.696
+Latency (hw)                      = 5.04367 ms
+Device 0001:01:00.0:
+  Power in streaming mode (average) = 1.78362 W
+                          (max)     = 1.79414 W
+== temp
+A subcommand is required
+Run with --help for more information.
 (exit 0)
 ```
