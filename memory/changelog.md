@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 04:00 Oracle study result + Note 20 Ultra idea filed
+- What: read oracle-study.md (300 rounds); no proven signal yet, details in kalshi-ai.md. Filed the Galaxy Note 20 Ultra repurpose idea in projects.md and todo.md.
+- Status: study done; walk-forward test is the next step.
+
 ## 2026-11-06 03:20 Oracle study made memory-light (rerun queued as 073)
 - Why: the Pi rebooted (uptime 0 minutes in the 03:00 snapshot) right as the first run (queue 071) started. I cannot prove the study caused it, but it loaded every recorded second into memory, so I rewrote it to keep only the needed numbers, default 3 days, and queue 073 caps it at 2 GB and lowest priority.
 - Status: queued.

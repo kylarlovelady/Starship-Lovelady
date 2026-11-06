@@ -45,3 +45,5 @@ Open items on top. When finished, move the line to Done with the date (never del
 - 2026-11-06 Starship page loading FIXED (stray semicolon in the 15 s refresh broke the whole script); Hub tab clean-up still open (was: Pi home pages are sloppy and cluttered, and the Starship page is not loading (reported b...)
 - 2026-11-06 per-second ticks found: ~/market-data/ticks-*.jsonl, 268 rounds used by the close study (was: Maker study found 0 rounds of tick data; Claude to check where the per-second ticks are ...)
 - 2026-11-06 reviewed in the sniper/close studies (was: Kalshi: review 12 h results in the morning....)
+
+- [ ] 2026-11-06 Galaxy Note 20 Ultra repurpose: Kylar asked for ideas (terminal / screen / sensors / Linux). Ask: truck or home, has SIM, which carrier model. Termux + Tailscale needs no unlock; full Linux needs an unlocked bootloader (US Snapdragon models are locked).
