@@ -1,33 +1,4 @@
- to services
-(exit 0)
-```
-
-## 2026-11-05 17:04:01 tasks/queue/037-home-mic-record-only.sh
-```
-recording flag added
-NOT healthy: rolled back
-active
-Nov 05 17:04:39 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 17:04:39 LoveladyMainAiHub bash[3005072]: INFO:root:Ready
-Nov 05 17:04:40 LoveladyMainAiHub bash[3005072]: INFO:root:Connected to services
-(exit 0)
-```
-
-## 2026-11-05 17:10:01 tasks/queue/038-home-mic-record-diagnose.sh
-```
-4:--name 'main hub' \
-#!/bin/bash
-cd ~/wyoming-satellite
-script/run \
---name 'main hub' \
---debug-recording-dir '/home/kylarlovelady/voice-data/home-mic' \
---uri 'tcp://127.0.0.1:10700' \
---mic-command '/home/kylarlovelady/hub-mic.py plughw:3,0' \
---snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
---wake-uri 'tcp://127.0.0.1:10400' \
---wake-word-name 'hey_jarvis' \
---detect-command 'bash -c "echo idle > /tmp/hub-state"' \
---detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
+:8080/event/wake > /dev/null"' \
 --stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
 --transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
 --synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
@@ -592,5 +563,40 @@ REFUSED: header must be '#!/bin/bash' then '# QUEUE-OK'
 
 ## 2026-11-05 21:10:01 tasks/queue/055-kdp-owner-page.sh
 ```
+(exit 0)
+```
+
+## 2026-11-05 21:13:01 tasks/queue/056-liq-by-second.sh
+```
+# Liquidity before the close (auto): dollars buyable on the favourite at 99c or less
+
+Rounds seen: 268. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable. Seconds with no row count as nothing buyable.
+
+| s before close | rounds with data | any | full ($1,000) | median $ buyable |
+|---|---|---|---|---|
+| 0 | 268 | 0% | 0% | $0 |
+| 1 | 268 | 0% | 0% | $0 |
+| 2 | 268 | 1% | 0% | $0 |
+| 3 | 268 | 1% | 0% | $0 |
+| 4 | 268 | 1% | 1% | $0 |
+| 5 | 268 | 1% | 1% | $0 |
+| 6 | 268 | 1% | 1% | $0 |
+| 7 | 268 | 2% | 2% | $0 |
+| 8 | 268 | 2% | 1% | $0 |
+| 9 | 268 | 3% | 2% | $0 |
+| 10 | 268 | 3% | 2% | $0 |
+| 11 | 268 | 3% | 2% | $0 |
+| 12 | 268 | 3% | 3% | $0 |
+| 13 | 268 | 4% | 3% | $0 |
+| 14 | 268 | 4% | 3% | $0 |
+| 15 | 268 | 4% | 4% | $0 |
+| 16 | 268 | 4% | 3% | $0 |
+| 17 | 268 | 4% | 3% | $0 |
+| 18 | 268 | 4% | 3% | $0 |
+| 19 | 268 | 5% | 4% | $0 |
+| 20 | 268 | 5% | 3% | $0 |
+| 25 | 268 | 7% | 4% | $0 |
+| 30 | 268 | 9% | 5% | $0 |
+| 40 | 268 | 16% | 11% | $0 |
 (exit 0)
 ```
