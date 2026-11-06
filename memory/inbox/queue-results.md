@@ -1,19 +1,4 @@
-ts embedded
-  OK Author / pen name set
-  OK Title set
-  OK Title + subtitle length OK
-  WARN Book description not written
-  WARN 0 of 7 keywords
-  WARN Price not set
-  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
-total 1988
-drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:22 .
-drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:22 ..
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1015384 Nov  5 17:22 cover-guides.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady  994007 Nov  5 17:22 cover.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:22 page1.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:22 page2.png
+arlovelady    1569 Nov  5 17:22 page2.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:22 page3.png
 
 /home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
@@ -630,5 +615,18 @@ Description: A durable hardcover notebook for lab operators: 120 numbered, lined
 Keywords: Notebook for work; Hardcover lined notebook; Tradesman notebook; Work notebook for men; Blue collar gifts; Lab technician gifts; Blue collar gifts for women
 Colours: Navy (A), Forest green (B), Burgundy (C), Orchid purple (E)
 
+(exit 0)
+```
+
+## 2026-11-06 00:01:01 tasks/queue/064-starship-check2.sh
+```
+y Jarvis voice assistant (phone) | in progress. Next: Truck test with the replay log; tune speed, hang-ups, voice ID
+y Jarvis at home (Home Assistant speaker) | in progress. Next: Add-on installed; Jarvis Hub integration added in Home Assistant (Kylar, 2026-11-05); test at home, t
+y Shared memory (Claude, Jarvis, Pi) | in progress. Next: Run for a week; daily Claude check to file inbox notes
+y Pi health and network | in progress. Next: Net watchdog installed 2026-11-05; at-home tasks (router reservations, Pi-hole pilot)
+crew.json written
+page copy: same as repo
+projects rows in served json: 14
+page 200 147167b
 (exit 0)
 ```
