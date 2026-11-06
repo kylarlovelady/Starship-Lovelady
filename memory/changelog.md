@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 20:35 Added tasks/snipe_autopsy.py (loss post-mortems for $1K-Snipe and v_snipe, run from crew_report.py every ~5 min -> memory/inbox/snipe-autopsy.md). Tested on synthetic data locally; real output appears after the first losing round on the Pi.
 - 2026-11-05 20:20 Renamed the all-in sniping test's display name to "$1K-Snipe" (key v_snipe_all unchanged so data stays linked); collector marker v8.8.
 - 2026-11-05 20:15 avg_lock_study ran (queue 053): inconclusive, only 19 usable rounds; findings in kalshi-ai.md. Plan: rerun after 24-48 h of new data.
 - 2026-11-05 20:25 Kalshi v8.7: added practice-only v_snipe_all (whole wallet on the favourite, last 15 s, hold; ALL_IN + CAP overrides in sim.py), collector marker bumped; syntax-checked and unit-tested size()/stage(). Status: pushed, awaiting Pi pull + restart and first rounds. Live mode untouched (OFF).

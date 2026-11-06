@@ -48,6 +48,9 @@ except Exception: pass
 try:
     import subprocess as _sp; _sp.run(["python3", os.path.join(R, "tasks", "home_mic_report.py")], timeout=60, capture_output=True)
 except Exception: pass
+try:
+    _sp.run(["python3", os.path.join(R, "tasks", "snipe_autopsy.py")], timeout=60, capture_output=True)
+except Exception: pass
 out["wallet"] = wl
 json.dump(out, open(os.path.join(W, "crew.json"), "w"))
 print("crew.json written")
