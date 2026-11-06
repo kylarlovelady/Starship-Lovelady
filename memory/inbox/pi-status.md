@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 11 hours, 15 minutes; temp 43.9'C; throttled flags 0x0 (0x0 is clean); memory 35%; disk 10%
+- up 11 hours, 45 minutes; temp 43.9'C; throttled flags 0x0 (0x0 is clean); memory 34%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 11 hours; whisper Up 11 hours (healthy); piper Up 11 hours (healthy); pihole Up 11 hours (healthy); homeassistant Up 11 hours
+- containers: openwakeword Up 12 hours; whisper Up 12 hours (healthy); piper Up 12 hours (healthy); pihole Up 12 hours (healthy); homeassistant Up 12 hours
 
 ## Sync and schedule
-- Pi repo copy at: 5eeb2a5 8 minutes ago: Kalshi forward-test results filed: longshot rejected, maker inconclusive
+- Pi repo copy at: 8bffbaf 30 minutes ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (23 min ago), first lines:
+- supervisor report (53 min ago), first lines:
     MARKET AGENT PROGRESS  Fri 06 Nov 14:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_x40223631   +58.21 over  123 rounds, wins 41%   (-21.82 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 24.6 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 25.1 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 
