@@ -1,4 +1,4 @@
-es: average size $3.12, typical (std) $6.70, 90th percentile $9.82, 99th $27.15, 99.9th $51.52, biggest $146.20.
+$27.15, 99.9th $51.52, biggest $146.20.
 - So in 60 s BTC typically wanders about $52 (std), and in 10 s about $21; the sqrt-of-time rule is what the z formula below uses.
 
 ## 2. Does Kalshi close rounds early?
@@ -534,4 +534,9 @@ Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or
 | 180s | 0.05 | 61 | 28% | +2.4% | 0.27 |
 | 180s | 0.10 | 31 | 32% | +32.3% | 0.24 |
 | 180s | 0.20 | 1 | 100% | +490.3% (exit 0)
+```
+
+## 2026-11-06 13:01:02 tasks/queue/074-send-cover-a.sh
+```
+(exit 0)
 ```
