@@ -34,9 +34,17 @@ def hook(row):
         from calendar import timegm
         ce = timegm(time.strptime((k.get("close_time") or "")[:19], "%Y-%m-%dT%H:%M:%S"))
         with _L:
+            prev = _ST.get("cur")
+            if prev and prev["tk"] != tk and _ST.get("zmax"):
+                zm = _ST["zmax"]; log({"t": int(time.time()), "ticker": prev["tk"], "result": "ROUND", "max_abs_z": round(zm[0], 2), "left_at_max_z": round(zm[1], 1), "z_ever_ge_min": zm[0] >= Z_MIN, "bought": prev["tk"] in _ST["fired"] and zm[2]})
+                _ST["zmax"] = None
             _ST["cur"] = {"tk": tk, "ce": ce, "strike": k.get("floor_strike"), "px": row.get("px")}
             if row.get("px") is not None:
                 h = _ST.setdefault("hist", []); h.append((row["t"], float(row["px"]))); del h[:-90]
+                zz, _sg = zscore(_ST["cur"], ce - row["t"])
+                if zz is not None:
+                    zm = _ST.get("zmax")
+                    if not zm or abs(zz) > zm[0]: _ST["zmax"] = (abs(zz), ce - row["t"], zm[2] if zm else False)
     except Exception: pass
 def _get(url, timeout=2.5):
     req = urllib.request.Request(url, headers={"User-Agent": "starship-market-agent/1.0"})
@@ -89,6 +97,11 @@ def fire(tk, ce, strike, px, ob, t_req, t_resp, status, side_seen, mode="close",
 Z_MIN = 4.0              # model: price is this many standard deviations from the target (z = gap / (sigma_per_second * sqrt(seconds left)))
 Z_ASK_MAX = 0.985        # and the favourite can still be bought at or below this price
 Z_LEFT_MIN = 4.0         # never fire the z-rule inside the last 4 s (the 1.3 s close rule covers that)
+def zlog(c, left, z, sg, r, base_why=""):
+    """log the FIRST z-rule attempt of a round that did not buy (so every round is explained)"""
+    if c["tk"] in _ST.setdefault("zlogged", set()): return
+    _ST["zlogged"].add(c["tk"])
+    log({"t": int(time.time()), "ticker": c["tk"], "result": "Z_NOBUY", "z": round(z, 2), "left": round(left, 1), "sigma_per_s": round(sg, 2), "why": {"NOASK": "z reached the trigger but nothing for sale at or below %.1fc" % (Z_ASK_MAX * 100), "NOBOOK": "z reached the trigger but one side of the book was empty", "SKIPPED": "model side and market favourite disagreed"}.get(r, r)})
 def zscore(c, left):
     h = list(_ST.get("hist") or [])[-61:]
     if len(h) < 40 or c.get("strike") is None or c.get("px") is None or left < 1: return None, None
@@ -120,7 +133,8 @@ def watch_loop():
                 except Exception: continue
                 r = fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None, mode="z", maxpx=Z_ASK_MAX, force_side="YES" if z > 0 else "NO",
                          extra={"z": round(z, 2), "sigma_per_s": round(sg, 2), "left_at_decision": round(left, 1)})
-                if r == "BOUGHT": _ST["fired"].add(c["tk"])
+                if r == "BOUGHT": _ST["fired"].add(c["tk"]); (_ST.get("zmax") and _ST.__setitem__("zmax", (_ST["zmax"][0], _ST["zmax"][1], True)))
+                else: zlog(c, left, z, sg, r)
                 continue
             if time.time() - st_t >= 1.0:
                 st_t = time.time()
@@ -134,7 +148,8 @@ def watch_loop():
             z, sg = zscore(c, c["ce"] - t1)
             if z is not None and abs(z) >= Z_MIN and (c["ce"] - t1) >= Z_LEFT_MIN:
                 r = fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None, mode="z", maxpx=Z_ASK_MAX, force_side="YES" if z > 0 else "NO", extra={"z": round(z, 2), "sigma_per_s": round(sg, 2)})
-                if r == "BOUGHT": _ST["fired"].add(c["tk"]); continue
+                if r == "BOUGHT": _ST["fired"].add(c["tk"]); (_ST.get("zmax") and _ST.__setitem__("zmax", (_ST["zmax"][0], _ST["zmax"][1], True))); continue
+                else: zlog(c, c["ce"] - t1, z, sg, r)
             if c["ce"] - t1 <= FIRE_LEFT and c["ce"] - t1 > -0.5:
                 _ST["fired"].add(c["tk"]); fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None, mode="close")
             time.sleep(0.05)

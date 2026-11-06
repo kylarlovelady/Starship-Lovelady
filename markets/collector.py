@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v9.0 restart: $1K-Snipe adds the z-rule (buy when the price is 4 standard deviations from the target and still for sale at 98.5c or less); close rule stays as fallback
+# v9.1 restart: sniper logs a ROUND summary (max z per round) and every z-rule round that did not buy, with the reason
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

@@ -24,8 +24,14 @@ fl = [b.get("filled_of_wallet", 1) for v in bought.values() for b in v]
 ms = [b.get("book_ms", 0) for v in bought.values() for b in v]
 lf = [b.get("left_at_book", 0) for v in bought.values() for b in v]
 if fl: L.append("- Average share of the wallet that actually filled: %.0f%%. Seconds left when the book came back: avg %.2f (min %.2f, max %.2f). Kalshi answer time avg %d ms." % (100 * sum(fl) / len(fl), sum(lf) / len(lf), min(lf), max(lf), sum(ms) / len(ms)))
+rs = [r for r in log if r["result"] == "ROUND"]
+if rs:
+    hit = [r for r in rs if r.get("z_ever_ge_min")]
+    L.append("- Z-rule: %d rounds seen, z reached the trigger in %d of them; biggest |z| per round: median %.1f, best %.1f." % (len(rs), len(hit), sorted(r["max_abs_z"] for r in rs)[len(rs) // 2], max(r["max_abs_z"] for r in rs)))
+zn = [r for r in log if r["result"] == "Z_NOBUY"]
+if zn: L.append("- Z-rule reached the trigger but did not buy in %d rounds (reasons: %s)." % (len(zn), "; ".join(sorted(set(r["why"] for r in zn)))[:240]))
 L += ["", "## Problems (lost / missed / skipped), newest last", ""]
-bad = [r for r in log if r["result"] in ("LOST", "MISSED", "SKIP", "UNSETTLED", "ERROR")][-25:]
+bad = [r for r in log if r["result"] in ("LOST", "MISSED", "SKIP", "UNSETTLED", "ERROR", "Z_NOBUY")][-25:]
 if not bad: L.append("None yet.")
 for r in bad:
     tk = r.get("ticker", "?"); b = (bought.get(tk) or [None])[0]

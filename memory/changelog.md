@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 23:35 Kalshi v9.1: sniper logs ROUND (max z per round) and Z_NOBUY (z-rule attempts that did not buy, with reason); autopsy shows z-rule stats. Collector marker bumped; Pi restarts itself. Rules unchanged.
 - 2026-11-05 23:28 KDP paused at 2 books (navy A, green B in review) until Kylar reports the review result; notes in amazon-kdp.md and projects.md.
 - 2026-11-05 23:30 KDP series locked: new tasks/kdp_series.json (colours, titles, lettering, price, settings, description + keywords) read by kdp_build.py; new tasks/kdp_listing.py prints paste-ready listing text per title; kdp_build sizes the title by its longer line, has --check and scheme-letter partial builds. Checked on the Pi by queue 063. Documented in amazon-kdp.md.
 - 2026-11-05 23:20 KDP: scheme E espresso replaced by orchid purple #5B2A6E (Kylar picked option 1 of 6 mockups); kdp_build.py takes scheme letters for partial builds; built process-operator-e and lab-operator-e (queue 062) with the refined owner page.
