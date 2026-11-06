@@ -77,3 +77,4 @@ open(os.path.join(R, "memory", "inbox", "pi-status.md"), "w").write("\n".join(md
 json.dump(out, open(os.path.join(R, "hub-extra.json"), "w"))
 print("\n".join(md))
 PY
+python3 "$HOME/starship/tasks/projects_board.py" >/dev/null 2>&1 || true

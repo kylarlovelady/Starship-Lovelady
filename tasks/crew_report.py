@@ -7,7 +7,10 @@ def rd(p):
     try: return open(p, encoding="utf-8", errors="replace").read()
     except OSError: return ""
 out = {"time": now}
-for n in ("hub-extra.json", "hub-alerts.json"):
+try:
+    import subprocess; subprocess.run(["python3", os.path.join(R, "tasks", "projects_board.py")], capture_output=True, timeout=20)   # adds the Projects board rows to hub-extra.json
+except Exception: pass
+for n in ("hub-extra.json", "hub-alerts.json", "index.html"):
     try: shutil.copyfile(os.path.join(R, n), os.path.join(W, n))
     except OSError: pass
 # decision log: changelog entries (newest first)
