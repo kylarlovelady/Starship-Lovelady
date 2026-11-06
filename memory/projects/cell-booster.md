@@ -34,6 +34,10 @@ Status: planned, parts not chosen until we know the buddy's carrier, town and si
 - Unit #1 needs: Kylar's carrier, where it will live (home / truck / shop), how weak the signal is there, what data plan the SIM will use (hotspot sharing must be allowed), and whether he wants the Pi 5 hub to host the Wi-Fi or a separate small Pi. US note: some carriers (Verizon, AT&T, T-Mobile) only accept devices/modems they have certified, so the module choice depends on his carrier; a global module like the EG25-G can work on some but not all (check the carrier's bands and approved-device list before buying).
 - Unit #2 (Mexico): same design, module chosen for his carrier and Mexican approval.
 
+## Unit #1 facts from Kylar (2026-11-06 00:12)
+- Carrier Verizon. Will carry it between the truck, the house and work. Usually 2 bars of 5G or 2 bars of LTE. Does NOT want a new SIM on his existing plan. Fine to use a Pi.
+- Claude's notes: (1) a modem unit needs its own SIM/line, or it only tethers to the phone, which gains nothing; options: a separate Verizon-network prepaid/MVNO data SIM on its own account (does not touch his plan), or a Verizon connected-device line (decide with Kylar). (2) Verizon only accepts certified devices: choose a Verizon-certified LTE module (verify before buying); LTE only, 5G modules are much dearer. (3) Truck power: 12 V to 5 V converter or USB car adapter, plus a wall adapter for house/work. (4) Honest expectation: a small unit with internal antennas is about as sensitive as the phone; the real gain comes from the antenna, so add SMA ports for an optional external antenna (magnetic roof puck for the truck) and good window placement.
+
 ## Next step
 Ask Kylar the open questions above, check the friend's signal, then pick route 1, 2 or 3 and write the parts list and steps here (buy-list.md only if Kylar wants parts listed).
 

@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-06 00:14 Cell Wi-Fi unit #1 facts filed (Verizon, truck/house/work, no new SIM on his plan): SIM options, Verizon certification need, truck power and expectation notes in memory/projects/cell-booster.md.
 - 2026-11-06 00:10 Cell Wi-Fi unit: Kylar wants to build unit #1 for himself (US) first, then one for the buddy in Mexico; open questions for unit #1 added to memory/projects/cell-booster.md.
 - 2026-11-06 00:08 Cell booster project: Kylar approved the one-piece plug-in cellular Wi-Fi unit; build plan (parts, software, placement, open questions) written in memory/projects/cell-booster.md; waiting on the buddy's carrier/town/signal before choosing parts.
 - 2026-11-05 23:46 Filed Kylar's new project: build (not buy) a cellular booster for a buddy: memory/projects/cell-booster.md plus a row in projects.md. Status: idea; open questions and the legal note (no homemade amplifier in the US, passive antenna route is fine) are in the file.
