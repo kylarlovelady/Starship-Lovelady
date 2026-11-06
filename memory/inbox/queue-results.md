@@ -1,44 +1,4 @@
-process exited, code=exited, status=1/FAILURE
-Nov 05 15:13:08 LoveladyMainAiHub systemd[1]: hub-satellite.service: Failed with result 'exit-code'.
-# Home speaker mic report (auto, stats only; audio stays on the Pi)
-
-floor = background noise level (16-bit scale, 0 to 32767); speech% = share of the clip louder than 3x the floor; tail quiet = seconds of quiet at the end (end-of-speech needs about 1 s).
-
-No clips yet: the satellite recording folder is empty or recording is not switched on.
-
-## Satellite restarts by the watchdog (last 24 h)
-Nov 05 14:58:19 LoveladyMainAiHub python3[35465]: stuck in listening for 40s, restarting satellite
-(exit 0)
-```
-
-## 2026-11-05 15:16:01 tasks/queue/035-satellite-rollback.sh
-```
-== why it failed (last error lines)
-Nov 05 15:15:57 LoveladyMainAiHub bash[2713529]: Extras for webrtc are not installed
-Nov 05 15:15:57 LoveladyMainAiHub bash[2713529]:     import webrtc_noise_gain  # noqa: F401
-Nov 05 15:15:57 LoveladyMainAiHub bash[2713529]: ModuleNotFoundError: No module named 'webrtc_noise_gain'
-Nov 05 15:16:01 LoveladyMainAiHub bash[2713669]:     raise CalledProcessError(retcode, cmd)
-Nov 05 15:16:01 LoveladyMainAiHub bash[2713669]: subprocess.CalledProcessError: Command '['/home/kylarlovelady/wyoming-satellite/.venv/bin/python3', '-m', 'wyoming_satellite', '--name', 'main hub', '--debug-recording-dir
-Nov 05 15:16:01 LoveladyMainAiHub bash[2713670]: Extras for webrtc are not installed
-Nov 05 15:16:01 LoveladyMainAiHub bash[2713670]:     import webrtc_noise_gain  # noqa: F401
-Nov 05 15:16:01 LoveladyMainAiHub bash[2713670]: ModuleNotFoundError: No module named 'webrtc_noise_gain'
-restored working run-hub.sh
-== satellite now
-active
-Nov 05 15:16:04 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 15:16:04 LoveladyMainAiHub bash[2713975]: INFO:root:Ready
-Nov 05 15:16:04 LoveladyMainAiHub bash[2713975]: INFO:root:Connected to services
-Nov 05 15:16:06 LoveladyMainAiHub bash[2713975]: INFO:root:Connected to server
-Nov 05 15:16:06 LoveladyMainAiHub bash[2713975]: INFO:root:Waiting for wake word
-(exit 0)
-```
-
-## 2026-11-05 15:19:01 tasks/queue/036-home-mic-record-only.sh
-```
-recording flag added
-NOT healthy: rolled back
-active
-Nov 05 15:19:19 LoveladyMainAiHub systemd[1]: Started hub-satellite.service - Wyoming satellite (main hub).
+arted hub-satellite.service - Wyoming satellite (main hub).
 Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Ready
 Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Connected to services
 (exit 0)
@@ -574,5 +534,57 @@ Rounds with a real settled result in history: 267 of 362
 | 55-59c | 6 | 33.3% | 0.594 | -43.9% | $667 |
 | 60-64c | 2 | 100.0% | 0.656 | +52.4% | $786 |
 ... wrote /home/kylarlovelady/starship/memory/inbox/snipe-study.md
+(exit 0)
+```
+
+## 2026-11-05 19:46:01 tasks/queue/053-avg-lock-study.sh
+```
+# Average-lock study (can we call the winning side late?)
+
+Rounds with real results and full recordings: 19. Model: the last-minute average is partly known; remaining seconds = random walk (recent 1 s vol). Edge = model P - Kalshi ask - fee.
+
+## 10 seconds left
+
+| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
+|---|---|---|---|---|---|---|
+| any edge > 3c | 0 | | | | | |
+| edge > 8c | 0 | | | | | |
+| edge > 3c AND near target (within 1 sd) | 0 | | | | | |
+| always bet model favourite | 0 | | | | | |
+| near target only, always bet model favourite | 0 | | | | | |
+
+## 20 seconds left
+
+| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
+|---|---|---|---|---|---|---|
+| any edge > 3c | 0 | | | | | |
+| edge > 8c | 0 | | | | | |
+| edge > 3c AND near target (within 1 sd) | 0 | | | | | |
+| always bet model favourite | 2 | 50.0% | 0.501 | -0.1% | 0.99 | 0.50 |
+| near target only, always bet model favourite | 0 | | | | | |
+
+## 30 seconds left
+
+| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
+|---|---|---|---|---|---|---|
+| any edge > 3c | 3 | 0.0% | 0.020 | -100.0% | 0.84 | 0.02 |
+| edge > 8c | 2 | 0.0% | 0.013 | -100.0% | 0.81 | 0.01 |
+| edge > 3c AND near target (within 1 sd) | 1 | 0.0% | 0.014 | -100.0% | 0.74 | 0.01 |
+| always bet model favourite | 4 | 25.0% | 0.264 | -5.5% | 0.88 | 0.26 |
+| near target only, always bet model favourite | 1 | 0.0% | 0.014 | -100.0% | 0.74 | 0.01 |
+
+## 45 seconds left
+
+| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
+|---|---|---|---|---|---|---|
+| any edge > 3c | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
+| edge > 8c | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
+| edge > 3c AND near target (within 1 sd) | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
+| always bet model favourite | 6 | 16.7% | 0.301 | -44.7% | 0.76 | 0.29 |
+| near target only, always bet model favourite | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
+
+Calibration check (does the model's P match reality?): bucket by model P of the favourite
+(left=20) P~0.95: 2 rounds, 50% won
+... wrote /home/kylarlovelady/starship/memory/inbox/avg-lock-study.md
 (exit 0)
 ```
