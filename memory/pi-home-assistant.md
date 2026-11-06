@@ -68,3 +68,5 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 - 2026-11-06 15:36 Kylar's iPhone now uses Pi-hole: Pi-hole network table shows 192.168.1.142 (private/fixed Wi-Fi address, first seen 15:33:53, 27 queries, 'uses Pi-hole' yes) right after he saved the manual DNS (192.168.1.107). Same table shows the Pi on wlan0 (Wi-Fi) with BOTH 192.168.1.106 and 192.168.1.107, and 38 entries mostly docker veth interfaces. Hardening list is in todo.md (HARDEN THE PI).
 
 - 2026-11-06 Pi-hole rollout: Kylar's iPhone (manual DNS 192.168.1.107) confirmed blocking, also with Tailscale on. Next: Sharee's phone.
+
+- 2026-11-06 Pi-hole rollout: Sharee's iPhone (192.168.1.228) connected and blocking. Next: iPad, then TVs after hardening.

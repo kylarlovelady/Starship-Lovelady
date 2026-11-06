@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Pi-hole: Sharee's phone connected and blocking
+- What: Sharee's iPhone (192.168.1.228) uses Pi-hole; 3 clients, 331 blocked (3.1%) after about 25 min. mask.icloud.com is blocked on purpose (Pi-hole's way of telling Apple to turn Private Relay off on this network).
+- Where: memory/pi-home-assistant.md
+- Status: phones done. Next: iPad. TVs and router only after Pi hardening (todo.md).
+
 ## 2026-11-06 Pi-hole: Kylar's iPhone confirmed blocking (with Tailscale ON)
 - What: 44 blocked in first test; cnn.com ad/tracker domains (tremorhub, rubiconproject, pubmatic) blocked for 192.168.1.142 with Tailscale on. Normal sites load.
 - Where: memory/pi-home-assistant.md
