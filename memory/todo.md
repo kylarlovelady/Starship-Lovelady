@@ -2,11 +2,14 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- 2026-11-06 Kalshi $1K-Snipe: let the z-rule collect rounds; investigate every loss; first MISSED round at 00:00:06 (no book reply with 1.3 s left, status None, likely the v9.1 restart) to check; decide z threshold later (kalshi-ai.md).
+- 2026-11-06 KDP: navy A and green B IN REVIEW; Kylar reports the result; then burgundy C, orchid E, Lab Operator (amazon-kdp.md, kdp_series.json).
+- 2026-11-06 Cell Wi-Fi unit for Kylar (Verizon, truck/house/work, own data SIM, antenna ports): waiting on his SIM choice (separate prepaid vs connected-device line) and the hotspot tests (force LTE, check hotspot data use); then unit #2 for the buddy in Mexico (projects/cell-booster.md).
+- 2026-11-06 Starship projects board is live on the Mission board; next from the build order: Captain on the Starship, Kalshi team, crew daily jobs (architecture.md).
 - HOME JARVIS (Kylar 2026-11-05 15:00, urgent): at home he is very slow or does not reply at all; Kylar wants the home mic audio and what the mic heard WITH TIME STAMPS so Claude can find why replies take so long, why he sometimes does not hear him, and why there is no back-and-forth. Claude is checking HA's pipeline timeline (queue 031/032); then set up recording of home utterances (Wyoming satellite debug recording or HA assist_pipeline debug_recording_dir; needs one sudo or HA config edit) and a replay report like /report for the phone. Also stop the satellite from being restarted repeatedly (14:58 and 15:01).
 - HOME SCREEN reply pop-up: Kylar does not want the custom font (settings.json font is Great Vibes) applied to the pop window that shows Jarvis replies; fix in ~/hub-dashboard/theme.html / index.html (reply and 'you' text should use the normal font).
 - STARSHIP SHOULD DO THIS (Kylar 2026-11-05): the Captain and crew should do the project work and discussions, not Claude by hand. Build the real Captain: see architecture.md "Captain runtime".
 - Kalshi stake ladder: measure win rate per confidence bucket on unseen rounds, then raise stakes only where it is proven (kalshi-ai.md, Kylar's idea 2026-11-05).
-- Pi home pages are sloppy and cluttered, and the Starship page is not loading (reported by Kylar 2026-11-05 04:26). Claude to: find why Starship fails (likely my crew.json/overview changes or the :8095 server), clean up and simplify the Hub tabs and Overview, then confirm by screenshot. Check first thing.
 - Jarvis replaces Alexa: alarms, timers, thermostat, Spotify, any question. Order: fix hear/hang-up/talk-over/false wake first, then reminders and timers, thermostat, Spotify (pi-home-assistant.md).
 - Poly pellets: research products and equipment (business.md).
 - Dynamic Island wallet: research what is possible (needs an iPhone app) alongside iPhone Shortcuts.
@@ -18,7 +21,6 @@ Open items on top. When finished, move the line to Done with the date (never del
 - Satellite Pis for 3 bedrooms (family.md / pi-home-assistant.md).
 - iPhone Shortcuts (added 2026-11-05 by Kylar): set up Siri Shortcuts for Jarvis and the Hub (e.g. "Hey Siri, Jarvis" opens/asks Jarvis, truck-mode shortcut, Hub and Starship on the home screen). Claude to list what to build, then give step-by-step taps.
 - One site: after the next pull run `bash ~/starship/tasks/pi_update.sh` once (restarts Jarvis, needs the Pi password) so Jarvis /home redirects to the Hub; open http://loveladymainaihub:8081/hub and look at the new Overview tab. Tell Claude what else to fold in.
-- Maker study found 0 rounds of tick data; Claude to check where the per-second ticks are stored.
 - Home screen: confirm the frosted bubble looks right and the cursor line is gone (revert: copy index.html.bak-glass back in ~/hub-dashboard). Tell Claude if you want it bigger/smaller/clearer.
 - Pi-hole: confirm it is answering, pilot on the iPad, then phones, then TVs; turn off Private Wi-Fi Address/Private Relay/VPN/Private DNS on devices; name the 11 unnamed devices; then feed its stats into Starship/Jarvis (see architecture.md).
 - On the Pi: `cd ~/starship && git pull -q; bash ~/starship/tasks/pi_update.sh ha` (installs alerts, Kalshi sync, task queue, restarts Jarvis, installs the home-speaker add-on), then add the Jarvis Hub integration in Home Assistant (steps print at the end).
@@ -27,7 +29,6 @@ Open items on top. When finished, move the line to Done with the date (never del
 - Pi: confirm net watchdog installed; confirm home screen cursor line is gone.
 - Jarvis: after update, test in the parked truck (page, Truck mode, barge-in), tag misses in /lab, enroll family voices, run pi_push_setup.sh; test Back Tap and the 6 s hands-free shortcut; try the web page wake word; later voice ID.
 - Home screen: readability on busy backgrounds.
-- Kalshi: review 12 h results in the morning.
 - At home: unmute mic and test Hey Jarvis; switch Assist STT to OpenAI Whisper; router reservations; Pi-hole pilot (see pi-home-assistant.md).
 - Empty the janitor trash (57 items, check the Hub first); encrypted off-Pi backups (destination undecided); check OpenAI key "Last used" dates.
 - Tell Claude about the truck/vehicle projects so truck-project.md can be filled in.
@@ -41,3 +42,6 @@ Open items on top. When finished, move the line to Done with the date (never del
 - 2026-11-05: Pi can push notes to the repo (deploy key) and syncs every 30 min.
 - 2026-11-01: KDP identity verification.
 - 2026-11-01: Bitwarden 2-step login and recovery code.
+- 2026-11-06 Starship page loading FIXED (stray semicolon in the 15 s refresh broke the whole script); Hub tab clean-up still open (was: Pi home pages are sloppy and cluttered, and the Starship page is not loading (reported b...)
+- 2026-11-06 per-second ticks found: ~/market-data/ticks-*.jsonl, 268 rounds used by the close study (was: Maker study found 0 rounds of tick data; Claude to check where the per-second ticks are ...)
+- 2026-11-06 reviewed in the sniper/close studies (was: Kalshi: review 12 h results in the morning....)

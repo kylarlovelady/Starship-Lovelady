@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-06 00:30 todo.md: moved finished items (Starship loading fix, tick data location, Kalshi 12 h review) to Done; added the four live items (sniper, KDP review, cell Wi-Fi unit, Starship build order).
 - 2026-11-06 00:14 Cell Wi-Fi unit #1 facts filed (Verizon, truck/house/work, no new SIM on his plan): SIM options, Verizon certification need, truck power and expectation notes in memory/projects/cell-booster.md.
 - 2026-11-06 00:10 Cell Wi-Fi unit: Kylar wants to build unit #1 for himself (US) first, then one for the buddy in Mexico; open questions for unit #1 added to memory/projects/cell-booster.md.
 - 2026-11-06 00:08 Cell booster project: Kylar approved the one-piece plug-in cellular Wi-Fi unit; build plan (parts, software, placement, open questions) written in memory/projects/cell-booster.md; waiting on the buddy's carrier/town/signal before choosing parts.
