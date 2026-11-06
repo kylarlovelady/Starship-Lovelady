@@ -33,7 +33,10 @@ def hook(row):
         if not tk: return
         from calendar import timegm
         ce = timegm(time.strptime((k.get("close_time") or "")[:19], "%Y-%m-%dT%H:%M:%S"))
-        with _L: _ST["cur"] = {"tk": tk, "ce": ce, "strike": k.get("floor_strike"), "px": row.get("px")}
+        with _L:
+            _ST["cur"] = {"tk": tk, "ce": ce, "strike": k.get("floor_strike"), "px": row.get("px")}
+            if row.get("px") is not None:
+                h = _ST.setdefault("hist", []); h.append((row["t"], float(row["px"]))); del h[:-90]
     except Exception: pass
 def _get(url, timeout=2.5):
     req = urllib.request.Request(url, headers={"User-Agent": "starship-market-agent/1.0"})
@@ -46,7 +49,7 @@ def fetch_book(tk):
 def fetch_status(tk):
     m = (_get(BASE + tk) or {}).get("market") or {}
     return {k: m.get(k) for k in ("status", "close_time", "can_close_early", "early_close_condition", "yes_bid_dollars", "yes_ask_dollars", "no_bid_dollars", "no_ask_dollars") if m.get(k) is not None}
-def fire(tk, ce, strike, px, ob, t_req, t_resp, status, side_seen):
+def fire(tk, ce, strike, px, ob, t_req, t_resp, status, side_seen, mode="close", maxpx=None, force_side=None, extra=None):
     left = ce - t_resp                       # seconds before the close when the book answer came back (the order would land about now)
     s = load(); s["rounds"] += 1
     yl, nl = ob.get("yes_dollars") or ob.get("yes"), ob.get("no_dollars") or ob.get("no")
@@ -55,52 +58,85 @@ def fire(tk, ce, strike, px, ob, t_req, t_resp, status, side_seen):
     yb, nb = levels(yl, scale), levels(nl, scale)
     base = {"t": int(time.time()), "ticker": tk, "left_at_book": round(left, 2), "book_ms": int((t_resp - t_req) * 1000), "status": status, "px": px, "strike": strike}
     if not yb or not nb:
+        if mode == "z": return "NOBOOK"
         s["skips"] += 1; save(s)
         log(dict(base, result="SKIP", why="one side of the book is empty (nobody to buy from): yes levels %d, no levels %d" % (len(yb), len(nb)))); return
     ybest, nbest = max(a for a, b in yb), max(a for a, b in nb)
     side = "YES" if ybest >= nbest else "NO"
+    base["mode"] = mode
+    if extra: base.update(extra)
+    if force_side and force_side != side:
+        base["why"] = "model side %s but market favourite %s" % (force_side, side); return "SKIPPED"
+    maxpx = maxpx or MAX_PX
     sell_side = nb if side == "YES" else yb              # buy YES by hitting the NO bids: ask = 1 - NO bid
     asks = sorted(((1.0 - p, q) for p, q in sell_side), key=lambda x: x[0])
     budget = s["bal"]; c_tot = 0; cost = 0.0
     for ask, qty in asks:
-        if ask > MAX_PX + 1e-9 or budget < 1: break
+        if ask > maxpx + 1e-9 or budget < 1: break
         per = ask + fee_c(ask)
         n = int(min(qty, math.floor(budget / per + 1e-9)))
         if n >= 1: c_tot += n; spend = n * per; cost += spend; budget -= spend
     if c_tot < 1:
+        if mode == "z": return "NOASK"
         s["skips"] += 1; save(s)
-        log(dict(base, result="SKIP", side=side, why="nothing to buy at or below %dc (best ask %s)" % (int(MAX_PX * 100), round(asks[0][0], 3) if asks else None))); return
+        log(dict(base, result="SKIP", side=side, why="nothing to buy at or below %.1fc (best ask %s)" % (maxpx * 100, round(asks[0][0], 3) if asks else None))); return
     s["bal"] -= cost; s["bets"] += 1; s["staked"] += cost
     s["pending"].append({"ticker": tk, "close": ce, "side": side, "c": c_tot, "cost": round(cost, 4), "t": int(time.time())})
     save(s)
     log(dict(base, result="BOUGHT", side=side, c=c_tot, cost=round(cost, 2), avg_px=round(cost / c_tot, 4), best_ask=round(asks[0][0], 4),
              filled_of_wallet=round(cost / (cost + budget), 3), unfilled_cash=round(budget, 2), levels=[[round(a, 3), q] for a, q in asks[:5]]))
+    return "BOUGHT"
+Z_MIN = 4.0              # model: price is this many standard deviations from the target (z = gap / (sigma_per_second * sqrt(seconds left)))
+Z_ASK_MAX = 0.985        # and the favourite can still be bought at or below this price
+Z_LEFT_MIN = 4.0         # never fire the z-rule inside the last 4 s (the 1.3 s close rule covers that)
+def zscore(c, left):
+    h = list(_ST.get("hist") or [])[-61:]
+    if len(h) < 40 or c.get("strike") is None or c.get("px") is None or left < 1: return None, None
+    d = [b[1] - a[1] for a, b in zip(h, h[1:])]
+    m = sum(d) / len(d); sg = math.sqrt(sum((x - m) ** 2 for x in d) / len(d))
+    if sg <= 0: return None, None
+    return (float(c["px"]) - float(c["strike"])) / (sg * math.sqrt(left)), sg
 def watch_loop():
-    """Own clock, own Kalshi requests. From 9 s before the close it re-reads the live order book about 4 times a second (and the market status once a second);
-    the first book that comes back with <= FIRE_LEFT seconds to go is the one it trades on."""
-    last_status, st_t, st_fail = None, 0.0, 0
+    """Two rules, one bet per round, whole wallet, practice only.
+    1) Z-RULE (Kylar 21:21, the 'formula'): from 5 min out, read the live book about once a second; the moment the price is >= Z_MIN standard deviations from the target
+       (sigma = measured BTC move per second over the last minute) and the favourite is still for sale at <= Z_ASK_MAX, buy what the book offers up to the wallet.
+    2) CLOSE RULE: if nothing was bought, from 9 s out read the book about 4x a second and try again on the first fresh book with <= FIRE_LEFT s left (usually nothing for sale)."""
+    last_status, st_t, z_t = None, 0.0, 0.0
     while True:
         try:
             with _L: c = dict(_ST.get("cur") or {})
             if not c or c["tk"] in _ST["fired"]: time.sleep(0.2); continue
             left = c["ce"] - time.time()
-            if left > 9: time.sleep(min(1.0, max(0.05, left - 9))); continue
-            if left < -3:                                   # the round ended and we never traded it
+            if left > 300: time.sleep(min(1.0, max(0.05, left - 300))); continue
+            if left < -3:
                 _ST["fired"].add(c["tk"]); s = load(); s["rounds"] += 1; s["misses"] += 1; save(s)
                 log({"t": int(time.time()), "ticker": c["tk"], "result": "MISSED", "why": "no book reply landed with %.1f s or less to go; last status %s" % (FIRE_LEFT, last_status)}); continue
+            if left > 9:
+                if time.time() - z_t < 1.0: time.sleep(0.1); continue
+                z_t = time.time()
+                z, sg = zscore(c, left)
+                if z is None or abs(z) < Z_MIN or left < Z_LEFT_MIN: continue
+                try: ob, t0, t1 = fetch_book(c["tk"])
+                except Exception: continue
+                r = fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None, mode="z", maxpx=Z_ASK_MAX, force_side="YES" if z > 0 else "NO",
+                         extra={"z": round(z, 2), "sigma_per_s": round(sg, 2), "left_at_decision": round(left, 1)})
+                if r == "BOUGHT": _ST["fired"].add(c["tk"])
+                continue
             if time.time() - st_t >= 1.0:
                 st_t = time.time()
-                try: last_status = fetch_status(c["tk"]); st_fail = 0
-                except Exception: st_fail += 1
+                try: last_status = fetch_status(c["tk"])
+                except Exception: pass
                 if last_status and last_status.get("status") not in (None, "active", "open", "initialized"):
                     _ST["fired"].add(c["tk"]); s = load(); s["rounds"] += 1; s["misses"] += 1; save(s)
-                    log({"t": int(time.time()), "ticker": c["tk"], "result": "MISSED", "why": "Kalshi closed the round early (status %s) with %.1f s on our clock" % (last_status.get("status"), left), "status": last_status, "px": c.get("px"), "strike": c.get("strike")}); continue
+                    log({"t": int(time.time()), "ticker": c["tk"], "result": "MISSED", "why": "Kalshi closed the round early (status %s) with %.1f s on our clock" % (last_status.get("status"), left), "status": last_status}); continue
             try: ob, t0, t1 = fetch_book(c["tk"])
             except Exception: time.sleep(0.05); continue
+            z, sg = zscore(c, c["ce"] - t1)
+            if z is not None and abs(z) >= Z_MIN and (c["ce"] - t1) >= Z_LEFT_MIN:
+                r = fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None, mode="z", maxpx=Z_ASK_MAX, force_side="YES" if z > 0 else "NO", extra={"z": round(z, 2), "sigma_per_s": round(sg, 2)})
+                if r == "BOUGHT": _ST["fired"].add(c["tk"]); continue
             if c["ce"] - t1 <= FIRE_LEFT and c["ce"] - t1 > -0.5:
-                _ST["fired"].add(c["tk"]); fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None)
-            elif c["ce"] - t1 <= -0.5:
-                pass
+                _ST["fired"].add(c["tk"]); fire(c["tk"], c["ce"], c.get("strike"), c.get("px"), ob, t0, t1, last_status, None, mode="close")
             time.sleep(0.05)
         except Exception as e:
             try: log({"t": int(time.time()), "result": "ERROR", "why": repr(e)[:160]})

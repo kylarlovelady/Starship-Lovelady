@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v8.9 restart: $1K-Snipe is now its own 1-second sniper (sniper.py); wallet pick no longer forced back to Auto on restart
+# v9.0 restart: $1K-Snipe adds the z-rule (buy when the price is 4 standard deviations from the target and still for sale at 98.5c or less); close rule stays as fallback
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
