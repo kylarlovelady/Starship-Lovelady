@@ -2,7 +2,7 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 12 hours, 16 minutes; temp 42.2'C; throttled flags 0x0 (0x0 is clean); memory 34%; disk 10%
+- up 12 hours, 22 minutes; temp 44.4'C; throttled flags 0x0 (0x0 is clean); memory 35%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
@@ -11,13 +11,13 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - containers: openwakeword Up 12 hours; whisper Up 12 hours (healthy); piper Up 12 hours (healthy); pihole Up 12 hours (healthy); homeassistant Up 12 hours
 
 ## Sync and schedule
-- Pi repo copy at: 79b2536 40 seconds ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: 8faab6a 4 minutes ago: 15m markets findings; nightly accumulating study (queue 084); Pi-hole voice notes
 - last notes sync result: notes pushed to the repo
-- cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
+- cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue, series-catalog
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (23 min ago), first lines:
+- supervisor report (30 min ago), first lines:
     MARKET AGENT PROGRESS  Fri 06 Nov 15:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_x52220781   +62.94 over  151 rounds, wins 22%   (+8.37 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 25.6 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 25.7 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 

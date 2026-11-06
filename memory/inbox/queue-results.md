@@ -1,40 +1,4 @@
-acle-study.sh
-```
-
-## 2026-11-06 03:04:02 tasks/queue/071-oracle-study.sh
-```
-
-## 2026-11-06 03:07:01 tasks/queue/071-oracle-study.sh
-```
-
-## 2026-11-06 03:10:02 tasks/queue/071-oracle-study.sh
-```
-
-## 2026-11-06 03:13:01 tasks/queue/071-oracle-study.sh
-```
-
-## 2026-11-06 03:16:02 tasks/queue/071-oracle-study.sh
-```
-# Hindsight / oracle study (last 7 days)
-
-Rounds with a full recording, a strike and a real Kalshi result: **307** (149 UP, 158 DOWN).
-
-## A. The perfect-hindsight buy (cheapest ask of the side that won, with 3+ s left)
-
-| statistic | value |
-|---|---|
-| rounds with a usable book | 307 |
-| median cheapest winning ask | 39c |
-| average perfect-hindsight profit per contract | 61.1c (157% on cost) |
-| share of rounds where the perfect buy was 30c or less | 33% |
-| share where it was 50c or less | 78% |
-| WHEN in the round the cheapest winning ask was (seconds left) | 0-60 s: 2%, 60-180 s: 5%, 180-420 s: 15%, >420 s: 76% |
-
-Reading: the perfect buy is nearly always a *cheap* winner early in the round that you could not have known about. The rest of this report asks which signals could have pointed to it in advance.
-
-## B. Which signals predict UP/DOWN? (AUC: 0.50 = coin flip, 1.00 = perfect, below 0.50 = points the other way)
-
-Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or 0.40 or less) AND the same side of 0.50 in both halves. 'vs market' = rank correlation of the signal with (result minus Kalshi mid), i.e. does it know something the price does not. Roughly +-0.13 is noise at this sample size.
+ing the price does not. Roughly +-0.13 is noise at this sample size.
 
 | signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
 |---|---|---|---|---|---|---|
@@ -556,5 +520,25 @@ Rounds with a full recording and a real result: **450**.
 ## 2026-11-06 15:16:01 tasks/queue/083-series-catalog.sh
 ```
 started; progress so far:
+(exit 0)
+```
+
+## 2026-11-06 15:37:02 tasks/queue/084-series-nightly-install.sh
+```
+installed: runs every night at 4:40 am
+40 4 * * * flock -n /tmp/series_catalog.lock bash $HOME/starship/tasks/series_catalog_daily.sh >> $HOME/market-data/series_catalog.log 2>&1 # series-catalog
+== BTC lag-1 check
+rounds: 2936 span days: 31.0 UP share: 48.6%
+all                    P(UP|prev UP)=47.6% (n=1424)  P(UP|prev DOWN)=49.4% (n=1506)  gap=-1.8 pts  +-1.8 (1 SE)  z=-1.0
+older half             P(UP|prev UP)=49.5% (n=734)  P(UP|prev DOWN)=50.5% (n=731)  gap=-1.0 pts  +-2.6 (1 SE)  z=-0.4
+newer half             P(UP|prev UP)=45.7% (n=690)  P(UP|prev DOWN)=48.4% (n=775)  gap=-2.7 pts  +-2.6 (1 SE)  z=-1.0
+after UP,UP            P(UP)=46.7% (n=677)
+after DOWN,DOWN        P(UP)=49.9% (n=759)
+CT hours 00-04         P(UP|prev UP)=50.0% (n=228)  P(UP|prev DOWN)=49.3% (n=225)  gap=+0.7 pts  +-4.7 (1 SE)  z=+0.1
+CT hours 04-08         P(UP|prev UP)=44.2% (n=224)  P(UP|prev DOWN)=45.7% (n=269)  gap=-1.5 pts  +-4.5 (1 SE)  z=-0.3
+CT hours 08-12         P(UP|prev UP)=45.6% (n=241)  P(UP|prev DOWN)=51.4% (n=255)  gap=-5.7 pts  +-4.5 (1 SE)  z=-1.3
+CT hours 12-16         P(UP|prev UP)=45.5% (n=244)  P(UP|prev DOWN)=53.2% (n=252)  gap=-7.7 pts  +-4.5 (1 SE)  z=-1.7
+CT hours 16-20         P(UP|prev UP)=51.5% (n=237)  P(UP|prev DOWN)=46.7% (n=259)  gap=+4.8 pts  +-4.5 (1 SE)  z=+1.1
+CT hours 20-24         P(UP|prev UP)=48.8% (n=250)  P(UP|prev DOWN)=50.4% (n=246)  gap=-1.6 pts  +-4.5 (1 SE)  z=-0.4
 (exit 0)
 ```
