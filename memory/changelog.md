@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 02:55 Hindsight/oracle study (practice only, read-only)
+- What: new markets/oracle_study.py finds the best possible buy in every recorded round and tests which signals (distance to strike, momentum, Kraken lead, trade flow, order-book imbalance, Kalshi price) predicted the winner at 6 checkpoints, split older/newer half; plus a simple z-vs-ask edge rule after fees. Queued as tasks/queue/071-oracle-study.sh; output memory/inbox/oracle-study.md.
+- Status: queued, waiting for the Pi's next run (Kylar asked whether the best trades share signals).
+
 ## 2026-11-06 AI accelerator check (benchmark: 283 FPS, 1.8 W, works; no camera attached): Hailo-8 is installed, healthy and idle (queue 068); it only accelerates camera vision, not Jarvis voice or Kalshi. Findings in pi-home-assistant.md; queue 069 checks for a camera and benchmarks the chip.
 
 ## 2026-11-05 (daily check, 06:20 Central)
