@@ -1,6 +1,4 @@
-'main hub' \
---uri 'tcp://127.0.0.1:10700' \
---mic-command '/home/kylarlovelady/hub-mic.py plughw:3,0' \
+0' \
 --snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
 --wake-uri 'tcp://127.0.0.1:10400' \
 --wake-word-name 'hey_jarvis' \
@@ -577,5 +575,11 @@ drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
 
 ## 2026-11-05 18:43:01 tasks/queue/048-kdp-keyword-scan.sh
 ```
+(exit 0)
+```
+
+## 2026-11-05 18:52:01 tasks/queue/049-kdp-keyword-scan-bg.sh
+```
+started pid 3293782
 (exit 0)
 ```
