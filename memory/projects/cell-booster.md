@@ -30,6 +30,10 @@ Status: planned, parts not chosen until we know the buddy's carrier, town and si
 - Risks/notes: weak signal means slow data, it will not create signal that is not there; the modem's own antennas inside a plastic case are fine; keep the case ventilated. Check the SIM/plan allows tethering/hotspot sharing.
 - Kylar to confirm: carrier, town, signal strength outside/inside, data plan (who pays), Wi-Fi network name/password for the room, budget.
 
+## Order (Kylar, 2026-11-06 00:06): build unit #1 for HIMSELF first (US), then a second one for the buddy in Mexico
+- Unit #1 needs: Kylar's carrier, where it will live (home / truck / shop), how weak the signal is there, what data plan the SIM will use (hotspot sharing must be allowed), and whether he wants the Pi 5 hub to host the Wi-Fi or a separate small Pi. US note: some carriers (Verizon, AT&T, T-Mobile) only accept devices/modems they have certified, so the module choice depends on his carrier; a global module like the EG25-G can work on some but not all (check the carrier's bands and approved-device list before buying).
+- Unit #2 (Mexico): same design, module chosen for his carrier and Mexican approval.
+
 ## Next step
 Ask Kylar the open questions above, check the friend's signal, then pick route 1, 2 or 3 and write the parts list and steps here (buy-list.md only if Kylar wants parts listed).
 
