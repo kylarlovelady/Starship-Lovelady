@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 15:55 Forward tests read: longshot rejected, maker inconclusive
+- What: queue 082 (450 rounds): longshot rule has no edge (ranges span zero, older half positive and newer half negative). Queue 081: every maker order skipped because the spread is under 2c; only 28 rounds have a tape. Notes in kalshi-ai.md.
+- Status: nothing changed in the agent. Next: maker study v3 (post at the bid with queue position) once 150+ rounds have a tape.
+
 ## 2026-11-06 15:40 Pricing study read; maker study fixed; longshot test queued (081, 082)
 - What: queue 078 (implied volatility, calibration, spreads) ran and is summarised in kalshi-ai.md (market implies about 12 to 18% less volatility than realized from 2 to 10 min out; cheap side under 20c won more than priced at 3 to 7 min out in this sample). Queue 080 failed with a MemoryError; maker_study2.py now keeps only the first 5 minutes of each round and runs as 081. New markets/longshot_wf.py tests the longshot idea with bootstrap range, older/newer halves and per-day results (queue 082).
 - Status: 081 and 082 queued; practice only, nothing changes in the agent.

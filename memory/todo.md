@@ -2,6 +2,7 @@
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
 ## Open
+- 2026-11-06 Kalshi: maker study v3 (post AT the bid, queue from book size, real tape fills) once 150+ rounds have a tape; then hour-of-day/phase filter test, fair-value model with the 60 s average; ask Kylar before recording other coins (kalshi-ai.md ideas list).
 - 2026-11-06 PI SCREEN SAVER: fix the screen saver on the Pi's home screen (kiosk Chromium at http://localhost:8080, ~/hub-dashboard). Kylar did not say what it does wrong yet (blanks, never blanks, or wrong look): ask him, then check the display's screen-blanking/DPMS settings and the kiosk launch flags on the Pi.
 - 2026-11-06 Kalshi $1K-Snipe: let the z-rule collect rounds; investigate every loss; first MISSED round at 00:00:06 (no book reply with 1.3 s left, status None, likely the v9.1 restart) to check; decide z threshold later (kalshi-ai.md).
 - 2026-11-06 KDP: navy A and green B IN REVIEW; Kylar reports the result; then burgundy C, orchid E, Lab Operator (amazon-kdp.md, kdp_series.json).
