@@ -1,40 +1,4 @@
-instance Bold 0 ont /home/kylarlovelady/.local/share/fonts/PlayfairDisplay-Bold.ttf
-Attempting to fix OTLOffsetOverflowError ('GPOS', 'LookupIndex:', 4, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
-
-instance Regular 0 , 5, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
-Attempting to fix OTLOffsetOverflowError ('GPOS', 'LookupIndex:', 4, 'SubTableIndex:', None, 'ItemName:', None, 'ItemIndex:', None)
-
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Playfair Display | interior font: Lato
-== process-operator-a cover 14.065 x 10.418 spine 0.489
-  OK Page count 120 (hardcover needs 75 to 550)
-  OK Page count is even
-  OK Cover file 14.065 x 10.418 in, spine 0.489 in
-  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
-  OK Inside margin 0.500 in (KDP minimum 0.375)
-  OK All cover text inside the safe zone and clear of the barcode area
-  OK Inside text contrast 15.9:1
-  OK Picture on the full: sharp (300 dpi)
-  OK cover PDF fonts embedded
-  OK interior PDF fonts embedded
-  OK Author / pen name set
-  OK Title set
-  OK Title + subtitle length OK
-  WARN Book description not written
-  WARN 0 of 7 keywords
-  WARN Price not set
-  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
-== lab-operator-a cover 14.065 x 10.418 spine 0.489
-  OK Page count 120 (hardcover needs 75 to 550)
-  OK Page count is even
-  OK Cover file 14.065 x 10.418 in, spine 0.489 in
-  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
-  OK Inside margin 0.500 in (KDP minimum 0.375)
-  OK All cover text inside the safe zone and clear of the barcode area
-  OK Inside text contrast 15.9:1
-  OK Picture on the full: sharp (300 dpi)
-  OK cover PDF fonts embedded
-  OK interior PDF fonts embedded
+ts embedded
   OK Author / pen name set
   OK Title set
   OK Title + subtitle length OK
@@ -638,5 +602,33 @@ Win = real settled result when known, otherwise the average of the last 60 Coinb
 ## 2026-11-05 23:19:01 tasks/queue/062-build-orchid.sh
 ```
 orchid build started in the background
+(exit 0)
+```
+
+## 2026-11-05 23:25:01 tasks/queue/063-kdp-series-check.sh
+```
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Liberation Serif | interior font: Lato
+would build process-operator a #18233D #CDB360
+would build process-operator b #1F372A #CDB360
+would build process-operator c #4D1E28 #CDB360
+would build process-operator e #5B2A6E #CDB360
+would build lab-operator a #18233D #CDB360
+would build lab-operator b #1F372A #CDB360
+would build lab-operator c #4D1E28 #CDB360
+would build lab-operator e #5B2A6E #CDB360
+partial build or check, no contact sheet
+== Process Operator
+Title: Process Operator | Author: Lovelady LLC | no subtitle | price $18.99
+Description: A durable hardcover notebook for process operators: 120 numbered, lined pages (6 x 9 in) on cream paper, with an owner page for name, phone, email and company. Keep shift notes, readings, handoffs, checklists and daily logs in one place built to hold up on the job.
+Keywords: Notebook for work; Hardcover lined notebook; Tradesman notebook; Work notebook for men; Blue collar gifts; Plant operator gifts; Blue collar gifts for women
+Colours: Navy (A), Forest green (B), Burgundy (C), Orchid purple (E)
+
+== Lab Operator
+Title: Lab Operator | Author: Lovelady LLC | no subtitle | price $18.99
+Description: A durable hardcover notebook for lab operators: 120 numbered, lined pages (6 x 9 in) on cream paper, with an owner page for name, phone, email and company. Keep shift notes, readings, samples, results, checklists and daily logs in one place built to hold up on the job.
+Keywords: Notebook for work; Hardcover lined notebook; Tradesman notebook; Work notebook for men; Blue collar gifts; Lab technician gifts; Blue collar gifts for women
+Colours: Navy (A), Forest green (B), Burgundy (C), Orchid purple (E)
+
 (exit 0)
 ```
