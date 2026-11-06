@@ -1,29 +1,4 @@
-service
-  --mic-command MIC_COMMAND
-  --mic-command-rate MIC_COMMAND_RATE
-  --mic-command-width MIC_COMMAND_WIDTH
-  --mic-command-channels MIC_COMMAND_CHANNELS
-  --mic-command-samples-per-chunk MIC_COMMAND_SAMPLES_PER_CHUNK
-  --mic-volume-multiplier MIC_VOLUME_MULTIPLIER
-  --mic-noise-suppression {0,1,2,3,4}
-  --mic-auto-gain {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31}
-  --mic-seconds-to-mute-after-awake-wav MIC_SECONDS_TO_MUTE_AFTER_AWAKE_WAV
-  --mic-no-mute-during-awake-wav
-  --mic-channel-index MIC_CHANNEL_INDEX
-  --snd-uri SND_URI     URI of Wyoming sound service
-  --snd-command SND_COMMAND
-  --snd-command-rate SND_COMMAND_RATE
-  --snd-command-width SND_COMMAND_WIDTH
-  --snd-command-channels SND_COMMAND_CHANNELS
-  --snd-volume-multiplier SND_VOLUME_MULTIPLIER
-  --wake-uri WAKE_URI   URI of Wyoming wake word detection service
-  --wake-word-name name [pipeline ...]
-  --wake-command WAKE_COMMAND
-  --wake-command-rate WAKE_COMMAND_RATE
-  --wake-command-width WAKE_COMMAND_WIDTH
-  --wake-command-channels WAKE_COMMAND_CHANNELS
-  --wake-refractory-seconds WAKE_REFRACTORY_SECONDS
-  --vad                 Wait for speech before streaming audio
+dio
   --vad-threshold VAD_THRESHOLD
   --vad-trigger-level VAD_TRIGGER_LEVEL
   --vad-buffer-seconds VAD_BUFFER_SECONDS
@@ -569,4 +544,28 @@ sheet done
 -rw-rw-r-- 1 kylarlovelady kylarlovelady 5262158 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/cover.pdf
 -rw-rw-r-- 1 kylarlovelady kylarlovelady  113761 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/interior.pdf
 (exit 0)
+```
+
+## 2026-11-05 19:25:02 tasks/queue/051-kalshi-fresh-wallet.sh
+```
+reset reply: 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json;d=json.load(open('/tmp/live-after.json'));print({k:d.get(k) for k in list(d)[:12]})
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/usr/lib/python3.13/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+{"active": true, "id": 1793908418, "strategy": "auto", "start": 1000.0}(exit 0)
 ```
