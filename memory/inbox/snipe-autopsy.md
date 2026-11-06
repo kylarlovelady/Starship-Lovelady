@@ -1,6 +1,7 @@
 # $1K-Snipe report (auto)
 
-- Wallet $1000.00 (started $1000). Rounds 8: bought 0 (won 0, lost 0), skipped 8, missed 0. Profit $0.00 on $0.00 staked. Busts 0.
+- Wallet $1047.89 (started $1000). Rounds 9: bought 1 (won 1, lost 0), skipped 8, missed 0. Profit $47.89 on $999.11 staked. Busts 0.
+- Average share of the wallet that actually filled: 100%. Seconds left when the book came back: avg 299.84 (min 299.84, max 299.84). Kalshi answer time avg 158 ms.
 
 ## Problems (lost / missed / skipped), newest last
 
