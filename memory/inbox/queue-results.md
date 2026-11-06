@@ -1,19 +1,4 @@
-larlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  371246 Nov  5 17:49 cover-guides.png
--rw-rw-r--  1 kylarlovelady kylarlovelady 1306165 Nov  5 17:49 cover-hi.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  350388 Nov  5 17:49 cover.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  583258 Nov  5 17:49 front.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:49 page1.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:49 page2.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-b:
-total 2540
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  365446 Nov  5 17:50 cover-guides.png
--rw-rw-r--  1 kylarlovelady kylarlovelady 1283146 Nov  5 17:50 cover-hi.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  343754 Nov  5 17:50 cover.png
+ady kylarlovelady  343754 Nov  5 17:50 cover.png
 -rw-rw-r--  1 kylarlovelady kylarlovelady  578551 Nov  5 17:50 front.png
 -rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:50 page1.png
 -rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:50 page2.png
@@ -609,5 +594,33 @@ homeassistant ghcr.io/home-assistant/home-assistant:stable
 == cpu/temp now
  01:22:02 up 11 days, 14:22,  4 users,  load average: 3.64, 2.37, 2.08
 temp=45.0'C
+(exit 0)
+```
+
+## 2026-11-06 01:25:02 tasks/queue/069-camera-check.sh
+```
+== cameras (Pi camera)
+No cameras available!
+== video devices
+/dev/video19
+/dev/video20
+/dev/video21
+/dev/video22
+/dev/video23
+/dev/video24
+== usb devices
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 041e:3272 Creative Technology, Ltd Pebble V3
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 002 Device 002: ID 0bda:9210 Realtek Semiconductor Corp. RTL9210 M.2 NVME Adapter
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 010: ID 214b:7250 Huasheng Electronics USB2.0 HUB
+Bus 003 Device 011: ID 214b:7250 Huasheng Electronics USB2.0 HUB
+Bus 003 Device 013: ID 15dd:000b MXL  MXL AC-44  
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+== hailo quick benchmark (resnet, 5 s)
+hef: File does not exist: /usr/share/hailo-models/resnet_v1_50_h8.hef
+Run with --help for more information.
+12
 (exit 0)
 ```
