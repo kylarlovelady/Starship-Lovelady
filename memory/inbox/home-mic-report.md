@@ -7,7 +7,7 @@ floor = background noise level (16-bit scale, 0 to 32767); speech% = share of th
 | Fri 11:24:06 | 34941013996-wake.wav | 2.0 | 3139 | 655 | 288 | 27 | 0.0 |
 | Fri 11:25:08 | 34941013996-stt.wav | 61.9 | 4427 | 480 | 264 | 9 | 0.5 |
 | Fri 13:55:09 | 29455106377011-wake.wav | 2.0 | 1623 | 341 | 242 | 0 | 2.0 |
-| Fri 15:35:19 | 29455106377011-stt.wav | 5992.8 | 16407 | 629 | 243 | 22 | 0.1 |
+| Fri 15:55:22 | 29455106377011-stt.wav | 7192.1 | 16407 | 629 | 242 | 22 | 0.0 |
 
 Median background noise floor: 264. Clips with less than 0.8 s of tail quiet: 3 of 4.
 
