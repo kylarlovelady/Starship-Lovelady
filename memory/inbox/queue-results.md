@@ -1,63 +1,4 @@
-dio
-  --vad-threshold VAD_THRESHOLD
-  --vad-trigger-level VAD_TRIGGER_LEVEL
-  --vad-buffer-seconds VAD_BUFFER_SECONDS
-  --vad-wake-word-timeout VAD_WAKE_WORD_TIMEOUT
-  --timer-started-command TIMER_STARTED_COMMAND
-  --timer-updated-command TIMER_UPDATED_COMMAND
-  --timer-cancelled-command, --timer-canceled-command TIMER_CANCELLED_COMMAND
-  --timer-finished-command TIMER_FINISHED_COMMAND
-  --awake-wav AWAKE_WAV
-  --done-wav DONE_WAV   WAV file to play when voice command is done
-  --timer-finished-wav TIMER_FINISHED_WAV
-  --timer-finished-wav-repeat repeat delay
-  --no-zeroconf         Disable discovery over zeroconf
-  --debug-recording-dir DEBUG_RECORDING_DIR
-== watchdog: stuck rule
-4:STATE = "/tmp/hub-state"
-6:LIMITS = {"listening": 40, "thinking": 60, "speaking": 120}
-9:last_restart = 0
-34:            log("restarting " + svc)
-35:            run("systemctl", "restart", svc)
-38:        r = run("docker", "inspect", "-f", "{{.State.Running}} {{if .State.Health}}{{.State.Health.Status}}{{end}}", c)
-46:            log("restarting unhealthy " + c)
-47:            run("docker", "restart", c)
-50:        state = open(STATE).read().strip()
-51:        age = now - os.stat(STATE).st_mtime
-52:        if state in LIMITS and age > LIMITS[state] and now - last_restart > 60:
-53:            problems.append("stuck " + state)
-54:            log("stuck in %s for %ds, restarting satellite" % (state, age))
-55:            run("systemctl", "restart", "hub-satellite")
-56:            open(STATE, "w").write("idle")
-57:            last_restart = now
-62:        if run("docker", "inspect", "-f", "{{.State.Running}}", "pihole").stdout.strip() == "true":
-70:                    log("pihole dns dead, restarting")
-71:                    run("docker", "restart", "pihole")
-88:    time.sleep(10)
-== mic device and level
-**** List of CAPTURE Hardware Devices ****
-card 3: AC44 [MXL AC-44], device 0: USB Audio [USB Audio]
-  Subdevices: 0/1
-  Subdevice #0: subdevice #0
-(exit 0)
-```
-
-## 2026-11-05 15:13:01 tasks/queue/034-home-mic-setup.sh
-```
-== options present?
-                   [--mic-noise-suppression {0,1,2,3,4}]
-                   [--debug-recording-dir DEBUG_RECORDING_DIR] [--debug]
-  --mic-noise-suppression {0,1,2,3,4}
-  --debug-recording-dir DEBUG_RECORDING_DIR
-== hub-mic.py (gain/level lines)
-6:def stop(*a):
-added: ["--debug-recording-dir '/home/kylarlovelady/voice-data/home-mic' \\", '--mic-noise-suppression 2 \\']
-syntax ok
-== satellite now
-activating
-Nov 05 15:13:08 LoveladyMainAiHub bash[2706041]:     raise CalledProcessError(retcode, cmd)
-Nov 05 15:13:08 LoveladyMainAiHub bash[2706041]: subprocess.CalledProcessError: Command '['/home/kylarlovelady/wyoming-satellite/.venv/bin/python3', '-m', 'wyom
-Nov 05 15:13:08 LoveladyMainAiHub systemd[1]: hub-satellite.service: Main process exited, code=exited, status=1/FAILURE
+process exited, code=exited, status=1/FAILURE
 Nov 05 15:13:08 LoveladyMainAiHub systemd[1]: hub-satellite.service: Failed with result 'exit-code'.
 # Home speaker mic report (auto, stats only; audio stays on the Pi)
 
@@ -568,4 +509,70 @@ Traceback (most recent call last):
     raise JSONDecodeError("Expecting value", s, err.value) from None
 json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 {"active": true, "id": 1793908418, "strategy": "auto", "start": 1000.0}(exit 0)
+```
+
+## 2026-11-05 19:37:02 tasks/queue/052-snipe-study.sh
+```
+# Sniping study (recorded per-second data, last 5 days)
+
+Rounds with a full recording: 362
+
+
+## Part 1: seconds left on the clock at the LAST second the market was still open
+
+| left at last recorded second | rounds | share |
+|---|---|---|
+| 0-2 s | 2 | 1% |
+| 2-5 s | 2 | 1% |
+| 5-10 s | 8 | 2% |
+| 10-30 s | 36 | 10% |
+| 30-120 s | 229 | 63% |
+| >120 s | 85 | 23% |
+
+Median seconds left at last open second: 70.0 (a high number means Kalshi stopped quoting before the clock ran out, or our recorder missed the last seconds).
+
+Examples of rounds that stopped with more than 10 s left: left 90s, YES bid 1.00 / NO bid 0.00; left 183s, YES bid 0.01 / NO bid 0.99; left 32s, YES bid 0.00 / NO bid 1.00; left 62s, YES bid 0.00 / NO bid 1.00; left 198s, YES bid 0.13 / NO bid 0.86; left 115s, YES bid 0.00 / NO bid 1.00; left 128s, YES bid 0.00 / NO bid 1.00; left 144s, YES bid 1.00 / NO bid 0.00; left 17s, YES bid 1.00 / NO bid 0.00; left 75s, YES bid 0.00 / NO bid 1.00; left 18s, YES bid 1.00 / NO bid 0.00; left 38s, YES bid 0.00 / NO bid 1.00
+
+Rounds with a real settled result in history: 267 of 362
+
+## Part 2: buy the favourite at the last tick that still had at least B seconds left, hold to the result
+
+### B = 3 s left
+
+| ask bucket | rounds | win rate | avg cost/contract | profit per $ staked | median $ at best ask |
+|---|---|---|---|---|---|
+| 55-59c | 5 | 40.0% | 0.593 | -32.6% | $866 |
+| 60-64c | 1 | 100.0% | 0.656 | +52.4% | $1392 |
+| 65-69c | 1 | 100.0% | 0.666 | +50.2% | $1492 |
+| 70-74c | 3 | 66.7% | 0.734 | -9.2% | $192 |
+| 75-79c | 3 | 66.7% | 0.779 | -14.4% | $3112 |
+| 80-84c | 7 | 85.7% | 0.836 | +2.6% | $1937 |
+| 85-89c | 5 | 60.0% | 0.887 | -32.4% | $2778 |
+| 90-94c | 16 | 93.8% | 0.927 | +1.1% | $231 |
+| 95-99c | 40 | 97.5% | 0.982 | -0.7% | $965 |
+| ALL | 81 | | | -3.0% | |
+
+### B = 5 s left
+
+| ask bucket | rounds | win rate | avg cost/contract | profit per $ staked | median $ at best ask |
+|---|---|---|---|---|---|
+| 55-59c | 5 | 40.0% | 0.593 | -32.6% | $866 |
+| 60-64c | 1 | 100.0% | 0.656 | +52.4% | $1392 |
+| 65-69c | 2 | 50.0% | 0.685 | -27.1% | $764 |
+| 70-74c | 2 | 50.0% | 0.724 | -31.0% | $943 |
+| 75-79c | 3 | 66.7% | 0.779 | -14.4% | $3112 |
+| 80-84c | 7 | 85.7% | 0.836 | +2.6% | $1937 |
+| 85-89c | 6 | 66.7% | 0.884 | -24.6% | $1762 |
+| 90-94c | 15 | 93.3% | 0.928 | +0.6% | $241 |
+| 95-99c | 41 | 97.6% | 0.982 | -0.6% | $902 |
+| ALL | 82 | | | -4.2% | |
+
+### B = 10 s left
+
+| ask bucket | rounds | win rate | avg cost/contract | profit per $ staked | median $ at best ask |
+|---|---|---|---|---|---|
+| 55-59c | 6 | 33.3% | 0.594 | -43.9% | $667 |
+| 60-64c | 2 | 100.0% | 0.656 | +52.4% | $786 |
+... wrote /home/kylarlovelady/starship/memory/inbox/snipe-study.md
+(exit 0)
 ```
