@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 13:40 Desktop workstation set up
+- What: Kylar's Windows desktop now has Git, GitHub CLI, VS Code and Tailscale (Tailscale sign-in still to do), is signed in as kylarlovelady and cloned to C:\Users\<user>\Starship-Lovelady. Commits use the GitHub noreply address; pull.rebase and rebase.autoStash are on. First test push (memory/inbox/desktop-test.md, commit f46ee82) arrived in the repo.
+- Status: confirmed working. Next: Tailscale sign-in, open the repo in VS Code, optional Claude on the desktop.
+
 ## 2026-11-06 06:20 Daily check (Claude, scheduled)
 - What: read the inbox (no new Jarvis notes; the study files are already filed in kalshi-ai.md), pi-status (06:00 sync, fresh), Kalshi digest and sniper autopsy. Pi healthy: all services active, 39.5 C, disk 10%, Pi rebooted about 3 h before the snapshot (uptime 2 h 45 min, matches the earlier oracle-study load). Jarvis quiet overnight (0 turns, last use 16 h ago). Sniper wallet $1070.26 (2 bought, 2 won, rest skipped because nothing was for sale). No home-mic clips yet. Pi-hole stats still blank (needs tasks/pihole_key.sh). Wrote memory/brief.md and refreshed the projects.md header.
 - Status: filed, nothing stalled over 3 days.
