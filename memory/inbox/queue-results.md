@@ -1,38 +1,4 @@
-og log (satellite restarts)
-Nov 04 19:42:20 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:43:17 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:44:14 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:45:10 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:46:07 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:47:04 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:48:00 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:48:57 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:49:51 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 04 19:50:15 LoveladyMainAiHub python3[35465]: pihole dns dead, restarting
-Nov 05 14:58:19 LoveladyMainAiHub python3[35465]: stuck in listening for 40s, restarting satellite
-Nov 05 15:01:35 LoveladyMainAiHub python3[35465]: stuck in listening for 44s, restarting satellite
-(exit 0)
-```
-
-## 2026-11-05 15:07:03 tasks/queue/032-home-timeline.sh
-```
-== satellite unit
-ExecStart=/bin/bash /home/kylarlovelady/wyoming-satellite/run-hub.sh
-Restart=always
-RestartSec=3
-== watchdog unit
-ExecStart=/usr/bin/python3 /usr/local/bin/hub-watchdog.py
-== HA voice pipeline events (last 90 min)
-2026-11-05 14:57:38.136 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=date
-2026-11-05 14:58:52.352 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What do you know about Shari?', attachments=None, created=date
-2026-11-05 14:58:54.445 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update
-2026-11-05 15:00:18.370 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' What can you tell me about Shari?', attachments=None, created=
-2026-11-05 15:00:19.925 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Chat Log opened but no assistant message was added, ignoring update
-2026-11-05 15:00:51.274 DEBUG (MainThread) [homeassistant.components.conversation.chat_log] Adding user content: UserContent(role='user', content=' Do you know who I am?', attachments=None, created=datetime.dat
-(exit 0)
-```
-
-## 2026-11-05 15:10:01 tasks/queue/033-satellite-settings.sh
+.sh
 ```
 == run-hub.sh
 #!/bin/bash
@@ -566,5 +532,51 @@ total 2668
 drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
 drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
 -rw-rw-r--  1 kylarlovelady kylarlovelady  375809 Nov  5 17:56 cover-guides.png
+(exit 0)
+```
+
+## 2026-11-05 18:31:01 tasks/queue/047-kdp-same-yellow.sh
+```
+fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
+title font: Liberation Serif | interior font: Lato
+== process-operator-a FAILS: none | spine 0.489
+== process-operator-b FAILS: none | spine 0.489
+== process-operator-c FAILS: none | spine 0.489
+== process-operator-e FAILS: none | spine 0.489
+== lab-operator-a FAILS: none | spine 0.489
+== lab-operator-b FAILS: none | spine 0.489
+== lab-operator-c FAILS: none | spine 0.489
+== lab-operator-e FAILS: none | spine 0.489
+sheet done
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 2050548 Nov  5 18:32 /home/kylarlovelady/starship/memory/inbox/kdp-preview/contact-sheet.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
+total 2704
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:49 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  381632 Nov  5 18:31 cover-guides.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady 1382931 Nov  5 18:31 cover-hi.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  359835 Nov  5 18:31 cover.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  613909 Nov  5 18:31 front.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 18:31 page1.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 18:31 page2.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-b:
+total 2660
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  375111 Nov  5 18:32 cover-guides.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady 1359593 Nov  5 18:32 cover-hi.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  352917 Nov  5 18:32 cover.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady  608559 Nov  5 18:32 front.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 18:32 page1.png
+-rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 18:32 page2.png
+
+/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-c:
+total 2664
+drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
+drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+-rw-rw-r--  1 kylarlovelady kylarlovelady  375566 Nov  5 18:32 cover-guides.png
 (exit 0)
 ```
