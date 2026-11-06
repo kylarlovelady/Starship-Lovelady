@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 13:55 Pi-hole work started (at home)
+- What: queued tasks/queue/075-pihole-check.sh (read-only: container, DNS answering, blocking test). Plan: confirm it answers, reserve the Pi address at the router, pilot on the iPad only, then phones, then TVs.
+- Status: queued; results in memory/inbox/queue-results.md.
+
 ## 2026-11-06 13:40 Desktop workstation set up
 - What: Kylar's Windows desktop now has Git, GitHub CLI, VS Code and Tailscale (Tailscale sign-in still to do), is signed in as kylarlovelady and cloned to C:\Users\<user>\Starship-Lovelady. Commits use the GitHub noreply address; pull.rebase and rebase.autoStash are on. First test push (memory/inbox/desktop-test.md, commit f46ee82) arrived in the repo.
 - Status: confirmed working. Next: Tailscale sign-in, open the repo in VS Code, optional Claude on the desktop.
