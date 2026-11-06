@@ -12,6 +12,8 @@ idea. Nothing built. Open questions to ask Kylar: which carrier and phones, wher
 
 - 2026-11-06 00:00 Kylar wants the buddy's version to plug into a wall socket in his room and strengthen the weak signal, and believes that is legal in Mexico (unverified). Claude has not designed a homemade amplifier: a home-built repeater can oscillate (feedback between the two antennas) and jam the tower, which is a real hazard whatever the law says. Plan instead: build everything around an already-approved (homologated) amplifier module or kit: outdoor antenna, mast, cable, indoor antenna, enclosure, power, mounting. If Kylar has a source showing boosters are allowed in Mexico, add it here.
 
+- 2026-11-06 00:02 Kylar: it must be ONE piece, no wires, plug into the wall. A one-box repeater (both antennas inside one housing) is the worst case for oscillation, so Claude proposed an equivalent one-piece build that is not a repeater: a plug-in cellular-to-Wi-Fi unit (certified LTE modem module + small computer + Wi-Fi, internal antennas, one enclosure, one power plug). It takes the weak cell signal and gives the buddy Wi-Fi internet (and Wi-Fi calling for his phone). Needs: bands for his carrier in Mexico, SIM/data plan, module choice. Waiting on Kylar's yes and the carrier/town/signal details.
+
 ## Legal DIY routes to look at first (Claude can detail the one Kylar picks)
 1. Outdoor high-gain directional antenna (Yagi or panel) on a mast, pointed at the nearest tower, a low-loss coax run inside, and a cell phone/hotspot or a cellular router with external antenna ports. Making the antenna and mast is a real DIY job and legal.
 2. Cellular router/hotspot with external antenna connectors (placed in the best spot, Wi-Fi inside the house) plus Wi-Fi calling on the phones.
