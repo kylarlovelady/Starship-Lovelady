@@ -1,76 +1,4 @@
-arlovelady    1569 Nov  5 17:22 page2.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:22 page3.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
-total 1988
-drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:22 .
-drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:22 ..
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1013726 Nov  5 17:22 cover-guides.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady  992198 Nov  5 17:22 cover.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:22 page1.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:22 page2.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:22 page3.png
-(exit 0)
-```
-
-## 2026-11-05 17:34:01 tasks/queue/042-kdp-build-border.sh
-```
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Playfair Display | interior font: Lato
-== process-operator-a cover 14.065 x 10.418 spine 0.489
-  OK Page count 120 (hardcover needs 75 to 550)
-  OK Page count is even
-  OK Cover file 14.065 x 10.418 in, spine 0.489 in
-  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
-  OK Inside margin 0.500 in (KDP minimum 0.375)
-  OK All cover text inside the safe zone and clear of the barcode area
-  OK Inside text contrast 15.9:1
-  OK Picture on the full: sharp (300 dpi)
-  OK cover PDF fonts embedded
-  OK interior PDF fonts embedded
-  OK Author / pen name set
-  OK Title set
-  OK Title + subtitle length OK
-  WARN Book description not written
-  WARN 0 of 7 keywords
-  WARN Price not set
-  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
-== lab-operator-a cover 14.065 x 10.418 spine 0.489
-  OK Page count 120 (hardcover needs 75 to 550)
-  OK Page count is even
-  OK Cover file 14.065 x 10.418 in, spine 0.489 in
-  WARN Cover size NOT yet verified against KDP's cover calculator (do once before uploading)
-  OK Inside margin 0.500 in (KDP minimum 0.375)
-  OK All cover text inside the safe zone and clear of the barcode area
-  OK Inside text contrast 15.9:1
-  OK Picture on the full: sharp (300 dpi)
-  OK cover PDF fonts embedded
-  OK interior PDF fonts embedded
-  OK Author / pen name set
-  OK Title set
-  OK Title + subtitle length OK
-  WARN Book description not written
-  WARN 0 of 7 keywords
-  WARN Price not set
-  plan: ['owner', 'journal', 'journal', 'journal'] ... 120 pages
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
-total 2000
-drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
-drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1017671 Nov  5 17:34 cover-guides.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1000394 Nov  5 17:34 cover.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:34 page1.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:34 page2.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:34 page3.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
-total 1992
-drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
-drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1015213 Nov  5 17:34 cover-guides.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady  998636 Nov  5 17:34 cover.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:34 page1.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:34 page2.png
+69 Nov  5 17:34 page2.png
 -rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:34 page3.png
 (exit 0)
 ```
@@ -628,5 +556,46 @@ crew.json written
 page copy: same as repo
 projects rows in served json: 14
 page 200 147167b
+(exit 0)
+```
+
+## 2026-11-06 00:31:01 tasks/queue/065-diag-5-7.sh
+```
+== sniper log tail
+{"t":1793945730,"ticker":"KXBTC15M-26NOV060115-15","result":"ROUND","max_abs_z":68.12,"left_at_max_z":1.4,"z_ever_ge_min":true,"bought":false}
+{"t":1793946456,"ticker":"KXBTC15M-26NOV060130-30","result":"Z_NOBUY","z":4.12,"left":143.9,"sigma_per_s":3.53,"why":"z reached the trigger but nothing for sale at or below 98.5c"}
+{"t":1793946598,"ticker":"KXBTC15M-26NOV060130-30","left_at_book":1.19,"book_ms":170,"status":{"status":"active","close_time":"2026-11-06T06:30:00Z","can_close_early":true,"yes_bid_dollars":"0.9990","yes_ask_dollars":"1.0000","no_bid_dollars":"0.0000","no_ask_dollars":"0.0010"},"px":75552.6,"strike"
+{"t":1793946617,"ticker":"KXBTC15M-26NOV060130-30","result":"ROUND","max_abs_z":26.68,"left_at_max_z":1.9,"z_ever_ge_min":true,"bought":false}
+== agent restarts
+== hub-dashboard files
+total 364
+drwxrwxr-x 2 kylarlovelady kylarlovelady  4096 Nov  4 14:52 backgrounds
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  4348 Oct 20 20:23 crop_api.py
+-rw-r--r-- 1 kylarlovelady kylarlovelady  1147 Oct 26 22:14 device-names.json
+-rw-r--r-- 1 kylarlovelady kylarlovelady   138 Oct 26 22:11 device-names.json.bak-oct26
+drwxrwxr-x 2 kylarlovelady kylarlovelady  4096 Oct 20 21:15 fontcache
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  1841 Oct 25 22:21 health_api.py
+-rw-r--r-- 1 kylarlovelady kylarlovelady  3025 Oct 26 22:23 hub_api.py
+-rw-r--r-- 1 kylarlovelady kylarlovelady  2913 Oct 22 16:25 hub_api.py.bak-jh
+-rw-r--r-- 1 kylarlovelady kylarlovelady  2949 Oct 26 22:23 hub_api.py.bak-names
+-rw-r--r-- 1 kylarlovelady kylarlovelady 11098 Nov  5 03:04 hub.html
+-rw-r--r-- 1 kylarlovelady kylarlovelady  7400 Oct 30 14:51 hub.html.bak-cr
+-rw-r--r-- 1 kylarlovelady kylarlovelady  8936 Oct 30 15:25 hub.html.bak-crop
+-rw-r--r-- 1 kylarlovelady kylarlovelady  8936 Oct 30 15:20 hub.html.bak-dbg
+-rw-r--r-- 1 kylarlovelady kylarlovelady  8992 Oct 30 15:28 hub.html.bak-ha
+-rw-r--r-- 1 kylarlovelady kylarlovelady  7093 Oct 25 22:22 hub.html.bak-hl
+-rw-r--r-- 1 kylarlovelady kylarlovelady  7550 Oct 30 15:01 hub.html.bak-imm
+-rw-r--r-- 1 kylarlovelady kylarlovelady  8850 Oct 30 15:10 hub.html.bak-imm2
+-rw-r--r-- 1 kylarlovelady kylarlovelady  7291 Oct 25 23:00 hub.html.bak-ly
+-rw-r--r-- 1 kylarlovelady kylarlovelady 10776 Nov  2 00:51 hub.html.bak-markets
+== font settings
+1:{"version": 1793826125, "font": "Great Vibes", "clock_color": "#000000", "date_color": "#000000", "weather_color": "#000000", "text_color": "#000000", "bg_mode": "image", "bg_color": "#05080f", "bg_image": "bg-1793825570392.jpg", "dim": 0.0, "reload": 1793825746749, "layout": {"on": true, "clock": {"x": 49.83436622241936, "y": 80.02630104285585, "k": 0.56}, "date": {"x": 65.18151689283918, "y": 88.76360052796805, "k": 1.0}, "wx": {"x": 98.01980198019801, "y": 75.93233328576865, "k": 0.81}}}
+== popup/reply markup in index.html
+28:#you{font-size:2.6vw;color:var(--cyan);min-height:3.4vw;margin-bottom:1.5vh}
+31:/*glass*/#bubble{display:flex;flex-direction:column;align-items:center;padding:2.2vh 5vw 2.4vh;border-radius:34px;background:rgba(255,255,255,.5);max-width:92vw;
+34:#bubble #clock{text-shadow:none!important}#bubble #date{margin-bottom:1.6vh}
+37:<div id="bubble"><div id="clock">--:--</div><div id="date"></div>
+40:<div class="lbl">You</div><div id="you"></div><div class="lbl">Alexa</div><div id="ai"></div><img id="pic" alt=""></div>
+121:var bu=g('bubble');if(bu){if(s.glass===false){bu.style.cssText='background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0';}
 (exit 0)
 ```
