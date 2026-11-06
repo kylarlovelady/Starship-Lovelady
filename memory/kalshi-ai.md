@@ -62,6 +62,9 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 ## Parked
 - More agents on other markets (options, stocks, commodities) only after the Kalshi agent shows a real edge; share the method, not the bets. Other coins on hold. Mempool tracker for big transfers only.
 
+## Wallet reset 2026-11-05 19:30
+- Kylar asked for the practice wallet back to a fresh $1,000 / 0 profit so the sniping work gets a clean record (soft reset: keeps what the agent learned). Done by queue 051; new record starts at the time in the changelog.
+
 ## Idea: SNIPING (Kylar, 2026-11-05 19:22)
 - Buy a large favourite (he suggested $1,000) in the last seconds before a 15-minute BTC round stops accepting orders, when a comeback looks impossible; accept a small payout (about 1.15x, roughly $150) for a very high hit rate.
 - Claude's maths: at about 87c a $1,000 bet wins about $150 and loses $1,000, so it needs about 90%+ wins after the 7%·p(1-p) fee. Risks: settlement uses a last-minute average (not one tick), thin book at 90c+ (partial fills, slippage), Kylar's real trades over $150 stake lost about $1,700.
