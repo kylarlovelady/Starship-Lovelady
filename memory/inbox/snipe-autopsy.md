@@ -1,6 +1,6 @@
 # $1K-Snipe report (auto)
 
-- Wallet $1047.89 (started $1000). Rounds 9: bought 1 (won 1, lost 0), skipped 8, missed 0. Profit $47.89 on $999.11 staked. Busts 0.
+- Wallet $1047.89 (started $1000). Rounds 11: bought 1 (won 1, lost 0), skipped 10, missed 0. Profit $47.89 on $999.11 staked. Busts 0.
 - Average share of the wallet that actually filled: 100%. Seconds left when the book came back: avg 299.84 (min 299.84, max 299.84). Kalshi answer time avg 158 ms.
 
 ## Problems (lost / missed / skipped), newest last
@@ -13,3 +13,5 @@
 - 11-05 21:29:59 KXBTC15M-26NOV052230-30 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
 - 11-05 21:44:59 KXBTC15M-26NOV052245-45 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
 - 11-05 21:59:58 KXBTC15M-26NOV052300-00 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
+- 11-05 22:29:58 KXBTC15M-26NOV052330-30 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
+- 11-05 22:44:58 KXBTC15M-26NOV052345-45 SKIP: one side of the book is empty (nobody to buy from): yes levels 10, no levels 0
