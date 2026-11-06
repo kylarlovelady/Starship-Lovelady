@@ -1,6 +1,8 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 AI accelerator check: Hailo-8 is installed, healthy and idle (queue 068); it only accelerates camera vision, not Jarvis voice or Kalshi. Findings in pi-home-assistant.md; queue 069 checks for a camera and benchmarks the chip.
+
 ## 2026-11-05 (daily check, 06:20 Central)
 - 2026-11-06 00:55 Starship Captain slice 1: the Captain panel (Captain's Office) now shows the top 5 open to-dos and what is waiting on Kylar, read from memory/todo.md by tasks/crew_report.py every 5 min (crew.json: todo_top, waiting_on_kylar), on top of the open-alerts/changes rows. Page script re-checked (compiles). NOT yet built: Captain as a running agent, a text box to talk to the Captain, crew daily jobs (architecture.md build order).
 - 2026-11-06 00:45 Sniper v9.2: the 00:00 'MISSED' round was a bookkeeping glitch (the book DID answer at 0.97 s, then a second process logged MISSED); two agent processes overlap briefly after a restart. Fix: markets/sniper.py claims each round once across processes (snipe_claims/ marker files), so no double bets or false MISSED. z-rule is working: round 01:30 reached z=4.1 at 144 s but nothing was for sale under 98.5c (Z_NOBUY); round 01:15 reached z=68 at 1.4 s with nothing to buy.

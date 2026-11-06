@@ -57,3 +57,8 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 - Build order after the voice works: lights (done), timers and alarms and reminders (one-time and repeating), thermostat (needs the thermostat's Home Assistant integration; ask which model), Spotify (Home Assistant Spotify integration), then wider devices.
 - Satellite Pis (3 bedrooms) do everything the main Pi does except the screen (maybe added later). Kylar is also interested in sensors and add-ons for the main Pi.
 - Time: Kylar's available time varies a lot with work (hours some shifts, none other days), so Claude should do as much as possible on its own and leave short, clear steps for him.
+
+## AI accelerator (Hailo-8) - checked 2026-11-06 01:22 (queue 068)
+- The Pi 5 has a Hailo-8 AI accelerator (M.2, about 26 TOPS) on PCIe. It is healthy: driver and firmware 4.23.0, /dev/hailo0 present, hailort, Python bindings, TAPPAS and the Raspberry Pi Hailo model pack installed (object detection, pose, segmentation, face, classification models for the Hailo-8 / 8L). Nothing is using it right now.
+- What it can accelerate: camera vision only (person/face/object detection, pose, segmentation, image classification). It cannot run Whisper speech recognition, text-to-speech, language models, wake-word detection (those run on the CPU or the cloud) or the Kalshi models (small, CPU is fine); a Hailo-10H would be needed for speech/LLM work.
+- So right now there is nothing in Jarvis or the Kalshi agent for it to speed up. Real uses: a camera with person detection for security alerts (Starship Security room), a door/driveway/truck camera, image tasks. Needs a camera (queue 069 checks whether one is attached) and a small service that runs detection and sends a phone alert.
