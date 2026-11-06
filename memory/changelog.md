@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 TV cleanup notes, iPad DNS set, one-step-at-a-time rule
+- What: CLAUDE.md now says give one step at a time (Kylar asked by voice); TV cleanup recorded in home-network.md; iPad DNS saved, Pi-hole shows 5 clients, 648 blocked (5.4%).
+- Status: iPad address to confirm.
+
 ## 2026-11-06 Pi-hole: living room Sony Google TV connected
 - What: static IP 192.168.1.130, gateway 192.168.1.1, DNS 192.168.1.107; shows in Pi-hole (4 clients, 419 blocked, 3.8%).
 - Where: memory/home-network.md

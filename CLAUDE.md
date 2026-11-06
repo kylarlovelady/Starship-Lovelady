@@ -22,3 +22,4 @@ Pi 5 "LoveladyMainAiHub", user kylarlovelady, repo clone ~/starship (cron pulls 
 
 ## How Kylar likes to work (2026-11-05)
 When a Pi job will take a while, give Kylar the exact command to paste in the terminal as well as queueing it; he often finishes faster and sees what is happening. Say what you are doing in a short line every few minutes so he never thinks you are frozen. Paste-back results can go straight in the chat.
+One step at a time (Kylar, 2026-11-06, voice): give ONE instruction, wait for him to say done, then give the next. Never list several steps in one message when he is doing something hands-on. Names: say what to tap and what to tell back.
