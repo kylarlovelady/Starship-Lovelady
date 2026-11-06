@@ -47,6 +47,8 @@ for p in sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*"))):
                     continue
                 if r.get("left") is None or r.get("t") is None:
                     continue
+                if r["left"] < 570:
+                    continue          # entries are 1 to 3 minutes in plus a 2 minute wait: the first 5 minutes is enough
                 ce = int(round(r["t"] + r["left"]))
                 for x in (r.get("kt") or []):
                     try:
@@ -84,7 +86,7 @@ def result(ce):
 rounds = []
 for ce, seq in ROWS.items():
     seq.sort()
-    if len(seq) < 300 or seq[0][1] < 800 or result(ce) is None or not TR.get(ce):
+    if len(seq) < 200 or seq[0][1] < 800 or result(ce) is None or not TR.get(ce):
         continue
     rounds.append((ce, seq, result(ce), sorted((v for v in TR[ce].values() if v[0] is not None), key=lambda v: v[0])))
 rounds.sort()

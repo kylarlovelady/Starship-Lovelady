@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 15:40 Pricing study read; maker study fixed; longshot test queued (081, 082)
+- What: queue 078 (implied volatility, calibration, spreads) ran and is summarised in kalshi-ai.md (market implies about 12 to 18% less volatility than realized from 2 to 10 min out; cheap side under 20c won more than priced at 3 to 7 min out in this sample). Queue 080 failed with a MemoryError; maker_study2.py now keeps only the first 5 minutes of each round and runs as 081. New markets/longshot_wf.py tests the longshot idea with bootstrap range, older/newer halves and per-day results (queue 082).
+- Status: 081 and 082 queued; practice only, nothing changes in the agent.
+
 ## 2026-11-06 15:10 More ideas, stricter maker study, wallet back to Auto (queues 079, 080)
 - What: researched fees (taker 7%, maker 1.75%, rounded up per trade), the Volume Incentive Program, cross-venue arbitrage and an arxiv market-making paper; ideas listed in kalshi-ai.md. Wrote markets/maker_study2.py (fills need a real tape trade). Queue 077 showed the practice wallet still followed v_snipe, so queue 079 sets run.json strategy back to auto (backup kept; live untouched).
 - Status: queued (078, 079, 080); results to memory/inbox/ and queue-results.md.
