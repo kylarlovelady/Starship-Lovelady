@@ -1,5 +1,4 @@
-arted hub-satellite.service - Wyoming satellite (main hub).
-Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Ready
+:Ready
 Nov 05 15:19:19 LoveladyMainAiHub bash[2722919]: INFO:root:Connected to services
 (exit 0)
 ```
@@ -588,3 +587,6 @@ Calibration check (does the model's P match reality?): bucket by model P of the 
 ... wrote /home/kylarlovelady/starship/memory/inbox/avg-lock-study.md
 (exit 0)
 ```
+
+## 2026-11-05 20:16:01 tasks/queue/054-sniper-reset-check.sh
+REFUSED: header must be '#!/bin/bash' then '# QUEUE-OK'
