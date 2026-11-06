@@ -1,42 +1,4 @@
-4096 Nov  5 17:30 .
-drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1017733 Nov  5 17:46 cover-guides.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1000401 Nov  5 17:46 cover.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:46 page1.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:46 page2.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/process-operator-a:
-total 1992
-drwxrwxr-x 2 kylarlovelady kylarlovelady    4096 Nov  5 17:30 .
-drwxrwxr-x 4 kylarlovelady kylarlovelady    4096 Nov  5 17:30 ..
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1015236 Nov  5 17:46 cover-guides.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady  998588 Nov  5 17:46 cover.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    7365 Nov  5 17:46 page1.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1569 Nov  5 17:46 page2.png
--rw-rw-r-- 1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
-(exit 0)
-```
-
-## 2026-11-05 17:49:01 tasks/queue/045-kdp-build-approved-look.sh
-```
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Liberation Serif | interior font: Lato
-== process-operator-a FAILS: none | spine 0.489
-== process-operator-b FAILS: none | spine 0.489
-== process-operator-c FAILS: none | spine 0.489
-== process-operator-e FAILS: none | spine 0.489
-== lab-operator-a FAILS: none | spine 0.489
-== lab-operator-b FAILS: none | spine 0.489
-== lab-operator-c FAILS: none | spine 0.489
-== lab-operator-e FAILS: none | spine 0.489
-sheet done
--rw-rw-r-- 1 kylarlovelady kylarlovelady 1954345 Nov  5 17:50 /home/kylarlovelady/starship/memory/inbox/kdp-preview/contact-sheet.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
-total 2580
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:49 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
+larlovelady kylarlovelady    4096 Nov  5 17:50 ..
 -rw-rw-r--  1 kylarlovelady kylarlovelady  371246 Nov  5 17:49 cover-guides.png
 -rw-rw-r--  1 kylarlovelady kylarlovelady 1306165 Nov  5 17:49 cover-hi.png
 -rw-rw-r--  1 kylarlovelady kylarlovelady  350388 Nov  5 17:49 cover.png
@@ -581,5 +543,71 @@ seconds with a row: 78 of 80; last row (left, ticker, has book): (590, 'KXBTC15M
 ```
 patched: pop-up text now uses the normal font
 1
+(exit 0)
+```
+
+## 2026-11-06 01:22:01 tasks/queue/068-ai-chip-check.sh
+```
+== model
+Raspberry Pi 5 Model B Rev 1.1
+== PCIe devices
+0001:00:00.0 PCI bridge: Broadcom Inc. and subsidiaries BCM2712 PCIe Bridge (rev 30)
+0001:01:00.0 Co-processor: Hailo Technologies Ltd. Hailo-8 AI Processor (rev 01)
+0002:00:00.0 PCI bridge: Broadcom Inc. and subsidiaries BCM2712 PCIe Bridge (rev 30)
+0002:01:00.0 Ethernet controller: Raspberry Pi Ltd RP1 PCIe 2.0 South Bridge
+== device nodes
+crw-rw-rw- 1 root root 509, 0 Oct 25 11:59 /dev/hailo0
+== kernel
+6.18.50+rpt-rpi-2712
+== hailo packages
+hailo-all 5.1.1
+hailo-models 1.0.0-2
+hailo-tappas-core 5.1.0
+hailort 4.23.0
+hailort-pcie-driver 4.23.0
+python3-hailo-tappas 5.1.0
+python3-hailort 4.23.0-1
+rpicam-apps-hailo-postprocess 1.14.0-1
+== hailortcli
+/usr/bin/hailortcli
+Executing on device: 0001:01:00.0
+Identifying board
+Control Protocol Version: 2
+Firmware Version: 4.23.0 (release,app,extended context switch buffer)
+Logger Version: 0
+Board Name: Hailo-8                         
+Device Architecture: HAILO8
+Serial Number: HLLWM2A233900170
+Part Number: HM218B1C2FAE
+Product Name: HAILO-8 AI ACC M.2 M KEY MODULE EXT TEMP
+
+== python hailo
+hailo_platform 4.23.0
+== models and examples on disk
+resnet_v1_50_h10.hef
+resnet_v1_50_h8l.hef
+scrfd_2.5g_h8l.hef
+yolov11m_h10.hef
+yolov5n_seg_h10.hef
+yolov5n_seg_h8.hef
+yolov5n_seg_h8l_mz.hef
+yolov5_personface.json
+yolov5seg.json
+yolov5s_personface_h8l.hef
+yolov6n_h8.hef
+yolov6n_h8l.hef
+== processes touching hailo
+== services that might use it
+  hailort.service                                                                                                       
+  hub-satellite.service                                                                                                 
+== docker
+openwakeword rhasspy/wyoming-openwakeword
+whisper rhasspy/wyoming-whisper
+piper rhasspy/wyoming-piper
+pihole pihole/pihole:latest
+homeassistant ghcr.io/home-assistant/home-assistant:stable
+== cpu/temp now
+ 01:22:02 up 11 days, 14:22,  4 users,  load average: 3.64, 2.37, 2.08
+temp=45.0'C
 (exit 0)
 ```

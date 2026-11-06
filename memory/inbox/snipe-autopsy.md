@@ -1,9 +1,9 @@
 # $1K-Snipe report (auto)
 
-- Wallet $1047.89 (started $1000). Rounds 20: bought 1 (won 1, lost 0), skipped 18, missed 1. Profit $47.89 on $999.11 staked. Busts 0.
-- Average share of the wallet that actually filled: 100%. Seconds left when the book came back: avg 299.84 (min 299.84, max 299.84). Kalshi answer time avg 158 ms.
-- Z-rule: 3 rounds seen, z reached the trigger in 3 of them; biggest |z| per round: median 26.7, best 68.1.
-- Z-rule reached the trigger but did not buy in 3 rounds (reasons: z reached the trigger but nothing for sale at or below 98.5c; z reached the trigger but one side of the book was empty).
+- Wallet $1070.26 (started $1000). Rounds 22: bought 2 (won 2, lost 0), skipped 19, missed 1. Profit $70.27 on $2046.74 staked. Busts 0.
+- Average share of the wallet that actually filled: 100%. Seconds left when the book came back: avg 150.45 (min 1.06, max 299.84). Kalshi answer time avg 176 ms.
+- Z-rule: 8 rounds seen, z reached the trigger in 5 of them; biggest |z| per round: median 18.9, best 68.1.
+- Z-rule reached the trigger but did not buy in 4 rounds (reasons: z reached the trigger but nothing for sale at or below 98.5c; z reached the trigger but one side of the book was empty).
 
 ## Problems (lost / missed / skipped), newest last
 
@@ -29,3 +29,5 @@
 - 11-06 00:29:58 KXBTC15M-26NOV060130-30 SKIP: one side of the book is empty (nobody to buy from): yes levels 10, no levels 0
 - 11-06 00:44:44 KXBTC15M-26NOV060145-45 Z_NOBUY: z reached the trigger but one side of the book was empty
 - 11-06 00:44:58 KXBTC15M-26NOV060145-45 SKIP: one side of the book is empty (nobody to buy from): yes levels 10, no levels 0
+- 11-06 01:10:53 KXBTC15M-26NOV060215-15 Z_NOBUY: z reached the trigger but nothing for sale at or below 98.5c
+- 11-06 01:14:58 KXBTC15M-26NOV060215-15 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
