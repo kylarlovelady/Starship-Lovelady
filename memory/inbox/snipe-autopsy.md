@@ -1,16 +1,12 @@
 # $1K-Snipe report (auto)
 
-- Wallet $1070.26 (started $1000). Rounds 36: bought 2 (won 2, lost 0), skipped 33, missed 1. Profit $70.27 on $2046.74 staked. Busts 0.
+- Wallet $1070.26 (started $1000). Rounds 38: bought 2 (won 2, lost 0), skipped 35, missed 1. Profit $70.27 on $2046.74 staked. Busts 0.
 - Average share of the wallet that actually filled: 100%. Seconds left when the book came back: avg 150.45 (min 1.06, max 299.84). Kalshi answer time avg 176 ms.
-- Z-rule: 21 rounds seen, z reached the trigger in 14 of them; biggest |z| per round: median 9.1, best 68.1.
-- Z-rule reached the trigger but did not buy in 13 rounds (reasons: z reached the trigger but nothing for sale at or below 98.5c; z reached the trigger but one side of the book was empty).
+- Z-rule: 23 rounds seen, z reached the trigger in 16 of them; biggest |z| per round: median 13.3, best 68.1.
+- Z-rule reached the trigger but did not buy in 15 rounds (reasons: z reached the trigger but nothing for sale at or below 98.5c; z reached the trigger but one side of the book was empty).
 
 ## Problems (lost / missed / skipped), newest last
 
-- 11-06 01:10:53 KXBTC15M-26NOV060215-15 Z_NOBUY: z reached the trigger but nothing for sale at or below 98.5c
-- 11-06 01:14:58 KXBTC15M-26NOV060215-15 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
-- 11-06 01:29:46 KXBTC15M-26NOV060230-30 Z_NOBUY: z reached the trigger but one side of the book was empty
-- 11-06 01:29:59 KXBTC15M-26NOV060230-30 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
 - 11-06 01:42:23 KXBTC15M-26NOV060245-45 Z_NOBUY: z reached the trigger but one side of the book was empty
 - 11-06 01:44:59 KXBTC15M-26NOV060245-45 SKIP: one side of the book is empty (nobody to buy from): yes levels 10, no levels 0
 - 11-06 01:58:42 KXBTC15M-26NOV060300-00 Z_NOBUY: z reached the trigger but one side of the book was empty
@@ -32,3 +28,7 @@
 - 11-06 04:29:59 KXBTC15M-26NOV060530-30 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
 - 11-06 04:44:47 KXBTC15M-26NOV060545-45 Z_NOBUY: z reached the trigger but one side of the book was empty
 - 11-06 04:44:58 KXBTC15M-26NOV060545-45 SKIP: one side of the book is empty (nobody to buy from): yes levels 10, no levels 0
+- 11-06 04:58:02 KXBTC15M-26NOV060600-00 Z_NOBUY: z reached the trigger but nothing for sale at or below 98.5c
+- 11-06 04:59:58 KXBTC15M-26NOV060600-00 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10
+- 11-06 05:14:03 KXBTC15M-26NOV060615-15 Z_NOBUY: z reached the trigger but one side of the book was empty
+- 11-06 05:14:59 KXBTC15M-26NOV060615-15 SKIP: one side of the book is empty (nobody to buy from): yes levels 0, no levels 10

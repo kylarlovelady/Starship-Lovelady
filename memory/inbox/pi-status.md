@@ -2,7 +2,7 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 hour, 45 minutes; temp 38.9'C; throttled flags 0x0 (0x0 is clean); memory 31%; disk 10%
+- up 2 hours, 15 minutes; temp 40.6'C; throttled flags 0x0 (0x0 is clean); memory 31%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
@@ -11,14 +11,14 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - containers: openwakeword Up 2 hours; whisper Up 2 hours (healthy); piper Up 2 hours (healthy); pihole Up 2 hours (healthy); homeassistant Up 2 hours
 
 ## Sync and schedule
-- Pi repo copy at: 9792941 19 minutes ago: Field Deck plan expanded, parts inventory
+- Pi repo copy at: 519d66f 30 minutes ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (53 min ago), first lines:
-    MARKET AGENT PROGRESS  Fri 06 Nov 04:07
+- supervisor report (22 min ago), first lines:
+    MARKET AGENT PROGRESS  Fri 06 Nov 05:07
     
     1. ALIVE
       OK    service market-agent is active
@@ -27,27 +27,27 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
     
     2. LEARNING (rounds turned into lessons)
       OK    95 of the last 96 rounds were settled by Kalshi and logged
-      OK    +4 new written lessons since the last check (335 total)
-      OK    entry_stats.json updated 2 min ago
-      OK    exit_rules.json updated 7 min ago
-      OK    patterns.json updated 6 min ago
+      OK    +4 new written lessons since the last check (339 total)
+      OK    entry_stats.json updated 0 min ago
+      OK    exit_rules.json updated 2 min ago
+      OK    patterns.json updated 1 min ago
       OK    learn_report.json updated 6 min ago
     
     3. PRACTICE SCOREBOARD (fake money, after fees)
-            v_x96220861  +491.21 over   96 rounds, wins 43%   (+1.92 over +4 rounds since last check)
-            v_x60222031  +447.94 over   96 rounds, wins 46%   (+2.36 over +4 rounds since last check)
-            v_x88221261  +292.16 over  103 rounds, wins 21%   (-9.66 over +4 rounds since last check)
-            v_x64216771  +230.72 over  131 rounds, wins 37%   (+127.97 over +4 rounds since last check)
-            v_x80218932  +153.92 over  115 rounds, wins 44%   (-17.98 over +4 rounds since last check)
-            v_x64216772  +152.80 over  131 rounds, wins 47%   (+1.79 over +4 rounds since last check)
-            v_x52220781  +125.74 over  107 rounds, wins 23%   (-28.35 over +4 rounds since last check)
-            v_x60222032  +122.03 over   96 rounds, wins 49%   (+1.79 over +4 rounds since last check)
-            v_x24220781   +97.20 over   99 rounds, wins 44%   (-17.98 over +4 rounds since last check)
+            v_x96220861  +453.20 over  100 rounds, wins 42%   (-38.01 over +4 rounds since last check)
+            v_x60222031  +422.61 over  100 rounds, wins 45%   (-25.33 over +4 rounds since last check)
+            v_x88221261  +281.00 over  107 rounds, wins 21%   (-11.16 over +4 rounds since last check)
+            v_x64216771  +261.78 over  135 rounds, wins 37%   (+31.06 over +4 rounds since last check)
+            v_x80218932  +166.54 over  119 rounds, wins 45%   (+12.62 over +4 rounds since last check)
+            v_x64216772  +154.98 over  135 rounds, wins 47%   (+2.18 over +4 rounds since last check)
+            v_x60222032  +124.21 over  100 rounds, wins 49%   (+2.18 over +4 rounds since last check)
+            v_x24220781  +109.82 over  103 rounds, wins 45%   (+12.62 over +4 rounds since last check)
+            v_x52220781   +98.57 over  111 rounds, wins 23%   (-27.17 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 71; errors: 0; ignored blips: 10; last activity: 15.1 h ago
-- hang-ups: you ended it x9, quiet x2
-- time to first words: avg 1.6s, slowest 4.2s over 69 answers
+- turns: 52; errors: 0; ignored blips: 5; last activity: 15.6 h ago
+- hang-ups: you ended it x2
+- time to first words: avg 1.5s, slowest 3.3s over 51 answers
 
 ## Pi-hole
 - Pi-hole container is up and healthy, but I need its password to read stats (run tasks/pihole_key.sh once).
