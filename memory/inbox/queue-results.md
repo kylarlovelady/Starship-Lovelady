@@ -1,37 +1,4 @@
-0' \
---snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
---wake-uri 'tcp://127.0.0.1:10400' \
---wake-word-name 'hey_jarvis' \
---detect-command 'bash -c "echo idle > /tmp/hub-state"' \
---detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
---stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
---transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
---synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
---tts-start-command 'bash -c "echo speaking > /tmp/hub-state"' \
---tts-stop-command 'bash -c "echo idle > /tmp/hub-state; curl -s -m 2 -X POST -d done http://127.0.0.1:8080/event/done > /dev/null"' \
---error-command 'bash -c "echo idle > /tmp/hub-state"'
-== wyoming-satellite version / options
-CHANGELOG.md
-docker
-docker-compose.yml
-Dockerfile
-docs
-etc
-examples
-installer
-LICENSE.md
-mypy.ini
-pylintrc
-pyproject.toml
-README.md
-run-hub.sh
-run-hub.sh.bak
-run-hub.sh.bak2
-run-hub.sh.bak-alexa
-run-hub.sh.bak-lock
-script
-setup.cfg
-  --mic-uri MIC_URI     URI of Wyoming microphone service
+service
   --mic-command MIC_COMMAND
   --mic-command-rate MIC_COMMAND_RATE
   --mic-command-width MIC_COMMAND_WIDTH
@@ -581,5 +548,25 @@ drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
 ## 2026-11-05 18:52:01 tasks/queue/049-kdp-keyword-scan-bg.sh
 ```
 started pid 3293782
+(exit 0)
+```
+
+## 2026-11-05 19:13:02 tasks/queue/050-kdp-no-barcode-box.sh
+```
+== process-operator-a FAILS: none | spine 0.489
+== process-operator-b FAILS: none | spine 0.489
+== process-operator-c FAILS: none | spine 0.489
+== process-operator-e FAILS: none | spine 0.489
+== lab-operator-a FAILS: none | spine 0.489
+== lab-operator-b FAILS: none | spine 0.489
+== lab-operator-c FAILS: none | spine 0.489
+== lab-operator-e FAILS: none | spine 0.489
+sheet done
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5282832 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/lab-operator-a/out/coverg.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5262157 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/lab-operator-a/out/cover.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  113757 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/lab-operator-a/out/interior.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5282830 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/coverg.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5262158 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/cover.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  113761 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/interior.pdf
 (exit 0)
 ```
