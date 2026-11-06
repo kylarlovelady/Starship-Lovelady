@@ -1,19 +1,4 @@
-:8080/event/wake > /dev/null"' \
---stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
---transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
---synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
---tts-start-command 'bash -c "echo speaking > /tmp/hub-state"' \
---tts-stop-command 'bash -c "echo idle > /tmp/hub-state; curl -s -m 2 -X POST -d done http://127.0.0.1:8080/event/done > /dev/null"' \
---error-command 'bash -c "echo idle > /tmp/hub-state"'
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]: Traceback (most recent call last):
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:   File "/home/kylarlovelady/wyoming-satellite/script/run", line 12, in <module>
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:     subprocess.check_call([context.env_exe, "-m", "wyoming_satellite"] + sys.argv[1:])
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:     ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:   File "/usr/lib/python3.13/subprocess.py", line 419, in check_call
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]:     raise CalledProcessError(retcode, cmd)
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005068]: subprocess.CalledProcessError: Command '['/home/kylarlovelady/wyoming-satellite/.venv/bin/python3', '-m', 'wyoming_satellite', '--name', 'main hub', '-
-Nov 05 17:10:01 LoveladyMainAiHub bash[3005067]: /home/kylarlovelady/wyoming-satellite/run-hub.sh: line 19: unexpected EOF while looking for matching `"'
-Nov 05 17:10:01 LoveladyMainAiHub systemd[1]: hub-satellite.service: Main process exited, code=exited, status=1/FAILURE
+tellite.service: Main process exited, code=exited, status=1/FAILURE
 Nov 05 17:10:01 LoveladyMainAiHub systemd[1]: hub-satellite.service: Failed with result 'exit-code'.
 Nov 05 17:10:01 LoveladyMainAiHub systemd[1]: hub-satellite.service: Consumed 2.431s CPU time.
 Nov 05 17:10:05 LoveladyMainAiHub systemd[1]: hub-satellite.service: Scheduled restart job, restart counter is at 5.
@@ -598,5 +583,48 @@ Rounds seen: 268. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable
 | 25 | 268 | 7% | 4% | $0 |
 | 30 | 268 | 9% | 5% | $0 |
 | 40 | 268 | 16% | 11% | $0 |
+(exit 0)
+```
+
+## 2026-11-05 21:16:01 tasks/queue/057-liq-by-second-v2.sh
+```
+# Liquidity before the close (auto): dollars buyable on the favourite at 99c or less
+
+Rounds seen: 269. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable. Only seconds that have a recorded book row are counted (percent is of those rows); no row = the book was missing or one-sided.
+
+| s before close | rounds with a book row | any | full ($1,000) | median $ buyable |
+|---|---|---|---|---|
+| 0 | 265 of 269 | 0% | 0% | $0 |
+| 1 | 246 of 269 | 0% | 0% | $0 |
+| 2 | 250 of 269 | 1% | 0% | $0 |
+| 3 | 242 of 269 | 1% | 0% | $0 |
+| 4 | 243 of 269 | 1% | 1% | $0 |
+| 5 | 251 of 269 | 2% | 1% | $0 |
+| 6 | 255 of 269 | 2% | 1% | $0 |
+| 7 | 255 of 269 | 2% | 2% | $0 |
+| 8 | 256 of 269 | 2% | 2% | $0 |
+| 9 | 255 of 269 | 3% | 2% | $0 |
+| 10 | 251 of 269 | 3% | 2% | $0 |
+| 11 | 249 of 269 | 3% | 2% | $0 |
+| 12 | 249 of 269 | 3% | 3% | $0 |
+| 13 | 252 of 269 | 4% | 4% | $0 |
+| 14 | 253 of 269 | 4% | 4% | $0 |
+| 15 | 252 of 269 | 5% | 4% | $0 |
+| 16 | 253 of 269 | 4% | 4% | $0 |
+| 17 | 252 of 269 | 4% | 3% | $0 |
+| 18 | 249 of 269 | 5% | 3% | $0 |
+| 19 | 248 of 269 | 5% | 4% | $0 |
+| 20 | 248 of 269 | 6% | 4% | $0 |
+| 25 | 252 of 269 | 7% | 5% | $0 |
+| 30 | 245 of 269 | 9% | 6% | $0 |
+| 40 | 245 of 269 | 17% | 12% | $0 |
+=== owner page
+pypdf 6.21.4
+owner page refined: process-operator-a 120 pages
+total 10568
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5282830 Nov  5 19:13 coverg.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5262158 Nov  5 19:13 cover.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  113761 Nov  5 21:10 interior-orig.pdf
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  156768 Nov  5 21:16 interior.pdf
 (exit 0)
 ```
