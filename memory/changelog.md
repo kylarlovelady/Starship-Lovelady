@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 04:40 Starship Field Deck project filed
+- What: new memory/projects/field-deck.md (Note 20 Ultra + mesh radio + Linux terminal + module case); projects.md row now points to it.
+- Status: idea, waiting on model number, mesh range need and 3D printer answer.
+
 ## 2026-11-06 04:25 Note 20 Ultra plan
 - What: Kylar's phone is AT&T, holds a charge; he wants a Starship comms terminal and maybe an off-grid comms unit. Plan filed in projects.md (phase 1 Tailscale terminal, phase 2 Meshtastic + offline kit).
 - Status: waiting for Kylar to install Tailscale on it.
