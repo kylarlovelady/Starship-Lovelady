@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 03:20 Oracle study made memory-light (rerun queued as 073)
+- Why: the Pi rebooted (uptime 0 minutes in the 03:00 snapshot) right as the first run (queue 071) started. I cannot prove the study caused it, but it loaded every recorded second into memory, so I rewrote it to keep only the needed numbers, default 3 days, and queue 073 caps it at 2 GB and lowest priority.
+- Status: queued.
+
 ## 2026-11-06 02:55 Hindsight/oracle study (practice only, read-only)
 - What: new markets/oracle_study.py finds the best possible buy in every recorded round and tests which signals (distance to strike, momentum, Kraken lead, trade flow, order-book imbalance, Kalshi price) predicted the winner at 6 checkpoints, split older/newer half; plus a simple z-vs-ask edge rule after fees. Queued as tasks/queue/071-oracle-study.sh; output memory/inbox/oracle-study.md.
 - Status: queued, waiting for the Pi's next run (Kylar asked whether the best trades share signals).

@@ -9,7 +9,7 @@ Part C  simple edge rule: model chance from z-score vs the Kalshi ask, buy when 
 Run: python3 oracle_study.py [days=7]. Output: ~/starship/memory/inbox/oracle-study.md"""
 import glob, gzip, json, math, os, sys, time, collections, statistics
 D = os.path.expanduser(os.environ.get("MARKET_DIR", "~/market-data"))
-days = float(sys.argv[1]) if len(sys.argv) > 1 else 7
+days = float(sys.argv[1]) if len(sys.argv) > 1 else 3
 OUT = os.environ.get('OUTF', os.path.expanduser('~/starship/memory/inbox/oracle-study.md'))
 CPS = (600, 420, 300, 180, 90, 45)
 fee = lambda p: 0.07 * p * (1 - p)
@@ -30,6 +30,29 @@ def lv(x):
         return []
 
 
+def asks_raw(r):
+    ob = r.get("ob") or {}
+    y = lv(ob.get("yes_dollars") or ob.get("yes") or [])
+    n = lv(ob.get("no_dollars") or ob.get("no") or [])
+    if not y or not n:
+        return None
+    sc = 1.0 if max(a for a, b in y + n) <= 1.0 else 100.0
+    yb = max(a for a, b in y) / sc
+    nb = max(a for a, b in n) / sc
+    imb = None
+    ys = sum(b for a, b in y); ns = sum(b for a, b in n)
+    if ys + ns > 0:
+        imb = (ys - ns) / (ys + ns)
+    return 1 - nb, 1 - yb, imb
+
+
+def slim(r):
+    """keep only the few numbers this study needs (the raw rows are big; keeping them all can run the Pi out of memory)"""
+    fl = r.get("flow") or {}; cb = r.get("cbbook") or {}; x = r.get("x") or {}; fu = r.get("funding") or {}
+    return {"px": float(r["px"]), "a": asks_raw(r), "st": num((r.get("k") or {}).get("floor_strike")), "kr": num(x.get("kraken")),
+            "fb": fl.get("buy_usd"), "fs": fl.get("sell_usd"), "cb": cb.get("bid_usd"), "ca": cb.get("ask_usd"), "fu": fu.get("rate")}
+
+
 R = collections.defaultdict(list)
 cut = time.time() - days * 86400
 for p in sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*"))):
@@ -47,7 +70,7 @@ for p in sorted(glob.glob(os.path.join(D, "ticks-*.jsonl*"))):
                     continue
                 k = r.get("k") or {}
                 ce = int(round(r["t"] + r["left"]))
-                R[ce].append((r["t"], float(r["left"]), r))
+                R[ce].append((r["t"], float(r["left"]), slim(r)))
     except OSError:
         pass
 
@@ -71,20 +94,7 @@ def result(ce):
 
 
 def asks(r):
-    """(yes ask, no ask) in dollars from the order book (asks = 1 - opposite best bid)."""
-    ob = r.get("ob") or {}
-    y = lv(ob.get("yes_dollars") or ob.get("yes") or [])
-    n = lv(ob.get("no_dollars") or ob.get("no") or [])
-    if not y or not n:
-        return None
-    sc = 1.0 if max(a for a, b in y + n) <= 1.0 else 100.0
-    yb = max(a for a, b in y) / sc
-    nb = max(a for a, b in n) / sc
-    imb = None
-    ys = sum(b for a, b in y); ns = sum(b for a, b in n)
-    if ys + ns > 0:
-        imb = (ys - ns) / (ys + ns)
-    return 1 - nb, 1 - yb, imb
+    return r.get("a")
 
 
 rounds = []
@@ -97,7 +107,7 @@ for ce, seq in R.items():
         continue
     strike = None
     for t, left, r in seq:
-        s = num((r.get("k") or {}).get("floor_strike"))
+        s = r.get("st")
         if s:
             strike = s
             break
@@ -172,9 +182,9 @@ def feats(seq, i, strike):
     ws = []
     prev = None
     for tt, ll, rr in seq[max(0, i - 60):i + 1]:
-        if prev is not None and rr.get("px") is not None:
+        if prev is not None and True:
             ws.append(float(rr["px"]) - prev)
-        prev = float(rr["px"]) if rr.get("px") is not None else prev
+        prev = float(rr["px"])
     sig = statistics.pstdev(ws) if len(ws) > 10 else None
     f = {}
     f["dist $ (btc - strike)"] = px - strike
@@ -182,19 +192,15 @@ def feats(seq, i, strike):
     for s, nm in ((10, "mom 10s $"), (30, "mom 30s $"), (60, "mom 60s $")):
         b = px_back(seq, i, s)
         f[nm] = px - float(b) if b is not None else None
-    x = r.get("x") or {}
-    f["kraken - coinbase $"] = float(x["kraken"]) - px if x.get("kraken") is not None else None
-    fl = r.get("flow") or {}
-    tot = (fl.get("buy_usd") or 0) + (fl.get("sell_usd") or 0)
-    f["trade flow imbalance"] = (fl["buy_usd"] - fl["sell_usd"]) / tot if tot > 0 else None
-    cb = r.get("cbbook") or {}
-    tot = (cb.get("bid_usd") or 0) + (cb.get("ask_usd") or 0)
-    f["coinbase book imbalance"] = (cb["bid_usd"] - cb["ask_usd"]) / tot if tot > 0 else None
+    f["kraken - coinbase $"] = r["kr"] - px if r.get("kr") is not None else None
+    tot = (r.get("fb") or 0) + (r.get("fs") or 0)
+    f["trade flow imbalance"] = (r["fb"] - r["fs"]) / tot if tot > 0 else None
+    tot = (r.get("cb") or 0) + (r.get("ca") or 0)
+    f["coinbase book imbalance"] = (r["cb"] - r["ca"]) / tot if tot > 0 else None
     a = asks(r)
     f["kalshi book imbalance"] = a[2] if a else None
     f["kalshi mid (crowd)"] = (a[0] + (1 - a[1])) / 2.0 if a else None
-    fu = r.get("funding") or {}
-    f["funding rate"] = fu.get("rate")
+    f["funding rate"] = r.get("fu")
     return f, a
 
 
