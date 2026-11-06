@@ -10,7 +10,7 @@ Score = rank points (10 for first suggestion down to 1) added up across all seed
 - **plant operator**
   - books: plant operator tools
   - all: plant operator; plant operator tools; plant operator selection system study guide; plant operator accessories; plant operator pipe wrench; plant operator tool pouch; plant operator stickers; plant operator log book; plant operator gifts; plant operator selection system secrets study guide 2nd edition
-  - google: plant operator jobs; plant operator; plant operator jobs texas; plant operator jobs florida; plant operator salary; plant operator jobs near me; plant operator trainee; plant operator jobs louisiana; plant operator jobs houston; plant operator school
+  - google: plant operator jobs; plant operator; plant operator jobs texas; plant operator jobs florida; plant operator salary; plant operator jobs near me; plant operator selection system/power plant operations and maintenance (poss / mass) program; plant operator selection system (poss) test; plant operator trainee; plant operator jobs louisiana
 - **chemical operator**
   - books: chemical operator sticker
   - all: chemical operator; chemical operator tools; chemical operator gear; chemical operator sticker
@@ -136,13 +136,13 @@ Score = rank points (10 for first suggestion down to 1) added up across all seed
 | notebook with numbered pages | 10 | 10 | 20 | 2 |
 | hardcover lined notebook spiral | 10 | 12 | 17 | 1 |
 | refinery operator accessories | 10 | 19 | 6 | 1 |
+| laboratory notebook pink | 10 | 17 | 5 | 1 |
 | hardcover lined notebook a5 | 10 | 10 | 15 | 1 |
 | process operator tools | 10 | 20 | 0 | 1 |
 | laboratory notebook bulk | 10 | 20 | 0 | 1 |
 | work notebook for men a4 | 20 | 10 | 0 | 1 |
 | hardcover lined notebook bulk | 10 | 20 | 0 | 1 |
 | numbered pages notebook with index | 10 | 20 | 0 | 1 |
-| laboratory notebook pink | 10 | 17 | 4 | 1 |
 | process operator accessories | 10 | 19 | 0 | 1 |
 | chemical operator tools | 10 | 19 | 0 | 1 |
 | numbered pages notebook index | 10 | 19 | 0 | 1 |
@@ -152,11 +152,11 @@ Score = rank points (10 for first suggestion down to 1) added up across all seed
 | laboratory notebook with periodic table | 10 | 18 | 0 | 1 |
 | work notebook for men pocket | 10 | 18 | 0 | 1 |
 | hardcover lined notebook durable | 10 | 18 | 0 | 1 |
-| laboratory notebook with carbon copy pages | 0 | 23 | 7 | 1 |
 | refinery operator tool belt | 10 | 15 | 4 | 1 |
 | refinery operator jobs | 0 | 0 | 39 | 1 |
 | types of lined notebooks | 0 | 0 | 39 | 1 |
 | how are book pages numbered | 0 | 0 | 39 | 1 |
+| laboratory notebook with carbon copy pages | 0 | 23 | 6 | 1 |
 | laboratory notebook carbon copy | 0 | 18 | 13 | 1 |
 | process operator radio vest | 10 | 17 | 0 | 1 |
 | plant operator accessories | 10 | 17 | 0 | 1 |
@@ -229,7 +229,6 @@ Score = rank points (10 for first suggestion down to 1) added up across all seed
 | numbered pages notebook | 0 | 10 | 10 | 1 |
 | hardcover notebook for work | 0 | 10 | 10 | 1 |
 | process operator near me | 0 | 0 | 24 | 1 |
-| laboratory notebook with carbon pages | 0 | 11 | 8 | 1 |
 | plant operator | 0 | 10 | 9 | 1 |
 | blue collar gifts for men | 0 | 10 | 9 | 1 |
 | notebook size comparison | 0 | 0 | 23 | 1 |
@@ -237,14 +236,15 @@ Score = rank points (10 for first suggestion down to 1) added up across all seed
 | laboratory notebook spiral bound | 0 | 16 | 0 | 1 |
 | hardcover lined notebooks for work | 0 | 16 | 0 | 1 |
 | blue collar gifts | 0 | 9 | 10 | 1 |
-| laboratory notebook with carbon or duplicate pages | 0 | 15 | 1 | 1 |
+| laboratory notebook with carbon pages | 0 | 11 | 7 | 1 |
 | what is a lined notebook | 0 | 0 | 22 | 1 |
+| laboratory notebook with carbon or duplicate pages | 0 | 15 | 0 | 1 |
 | work notebook for men graph paper | 0 | 15 | 0 | 1 |
 | refinery operator jobs texas | 0 | 0 | 21 | 1 |
-| refinery operator jobs near me | 0 | 0 | 21 | 1 |
 | process operator jobs | 0 | 0 | 20 | 1 |
 | plant operator tool pouch | 0 | 14 | 0 | 1 |
 | plant operator jobs | 0 | 0 | 20 | 1 |
+| refinery operator jobs near me | 0 | 0 | 20 | 1 |
 | refinery operator entry level | 0 | 0 | 20 | 1 |
 | laboratory notebook carbonless copy | 10 | 4 | 0 | 1 |
 | laboratory notebook chemistry | 0 | 8 | 8 | 1 |
