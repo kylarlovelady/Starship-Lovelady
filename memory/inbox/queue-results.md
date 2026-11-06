@@ -1,369 +1,4 @@
-wxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  366146 Nov  5 17:50 cover-guides.png
-(exit 0)
-```
-
-## 2026-11-05 17:55:02 tasks/queue/046-kdp-build-thin-border.sh
-```
-engine min width patched
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Liberation Serif | interior font: Lato
-== process-operator-a FAILS: none | spine 0.489
-== process-operator-b FAILS: none | spine 0.489
-== process-operator-c FAILS: none | spine 0.489
-== process-operator-e FAILS: none | spine 0.489
-== lab-operator-a FAILS: none | spine 0.489
-== lab-operator-b FAILS: none | spine 0.489
-== lab-operator-c FAILS: none | spine 0.489
-== lab-operator-e FAILS: none | spine 0.489
-sheet done
--rw-rw-r-- 1 kylarlovelady kylarlovelady 2050871 Nov  5 17:56 /home/kylarlovelady/starship/memory/inbox/kdp-preview/contact-sheet.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
-total 2704
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:49 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  381632 Nov  5 17:55 cover-guides.png
--rw-rw-r--  1 kylarlovelady kylarlovelady 1382931 Nov  5 17:55 cover-hi.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  359835 Nov  5 17:55 cover.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  613909 Nov  5 17:55 front.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:55 page1.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:55 page2.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-b:
-total 2660
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  375111 Nov  5 17:56 cover-guides.png
--rw-rw-r--  1 kylarlovelady kylarlovelady 1359593 Nov  5 17:56 cover-hi.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  352917 Nov  5 17:56 cover.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  608559 Nov  5 17:56 front.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 17:56 page1.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 17:56 page2.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-c:
-total 2668
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  375809 Nov  5 17:56 cover-guides.png
-(exit 0)
-```
-
-## 2026-11-05 18:31:01 tasks/queue/047-kdp-same-yellow.sh
-```
-fonts found: ['Bitstream Vera', 'Caladea', 'Carlito', 'DejaVu Sans', 'DejaVu Serif', 'FreeSans', 'FreeSerif', 'Lato', 'Liberation Mono', 'Liberation Sans', 'Liberation Serif', 'Open Sans', 'Playfair Display', 'Roboto']
-title font: Liberation Serif | interior font: Lato
-== process-operator-a FAILS: none | spine 0.489
-== process-operator-b FAILS: none | spine 0.489
-== process-operator-c FAILS: none | spine 0.489
-== process-operator-e FAILS: none | spine 0.489
-== lab-operator-a FAILS: none | spine 0.489
-== lab-operator-b FAILS: none | spine 0.489
-== lab-operator-c FAILS: none | spine 0.489
-== lab-operator-e FAILS: none | spine 0.489
-sheet done
--rw-rw-r-- 1 kylarlovelady kylarlovelady 2050548 Nov  5 18:32 /home/kylarlovelady/starship/memory/inbox/kdp-preview/contact-sheet.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-a:
-total 2704
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:49 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  381632 Nov  5 18:31 cover-guides.png
--rw-rw-r--  1 kylarlovelady kylarlovelady 1382931 Nov  5 18:31 cover-hi.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  359835 Nov  5 18:31 cover.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  613909 Nov  5 18:31 front.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 18:31 page1.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 18:31 page2.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1593 Nov  5 17:46 page3.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-b:
-total 2660
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  375111 Nov  5 18:32 cover-guides.png
--rw-rw-r--  1 kylarlovelady kylarlovelady 1359593 Nov  5 18:32 cover-hi.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  352917 Nov  5 18:32 cover.png
--rw-rw-r--  1 kylarlovelady kylarlovelady  608559 Nov  5 18:32 front.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    7365 Nov  5 18:32 page1.png
--rw-rw-r--  1 kylarlovelady kylarlovelady    1569 Nov  5 18:32 page2.png
-
-/home/kylarlovelady/starship/memory/inbox/kdp-preview/lab-operator-c:
-total 2664
-drwxrwxr-x  2 kylarlovelady kylarlovelady    4096 Nov  5 17:50 .
-drwxrwxr-x 10 kylarlovelady kylarlovelady    4096 Nov  5 17:50 ..
--rw-rw-r--  1 kylarlovelady kylarlovelady  375566 Nov  5 18:32 cover-guides.png
-(exit 0)
-```
-
-## 2026-11-05 18:43:01 tasks/queue/048-kdp-keyword-scan.sh
-```
-(exit 0)
-```
-
-## 2026-11-05 18:52:01 tasks/queue/049-kdp-keyword-scan-bg.sh
-```
-started pid 3293782
-(exit 0)
-```
-
-## 2026-11-05 19:13:02 tasks/queue/050-kdp-no-barcode-box.sh
-```
-== process-operator-a FAILS: none | spine 0.489
-== process-operator-b FAILS: none | spine 0.489
-== process-operator-c FAILS: none | spine 0.489
-== process-operator-e FAILS: none | spine 0.489
-== lab-operator-a FAILS: none | spine 0.489
-== lab-operator-b FAILS: none | spine 0.489
-== lab-operator-c FAILS: none | spine 0.489
-== lab-operator-e FAILS: none | spine 0.489
-sheet done
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5282832 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/lab-operator-a/out/coverg.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5262157 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/lab-operator-a/out/cover.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady  113757 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/lab-operator-a/out/interior.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5282830 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/coverg.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5262158 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/cover.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady  113761 Nov  5 19:13 /home/kylarlovelady/kdp-studio/books/process-operator-a/out/interior.pdf
-(exit 0)
-```
-
-## 2026-11-05 19:25:02 tasks/queue/051-kalshi-fresh-wallet.sh
-```
-reset reply: 
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-    import json;d=json.load(open('/tmp/live-after.json'));print({k:d.get(k) for k in list(d)[:12]})
-                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.13/json/__init__.py", line 293, in load
-    return loads(fp.read(),
-        cls=cls, object_hook=object_hook,
-        parse_float=parse_float, parse_int=parse_int,
-        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
-  File "/usr/lib/python3.13/json/__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-           ~~~~~~~~~~~~~~~~~~~~~~~^^^
-  File "/usr/lib/python3.13/json/decoder.py", line 345, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.13/json/decoder.py", line 363, in raw_decode
-    raise JSONDecodeError("Expecting value", s, err.value) from None
-json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
-{"active": true, "id": 1793908418, "strategy": "auto", "start": 1000.0}(exit 0)
-```
-
-## 2026-11-05 19:37:02 tasks/queue/052-snipe-study.sh
-```
-# Sniping study (recorded per-second data, last 5 days)
-
-Rounds with a full recording: 362
-
-
-## Part 1: seconds left on the clock at the LAST second the market was still open
-
-| left at last recorded second | rounds | share |
-|---|---|---|
-| 0-2 s | 2 | 1% |
-| 2-5 s | 2 | 1% |
-| 5-10 s | 8 | 2% |
-| 10-30 s | 36 | 10% |
-| 30-120 s | 229 | 63% |
-| >120 s | 85 | 23% |
-
-Median seconds left at last open second: 70.0 (a high number means Kalshi stopped quoting before the clock ran out, or our recorder missed the last seconds).
-
-Examples of rounds that stopped with more than 10 s left: left 90s, YES bid 1.00 / NO bid 0.00; left 183s, YES bid 0.01 / NO bid 0.99; left 32s, YES bid 0.00 / NO bid 1.00; left 62s, YES bid 0.00 / NO bid 1.00; left 198s, YES bid 0.13 / NO bid 0.86; left 115s, YES bid 0.00 / NO bid 1.00; left 128s, YES bid 0.00 / NO bid 1.00; left 144s, YES bid 1.00 / NO bid 0.00; left 17s, YES bid 1.00 / NO bid 0.00; left 75s, YES bid 0.00 / NO bid 1.00; left 18s, YES bid 1.00 / NO bid 0.00; left 38s, YES bid 0.00 / NO bid 1.00
-
-Rounds with a real settled result in history: 267 of 362
-
-## Part 2: buy the favourite at the last tick that still had at least B seconds left, hold to the result
-
-### B = 3 s left
-
-| ask bucket | rounds | win rate | avg cost/contract | profit per $ staked | median $ at best ask |
-|---|---|---|---|---|---|
-| 55-59c | 5 | 40.0% | 0.593 | -32.6% | $866 |
-| 60-64c | 1 | 100.0% | 0.656 | +52.4% | $1392 |
-| 65-69c | 1 | 100.0% | 0.666 | +50.2% | $1492 |
-| 70-74c | 3 | 66.7% | 0.734 | -9.2% | $192 |
-| 75-79c | 3 | 66.7% | 0.779 | -14.4% | $3112 |
-| 80-84c | 7 | 85.7% | 0.836 | +2.6% | $1937 |
-| 85-89c | 5 | 60.0% | 0.887 | -32.4% | $2778 |
-| 90-94c | 16 | 93.8% | 0.927 | +1.1% | $231 |
-| 95-99c | 40 | 97.5% | 0.982 | -0.7% | $965 |
-| ALL | 81 | | | -3.0% | |
-
-### B = 5 s left
-
-| ask bucket | rounds | win rate | avg cost/contract | profit per $ staked | median $ at best ask |
-|---|---|---|---|---|---|
-| 55-59c | 5 | 40.0% | 0.593 | -32.6% | $866 |
-| 60-64c | 1 | 100.0% | 0.656 | +52.4% | $1392 |
-| 65-69c | 2 | 50.0% | 0.685 | -27.1% | $764 |
-| 70-74c | 2 | 50.0% | 0.724 | -31.0% | $943 |
-| 75-79c | 3 | 66.7% | 0.779 | -14.4% | $3112 |
-| 80-84c | 7 | 85.7% | 0.836 | +2.6% | $1937 |
-| 85-89c | 6 | 66.7% | 0.884 | -24.6% | $1762 |
-| 90-94c | 15 | 93.3% | 0.928 | +0.6% | $241 |
-| 95-99c | 41 | 97.6% | 0.982 | -0.6% | $902 |
-| ALL | 82 | | | -4.2% | |
-
-### B = 10 s left
-
-| ask bucket | rounds | win rate | avg cost/contract | profit per $ staked | median $ at best ask |
-|---|---|---|---|---|---|
-| 55-59c | 6 | 33.3% | 0.594 | -43.9% | $667 |
-| 60-64c | 2 | 100.0% | 0.656 | +52.4% | $786 |
-... wrote /home/kylarlovelady/starship/memory/inbox/snipe-study.md
-(exit 0)
-```
-
-## 2026-11-05 19:46:01 tasks/queue/053-avg-lock-study.sh
-```
-# Average-lock study (can we call the winning side late?)
-
-Rounds with real results and full recordings: 19. Model: the last-minute average is partly known; remaining seconds = random walk (recent 1 s vol). Edge = model P - Kalshi ask - fee.
-
-## 10 seconds left
-
-| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
-|---|---|---|---|---|---|---|
-| any edge > 3c | 0 | | | | | |
-| edge > 8c | 0 | | | | | |
-| edge > 3c AND near target (within 1 sd) | 0 | | | | | |
-| always bet model favourite | 0 | | | | | |
-| near target only, always bet model favourite | 0 | | | | | |
-
-## 20 seconds left
-
-| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
-|---|---|---|---|---|---|---|
-| any edge > 3c | 0 | | | | | |
-| edge > 8c | 0 | | | | | |
-| edge > 3c AND near target (within 1 sd) | 0 | | | | | |
-| always bet model favourite | 2 | 50.0% | 0.501 | -0.1% | 0.99 | 0.50 |
-| near target only, always bet model favourite | 0 | | | | | |
-
-## 30 seconds left
-
-| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
-|---|---|---|---|---|---|---|
-| any edge > 3c | 3 | 0.0% | 0.020 | -100.0% | 0.84 | 0.02 |
-| edge > 8c | 2 | 0.0% | 0.013 | -100.0% | 0.81 | 0.01 |
-| edge > 3c AND near target (within 1 sd) | 1 | 0.0% | 0.014 | -100.0% | 0.74 | 0.01 |
-| always bet model favourite | 4 | 25.0% | 0.264 | -5.5% | 0.88 | 0.26 |
-| near target only, always bet model favourite | 1 | 0.0% | 0.014 | -100.0% | 0.74 | 0.01 |
-
-## 45 seconds left
-
-| rule | bets | win rate | avg cost/contract | profit per $ | avg model P | avg ask |
-|---|---|---|---|---|---|---|
-| any edge > 3c | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
-| edge > 8c | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
-| edge > 3c AND near target (within 1 sd) | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
-| always bet model favourite | 6 | 16.7% | 0.301 | -44.7% | 0.76 | 0.29 |
-| near target only, always bet model favourite | 3 | 0.0% | 0.232 | -100.0% | 0.58 | 0.22 |
-
-Calibration check (does the model's P match reality?): bucket by model P of the favourite
-(left=20) P~0.95: 2 rounds, 50% won
-... wrote /home/kylarlovelady/starship/memory/inbox/avg-lock-study.md
-(exit 0)
-```
-
-## 2026-11-05 20:16:01 tasks/queue/054-sniper-reset-check.sh
-REFUSED: header must be '#!/bin/bash' then '# QUEUE-OK'
-
-## 2026-11-05 21:10:01 tasks/queue/055-kdp-owner-page.sh
-```
-(exit 0)
-```
-
-## 2026-11-05 21:13:01 tasks/queue/056-liq-by-second.sh
-```
-# Liquidity before the close (auto): dollars buyable on the favourite at 99c or less
-
-Rounds seen: 268. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable. Seconds with no row count as nothing buyable.
-
-| s before close | rounds with data | any | full ($1,000) | median $ buyable |
-|---|---|---|---|---|
-| 0 | 268 | 0% | 0% | $0 |
-| 1 | 268 | 0% | 0% | $0 |
-| 2 | 268 | 1% | 0% | $0 |
-| 3 | 268 | 1% | 0% | $0 |
-| 4 | 268 | 1% | 1% | $0 |
-| 5 | 268 | 1% | 1% | $0 |
-| 6 | 268 | 1% | 1% | $0 |
-| 7 | 268 | 2% | 2% | $0 |
-| 8 | 268 | 2% | 1% | $0 |
-| 9 | 268 | 3% | 2% | $0 |
-| 10 | 268 | 3% | 2% | $0 |
-| 11 | 268 | 3% | 2% | $0 |
-| 12 | 268 | 3% | 3% | $0 |
-| 13 | 268 | 4% | 3% | $0 |
-| 14 | 268 | 4% | 3% | $0 |
-| 15 | 268 | 4% | 4% | $0 |
-| 16 | 268 | 4% | 3% | $0 |
-| 17 | 268 | 4% | 3% | $0 |
-| 18 | 268 | 4% | 3% | $0 |
-| 19 | 268 | 5% | 4% | $0 |
-| 20 | 268 | 5% | 3% | $0 |
-| 25 | 268 | 7% | 4% | $0 |
-| 30 | 268 | 9% | 5% | $0 |
-| 40 | 268 | 16% | 11% | $0 |
-(exit 0)
-```
-
-## 2026-11-05 21:16:01 tasks/queue/057-liq-by-second-v2.sh
-```
-# Liquidity before the close (auto): dollars buyable on the favourite at 99c or less
-
-Rounds seen: 269. 'any' = at least $25 buyable, 'full' = at least $1,000 buyable. Only seconds that have a recorded book row are counted (percent is of those rows); no row = the book was missing or one-sided.
-
-| s before close | rounds with a book row | any | full ($1,000) | median $ buyable |
-|---|---|---|---|---|
-| 0 | 265 of 269 | 0% | 0% | $0 |
-| 1 | 246 of 269 | 0% | 0% | $0 |
-| 2 | 250 of 269 | 1% | 0% | $0 |
-| 3 | 242 of 269 | 1% | 0% | $0 |
-| 4 | 243 of 269 | 1% | 1% | $0 |
-| 5 | 251 of 269 | 2% | 1% | $0 |
-| 6 | 255 of 269 | 2% | 1% | $0 |
-| 7 | 255 of 269 | 2% | 2% | $0 |
-| 8 | 256 of 269 | 2% | 2% | $0 |
-| 9 | 255 of 269 | 3% | 2% | $0 |
-| 10 | 251 of 269 | 3% | 2% | $0 |
-| 11 | 249 of 269 | 3% | 2% | $0 |
-| 12 | 249 of 269 | 3% | 3% | $0 |
-| 13 | 252 of 269 | 4% | 4% | $0 |
-| 14 | 253 of 269 | 4% | 4% | $0 |
-| 15 | 252 of 269 | 5% | 4% | $0 |
-| 16 | 253 of 269 | 4% | 4% | $0 |
-| 17 | 252 of 269 | 4% | 3% | $0 |
-| 18 | 249 of 269 | 5% | 3% | $0 |
-| 19 | 248 of 269 | 5% | 4% | $0 |
-| 20 | 248 of 269 | 6% | 4% | $0 |
-| 25 | 252 of 269 | 7% | 5% | $0 |
-| 30 | 245 of 269 | 9% | 6% | $0 |
-| 40 | 245 of 269 | 17% | 12% | $0 |
-=== owner page
-pypdf 6.21.4
-owner page refined: process-operator-a 120 pages
-total 10568
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5282830 Nov  5 19:13 coverg.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5262158 Nov  5 19:13 cover.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady  113761 Nov  5 21:10 interior-orig.pdf
--rw-rw-r-- 1 kylarlovelady kylarlovelady  156768 Nov  5 21:16 interior.pdf
-(exit 0)
-```
-
-## 2026-11-05 21:25:02 tasks/queue/058-close-study.sh
-```
-# Close study (auto)
-
-Rounds with ticks: 271; rounds with a real settled result: 201
-
-## 1. How fast BTC moves per second (Coinbase, USD)
-
-- 215152 one-second changes: average size $3.12, typical (std) $6.70, 90th percentile $9.82, 99th $27.15, 99.9th $51.52, biggest $146.20.
+es: average size $3.12, typical (std) $6.70, 90th percentile $9.82, 99th $27.15, 99.9th $51.52, biggest $146.20.
 - So in 60 s BTC typically wanders about $52 (std), and in 10 s about $21; the sqrt-of-time rule is what the z formula below uses.
 
 ## 2. Does Kalshi close rounds early?
@@ -657,4 +292,246 @@ Run with --help for more information.
 ```
 
 ## 2026-11-06 03:16:02 tasks/queue/071-oracle-study.sh
+```
+# Hindsight / oracle study (last 7 days)
+
+Rounds with a full recording, a strike and a real Kalshi result: **307** (149 UP, 158 DOWN).
+
+## A. The perfect-hindsight buy (cheapest ask of the side that won, with 3+ s left)
+
+| statistic | value |
+|---|---|
+| rounds with a usable book | 307 |
+| median cheapest winning ask | 39c |
+| average perfect-hindsight profit per contract | 61.1c (157% on cost) |
+| share of rounds where the perfect buy was 30c or less | 33% |
+| share where it was 50c or less | 78% |
+| WHEN in the round the cheapest winning ask was (seconds left) | 0-60 s: 2%, 60-180 s: 5%, 180-420 s: 15%, >420 s: 76% |
+
+Reading: the perfect buy is nearly always a *cheap* winner early in the round that you could not have known about. The rest of this report asks which signals could have pointed to it in advance.
+
+## B. Which signals predict UP/DOWN? (AUC: 0.50 = coin flip, 1.00 = perfect, below 0.50 = points the other way)
+
+Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or 0.40 or less) AND the same side of 0.50 in both halves. 'vs market' = rank correlation of the signal with (result minus Kalshi mid), i.e. does it know something the price does not. Roughly +-0.13 is noise at this sample size.
+
+| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
+|---|---|---|---|---|---|---|
+| z (btc vs strike, in sigmas) | **0.77 (0.73 / 0.82)** | **0.85 (0.80 / 0.89)** | **0.89 (0.85 / 0.91)** | **0.93 (0.91 / 0.94)** | **0.98 (0.99 / 0.98)** | **1.00 (1.00 / 0.99)** |
+| dist $ (btc - strike) | **0.78 (0.74 / 0.82)** | **0.86 (0.81 / 0.91)** | **0.90 (0.87 / 0.91)** | **0.93 (0.92 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
+| mom 10s $ | 0.57 (0.55 / 0.58) | 0.51 (0.52 / 0.50) | 0.49 (0.50 / 0.48) | 0.52 (0.54 / 0.49) | 0.52 (0.49 / 0.54) | 0.53 (0.55 / 0.52) |
+| mom 30s $ | **0.61 (0.62 / 0.61)** | 0.58 (0.61 / 0.56) | 0.54 (0.53 / 0.55) | 0.57 (0.66 / 0.46) | 0.58 (0.57 / 0.60) | 0.56 (0.54 / 0.58) |
+| mom 60s $ | 0.58 (0.55 / 0.60) | **0.65 (0.65 / 0.65)** | 0.56 (0.58 / 0.55) | 0.56 (0.65 / 0.47) | **0.62 (0.62 / 0.60)** | **0.63 (0.61 / 0.65)** |
+| kraken - coinbase $ | 0.48 (0.52 / 0.44) | 0.49 (0.48 / 0.52) | 0.52 (0.53 / 0.51) | 0.43 (0.32 / 0.55) | 0.42 (0.44 / 0.40) | 0.51 (0.48 / 0.55) |
+| trade flow imbalance | 0.50 (0.49 / 0.51) | 0.48 (0.43 / 0.53) | 0.50 (0.51 / 0.51) | 0.53 (0.52 / 0.55) | 0.57 (0.58 / 0.56) | 0.55 (0.59 / 0.52) |
+| coinbase book imbalance | 0.51 (0.69 / 0.41) | 0.47 (0.61 / 0.42) | 0.45 (0.55 / 0.39) | 0.50 (0.54 / 0.51) | 0.53 (0.64 / 0.48) | 0.49 (0.47 / 0.49) |
+| kalshi book imbalance | 0.48 (0.48 / 0.47) | 0.59 (0.57 / 0.61) | 0.45 (0.51 / 0.41) | **0.33 (0.29 / 0.37)** | **0.33 (0.35 / 0.30)** | **0.24 (0.31 / 0.19)** |
+| kalshi mid (crowd) | **0.78 (0.72 / 0.83)** | **0.86 (0.80 / 0.91)** | **0.90 (0.87 / 0.92)** | **0.93 (0.91 / 0.94)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
+| funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
+
+### Does it beat the market price? (rank correlation with result minus Kalshi mid)
+
+| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
+|---|---|---|---|---|---|---|
+| z (btc vs strike, in sigmas) | -0.00 | +0.16 | +0.24 | +0.32 | +0.45 | +0.45 |
+| dist $ (btc - strike) | +0.01 | +0.18 | +0.26 | +0.31 | +0.44 | +0.43 |
+| mom 10s $ | +0.08 | -0.05 | -0.08 | -0.01 | +0.03 | +0.09 |
+| mom 30s $ | +0.02 | +0.04 | +0.03 | +0.03 | +0.09 | +0.07 |
+| mom 60s $ | -0.06 | +0.15 | +0.01 | -0.06 | +0.09 | +0.13 |
+| kraken - coinbase $ | +0.02 | +0.05 | +0.05 | -0.09 | -0.18 | +0.10 |
+| trade flow imbalance | +0.03 | -0.04 | -0.01 | +0.08 | +0.15 | +0.21 |
+| coinbase book imbalance | -0.00 | -0.01 | -0.05 | -0.00 | +0.06 | -0.07 |
+| kalshi book imbalance | +0.04 | +0.14 | -0.00 | -0.04 | -0.06 | -0.14 |
+| kalshi mid (crowd) | -0.01 | +0.15 | +0.24 | +0.31 | +0.42 | +0.42 |
+| funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
+
+## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
+
+| left | min gap | bets | win rate | profit per $ staked | avg cost |
+|---|---|---|---|---|---|
+| 600s | 0.05 | 69 | 41% | +1.5% | 0.40 |
+| 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
+| 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
+| 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
+| 420s | 0.10 | 44 | 23% | +26.3% | 0.18 |
+| 420s | 0.20 | 3 | 0% | -100.0% | 0.09 |
+| 300s | 0.05 | 77 | 25% | -4.3% | 0.26 |
+| 300s | 0.10 | 36 | 19% | -4.6% | 0.20 |
+| 300s | 0.20 | 2 | 50% | +411.5% | 0.10 |
+| 180s | 0.05 | 63 | 29% | +1.9% | 0.28 |
+| 180s | 0.10 | 32 | 31% | +30.1% | 0.24 |
+| 180s | 0.20 | 1 | 100% | +490.3% | 0.17 |
+| 90s | 0.05 | 66 | 17% | -11.6% | 0.19 |
+| 90s | 0.10 | 35 | 11% | -23.3% | 0.15 |
+| 90s | 0.20 | 6 | 0% | -100.0% | 0.09 |
+| 45s | 0.05 | 35 | 23% | +42.0% | 0.16 |
+| 45s | 0.10 | 33 | 24% | +52.9% | 0.16 |
+| 45s | 0.20 | 21 | 14% | +4.1% | 0.14 |
+
+## How much to trust this
+
+- 307 rounds, many signals x checkpoints: a few will look good by luck. Only a signal that stays on the same side in both halves, at several checkpoints, deserves a real test.
+- Hindsight always finds a great trade. The test that matters is walk-forward: pick the rule on older rounds, test it on newer ones, after fees.
+- Practice only. Nothing here changes any setting.
+(exit 0)
+```
+
+## 2026-11-06 03:17:44 tasks/queue/072-oracle-check.sh
+```
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5459 Nov  6 03:16 /home/kylarlovelady/starship/memory/inbox/oracle-study.md
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 5459 Nov  6 03:16 /tmp/oracle-study.out
+366M	/home/kylarlovelady/market-data
+agent_trades.json
+alerts.log
+archive
+calendar.json
+calls.jsonl
+coach_rules.json
+config.json
+entry_stats.json
+env
+exit_rules.json
+exits.jsonl
+hindsight.jsonl
+history
+innovations.jsonl
+island.json
+kalshi_key.pem
+kalshi_raw.json
+kalshi_sync.log
+lab.log
+lab_log.jsonl
+# Hindsight / oracle study (last 7 days)
+
+Rounds with a full recording, a strike and a real Kalshi result: **307** (149 UP, 158 DOWN).
+
+## A. The perfect-hindsight buy (cheapest ask of the side that won, with 3+ s left)
+
+| statistic | value |
+|---|---|
+| rounds with a usable book | 307 |
+| median cheapest winning ask | 39c |
+| average perfect-hindsight profit per contract | 61.1c (157% on cost) |
+| share of rounds where the perfect buy was 30c or less | 33% |
+| share where it was 50c or less | 78% |
+| WHEN in the round the cheapest winning ask was (seconds left) | 0-60 s: 2%, 60-180 s: 5%, 180-420 s: 15%, >420 s: 76% |
+
+Reading: the perfect buy is nearly always a *cheap* winner early in the round that you could not have known about. The rest of this report asks which signals could have pointed to it in advance.
+
+## B. Which signals predict UP/DOWN? (AUC: 0.50 = coin flip, 1.00 = perfect, below 0.50 = points the other way)
+
+Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or 0.40 or less) AND the same side of 0.50 in both halves. 'vs market' = rank correlation of the signal with (result minus Kalshi mid), i.e. does it know something the price does not. Roughly +-0.13 is noise at this sample size.
+
+| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
+|---|---|---|---|---|---|---|
+| z (btc vs strike, in sigmas) | **0.77 (0.73 / 0.82)** | **0.85 (0.80 / 0.89)** | **0.89 (0.85 / 0.91)** | **0.93 (0.91 / 0.94)** | **0.98 (0.99 / 0.98)** | **1.00 (1.00 / 0.99)** |
+| dist $ (btc - strike) | **0.78 (0.74 / 0.82)** | **0.86 (0.81 / 0.91)** | **0.90 (0.87 / 0.91)** | **0.93 (0.92 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
+| mom 10s $ | 0.57 (0.55 / 0.58) | 0.51 (0.52 / 0.50) | 0.49 (0.50 / 0.48) | 0.52 (0.54 / 0.49) | 0.52 (0.49 / 0.54) | 0.53 (0.55 / 0.52) |
+| mom 30s $ | **0.61 (0.62 / 0.61)** | 0.58 (0.61 / 0.56) | 0.54 (0.53 / 0.55) | 0.57 (0.66 / 0.46) | 0.58 (0.57 / 0.60) | 0.56 (0.54 / 0.58) |
+| mom 60s $ | 0.58 (0.55 / 0.60) | **0.65 (0.65 / 0.65)** | 0.56 (0.58 / 0.55) | 0.56 (0.65 / 0.47) | **0.62 (0.62 / 0.60)** | **0.63 (0.61 / 0.65)** |
+| kraken - coinbase $ | 0.48 (0.52 / 0.44) | 0.49 (0.48 / 0.52) | 0.52 (0.53 / 0.51) | 0.43 (0.32 / 0.55) | 0.42 (0.44 / 0.40) | 0.51 (0.48 / 0.55) |
+| trade flow imbalance | 0.50 (0.49 / 0.51) | 0.48 (0.43 / 0.53) | 0.50 (0.51 / 0.51) | 0.53 (0.52 / 0.55) | 0.57 (0.58 / 0.56) | 0.55 (0.59 / 0.52) |
+| coinbase book imbalance | 0.51 (0.69 / 0.41) | 0.47 (0.61 / 0.42) | 0.45 (0.55 / 0.39) | 0.50 (0.54 / 0.51) | 0.53 (0.64 / 0.48) | 0.49 (0.47 / 0.49) |
+| kalshi book imbalance | 0.48 (0.48 / 0.47) | 0.59 (0.57 / 0.61) | 0.45 (0.51 / 0.41) | **0.33 (0.29 / 0.37)** | **0.33 (0.35 / 0.30)** | **0.24 (0.31 / 0.19)** |
+| kalshi mid (crowd) | **0.78 (0.72 / 0.83)** | **0.86 (0.80 / 0.91)** | **0.90 (0.87 / 0.92)** | **0.93 (0.91 / 0.94)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
+| funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
+
+### Does it beat the market price? (rank correlation with result minus Kalshi mid)
+
+| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
+|---|---|---|---|---|---|---|
+| z (btc vs strike, in sigmas) | -0.00 | +0.16 | +0.24 | +0.32 | +0.45 | +0.45 |
+| dist $ (btc - strike) | +0.01 | +0.18 | +0.26 | +0.31 | +0.44 | +0.43 |
+| mom 10s $ | +0.08 | -0.05 | -0.08 | -0.01 | +0.03 | +0.09 |
+| mom 30s $ | +0.02 | +0.04 | +0.03 | +0.03 | +0.09 | +0.07 |
+| mom 60s $ | -0.06 | +0.15 | +0.01 | -0.06 | +0.09 | +0.13 |
+| kraken - coinbase $ | +0.02 | +0.05 | +0.05 | -0.09 | -0.18 | +0.10 |
+| trade flow imbalance | +0.03 | -0.04 | -0.01 | +0.08 | +0.15 | +0.21 |
+| coinbase book imbalance | -0.00 | -0.01 | -0.05 | -0.00 | +0.06 | -0.07 |
+| kalshi book imbalance | +0.04 | +0.14 | -0.00 | -0.04 | -0.06 | -0.14 |
+| kalshi mid (crowd) | -0.01 | +0.15 | +0.24 | +0.31 | +0.42 | +0.42 |
+| funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
+
+## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
+
+| left | min gap | bets | win rate | profit per $ staked | avg cost |
+|---|---|---|---|---|---|
+| 600s | 0.05 | 69 | 41% | +1.5% | 0.40 |
+| 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
+| 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
+| 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
+| 420s | 0.10 | 44 | 23% | +26.3(exit 0)
+```
+
+## 2026-11-06 03:17:44 tasks/queue/073-oracle-light.sh
+```
+               total        used        free      shared  buff/cache   available
+Mem:            8058        2589        2228          64        3391        5469
+Mem:            8058        2489        2327          63        3392        5569
+# Hindsight / oracle study (last 3 days)
+
+Rounds with a full recording, a strike and a real Kalshi result: **300** (147 UP, 153 DOWN).
+
+## A. The perfect-hindsight buy (cheapest ask of the side that won, with 3+ s left)
+
+| statistic | value |
+|---|---|
+| rounds with a usable book | 300 |
+| median cheapest winning ask | 39c |
+| average perfect-hindsight profit per contract | 61.0c (157% on cost) |
+| share of rounds where the perfect buy was 30c or less | 32% |
+| share where it was 50c or less | 78% |
+| WHEN in the round the cheapest winning ask was (seconds left) | 0-60 s: 2%, 60-180 s: 5%, 180-420 s: 15%, >420 s: 77% |
+
+Reading: the perfect buy is nearly always a *cheap* winner early in the round that you could not have known about. The rest of this report asks which signals could have pointed to it in advance.
+
+## B. Which signals predict UP/DOWN? (AUC: 0.50 = coin flip, 1.00 = perfect, below 0.50 = points the other way)
+
+Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or 0.40 or less) AND the same side of 0.50 in both halves. 'vs market' = rank correlation of the signal with (result minus Kalshi mid), i.e. does it know something the price does not. Roughly +-0.13 is noise at this sample size.
+
+| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
+|---|---|---|---|---|---|---|
+| z (btc vs strike, in sigmas) | **0.78 (0.74 / 0.83)** | **0.85 (0.80 / 0.89)** | **0.90 (0.87 / 0.91)** | **0.93 (0.92 / 0.93)** | **0.98 (0.99 / 0.98)** | **0.99 (1.00 / 0.99)** |
+| dist $ (btc - strike) | **0.78 (0.75 / 0.82)** | **0.86 (0.81 / 0.91)** | **0.90 (0.89 / 0.91)** | **0.93 (0.93 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
+| mom 10s $ | 0.57 (0.55 / 0.59) | 0.50 (0.50 / 0.50) | 0.49 (0.51 / 0.48) | 0.52 (0.53 / 0.50) | 0.52 (0.49 / 0.55) | 0.52 (0.51 / 0.53) |
+| mom 30s $ | **0.62 (0.63 / 0.61)** | 0.58 (0.60 / 0.57) | 0.54 (0.55 / 0.54) | 0.56 (0.64 / 0.47) | 0.59 (0.57 / 0.61) | 0.56 (0.52 / 0.59) |
+| mom 60s $ | 0.58 (0.56 / 0.60) | **0.66 (0.66 / 0.66)** | 0.57 (0.59 / 0.55) | 0.55 (0.63 / 0.47) | **0.62 (0.60 / 0.62)** | **0.62 (0.59 / 0.66)** |
+| kraken - coinbase $ | 0.48 (0.53 / 0.44) | 0.50 (0.50 / 0.51) | 0.53 (0.54 / 0.52) | 0.44 (0.36 / 0.53) | 0.42 (0.44 / 0.38) | 0.52 (0.52 / 0.52) |
+| trade flow imbalance | 0.50 (0.48 / 0.52) | 0.48 (0.41 / 0.54) | 0.51 (0.52 / 0.51) | 0.54 (0.55 / 0.54) | 0.58 (0.60 / 0.57) | 0.54 (0.56 / 0.53) |
+| coinbase book imbalance | 0.51 (0.65 / 0.43) | 0.47 (0.60 / 0.42) | 0.45 (0.51 / 0.40) | 0.50 (0.52 / 0.51) | 0.53 (0.60 / 0.49) | 0.49 (0.47 / 0.49) |
+| kalshi book imbalance | 0.47 (0.46 / 0.48) | 0.59 (0.58 / 0.61) | 0.46 (0.51 / 0.42) | **0.33 (0.27 / 0.38)** | **0.32 (0.34 / 0.30)** | **0.24 (0.29 / 0.20)** |
+| kalshi mid (crowd) | **0.79 (0.73 / 0.84)** | **0.86 (0.80 / 0.91)** | **0.90 (0.88 / 0.92)** | **0.93 (0.92 / 0.93)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
+| funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
+
+### Does it beat the market price? (rank correlation with result minus Kalshi mid)
+
+| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
+|---|---|---|---|---|---|---|
+| z (btc vs strike, in sigmas) | +0.01 | +0.16 | +0.26 | +0.33 | +0.44 | +0.45 |
+| dist $ (btc - strike) | +0.01 | +0.18 | +0.27 | +0.32 | +0.44 | +0.43 |
+| mom 10s $ | +0.08 | -0.07 | -0.08 | +0.01 | +0.04 | +0.09 |
+| mom 30s $ | +0.03 | +0.04 | +0.03 | +0.01 | +0.10 | +0.07 |
+| mom 60s $ | -0.06 | +0.15 | +0.03 | -0.07 | +0.10 | +0.14 |
+| kraken - coinbase $ | +0.01 | +0.06 | +0.06 | -0.08 | -0.19 | +0.09 |
+| trade flow imbalance | +0.03 | -0.05 | +0.01 | +0.09 | +0.17 | +0.20 |
+| coinbase book imbalance | -0.00 | -0.01 | -0.05 | -0.00 | +0.06 | -0.07 |
+| kalshi book imbalance | +0.03 | +0.14 | +0.01 | -0.04 | -0.06 | -0.13 |
+| kalshi mid (crowd) | +0.00 | +0.15 | +0.26 | +0.32 | +0.41 | +0.42 |
+| funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
+
+## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
+
+| left | min gap | bets | win rate | profit per $ staked | avg cost |
+|---|---|---|---|---|---|
+| 600s | 0.05 | 68 | 40% | +0.8% | 0.39 |
+| 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
+| 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
+| 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
+| 420s | 0.10 | 44 | 23% | +26.3% | 0.18 |
+| 420s | 0.20 | 3 | 0% | -100.0% | 0.09 |
+| 300s | 0.05 | 75 | 24% | -1.4% | 0.24 |
+| 300s | 0.10 | 35 | 17% | -9.7% | 0.19 |
+| 300s | 0.20 | 2 | 50% | +411.5% | 0.10 |
+| 180s | 0.05 | 61 | 28% | +2.4% | 0.27 |
+| 180s | 0.10 | 31 | 32% | +32.3% | 0.24 |
+| 180s | 0.20 | 1 | 100% | +490.3% (exit 0)
 ```
