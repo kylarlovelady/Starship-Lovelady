@@ -34,5 +34,5 @@ bash "$HOME/starship/tasks/status_report.sh" >/dev/null 2>&1 || true
 git add memory/inbox
 git diff --cached --quiet && { echo "notes unchanged"; exit 0; }
 git commit -qm "Jarvis notes and feedback summary sync"
-git pull -q --rebase 2>/dev/null || true
+git pull -q --rebase --autostash 2>/dev/null || true
 git push -q && echo "notes pushed to the repo" || echo "push failed (run tasks/pi_push_setup.sh)"
