@@ -2,6 +2,7 @@
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
 ## 2026-11-05 (daily check, 06:20 Central)
+- 2026-11-05 22:20 KDP: replaced the guessed keywords in amazon-kdp.md with the exact 7 Kylar entered (from his screenshot), including Blue collar gifts for women.
 - 2026-11-05 22:10 KDP: saved the reusable description, keywords and listing settings in amazon-kdp.md (Reusable listing text) for every colour and title.
 - 2026-11-05 21:46 KDP: Process Operator A hardcover submitted by Kylar, status In review, $18.99. Notes in amazon-kdp.md (Done section) and projects.md.
 - 2026-11-05 21:35 Kalshi v9.0: close study (queue 058) found Kalshi never closes early; the book just empties a median 90 s before the close. Added the z-rule (buy at z>=4 while still for sale at <=98.5c) to sniper.py, collector marker v9.0. Tested on synthetic books. Status: pushed, Pi restarts itself; Kylar to confirm bets appear.
