@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 15:45 Pi-hole: first device connected; hardening note filed
+- What: Kylar's iPhone (192.168.1.142) now queries Pi-hole (confirmed by his Network table screenshot). Filed HARDEN THE PI in todo.md (power, NVMe boot, Ethernet instead of Wi-Fi, auto-restart watchdog, backup DNS, one reserved address, reboot test). Noted the Pi has two addresses on wlan0.
+- Status: phone connected; blocking test next, then Tailscale back on with DNS check, then Sharee's phone.
+
 ## 2026-11-06 16:35 15-minute markets study read; made it accumulate nightly (queue 084)
 - What: read inbox/market-catalog.md (9 coins x 280 rounds). Findings in projects/kalshi-15m-markets.md: alts are decided 1 to 4 points earlier than BTC but are thin (BTC 36 to 1,000x deeper) and calibrated; round-to-round memory and BTC lead/lag look interesting but are the same rounds repeated in every series. Rewrote series_catalog.py to cache every round (history/series15m.jsonl) and added tasks/series_catalog_daily.sh (cron 4:40 am) and tasks/lag1_btc.py (lag-1 check on about 2,800 BTC rounds).
 - Status: queue 084 installs the cron and starts the 14-day catch-up now. BTC-only rule unchanged.
