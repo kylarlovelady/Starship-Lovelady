@@ -1,6 +1,12 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Starship rebuilt as one endless space (v1: sky, zoom, drag, clock, meteors, intro)
+- What: index.html. Removed the TABS ship, the header text and the isolated room view. Added an endless starfield you can drag (mouse, touch, arrow keys) and zoom (wheel, pinch, + / -; 0 or double-click = fit). Zoomed all the way out the ship is a speck; zooming in brings it to the middle, and rooms open up in place with their clickable items. 12-hour Orbitron clock in a frosted bubble (top right). Meteor on the hour, comet at :30, shooting star at :15 and :45, random spots. First visit per session: THE STARSHIP fades in, holds 3 s, fades out, ship flies in.
+- Hub pages (Network, Janitor, Memory, Layout, Look, Markets, Activity) open as a full-screen panel from room items (Esc or X closes). Control board and read-only Hub status are NOT done yet.
+- Status: tested here in a browser (drag, zoom, room items, fly-to, no script errors). Not on the Pi/phone yet; goes live when crew-web copies it.
+- Not done: Pi screen saver (frosted bubble and quiet-spot placement), Hub merge/control board.
+
 ## 2026-11-06 Friendly Pi-hole activity page built (12-hour time, plain-English names, per device)
 - What: tasks/pihole_activity.py reads Pi-hole's database and writes ~/crew-web/activity.html (about 250 known sites/apps in tasks/pihole_names.json, unknown ones listed at the bottom for Claude to name). crew_report.py refreshes it every 5 minutes. Page is on the tailnet only: http://loveladymainaihub.taild703ca.ts.net:8095/activity.html . PRIVACY: browsing history is never written into this public repo.
 - Not done yet: alerts per app, delete a device's history, blocking for Warren's iPad (todo.md).

@@ -33,11 +33,9 @@ button{font-family:inherit}
 </style>
 </helmet>
 <div id="zoom-root" style="position: relative; width: 2440px; height: 1400px; background: #050a1c; overflow: hidden; touch-action: pan-x pan-y; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #e8eeff">
+<div id="world" style="position: absolute; left: 0; top: 0; width: 2440px; height: 1400px; transform-origin: 0 0">
 <div id="zoom-station" style="position: absolute; left: 0; top: 0; width: 2440px; height: 1400px; transform-origin: 0 0; transform: {{zStation}}">
 <svg width="2440" height="1400" viewBox="0 0 2440 1400" style="position: absolute; left: 0; top: 0" role="img" aria-label="The whole station seen from an angle: seven rooms joined by a hallway. Tap a room to open it.">
-<sc-for list="{{stars}}" as="s" hint-placeholder-count="520">
-<circle cx="{{s.x}}" cy="{{s.y}}" r="{{s.r}}" style="fill: #ffffff; fill-opacity: {{s.o}}"></circle>
-</sc-for>
 <sc-for list="{{bg}}" as="c" hint-placeholder-count="6">
 <circle cx="{{c.x}}" cy="{{c.y}}" r="{{c.r}}" style="fill: {{c.fill}}; fill-opacity: {{c.op}}"></circle>
 </sc-for>
@@ -50,99 +48,14 @@ button{font-family:inherit}
 <sc-for list="{{roomHits}}" as="h" hint-placeholder-count="7">
 <polygon class="roomhit" points="{{h.pts}}" onClick="{{h.go}}" aria-label="{{h.label}}"></polygon>
 </sc-for>
-<g transform="translate(0,-65)" style="opacity: {{menuOp}}">
-<ellipse cx="150" cy="1330" rx="70" ry="8" fill="#7dffb0" fill-opacity="0.10"></ellipse>
-<circle cx="150" cy="1268" r="26" fill="#7dffb0" fill-opacity="0.30" stroke="#a8ffd0" stroke-opacity="0.6" stroke-width="2"></circle>
-<ellipse cx="150" cy="1296" rx="78" ry="21" fill="#7f8aa3"></ellipse>
-<ellipse cx="150" cy="1290" rx="78" ry="19" fill="#aab4cc"></ellipse>
-<ellipse cx="150" cy="1296" rx="52" ry="9" fill="#4a5470"></ellipse>
-<circle cx="102" cy="1298" r="5" fill="#7dffb0"></circle>
-<circle cx="126" cy="1304" r="5" fill="#ffd166"></circle>
-<circle cx="150" cy="1306" r="5" fill="#7dffb0"></circle>
-<circle cx="174" cy="1304" r="5" fill="#ffd166"></circle>
-<circle cx="198" cy="1298" r="5" fill="#7dffb0"></circle>
-<text x="150" y="1372" text-anchor="middle" font-size="24" letter-spacing="5" fill="#9fb0d6" fill-opacity="0.8" font-family="Chakra Petch, sans-serif">TABS</text>
-<circle cx="150" cy="1296" r="120" fill="#ffffff" fill-opacity="0" onClick="{{menu}}" style="cursor: pointer; pointer-events: {{menuPe}}"></circle>
-</g>
 </svg>
 <sc-for list="{{labels}}" as="t" hint-placeholder-count="60">
 <div style="position: absolute; left: {{t.x}}px; top: {{t.y}}px; width: 0; height: 0; pointer-events: none">
 <div style="position: absolute; white-space: nowrap; pointer-events: none; font-family: 'Chakra Petch', sans-serif; font-size: {{t.size}}px; font-weight: {{t.weight}}; color: {{t.fill}}; text-shadow: {{t.sh}}; transform: {{t.tf}}; line-height: 1">{{t.text}}</div>
 </div>
 </sc-for>
-<div style="position: absolute; left: 40px; top: 28px; right: 40px; pointer-events: none">
-<div style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; letter-spacing: 0.2em; color: #5ce1ff">{{kicker}}</div>
-<div style="font-family: 'Chakra Petch', sans-serif; font-size: 44px; font-weight: 700; letter-spacing: 0.04em">{{title}}</div>
-<div style="font-size: 20px; color: #9fb0d6; margin-top: 4px">{{sub}}</div>
 </div>
 </div>
-<sc-if value="{{roomOn}}" hint-placeholder-val="{{ false }}">
-<div style="position: absolute; left: 0; top: 0; width: 2440px; height: 1400px; background: rgba(5, 10, 28, 0.94)">
-<div id="zoom-room" style="position: absolute; left: 0; top: 0; width: 1280px; height: 900px; transform: {{zRoom}}; transform-origin: 0 0; background: #050a1c; overflow: hidden; border: 2px solid #c9a227; box-sizing: border-box; color: #e8eeff">
-<svg width="1280" height="900" viewBox="0 0 1280 900" style="position: absolute; left: 0; top: 0" role="img" aria-label="{{room.title}}">
-<sc-for list="{{room.stars}}" as="s" hint-placeholder-count="140">
-<circle cx="{{s.x}}" cy="{{s.y}}" r="{{s.r}}" style="fill: #ffffff; fill-opacity: {{s.o}}"></circle>
-</sc-for>
-<sc-for list="{{room.polys}}" as="p" hint-placeholder-count="900">
-<polygon points="{{p.pts}}" style="fill: {{p.fill}}; stroke: {{p.stroke}}; stroke-width: {{p.sw}}; fill-opacity: {{p.op}}; stroke-linejoin: round; stroke-linecap: round"></polygon>
-</sc-for>
-<sc-for list="{{room.circles}}" as="c" hint-placeholder-count="10">
-<circle cx="{{c.x}}" cy="{{c.y}}" r="{{c.r}}" style="fill: {{c.fill}}; fill-opacity: {{c.op}}"></circle>
-</sc-for>
-
-</svg>
-<sc-for list="{{room.labels}}" as="t" hint-placeholder-count="30">
-<div style="position: absolute; left: {{t.x}}px; top: {{t.y}}px; width: 0; height: 0; pointer-events: none">
-<div style="position: absolute; white-space: nowrap; pointer-events: none; font-family: 'Chakra Petch', sans-serif; font-size: {{t.size}}px; font-weight: {{t.weight}}; color: {{t.fill}}; text-shadow: {{t.sh}}; transform: {{t.tf}}; line-height: 1">{{t.text}}</div>
-</div>
-</sc-for>
-<div style="position: absolute; left: 28px; top: 16px; right: 200px">
-<div style="font-family: 'Chakra Petch', sans-serif; font-size: 13px; letter-spacing: 0.2em; color: #ffd166">{{room.kicker}}</div>
-<div style="font-family: 'Chakra Petch', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 0.04em">{{room.title}}</div>
-<div style="font-size: 14px; color: #9fb0d6; margin-top: 2px">{{room.sub}}</div>
-</div>
-<button onClick="{{room.toggleHints}}" style="position: absolute; right: 236px; top: 20px; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 2px solid #c9a227; background: #1a1630; color: #ffd166; font-size: 14px; font-weight: 600; cursor: pointer">{{room.hintsLabel}}</button>
-<button onClick="{{closeRoom}}" style="position: absolute; right: 24px; top: 20px; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 2px solid #5ce1ff; background: #10223e; color: #e8f6ff; font-size: 14px; font-weight: 600; cursor: pointer">Back to the station</button>
-<sc-for list="{{room.hits}}" as="h" hint-placeholder-count="10">
-<button onClick="{{h.go}}" aria-label="{{h.label}}" style="position: absolute; left: {{h.l}}px; top: {{h.t}}px; width: {{h.w}}px; height: {{h.h}}px; padding: 0; margin: 0; background: transparent; border: {{h.bd}}; border-radius: 10px; cursor: pointer"></button>
-</sc-for>
-<div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 12px">
-<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center">
-<sc-for list="{{room.previews}}" as="b" hint-placeholder-count="4">
-<button onClick="{{b.go}}" style="min-height: 40px; padding: 0 14px; border-radius: 8px; border: 2px solid {{b.edge}}; background: {{b.bg}}; color: #f1f5ff; font-size: 14px; font-weight: 600; cursor: pointer">{{b.label}}</button>
-</sc-for>
-</div>
-</div>
-<sc-if value="{{room.ov.onOld}}" hint-placeholder-val="{{ false }}">
-<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(5, 10, 28, 0.96); overflow-y: auto; padding: 24px 40px; box-sizing: border-box">
-<div style="max-width: 1000px; margin: 0 auto">
-<button onClick="{{room.ov.back}}" style="min-height: 48px; padding: 0 22px; border-radius: 10px; border: 2px solid #5ce1ff; background: #10223e; color: #e8f6ff; font-size: 16px; font-weight: 600; cursor: pointer">{{room.ov.backLabel}}</button>
-<div style="font-family: 'Chakra Petch', sans-serif; font-size: 34px; font-weight: 700; margin-top: 16px; color: #ffd166">{{room.ov.title}}</div>
-<div style="font-size: 16px; color: #9fb0d6; margin-bottom: 14px">{{room.ov.sub}}</div>
-<sc-for list="{{room.ov.cards}}" as="c" hint-placeholder-count="0">
-<button onClick="{{c.go}}" style="display: inline-flex; flex-direction: column; justify-content: space-between; width: 226px; height: 112px; margin: 0 12px 12px 0; padding: 12px 14px; box-sizing: border-box; text-align: left; border-radius: 12px; border: 3px solid {{c.edge}}; background: {{c.bg}}; color: #0a0f24; cursor: pointer; vertical-align: top">
-<span style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700">{{c.name}}</span>
-<span style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600"><span>{{c.role}}</span><span style="width: 22px; height: 22px; border-radius: 11px; background: {{c.dot}}; border: 2px solid #0a0f24"></span></span>
-</button>
-</sc-for>
-<sc-for list="{{room.ov.rows}}" as="r" hint-placeholder-count="5">
-<div style="display: flex; gap: 14px; padding: 12px 14px; margin-bottom: 8px; border-radius: 10px; background: #0f1a36; border-left: 6px solid {{r.edge}}; font-size: 17px; line-height: 1.35">
-<div style="width: 210px; flex-shrink: 0; color: #9fb0d6; font-weight: 600">{{r.k}}</div>
-<div style="flex-grow: 1">{{r.v}}</div>
-</div>
-</sc-for>
-<div style="margin-top: 10px">
-<sc-for list="{{room.ov.actions}}" as="a" hint-placeholder-count="0">
-<button onClick="{{a.go}}" style="min-height: 52px; padding: 0 20px; margin: 0 10px 10px 0; border-radius: 10px; border: 2px solid {{a.edge}}; background: {{a.bg}}; color: #f1f5ff; font-size: 16px; font-weight: 600; cursor: pointer">{{a.label}}</button>
-</sc-for>
-</div>
-<div style="font-size: 13px; color: #6f7fa8; margin-top: 12px">{{room.ov.note}}</div>
-</div>
-</div>
-</sc-if>
-</div>
-</div>
-</sc-if>
 </div>
 <sc-if value="{{sheetOn}}" hint-placeholder-val="{{ false }}">
 <div class="sheet">
@@ -1276,7 +1189,7 @@ return r;
 
 const EMPTY_ROOM = { stars: [], polys: [], circles: [], labels: [], hits: [], previews: [], kicker: '', title: '', sub: '', hintsLabel: '', toggleHints: () => {}, ov: { on: false, title: '', sub: '', rows: [], cards: [], actions: [], back: () => {}, backLabel: '', note: '' } };
 class Component extends DCLogic {
-componentDidMount() { this._n = 0; this._t = setInterval(() => { this._n += 1; this.setState({ tick: this._n }); }, 250); this.gestures(); this.fit(); if (typeof location !== 'undefined' && location.hash === '#outage' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 280 }; if (typeof location !== 'undefined' && location.protocol !== 'file:' && location.hash !== '#outage' && location.hash !== '#nointro' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 80, intro: true }; this.pull(); this.pullExtra(); this.pullCrew(); this.pullAlerts(); this._p = setInterval(() => (this.pull(), this.pullExtra(), this.pullCrew(), this.pullAlerts()), 15000); }
+componentDidMount() { this._n = 0; this._t = setInterval(() => { this._n += 1; this.setState({ tick: this._n }); }, 250); window.__ship = this; if (typeof location !== 'undefined' && location.hash === '#outage' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 280 }; if (typeof location !== 'undefined' && location.protocol !== 'file:' && location.hash !== '#outage' && location.hash !== '#nointro' && !OUTCTL) OUTCTL = { t0: 60, t1: null, req: 80, intro: true }; this.pull(); this.pullExtra(); this.pullCrew(); this.pullAlerts(); this._p = setInterval(() => (this.pull(), this.pullExtra(), this.pullCrew(), this.pullAlerts()), 15000); }
 componentWillUnmount() { clearInterval(this._t); clearInterval(this._p); (this._off || []).forEach((f) => f()); }
 fit() { try { if (typeof location === 'undefined' || location.protocol !== 'http:') return; const de = document.documentElement, bd = document.body; de.style.overflow = 'hidden'; bd.style.overflow = 'hidden'; bd.style.margin = '0'; bd.style.background = '#050a1c'; const go = () => { const root = document.getElementById('zoom-root'); if (!root) return; const w = window.innerWidth, h = window.innerHeight; if (!w || !h) return; const k = Math.min(w / 2440, h / 1400); try { window.parent.postMessage({ dbg: 'page ' + w + 'x' + h + ' k2=' + k.toFixed(3) + ' dpr=' + window.devicePixelRatio }, '*'); } catch (e) {} root.style.transformOrigin = '0 0'; root.style.transform = 'translate(' + ((w - 2440 * k) / 2).toFixed(1) + 'px, ' + ((h - 1400 * k) / 2).toFixed(1) + 'px) scale(' + k.toFixed(5) + ')'; }; go(); window.addEventListener('resize', go); this._fit = go; } catch (e) {} }
 pullAlerts() { try { fetch('hub-alerts.json?t=' + Date.now(), { cache: 'no-store' }).then((r) => { if (!r.ok) throw new Error('http'); return r.json(); }).then((d) => { REAL.alerts = d; const a = (d && d.active) || []; if (a.length) { const sec = agent('security'); if (sec.light === 'g') sec.light = 'y'; sec.stuck = a[0]; } }).catch(() => { REAL.alerts = null; }); } catch (e) { REAL.alerts = null; } }
@@ -1332,12 +1245,14 @@ const st0 = this.state || {}, set = (o) => this.setState(o);
 let base;
 if (st0.room && this._last) base = this._last; else { base = buildStation(st0.tick || 0); this._last = base; }
 const out = Object.assign({}, base);
-out.roomHits = (base.roomHitsData || []).map((h) => ({ pts: h.pts, label: h.label, go: () => { if (h.id === 'wifi') { const n = this._n || 0; if (OUTCTL && OUTCTL.t1 === null) OUTCTL.req = n + 60; else if (!OUTCTL) OUTCTL = { t0: n + 60, t1: null, req: n + 220 }; return; } this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: h.id, open: null, hints: false }); } }));
-const inHub = typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:'; out.menuOp = inHub ? 1 : 0; out.menuPe = inHub ? 'all' : 'none'; out.menu = () => { try { window.parent.postMessage({ crew: 'tabs' }, '*'); } catch (e) {} }; out.zStation = this.tf('station'); out.zRoom = this.tf('room');
-out.roomOn = !!st0.room;
-out.closeRoom = () => { this.zz().room = { k: 1, x: 0, y: 0 }; set({ room: null, open: null }); };
-out.room = st0.room ? this.roomView(st0, set) : EMPTY_ROOM; { const inS = typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:'; const ovn = out.room.ov || {}; out.room = Object.assign({}, out.room, { ov: Object.assign({}, ovn, { onOld: !!ovn.on && !inS }) }); out.sheet = ovn; out.sheetOn = inS && !!ovn.on; if (inS) { const key = (out.sheetOn ? 's' : '') + (st0.room ? 'r' : ''); if (this._view !== key) { this._view = key; try { window.parent.postMessage({ crew: 'view', sheet: out.sheetOn, room: !!st0.room }, '*'); } catch (e) {} } } }
+out.roomHits = (base.roomHitsData || []).map((h) => ({ pts: h.pts, label: h.label, go: () => { if (h.id === 'wifi') { const n = this._n || 0; if (OUTCTL && OUTCTL.t1 === null) OUTCTL.req = n + 60; else if (!OUTCTL) OUTCTL = { t0: n + 60, t1: null, req: n + 220 }; return; } if (window.__nav) window.__nav.fly(h.id); } }));
+out.zStation = 'none'; out.zRoom = 'none';
+{ const ss = this.ovState(st0), ovn = this.overlay(st0.open || null, ss, ss.pending, ss.log, set); out.sheet = ovn; out.sheetOn = !!ovn.on; }
 return out;
+}
+ovState(st0) {
+const k = Math.floor((st0.tick || 0) / 2);
+return Object.assign({}, st0, { on: k % 2 === 1, n: k, scene: st0.scene || null, health: st0.health || 'green', gold: st0.gold === undefined ? 14 : st0.gold, pending: st0.pending || INIT_PENDING, log: st0.log || INIT_LOG, gauge: st0.gauge || 0, stale: st0.stale || 'ok', gv: st0.gv || 0, busy: !!st0.busy, alert: !!st0.alert, meeting: st0.meeting !== false });
 }
 roomView(st0, set) {
 const k = Math.floor((st0.tick || 0) / 2), st = Object.assign({}, st0, { on: k % 2 === 1, n: k });
@@ -1428,7 +1343,7 @@ o.title = 'Vote history'; o.sub = 'How past votes went (last 30 days)'; o.rows =
 } else if (open === 'agenda') {
 o.title = 'Next meeting'; o.sub = 'Planned for 4:00 am'; o.rows = [row('Topic', 'Pi-hole nightly restart'), row('Who is called', 'Mechanic, Security, Librarian'), row('Called by', 'Mechanic', '#6ab7ff'), row('Captain', 'Joins at the end to decide')];
 } else if (open === 'monitors') {
-o.title = 'Monitor wall'; if (typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:') o.actions = [{ label: 'Open the device list (names, online, new)', bg: '#14204a', edge: '#5ce1ff', go: () => { try { window.parent.postMessage({ crew: 'open', pane: 'network' }, '*'); } catch (e) {} } }]; o.sub = 'Live health checks'; o.rows = [row('Pi health', REAL.extra && REAL.extra.pi ? REAL.extra.pi.temp + ', memory ' + REAL.extra.pi.mem + ', disk ' + REAL.extra.pi.disk + ' (live)' : 'No live report yet (sample: 48 C, memory 41%, disk 32%)', '#2fbf71'), row('Wi-Fi and internet', 'OK', '#2fbf71'), row('Devices', '14 connected, 0 unknown', '#2fbf71'), row('Pi-hole', 'Answering. 214 blocked today', '#2fbf71'), row('Backups', 'Last backup yesterday', '#2fbf71'), row('Alerts', 'None today', '#2fbf71')];
+o.title = 'Monitor wall'; if (true) o.actions = [{ label: 'Open the device list (names, online, new)', bg: '#14204a', edge: '#5ce1ff', go: () => { if (window.__nav) window.__nav.pane('network'); } }]; o.sub = 'Live health checks'; o.rows = [row('Pi health', REAL.extra && REAL.extra.pi ? REAL.extra.pi.temp + ', memory ' + REAL.extra.pi.mem + ', disk ' + REAL.extra.pi.disk + ' (live)' : 'No live report yet (sample: 48 C, memory 41%, disk 32%)', '#2fbf71'), row('Wi-Fi and internet', 'OK', '#2fbf71'), row('Devices', '14 connected, 0 unknown', '#2fbf71'), row('Pi-hole', 'Answering. 214 blocked today', '#2fbf71'), row('Backups', 'Last backup yesterday', '#2fbf71'), row('Alerts', 'None today', '#2fbf71')];
 } else if (open === 'bookshelf') {
 o.title = 'Rule book and minutes'; o.sub = 'Search box at the top (later)'; o.rows = REAL.crew ? [row('Rule book', 'CLAUDE.md: ' + REAL.crew.rules + ' shared-memory rules, plus ' + REAL.crew.files.memory_files + ' memory files'), row('Latest entry', REAL.crew.log[0] ? REAL.crew.log[0].t + ': ' + REAL.crew.log[0].what : 'none'), row('Search', 'Later')] : [row('Rule book', 'Crew rules, then each role rules'), row('Latest minutes', 'Voice ports meeting, 11:40 am'), row('Search', 'Type to find anything')];
 } else if (open.indexOf('bunk:') === 0) {
@@ -1440,9 +1355,9 @@ o.title = 'Services rack'; o.sub = 'One light and one switch per hub service'; o
 } else if (open === 'toolbox') {
 o.title = 'Rolling toolbox'; o.sub = 'Just the Mechanic tools'; o.rows = [row('Contents', 'Wrenches, pliers, screwdrivers, a tape measure')];
 } else if (open === 'filing') {
-o.title = 'Filing cabinets'; if (typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:') o.actions = [{ label: 'Open the Memory (view and undo)', bg: '#14204a', edge: '#5ce1ff', go: () => { try { window.parent.postMessage({ crew: 'open', pane: 'memory' }, '*'); } catch (e) {} } }]; o.sub = 'Saved conversations, voice logs and device lists'; o.rows = [REAL.crew ? row('Top drawer: shared memory', REAL.crew.files.memory_files + ' memory files in the repo plus ' + REAL.crew.files.jarvis_notes + ' Jarvis notes. Nothing is deleted; finished items go under Done.') : row('Top drawer: conversations', 'Waiting for the Pi report.'), row('Middle drawer: voice logs', REAL.crew ? REAL.crew.files.clips + ' saved voice clips on the Pi (replay on the Lab page).' : 'What the hub heard and answered.'), row('Bottom drawer: devices', 'See the Hub device list (button above).', '#2fbf71')];
+o.title = 'Filing cabinets'; if (true) o.actions = [{ label: 'Open the Memory (view and undo)', bg: '#14204a', edge: '#5ce1ff', go: () => { if (window.__nav) window.__nav.pane('memory'); } }]; o.sub = 'Saved conversations, voice logs and device lists'; o.rows = [REAL.crew ? row('Top drawer: shared memory', REAL.crew.files.memory_files + ' memory files in the repo plus ' + REAL.crew.files.jarvis_notes + ' Jarvis notes. Nothing is deleted; finished items go under Done.') : row('Top drawer: conversations', 'Waiting for the Pi report.'), row('Middle drawer: voice logs', REAL.crew ? REAL.crew.files.clips + ' saved voice clips on the Pi (replay on the Lab page).' : 'What the hub heard and answered.'), row('Bottom drawer: devices', 'See the Hub device list (button above).', '#2fbf71')];
 } else if (open === 'legend') {
-o.title = 'What can I tap?'; o.sub = 'Every clickable thing on the ship, by room. Use the buttons to jump straight to a room.';
+o.title = 'What can I tap?'; o.sub = 'Every clickable thing on the ship, by room. Use the buttons to fly straight to a room.';
 const lr = (k, v, e) => row(k, v, e || '#c9a227');
 o.rows = [
 lr("Captain's Office", 'Decision log (what the Captain decided). Crew board (all agents, tap one). Mission board. Safe (crew budget). Siren light (system health). Paper tray (approvals waiting on you). Achievements case.'),
@@ -1454,12 +1369,12 @@ lr('Data Archive', 'Bookshelf wall (rule book and minutes). Filing cabinets (a b
 lr('Sleeping Quarters', "Each agent's bunk. The cat sleeps here sometimes."),
 lr('Everywhere', 'Tap any agent to see their role, light, what they are doing now and their history. Tap the cat any time. Inside a room, Show clickable outlines everything you can tap there.', '#5ce1ff')
 ];
-o.actions = [['captain', "Captain's Office"], ['conference', 'Conference Room'], ['watch', 'Security Office'], ['trainer', 'Training Room'], ['workshop', 'Workshop'], ['archive', 'Data Archive'], ['sleeping', 'Sleeping Quarters']].map((q) => ({ label: 'Go to ' + q[1], bg: '#14204a', edge: '#2a3a6b', go: () => set({ room: q[0], open: null, hints: false }) }));
+o.actions = [['captain', "Captain's Office"], ['conference', 'Conference Room'], ['watch', 'Security Office'], ['trainer', 'Training Room'], ['workshop', 'Workshop'], ['archive', 'Data Archive'], ['sleeping', 'Sleeping Quarters']].map((q) => ({ label: 'Go to ' + q[1], bg: '#14204a', edge: '#2a3a6b', go: () => { set({ open: null }); if (window.__nav) window.__nav.fly(q[0]); } }));
 o.backLabel = 'Back to the cat'; o.back = () => set({ open: 'cat' }); o.note = 'Tip: a room that has a button inside a screen (Monitor wall, Filing cabinets) opens the matching Hub page.';
 } else if (open === 'cat') {
 o.title = 'The cat'; o.actions = [{ label: 'Legend: what can I tap?', bg: '#14204a', edge: '#5ce1ff', go: () => set({ open: 'legend' }) }]; o.sub = 'Orange, still unnamed'; o.rows = [row('Purr', 'Purrrr... (heart)', '#ff8a6a'), row('Right now', 'Napping in the bed in the Data Archive'), row('Favorite spots', 'The Archive bed and the bunk room bed'), row('Job', 'None. Just the cat.', '#7be0a0')];
 } else if (open === 'bin') {
-o.title = 'Trash folder'; if (typeof window !== 'undefined' && window.parent !== window && location.protocol === 'http:') o.actions = [{ label: 'Open the Janitor (review, restore, empty)', bg: '#14204a', edge: '#5ce1ff', go: () => { try { window.parent.postMessage({ crew: 'open', pane: 'janitor' }, '*'); } catch (e) {} } }]; o.sub = 'Nothing is deleted for good without Kylar'; o.rows = REAL.crew ? [row('Dropped items', REAL.crew.dropped + ' in memory/_archive.md (nothing is deleted)'), row('Next empty', 'Never automatic')] : [row('Waiting', '312 MB in 41 files'), row('Next empty', 'After you approve it'), row('For Kylar', '3 files he is not sure about')];
+o.title = 'Trash folder'; if (true) o.actions = [{ label: 'Open the Janitor (review, restore, empty)', bg: '#14204a', edge: '#5ce1ff', go: () => { if (window.__nav) window.__nav.pane('janitor'); } }]; o.sub = 'Nothing is deleted for good without Kylar'; o.rows = REAL.crew ? [row('Dropped items', REAL.crew.dropped + ' in memory/_archive.md (nothing is deleted)'), row('Next empty', 'Never automatic')] : [row('Waiting', '312 MB in 41 files'), row('Next empty', 'After you approve it'), row('For Kylar', '3 files he is not sure about')];
 } else if (open === 'weak') {
 o.title = 'Weak spots board'; o.sub = 'Mechanic'; o.rows = [row('Backup script: no error check', 'Risk: high. Fix proposed.', '#ff3b3b'), row('hub-oled: no restart rule', 'Risk: medium. Fix proposed.', '#ffd166'), row('Old key file readable', 'Risk: medium. Waiting on the Captain.', '#ffd166'), row('Unused service', 'Risk: low.', '#2fbf71')];
 } else if (open === 'lockerx') {
@@ -1474,6 +1389,284 @@ return o;
 }
 
 }
+window.__shipApi = {
+KS: KS, ROOMS: ROOMS,
+centre: (id) => { const r = ROOMS.filter((q) => q.built === id)[0]; if (!r) return null; return [440 + ((r.x + r.w / 2) - (r.y + r.d / 2)) * 44 * KS, 230 + ((r.x + r.w / 2) + (r.y + r.d / 2)) * 22 * KS - 1.5 * 44 * KS, r]; },
+detail: (id, ss) => {
+const r = ROOMS.filter((q) => q.built === id)[0]; if (!r) return null;
+const sc = buildScene(id, ss), ox = S.ox, oy = S.oy;
+const tx = 440 + (r.x - r.y) * 44 * KS - ox * KS, ty = 230 + (r.x + r.y) * 22 * KS - oy * KS;
+return { scene: sc, tx: tx, ty: ty };
+},
+hulls: () => { try { const b = window.__ship && window.__ship._last; return (b && b.roomHitsData) || []; } catch (e) { return []; } }
+};
+</script>
+<script>
+/* STARSHIP NAVIGATION (Kylar 2026-11-06): endless starfield, drag/zoom with mouse, touch or trackpad, rooms open up in place as you zoom in,
+   12-hour clock, meteor (hourly), comet (half hour), shooting star (quarter hours), first-boot title. No buttons or tabs on the screen. */
+(function () {
+'use strict';
+var D = document, W = innerWidth, H = innerHeight, DPR = Math.min(2, window.devicePixelRatio || 1);
+var SHIP = [1160, 790], SHIP_W = 2300, SHIP_H = 1280, KMIN = 0.018, KMAX = 9;
+var cam = { k: 0.5, x: SHIP[0], y: SHIP[1] }, anim = null, supp = 0, down = false;
+function kfit() { return Math.min(W / SHIP_W, H / SHIP_H) * 0.96; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function hash(a, b, c) { var h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x7f4a7c15, 0xc2b2ae35) ^ Math.imul(c + 0x165667b1, 0x27d4eb2f); h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12; h = Math.imul(h, 0x297a2d39); h ^= h >>> 15; return (h >>> 0) / 4294967296; }
+var css = D.createElement('style');
+css.textContent = 'html,body{margin:0;overflow:hidden;background:#02030a;overscroll-behavior:none}body{cursor:grab;-webkit-user-select:none;user-select:none}body.drag{cursor:grabbing}' +
+  '#zoom-root{position:fixed!important;left:0;top:0;width:100vw!important;height:100vh!important;background:transparent!important;touch-action:none!important;z-index:1;overflow:hidden}' +
+  '#sky{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:0}' +
+  '#rooms{position:fixed;left:0;top:0;width:2440px;height:1400px;transform-origin:0 0;pointer-events:none;z-index:2}' +
+  '#rooms .rl{position:absolute;left:0;top:0;width:2440px;height:1400px;pointer-events:none}#rooms .ri{position:absolute;left:0;top:0;width:1280px;height:900px;transform-origin:0 0}' +
+  '#rooms .hit{position:absolute;padding:0;margin:0;background:transparent;border:0;border-radius:10px;cursor:pointer;pointer-events:none;outline:0}#rooms .on .hit{pointer-events:auto}#rooms .hit:hover{box-shadow:0 0 0 3px rgba(255,209,102,.85),0 0 26px rgba(255,209,102,.45) inset}' +
+  '#clock{position:fixed;right:2.2vw;top:2.4vh;z-index:5;text-align:right;color:#eafcff;font-family:Orbitron,"Chakra Petch",sans-serif;padding:.35em .75em .45em;border-radius:18px;background:rgba(6,12,30,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(92,225,255,.22);text-shadow:0 0 14px rgba(92,225,255,.55);pointer-events:none}' +
+  '#clock .t{font-weight:700;font-size:clamp(30px,4.4vw,72px);letter-spacing:.04em;line-height:1.05}#clock .t small{font-size:.42em;margin-left:.25em;opacity:.85}#clock .d{font-weight:500;font-size:clamp(11px,1.15vw,19px);letter-spacing:.22em;opacity:.78;margin-top:.15em}' +
+  '#intro{position:fixed;left:0;top:0;right:0;bottom:0;z-index:100;background:#02030a;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 1.6s ease;pointer-events:all}' +
+  '#intro div{font-family:Orbitron,sans-serif;font-weight:900;font-size:clamp(28px,6.2vw,110px);letter-spacing:.3em;margin-right:-.3em;color:#e6fbff;text-shadow:0 0 18px #5ce1ff,0 0 48px rgba(92,225,255,.55);opacity:0;transition:opacity 1.6s ease}' +
+  '#pane{position:fixed;left:0;top:0;right:0;bottom:0;z-index:60;background:#050a1c;display:none;flex-direction:column}#pane.on{display:flex}#pane .ph{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;font:600 14px Orbitron,sans-serif;letter-spacing:.12em;color:#9fb0d6;background:#0a1230}' +
+  '#pane .px{font:600 20px system-ui;color:#e8f6ff;background:#10223e;border:2px solid #5ce1ff;border-radius:10px;min-width:44px;min-height:40px;cursor:pointer}#pane iframe{flex:1;border:0;width:100%;background:#0b1220}.sheet{z-index:50}';
+D.head.appendChild(css);
+var fl = D.createElement('link'); fl.rel = 'stylesheet'; fl.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap'; D.head.appendChild(fl);
+
+// ---------- DOM: sky canvas, room-detail layer, clock, intro ----------
+var cv = D.createElement('canvas'); cv.id = 'sky'; D.body.insertBefore(cv, D.body.firstChild);
+var cx = cv.getContext('2d');
+var roomsEl = D.createElement('div'); roomsEl.id = 'rooms'; D.body.appendChild(roomsEl);
+var clock = D.createElement('div'); clock.id = 'clock'; clock.innerHTML = '<div class="t"></div><div class="d"></div>'; D.body.appendChild(clock);
+var pane = D.createElement('div'); pane.id = 'pane'; pane.innerHTML = '<div class="ph"><span id="pt"></span><button class="px" aria-label="Close">&#10005;</button></div><iframe></iframe>'; D.body.appendChild(pane);
+function tickClock() {
+  var d = new Date(), t = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).split(' ');
+  clock.firstChild.innerHTML = t[0] + '<small>' + (t[1] || '') + '</small>';
+  clock.lastChild.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+}
+tickClock(); setInterval(tickClock, 1000);
+
+// ---------- camera ----------
+var worldEl = null;
+function apply() {
+  if (!worldEl || !worldEl.isConnected) worldEl = D.getElementById('world');
+  var tf = 'translate(' + (W / 2 - cam.x * cam.k).toFixed(2) + 'px,' + (H / 2 - cam.y * cam.k).toFixed(2) + 'px) scale(' + cam.k.toFixed(5) + ')';
+  if (worldEl && worldEl.style.transform !== tf) worldEl.style.transform = tf;
+  if (roomsEl.style.transform !== tf) roomsEl.style.transform = tf;
+}
+function bound() {
+  cam.k = clamp(cam.k, KMIN, KMAX);
+  var f = kfit();
+  if (cam.k < f) { var t = Math.min(1, (1 - cam.k / f) * 0.6); cam.x += (SHIP[0] - cam.x) * t; cam.y += (SHIP[1] - cam.y) * t; }
+  cam.x = clamp(cam.x, 0, 2440); cam.y = clamp(cam.y, 120, 1400);
+}
+function zoomAt(sx, sy, k1) {
+  k1 = clamp(k1, KMIN, KMAX);
+  var wx = cam.x + (sx - W / 2) / cam.k, wy = cam.y + (sy - H / 2) / cam.k;
+  cam.k = k1; cam.x = wx - (sx - W / 2) / k1; cam.y = wy - (sy - H / 2) / k1; bound();
+}
+function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function goTo(x, y, k, ms) { anim = { t0: performance.now(), d: ms || 900, a: { k: cam.k, x: cam.x, y: cam.y }, b: { k: clamp(k, KMIN, KMAX), x: x, y: y } }; }
+function stepAnim(now) {
+  if (!anim) return; var t = Math.min(1, (now - anim.t0) / anim.d), e = ease(t);
+  var lk = Math.log(anim.a.k) + (Math.log(anim.b.k) - Math.log(anim.a.k)) * e; cam.k = Math.exp(lk);
+  cam.x = anim.a.x + (anim.b.x - anim.a.x) * e; cam.y = anim.a.y + (anim.b.y - anim.a.y) * e; if (t >= 1) anim = null;
+}
+function home(ms) { goTo(SHIP[0], SHIP[1], kfit(), ms || 800); }
+
+// ---------- pointer / wheel / pinch ----------
+var ptrs = {}, vel = { x: 0, y: 0 }, moved = 0, last = null;
+function inUi(e) { var t = e.target; return !!(t && t.closest && (t.closest('.sheet') || t.closest('#pane'))); }
+addEventListener('pointerdown', function (e) {
+  if (inUi(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  ptrs[e.pointerId] = { x: e.clientX, y: e.clientY }; down = true; moved = 0; anim = null; vel.x = vel.y = 0;
+  if (Object.keys(ptrs).length === 1) last = { x: e.clientX, y: e.clientY, t: performance.now() };
+}, true);
+addEventListener('pointermove', function (e) {
+  var p = ptrs[e.pointerId]; if (!p) return; var ids = Object.keys(ptrs);
+  if (ids.length === 1) {
+    var dx = e.clientX - p.x, dy = e.clientY - p.y; moved += Math.abs(dx) + Math.abs(dy);
+    if (moved > 7) { D.body.classList.add('drag'); cam.x -= dx / cam.k; cam.y -= dy / cam.k; var now = performance.now(), dt = Math.max(8, now - last.t); vel.x = -dx / cam.k / dt * 16; vel.y = -dy / cam.k / dt * 16; last = { x: e.clientX, y: e.clientY, t: now }; bound(); }
+    p.x = e.clientX; p.y = e.clientY;
+  } else if (ids.length === 2) {
+    var o = ptrs[ids[0] === String(e.pointerId) ? ids[1] : ids[0]], d0 = Math.hypot(p.x - o.x, p.y - o.y), mx0 = (p.x + o.x) / 2, my0 = (p.y + o.y) / 2;
+    p.x = e.clientX; p.y = e.clientY; var d1 = Math.hypot(p.x - o.x, p.y - o.y), mx1 = (p.x + o.x) / 2, my1 = (p.y + o.y) / 2; moved += 20;
+    if (d0 > 0) { cam.x -= (mx1 - mx0) / cam.k; cam.y -= (my1 - my0) / cam.k; zoomAt(mx1, my1, cam.k * d1 / d0); }
+  }
+}, true);
+function up(e) { if (!ptrs[e.pointerId]) return; delete ptrs[e.pointerId]; if (!Object.keys(ptrs).length) { down = false; D.body.classList.remove('drag'); if (moved > 7) supp = Date.now() + 300; } }
+addEventListener('pointerup', up, true); addEventListener('pointercancel', up, true);
+addEventListener('wheel', function (e) {
+  if (inUi(e)) return; e.preventDefault(); anim = null;
+  var dy = e.deltaMode === 1 ? e.deltaY * 18 : e.deltaY, f = Math.exp(-dy * (e.ctrlKey ? 0.012 : 0.0016));
+  zoomAt(e.clientX, e.clientY, cam.k * f);
+}, { passive: false });
+addEventListener('click', function (e) { if (Date.now() < supp) { e.stopPropagation(); e.preventDefault(); } }, true);
+addEventListener('dblclick', function (e) { if (inUi(e) || (e.target.closest && e.target.closest('.hit'))) return; if (cam.k > kfit() * 1.15) home(700); else if (cam.k < kfit() * 0.9) home(700); }, true);
+addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') { if (pane.classList.contains('on')) closePane(); else if (window.__ship) window.__ship.setState({ open: null }); }
+  else if (e.key === '+' || e.key === '=') zoomAt(W / 2, H / 2, cam.k * 1.25); else if (e.key === '-') zoomAt(W / 2, H / 2, cam.k / 1.25); else if (e.key === '0' || e.key === 'Home') home();
+  else if (e.key.indexOf('Arrow') === 0) { var s = 60 / cam.k; cam.x += e.key === 'ArrowRight' ? s : e.key === 'ArrowLeft' ? -s : 0; cam.y += e.key === 'ArrowDown' ? s : e.key === 'ArrowUp' ? -s : 0; bound(); }
+});
+addEventListener('resize', function () { W = innerWidth; H = innerHeight; sizeCanvas(); });
+function sizeCanvas() { cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
+sizeCanvas();
+
+// ---------- the endless sky ----------
+var LAYERS = [{ f: .05, e: .05, cell: 240, n: 3.2, s: .65, a: .5 }, { f: .12, e: .12, cell: 280, n: 3, s: .9, a: .65 }, { f: .26, e: .24, cell: 330, n: 2.2, s: 1.2, a: .85 }, { f: .5, e: .42, cell: 420, n: 1.5, s: 1.7, a: 1 }];
+var COLS = ['#ffffff', '#ffffff', '#dbe7ff', '#cfe0ff', '#fff1d6', '#ffe2b8', '#ffc9b3'];
+var NEB = [[120, 90, 255], [60, 190, 255], [255, 90, 170], [90, 255, 190]];
+function drawSky(t) {
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0); cx.fillStyle = '#02030a'; cx.fillRect(0, 0, W, H);
+  var fk = kfit();
+  // faint nebulae (far layer)
+  var L0 = LAYERS[0], ks0 = Math.pow(cam.k / fk, L0.e), off0x = cam.x * 0.06 * cam.k, off0y = cam.y * 0.06 * cam.k, NC = 1700;
+  var u0 = Math.floor((-W / 2 + off0x) / ks0 / NC) - 1, u1 = Math.ceil((W / 2 + off0x) / ks0 / NC) + 1, v0 = Math.floor((-H / 2 + off0y) / ks0 / NC) - 1, v1 = Math.ceil((H / 2 + off0y) / ks0 / NC) + 1;
+  if ((u1 - u0) * (v1 - v0) < 600) for (var i = u0; i <= u1; i++) for (var j = v0; j <= v1; j++) {
+    if (hash(i, j, 77) > 0.42) continue; var nc = NEB[Math.floor(hash(i, j, 78) * NEB.length)], r = (500 + hash(i, j, 79) * 700) * ks0;
+    var sx = W / 2 + (i + hash(i, j, 80)) * NC * ks0 - off0x, sy = H / 2 + (j + hash(i, j, 81)) * NC * ks0 - off0y;
+    var g = cx.createRadialGradient(sx, sy, 0, sx, sy, r); g.addColorStop(0, 'rgba(' + nc[0] + ',' + nc[1] + ',' + nc[2] + ',.09)'); g.addColorStop(1, 'rgba(' + nc[0] + ',' + nc[1] + ',' + nc[2] + ',0)'); cx.fillStyle = g; cx.fillRect(sx - r, sy - r, r * 2, r * 2);
+  }
+  for (var li = 0; li < LAYERS.length; li++) {
+    var L = LAYERS[li], ks = Math.pow(cam.k / fk, L.e), offx = cam.x * L.f * cam.k, offy = cam.y * L.f * cam.k, C = L.cell;
+    var a0 = Math.floor((-W / 2 + offx) / ks / C) - 1, a1 = Math.ceil((W / 2 + offx) / ks / C) + 1, b0 = Math.floor((-H / 2 + offy) / ks / C) - 1, b1 = Math.ceil((H / 2 + offy) / ks / C) + 1;
+    var cells = (a1 - a0 + 1) * (b1 - b0 + 1), thin = cells > 1400 ? Math.sqrt(1400 / cells) : 1;
+    for (var a = a0; a <= a1; a++) for (var b = b0; b <= b1; b++) {
+      var cnt = Math.floor(L.n * thin + hash(a, b, li) * 1.5 * thin);
+      for (var s = 0; s < cnt; s++) {
+        var px = W / 2 + (a + hash(a, b, 10 + s * 7 + li)) * C * ks - offx, py = H / 2 + (b + hash(a, b, 11 + s * 7 + li)) * C * ks - offy;
+        if (px < -4 || py < -4 || px > W + 4 || py > H + 4) continue;
+        var m = hash(a, b, 12 + s * 7 + li), mag = m * m, rr = (0.35 + mag * 1.5) * L.s * Math.pow(ks, 0.3), al = L.a * (0.35 + 0.65 * mag), tw = hash(a, b, 13 + s * 7);
+        if (tw > 0.7) al *= 0.72 + 0.28 * Math.sin(t * (0.8 + tw * 2.4) + tw * 40);
+        cx.globalAlpha = Math.min(1, al); cx.fillStyle = COLS[Math.floor(hash(a, b, 14 + s * 7) * COLS.length)];
+        if (rr < 0.9) cx.fillRect(px, py, Math.max(1, rr * 1.6), Math.max(1, rr * 1.6)); else { cx.beginPath(); cx.arc(px, py, rr, 0, 6.2832); cx.fill(); if (rr > 1.7) { cx.globalAlpha = al * 0.18; cx.beginPath(); cx.arc(px, py, rr * 3.2, 0, 6.2832); cx.fill(); } }
+      }
+    }
+  }
+  cx.globalAlpha = 1;
+}
+
+// ---------- meteors: hourly meteor, half-hour comet, quarter-hour shooting star; always a new random place ----------
+var fx = [];
+function spawn(kind) {
+  var dir = Math.random() < 0.5 ? 1 : -1, ang = (14 + Math.random() * 46) * Math.PI / 180, dx = dir * Math.cos(ang), dy = Math.sin(ang);
+  var span = (kind === 'star' ? 0.55 : kind === 'comet' ? 0.7 : 0.95) * Math.max(W, H) * (0.8 + Math.random() * 0.4);
+  var sx = dir > 0 ? Math.random() * W * 0.55 : W * (0.45 + Math.random() * 0.55), sy = Math.random() * H * 0.55;
+  fx.push({ kind: kind, t0: performance.now(), dur: kind === 'star' ? 900 : kind === 'comet' ? 14000 : 7500, sx: sx, sy: sy, dx: dx, dy: dy, span: span, curve: (Math.random() - 0.5) * 0.25, parts: [] });
+}
+function drawFx(now) {
+  for (var i = fx.length - 1; i >= 0; i--) {
+    var m = fx[i], u = (now - m.t0) / m.dur; if (u >= 1) { fx.splice(i, 1); continue; }
+    var e = m.kind === 'star' ? u : 1 - Math.pow(1 - u, 1.6) * 0.0 - 0, p = u, hx = m.sx + m.dx * m.span * p, hy = m.sy + m.dy * m.span * p + Math.sin(p * 3.1416) * m.curve * m.span * 0.4;
+    var env = Math.min(1, u / 0.1, (1 - u) / 0.18), tail = m.kind === 'star' ? 150 : m.kind === 'comet' ? 330 : 300, nx = -m.dx, ny = -m.dy;
+    cx.save(); cx.globalAlpha = Math.max(0, env); cx.lineCap = 'round';
+    if (m.kind === 'comet') {
+      var g1 = cx.createLinearGradient(hx, hy, hx + nx * tail * 1.4, hy + ny * tail * 1.4); g1.addColorStop(0, 'rgba(150,215,255,.85)'); g1.addColorStop(1, 'rgba(150,215,255,0)');
+      cx.strokeStyle = g1; cx.lineWidth = 3.2; cx.beginPath(); cx.moveTo(hx, hy); cx.lineTo(hx + nx * tail * 1.4, hy + ny * tail * 1.4); cx.stroke();
+      var g2 = cx.createLinearGradient(hx, hy, hx + nx * tail, hy + ny * tail + 40); g2.addColorStop(0, 'rgba(255,230,170,.7)'); g2.addColorStop(1, 'rgba(255,200,120,0)');
+      cx.strokeStyle = g2; cx.lineWidth = 6; cx.beginPath(); cx.moveTo(hx, hy); cx.quadraticCurveTo(hx + nx * tail * 0.5, hy + ny * tail * 0.5 + 6, hx + nx * tail, hy + ny * tail + 40); cx.stroke();
+      var gc = cx.createRadialGradient(hx, hy, 0, hx, hy, 22); gc.addColorStop(0, 'rgba(235,248,255,.95)'); gc.addColorStop(1, 'rgba(160,215,255,0)'); cx.fillStyle = gc; cx.beginPath(); cx.arc(hx, hy, 22, 0, 6.2832); cx.fill();
+    } else if (m.kind === 'big') {
+      var g3 = cx.createLinearGradient(hx, hy, hx + nx * tail, hy + ny * tail); g3.addColorStop(0, 'rgba(255,244,220,.95)'); g3.addColorStop(0.35, 'rgba(255,170,90,.55)'); g3.addColorStop(1, 'rgba(255,90,30,0)');
+      cx.strokeStyle = g3; cx.lineWidth = 8; cx.beginPath(); cx.moveTo(hx, hy); cx.lineTo(hx + nx * tail, hy + ny * tail); cx.stroke();
+      var gh = cx.createRadialGradient(hx, hy, 0, hx, hy, 30); gh.addColorStop(0, 'rgba(255,255,255,1)'); gh.addColorStop(0.3, 'rgba(255,215,160,.8)'); gh.addColorStop(1, 'rgba(255,140,60,0)'); cx.fillStyle = gh; cx.beginPath(); cx.arc(hx, hy, 30, 0, 6.2832); cx.fill();
+      if (Math.random() < 0.55) m.parts.push({ x: hx, y: hy, vx: nx * (0.4 + Math.random()) + (Math.random() - 0.5), vy: ny * (0.4 + Math.random()) + (Math.random() - 0.5) + 0.3, a: 0.9 });
+    } else {
+      var g4 = cx.createLinearGradient(hx, hy, hx + nx * tail, hy + ny * tail); g4.addColorStop(0, 'rgba(255,255,255,.95)'); g4.addColorStop(1, 'rgba(180,215,255,0)');
+      cx.strokeStyle = g4; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(hx, hy); cx.lineTo(hx + nx * tail, hy + ny * tail); cx.stroke();
+      cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(hx, hy, 1.8, 0, 6.2832); cx.fill();
+    }
+    cx.restore();
+    m.parts = m.parts.filter(function (q) { q.x += q.vx; q.y += q.vy; q.a -= 0.018; if (q.a <= 0) return false; cx.globalAlpha = q.a * env; cx.fillStyle = '#ffb870'; cx.fillRect(q.x, q.y, 2, 2); return true; }); cx.globalAlpha = 1;
+  }
+}
+var fired = {};
+function schedule() {
+  var d = new Date(), mi = d.getMinutes(); if (d.getSeconds() > 3) return;
+  var key = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate() + '-' + d.getHours() + ':' + mi; if (fired[key]) return; fired[key] = 1;
+  if (mi === 0) spawn('big'); else if (mi === 30) spawn('comet'); else if (mi === 15 || mi === 45) spawn('star');
+}
+setInterval(schedule, 1000);
+
+// ---------- rooms that open up in place as you zoom in ----------
+var rl = {}, lastB = {};
+function smooth(x) { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function hullOf(h) { return (h.pts || '').split(' ').map(function (p) { return p.split(',').map(Number); }); }
+function buildRoom(id, hull) {
+  var api = window.__shipApi, comp = window.__ship; if (!api || !comp) return null;
+  var st = comp.state || {}, k = Math.floor((st.tick || 0) / 2);
+  var ss = { gauge: st.gauge || 0, health: st.health || 'green', on: k % 2 === 1, busy: !!st.busy, gold: st.gold === undefined ? 14 : st.gold, pending: st.pending || [], log: st.log || [], meeting: st.meeting !== false, stale: st.stale || 'ok', gv: st.gv || 0, mood: 'calm', alert: !!st.alert, n: k };
+  var d; try { d = api.detail(id, ss); } catch (e) { return null; } if (!d) return null;
+  var sc = d.scene, h = '<svg width="1280" height="900" viewBox="0 0 1280 900" style="position:absolute;left:0;top:0">';
+  sc.polys.forEach(function (p) { h += '<polygon points="' + p.pts + '" style="fill:' + p.fill + ';stroke:' + p.stroke + ';stroke-width:' + p.sw + ';fill-opacity:' + p.op + ';stroke-linejoin:round;stroke-linecap:round"/>'; });
+  sc.circles.forEach(function (c) { h += '<circle cx="' + c.x + '" cy="' + c.y + '" r="' + c.r + '" style="fill:' + c.fill + ';fill-opacity:' + c.op + '"/>'; });
+  h += '</svg>';
+  sc.texts.forEach(function (t) { h += '<div style="position:absolute;left:' + t.x + 'px;top:' + t.y + 'px;width:0;height:0;pointer-events:none"><div style="position:absolute;white-space:nowrap;pointer-events:none;font-family:\'Chakra Petch\',sans-serif;font-size:' + t.size + 'px;font-weight:' + t.weight + ';color:' + t.fill + ';text-shadow:' + t.sh + ';transform:' + t.tf + ';line-height:1">' + esc(t.text) + '</div></div>'; });
+  sc.hits.forEach(function (q) { h += '<button class="hit" data-open="' + esc(q.id) + '" data-room="' + id + '" aria-label="' + esc(q.label || q.id) + '" style="left:' + q.l + 'px;top:' + q.t + 'px;width:' + q.w + 'px;height:' + q.h + 'px"></button>'; });
+  return { html: h, tx: d.tx, ty: d.ty };
+}
+function updateRooms(now) {
+  var api = window.__shipApi; if (!api) return; var hulls = api.hulls(); if (!hulls.length) return;
+  var o = smooth((cam.k - 1.25) / 0.7);
+  hulls.forEach(function (h) {
+    var id = h.id; if (!id || id === 'wifi') return;
+    var el = rl[id], poly = hullOf(h);
+    if (!el) { el = rl[id] = D.createElement('div'); el.className = 'rl'; el.style.opacity = 0; el.style.display = 'none'; el.innerHTML = '<div class="bg" style="position:absolute;left:0;top:0;width:2440px;height:1400px;background:#080d1e"></div><div class="ri"></div>'; roomsEl.appendChild(el); el.__t = 0; }
+    var xs = poly.map(function (p) { return p[0]; }), ys = poly.map(function (p) { return p[1]; }), l = Math.min.apply(0, xs), r = Math.max.apply(0, xs), t = Math.min.apply(0, ys), b = Math.max.apply(0, ys);
+    var sl = (l - cam.x) * cam.k + W / 2, sr = (r - cam.x) * cam.k + W / 2, st = (t - cam.y) * cam.k + H / 2, sb = (b - cam.y) * cam.k + H / 2;
+    var vis = o > 0.02 && sr > 0 && sl < W && sb > 0 && st < H;
+    if (!vis) { if (el.style.display !== 'none') { el.style.display = 'none'; } return; }
+    if (el.style.display === 'none') { el.style.display = 'block'; el.__t = 0; }
+    el.style.clipPath = 'polygon(' + poly.map(function (p) { return p[0].toFixed(1) + 'px ' + p[1].toFixed(1) + 'px'; }).join(',') + ')';
+    el.style.opacity = o.toFixed(3); el.className = 'rl' + (o > 0.6 ? ' on' : '');
+    if (!down && now - el.__t > 1400) { var rb = buildRoom(id, poly); if (rb) { var ri = el.querySelector('.ri'); ri.innerHTML = rb.html; ri.style.transform = 'translate(' + rb.tx.toFixed(2) + 'px,' + rb.ty.toFixed(2) + 'px) scale(' + window.__shipApi.KS + ')'; el.__t = now; } }
+  });
+}
+roomsEl.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.hit'); if (!b || Date.now() < supp) return;
+  var comp = window.__ship; if (comp) comp.setState({ open: b.getAttribute('data-open'), scene: b.getAttribute('data-room'), prev: null });
+});
+
+// ---------- hub pages open on top of the ship ----------
+var HUB = (location.protocol === 'http:' || location.protocol === 'https:') ? location.protocol + '//' + location.hostname + ':8081' : '';
+var PANES = { network: ['Devices on the network', HUB + '/network'], janitor: ['Janitor: trash and cleanup', HUB + '/janitor'], memory: ['Memory: what Jarvis remembers', HUB + '/memory'], layout: ['Screen layout', HUB + '/layout'], look: ['Look: colors, fonts, backgrounds', HUB + '/settings'], hub: ['Hub', HUB + '/hub'], markets: ['Kalshi practice agent', 'live.html'], activity: ['Family activity (Pi-hole)', 'activity.html'] };
+function openPane(name) { var q = PANES[name]; if (!q) return; D.getElementById('pt').textContent = q[0].toUpperCase(); pane.querySelector('iframe').src = q[1]; pane.classList.add('on'); }
+function closePane() { pane.classList.remove('on'); pane.querySelector('iframe').src = 'about:blank'; }
+pane.querySelector('.px').addEventListener('click', closePane);
+
+// ---------- fly to a room ----------
+function fly(id) {
+  var api = window.__shipApi; if (!api) return; var c = api.centre(id); if (!c) return;
+  var h = api.hulls().filter(function (q) { return q.id === id; })[0], poly = h ? hullOf(h) : null, bw = 700, bh = 520;
+  if (poly) { var xs = poly.map(function (p) { return p[0]; }), ys = poly.map(function (p) { return p[1]; }); bw = Math.max.apply(0, xs) - Math.min.apply(0, xs); bh = Math.max.apply(0, ys) - Math.min.apply(0, ys); }
+  goTo(c[0], c[1], Math.max(2.0, Math.min(W / bw, H / bh) * 0.85), 1100);
+}
+
+// ---------- first boot: title fades in, holds 3 s, fades out, then the ship comes in from far away ----------
+var intro = null;
+function boot() {
+  var skip = /nointro/.test(location.hash); try { if (sessionStorage.getItem('shipIntro')) skip = true; } catch (e) {}
+  if (skip) { cam.k = kfit(); cam.x = SHIP[0]; cam.y = SHIP[1]; return; }
+  try { sessionStorage.setItem('shipIntro', '1'); } catch (e) {}
+  cam.k = KMIN * 1.4; cam.x = SHIP[0]; cam.y = SHIP[1];
+  intro = D.createElement('div'); intro.id = 'intro'; intro.innerHTML = '<div>THE STARSHIP</div>'; D.body.appendChild(intro);
+  var tt = intro.firstChild;
+  setTimeout(function () { tt.style.opacity = 1; }, 300);
+  setTimeout(function () { tt.style.opacity = 0; }, 300 + 1600 + 3000);
+  setTimeout(function () { intro.style.opacity = 0; goTo(SHIP[0], SHIP[1], kfit(), 6500); }, 300 + 1600 + 3000 + 1500);
+  setTimeout(function () { if (intro && intro.parentNode) intro.parentNode.removeChild(intro); intro = null; }, 300 + 1600 + 3000 + 1500 + 1800);
+}
+boot();
+
+// ---------- main loop ----------
+var lastDraw = 0, lastRooms = 0;
+function frame(now) {
+  stepAnim(now);
+  if (!down && (Math.abs(vel.x) > 0.02 || Math.abs(vel.y) > 0.02)) { cam.x += vel.x; cam.y += vel.y; vel.x *= 0.93; vel.y *= 0.93; bound(); }
+  apply();
+  if (now - lastDraw > 30) { drawSky(now / 1000); drawFx(now); lastDraw = now; }
+  if (now - lastRooms > 90) { updateRooms(now); lastRooms = now; }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__nav = { fly: fly, pane: openPane, home: home, cam: cam, meteor: spawn, goTo: goTo, closePane: closePane };
+})();
 </script>
 </body>
 </html>
