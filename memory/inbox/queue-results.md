@@ -1,11 +1,4 @@
-2 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
-| mom 10s $ | 0.57 (0.55 / 0.58) | 0.51 (0.52 / 0.50) | 0.49 (0.50 / 0.48) | 0.52 (0.54 / 0.49) | 0.52 (0.49 / 0.54) | 0.53 (0.55 / 0.52) |
-| mom 30s $ | **0.61 (0.62 / 0.61)** | 0.58 (0.61 / 0.56) | 0.54 (0.53 / 0.55) | 0.57 (0.66 / 0.46) | 0.58 (0.57 / 0.60) | 0.56 (0.54 / 0.58) |
-| mom 60s $ | 0.58 (0.55 / 0.60) | **0.65 (0.65 / 0.65)** | 0.56 (0.58 / 0.55) | 0.56 (0.65 / 0.47) | **0.62 (0.62 / 0.60)** | **0.63 (0.61 / 0.65)** |
-| kraken - coinbase $ | 0.48 (0.52 / 0.44) | 0.49 (0.48 / 0.52) | 0.52 (0.53 / 0.51) | 0.43 (0.32 / 0.55) | 0.42 (0.44 / 0.40) | 0.51 (0.48 / 0.55) |
-| trade flow imbalance | 0.50 (0.49 / 0.51) | 0.48 (0.43 / 0.53) | 0.50 (0.51 / 0.51) | 0.53 (0.52 / 0.55) | 0.57 (0.58 / 0.56) | 0.55 (0.59 / 0.52) |
-| coinbase book imbalance | 0.51 (0.69 / 0.41) | 0.47 (0.61 / 0.42) | 0.45 (0.55 / 0.39) | 0.50 (0.54 / 0.51) | 0.53 (0.64 / 0.48) | 0.49 (0.47 / 0.49) |
-| kalshi book imbalance | 0.48 (0.48 / 0.47) | 0.59 (0.57 / 0.61) | 0.45 (0.51 / 0.41) | **0.33 (0.29 / 0.37)** | **0.33 (0.35 / 0.30)** | **0.24 (0.31 / 0.19)** |
+** | **0.33 (0.35 / 0.30)** | **0.24 (0.31 / 0.19)** |
 | kalshi mid (crowd) | **0.78 (0.72 / 0.83)** | **0.86 (0.80 / 0.91)** | **0.90 (0.87 / 0.92)** | **0.93 (0.91 / 0.94)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
 | funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
 
@@ -544,6 +537,40 @@ CT hours 20-24         P(UP|prev UP)=48.8% (n=250)  P(UP|prev DOWN)=50.4% (n=246
 OCI runtime exec failed: exec failed: unable to start container process: exec: "sqlite3": executable file not found in $PATH
 == names Pi-hole knows (address, name)
 OCI runtime exec failed: exec failed: unable to start container process: exec: "sqlite3": executable file not found in $PATH
+== local DNS names set (dns.hosts)
+[]
+(exit 0)
+```
+
+## 2026-11-06 20:13:01 tasks/queue/086-pihole-clients.sh
+```
+== devices seen in the last 24 h (address, lookups, last seen, blocked)
+127.0.0.1|9852|2026-11-06 20:12:29|0
+192.168.1.142|1435|2026-11-06 20:12:16|375
+192.168.1.228|1009|2026-11-06 17:00:25|246
+192.168.1.240|560|2026-11-06 20:06:51|52
+192.168.1.130|127|2026-11-06 20:11:37|70
+== names Pi-hole knows (address, name)
+127.0.0.1|localhost|virtual interface
+::1|localhost|virtual interface
+fe80::e197:65e6:719b:399c||Raspberry Pi (Trading) Ltd
+172.17.0.1||
+0.0.0.0||virtual interface
+ff02::16||virtual interface
+192.168.1.107||Raspberry Pi (Trading) Ltd
+fe80::469:a9ff:fed0:ac9f||
+fe80::1034:1fff:fe35:38b9||
+fe80::a405:93ff:fefe:aa3d||
+fe80::98b3:90ff:fedc:483b||
+192.168.1.142||
+192.168.1.130||Cloud Network Technology Singapore Pte. Ltd.
+fe80::a045:3bb6:47e1:55f3||Cloud Network Technology Singapore Pte. Ltd.
+192.168.1.240||
+192.168.1.228||
+fe80::c6e:c5ff:fe19:b9b5||
+fe80::1831:65ff:fe10:4206||
+fe80::8064:fff:fe79:13c4||
+fe80::44aa:1cff:fe5a:a4cb||
 == local DNS names set (dns.hosts)
 []
 (exit 0)
