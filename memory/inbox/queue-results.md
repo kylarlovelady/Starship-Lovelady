@@ -1,88 +1,4 @@
-+0.8% | 0.39 |
-| 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
-| 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
-| 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
-| 420s | 0.10 | 44 | 23% | +26.3% | 0.18 |
-| 420s | 0.20 | 3 | 0% | -100.0% | 0.09 |
-| 300s | 0.05 | 75 | 24% | -1.4% | 0.24 |
-| 300s | 0.10 | 35 | 17% | -9.7% | 0.19 |
-| 300s | 0.20 | 2 | 50% | +411.5% | 0.10 |
-| 180s | 0.05 | 61 | 28% | +2.4% | 0.27 |
-| 180s | 0.10 | 31 | 32% | +32.3% | 0.24 |
-| 180s | 0.20 | 1 | 100% | +490.3% (exit 0)
-```
-
-## 2026-11-06 13:01:02 tasks/queue/074-send-cover-a.sh
-```
-(exit 0)
-```
-
-## 2026-11-06 13:52:02 tasks/queue/075-pihole-check.sh
-```
-== container
-pihole Up 11 hours (healthy) 
-== pi address
-192.168.1.107 100.105.140.126 172.17.0.1 fd7a:115c:a1e0::2f4c:8c7f 
-== normal lookup via pihole
-tasks/queue/075-pihole-check.sh: line 6: dig: command not found
-== ad domain via pihole (blocked answers 0.0.0.0 or ::)
-tasks/queue/075-pihole-check.sh: line 7: dig: command not found
-== same ad domain via 1.1.1.1 (real address)
-tasks/queue/075-pihole-check.sh: line 8: dig: command not found
-== pihole version
-Core version is v6.5 (Latest: v6.5)
-Web version is v6.6.1 (Latest: v6.6.1)
-FTL version is v6.8 (Latest: v6.8)
-== pihole status
-  [✓] FTL is listening on port 53
-     [✓] UDP (IPv4)
-     [✓] TCP (IPv4)
-     [✓] UDP (IPv6)
-     [✓] TCP (IPv6)
-== what the Pi itself uses for DNS
-
-nameserver 100.100.100.100
-nameserver fd7a:115c:a1e0::53
-(exit 0)
-```
-
-## 2026-11-06 14:04:02 tasks/queue/076-kalshi-series-probe.sh
-```
-crypto series: 294
-  KXCRYPTOLEAD15M | Coin Race 15 minutes | fifteen_min
-  KXDOGE15M | DOGE 15 min | fifteen_min
-  KXBTC15M | BTC 15 min | fifteen_min
-  KXBNB15M | BNB 15 min | fifteen_min
-  KXZEC15M | Zcash 15min | fifteen_min
-  KXETH15M | ETH 15 min | fifteen_min
-  KXADA15M | Cardano 15 Minute | fifteen_min
-  KXBCH15M | Bitcoin Cash 15 Minute | fifteen_min
-  KXTON15M | TON 15m | fifteen_min
-  KXCRYPTOCOMP15M | Crypto Comparison 15 minute | fifteen_min
-  KXXRP15M | XRP 15 min | fifteen_min
-  KXHYPE15M | HYPE 15 min | fifteen_min
-  KXSOL15M | SOL 15 min | fifteen_min
-  KXNEAR15M | NEAR 15m | fifteen_min
-KXBTC15M KXBTC15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 75760.07 yes 0.7500 0.7600 vol 967396.49 oi None
-KXETH15M KXETH15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 2232 yes 0.4900 0.5000 vol 16503.71 oi None
-KXSOL15M KXSOL15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 90.0337 yes 0.7200 0.7400 vol 25736.54 oi None
-KXXRP15M KXXRP15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 1.1845 yes 0.3800 0.3900 vol 15625.78 oi None
-KXDOGE15M KXDOGE15M-26NOV061515-15 close 2026-11-06T20:15:00Z strike 0.072809 yes 0.6600 0.6700 vol 5688.57 oi None
-KXBTCD KXBTCD-26NOV0616-T89299.99 close 2026-11-06T21:00:00Z strike 89299.99 yes 0.0000 0.0100 vol 0.00 oi None
-KXBTCD KXBTCD-26NOV0616-T89199.99 close 2026-11-06T21:00:00Z strike 89199.99 yes 0.0000 0.0100 vol 0.00 oi None
-KXETHD KXETHD-26NOV0616-T3144.99 close 2026-11-06T21:00:00Z strike 3144.99 yes 0.0000 0.0100 vol 0.00 oi None
-KXETHD KXETHD-26NOV0616-T3139.99 close 2026-11-06T21:00:00Z strike 3139.99 yes 0.0000 0.0100 vol 0.00 oi None
-KXBTC KXBTC-26NOV0616-T89299.99 close 2026-11-06T21:00:00Z strike 89299.99 yes 0.0000 0.0100 vol 0.00 oi None
-KXBTC KXBTC-26NOV0616-T70700 close 2026-11-06T21:00:00Z strike 70700 yes 0.0000 0.0100 vol 0.00 oi None
-KXETH KXETH-26NOV0616-T3144.99 close 2026-11-06T21:00:00Z strike 3144.99 yes 0.0000 0.0100 vol 0.00 oi None
-KXETH KXETH-26NOV0616-T1655 close 2026-11-06T21:00:00Z strike 1655 yes 0.0000 0.0100 vol 0.00 oi None
-(exit 0)
-```
-
-## 2026-11-06 14:07:01 tasks/queue/077-experiment-state.sh
-```
-== run.json
-{'active': True, 'live': None, 'strategy': 'v_snipe', 'start': 1000.0, 'id': 1793935799, 'halted': None}
+e', 'start': 1000.0, 'id': 1793935799, 'halted': None}
 == sniper switch file
 ls: cannot access '/home/kylarlovelady/market-data/sniper.on': No such file or directory
 == review 12h
@@ -642,3 +558,85 @@ INFO:root:Ready
 
 ## 2026-11-07 12:31:01 tasks/queue/096-jarvis-mic-files.sh
 REFUSED: sudo is not allowed in queue scripts
+
+## 2026-11-07 12:34:01 tasks/queue/096-jarvis-mic-files.sh
+```
+== run-hub.sh
+#!/bin/bash
+cd ~/wyoming-satellite
+script/run \
+--name 'main hub' \
+--debug-recording-dir '/home/kylarlovelady/voice-data/home-mic' \
+--uri 'tcp://127.0.0.1:10700' \
+--mic-command '/home/kylarlovelady/hub-mic.py plughw:3,0' \
+--snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
+--wake-uri 'tcp://127.0.0.1:10400' \
+--wake-word-name 'hey_jarvis' \
+--detect-command 'bash -c "echo idle > /tmp/hub-state"' \
+--detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
+--stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
+--transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
+--synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
+--tts-start-command 'bash -c "echo speaking > /tmp/hub-state"' \
+--tts-stop-command 'bash -c "echo idle > /tmp/hub-state; curl -s -m 2 -X POST -d done http://127.0.0.1:8080/event/done > /dev/null"' \
+--error-command 'bash -c "echo idle > /tmp/hub-state"'
+== hub-mic.py
+21 /home/kylarlovelady/hub-mic.py
+#!/usr/bin/env python3
+import sys, os, subprocess, signal
+M = "/home/kylarlovelady/hub-dashboard/muted"
+p = subprocess.Popen(["arecord", "-D", sys.argv[1], "-r", "16000", "-c", "1", "-f", "S16_LE", "-t", "raw"],
+                     stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+def stop(*a):
+    p.terminate()
+    sys.exit(0)
+signal.signal(signal.SIGTERM, stop)
+w = sys.stdout.buffer
+try:
+    while True:
+        d = p.stdout.read(2048)
+        if not d:
+            break
+        w.write(bytes(len(d)) if os.path.exists(M) else d)
+        w.flush()
+except BrokenPipeError:
+finally:
+    p.terminate()
+== mute mentions
+/home/kylarlovelady/hub-voice/voiced.py:210:        print("Enrolling %s. Unmute the mic. Say 'Alexa' then a sentence of 3 or more seconds, 5 times." % name)
+/usr/local/bin/hub-lights.py:5:MUTE_FILE = "/home/kylarlovelady/hub-dashboard/muted"
+/usr/local/bin/hub-lights.py:21:    if os.path.exists(MUTE_FILE):
+/usr/local/bin/hub-oled.py:6:MUTE_FILE = "/home/kylarlovelady/hub-dashboard/muted"
+/usr/local/bin/hub-oled.py:85:        if os.path.exists(MUTE_FILE):
+/usr/local/bin/hub-oled.py:86:            view = ("muted", dx, dy)
+/usr/local/bin/hub-oled.py:108:            elif view[0] == "muted":
+/usr/local/bin/hub-oled.py:109:                oled.draw_text("MIC MUTED", view[1], view[2], size=fit_size(oled, "MIC MUTED", 20))
+/home/kylarlovelady/hub-mic.py:3:M = "/home/kylarlovelady/hub-dashboard/muted"
+== mixer Mic
+Simple mixer control 'Mic',0
+  Capabilities: cvolume cswitch cswitch-joined
+  Capture channels: Front Left - Front Right
+  Limits: Capture 0 - 36
+  Front Left: Capture 36 [100%] [12.00dB] [on]
+  Front Right: Capture 36 [100%] [12.00dB] [on]
+== what listens on 8097
+LISTEN 0      5                             100.105.140.126:8097       0.0.0.0:*    users:(("python3",pid=2080,fd=3)) 
+== wake clips per hour (last 24 h) and conversations
+11-05 15 1
+11-05 17 3
+11-06 02 2
+11-06 03 4
+11-06 11 1
+11-06 13 1
+11-06 17 4
+11-07 11 2
+11-07 12 3
+total wake clips 21
+== conversations.jsonl keys of last row
+['t', 'sid', 'who', 'heard', 'reply', 'secs', 'times']
+== trace.jsonl last 3 rows (trimmed)
+{"t": 1793908429.312, "sid": "phtnri1w", "kind": "client", "what": "page_visible", "info": ""}
+{"t": 1793908431.636, "sid": "phtnri1w", "kind": "client", "what": "page_hidden", "info": ""}
+{"t": 1794019030.422, "sid": "phtnri1w", "kind": "client", "what": "page_hidden", "info": ""}
+(exit 0)
+```
