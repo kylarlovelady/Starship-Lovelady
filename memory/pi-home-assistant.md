@@ -70,3 +70,5 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 - 2026-11-06 Pi-hole rollout: Kylar's iPhone (manual DNS 192.168.1.107) confirmed blocking, also with Tailscale on. Next: Sharee's phone.
 
 - 2026-11-06 Pi-hole rollout: Sharee's iPhone (192.168.1.228) connected and blocking. Next: iPad, then TVs after hardening.
+
+- 2026-11-06 Alerts: our alerts go ONLY to notify.mobile_app_kylars_phone (file ~/market-data/alert_phone.txt on the Pi). Sharee's is mobile_app_sharees_iphone: only Home Assistant's own device notifications (Blink, thermostat) may go to her. Kalshi alerts muted; phone pushes only for Pi problems. Change with: python3 ~/starship/markets/ha_phones.py set NAME | all.

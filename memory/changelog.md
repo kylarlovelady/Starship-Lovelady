@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Alert phone set on the Pi: only mobile_app_kylars_phone (Sharee's phone is mobile_app_sharees_iphone, not used by our alerts)
+- Done by Kylar running markets/ha_phones.py set. Where: ~/market-data/alert_phone.txt on the Pi (not in repo).
+- Status: done; Kylar to say if Sharee still gets anything (then it is a Home Assistant automation).
+
 ## 2026-11-06 Alerts fixed: Kylar's phone only, and only Pi problems (Kylar: Sharee was getting project notifications, too many)
 - What: markets/alerts.py sends only to alert_phone.txt or HA_LIVE_DEVICE (Kylar's iPhone), never anyone else, and sends to nobody if neither is set. Kalshi/market alerts are muted (logged to alerts.log; turn back on with ~/market-data/market_alerts.on). tasks/alerts_check.py pushes only Pi problems (service down, hot, disk full, container down, repo not pulling); to-do reminders, 'cleared' notices, Kalshi-data-stale and Jarvis-error notes stay on the Starship page only. collector.py marker v9.4 restarts the agent to load it.
 - Not touched: Home Assistant's own automations (Blink, thermostat) that notify her; those stay as they are.
