@@ -1,6 +1,9 @@
 # To do
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
+## LIVING ROOM BUILD (Kylar by voice, 2026-11-07)
+- New compact powerhouse PC for the TV-stand cubby, wall touchscreen Pi panel (keys-holder spot), digital calendar, PoE wiring. Full notes and research: projects/living-room-build.md. Waiting on: cubby measurements, budget, TikTok models. Also: look at the desktop spec check and cleanup first (old white tower).
+
 ## HOME JARVIS FALSE WAKE-UPS: agents keep working on it (Kylar, 2026-11-07 12:24)
 - Kylar and Sharee talk and Jarvis wakes up; he wants a mic mute on the Starship (built 11-07: chip under the clock + Workshop Control board, tab Jarvis mic) and agents watching wake-ups and tuning on their own.
 - Watcher: tasks/jarvis_watch.py every 5 min -> memory/inbox/jarvis-wake-report.md. Claude reviews it at scheduled check-ins (4 PM, 8 PM, 11 PM, 8 AM) and, if 3+ false wake-ups in 24 h, raises the threshold by 0.05 with tasks/jarvis_tune.sh (max 0.92), noting it in changelog; lowers it if real commands get missed.

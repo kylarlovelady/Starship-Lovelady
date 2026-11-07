@@ -5,6 +5,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
 
+## 2026-11-07 Living room build project started
+- What: memory/projects/living-room-build.md (room layout from Kylar's photo, rules, parts research, wiring plan, open questions), projects.md row, todo.md. Status: planning only, nothing bought.
+
 ## 2026-11-07 Home Jarvis install confirmed on the Pi; wake threshold 0.7 -> 0.8 (queue 098)
 - What: queue 097 installed the mic switch (port 8098 listening) and watcher; first report: 21 wake-ups in 7 days, 14 false (6 at 2-4 AM). Queue 098 raises the threshold to 0.8 with automatic restore. Status: queued; result to be read at the 4 PM review.
 
