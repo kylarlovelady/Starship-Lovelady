@@ -43,14 +43,16 @@ def _targets(base, token):
     for d in _call(base + "/api/services", token):
         if d.get("domain") == "notify":
             names += [s for s in (d.get("services") or {}) if s.startswith("mobile_app_")]
-    # Kylar only (2026-11-06): if alert_phone.txt exists (one notify service name per line, e.g. mobile_app_xxx), send ONLY to those.
-    # If the file is missing, behave as before. If the file exists but matches no phone, send to nobody rather than to everyone.
+    # KYLAR ONLY (Kylar 2026-11-06: Sharee must never get these). Send only to the phone in alert_phone.txt (one notify service name per
+    # line) or, if that file is missing, to HA_LIVE_DEVICE (Kylar's iPhone, set by setisland.sh). If neither is set, send to NOBODY.
+    allow = []
     try:
         allow = [l.strip() for l in open(os.path.join(DIR, "alert_phone.txt")) if l.strip() and not l.startswith("#")]
     except OSError:
-        allow = None
-    if allow is not None:
-        names = [n for n in names if n in allow]
+        pass
+    if not allow and _env().get("HA_LIVE_DEVICE"):
+        allow = [_env()["HA_LIVE_DEVICE"]]
+    names = [n for n in names if n in allow]
     _svc.update({"t": time.time(), "names": names})
     return names
 
@@ -76,6 +78,8 @@ def send(msg, title="Market agent", wait=False):
     if now - _last.get(msg, 0) < 60:
         return
     _last[msg] = now
+    if not os.path.exists(os.path.join(DIR, "market_alerts.on")):
+        _log("MUTED (Kylar wants only Pi-problem alerts; touch ~/market-data/market_alerts.on to turn Kalshi alerts back on): %s | %s" % (title, msg)); return False
     if wait:
         return _send(title, msg)
     threading.Thread(target=_send, args=(title, msg), daemon=True).start()

@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Alerts fixed: Kylar's phone only, and only Pi problems (Kylar: Sharee was getting project notifications, too many)
+- What: markets/alerts.py sends only to alert_phone.txt or HA_LIVE_DEVICE (Kylar's iPhone), never anyone else, and sends to nobody if neither is set. Kalshi/market alerts are muted (logged to alerts.log; turn back on with ~/market-data/market_alerts.on). tasks/alerts_check.py pushes only Pi problems (service down, hot, disk full, container down, repo not pulling); to-do reminders, 'cleared' notices, Kalshi-data-stale and Jarvis-error notes stay on the Starship page only. collector.py marker v9.4 restarts the agent to load it.
+- Not touched: Home Assistant's own automations (Blink, thermostat) that notify her; those stay as they are.
+- Status: pushed; takes effect when the Pi pulls (about 3 min).
+
 ## 2026-11-06 To-do added: friendly Pi-hole activity view (12-hour time, plain-English site names)
 - Where: memory/todo.md
 - Status: planned; notifications fix is first.

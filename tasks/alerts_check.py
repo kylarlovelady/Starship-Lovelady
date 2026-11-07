@@ -56,13 +56,15 @@ try:
         if mm and mm.group(1) in (today, tom): problems["todo:" + mm.group(1) + mm.group(2)[:20]] = ("Today: " if mm.group(1) == today else "Tomorrow: ") + mm.group(2)[:140]
 except OSError: pass
 sent = []
+PUSH = ("svc:", "temp", "disk", "ctr:", "pull")      # Kylar 2026-11-06: phone alerts ONLY when the Pi itself has a problem. Everything else stays on the Starship page.
 for k, msg in problems.items():
     last = st.get(k, 0)
     if now - last > 6 * 3600:
-        ok = A._send("Starship alert", msg) if A else False
+        if not k.startswith(PUSH):
+            st[k] = now; continue
+        ok = A._send("Pi problem", msg) if A else False
         sent.append((k, ok)); st[k] = now if ok or not A else last
 for k in [k for k in st if k not in problems and st[k]]:
-    if not k.startswith("todo:") and A: A._send("Starship", "Cleared: " + k.split(":")[-1])
     st.pop(k)
 json.dump(st, open(STATE, "w"))
 json.dump({"time": now, "active": list(problems.values())}, open(os.path.join(R, "hub-alerts.json"), "w"))

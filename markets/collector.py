@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v9.3 restart: sniper switched OFF (Kylar 2026-11-06); all strategies back to experimenting
+# v9.4 restart: phone alerts go to Kylar only; Kalshi alerts muted (Kylar 2026-11-06)
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
