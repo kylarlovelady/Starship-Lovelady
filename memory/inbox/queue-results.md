@@ -1,12 +1,4 @@
-| +0.43 |
-| mom 10s $ | +0.08 | -0.05 | -0.08 | -0.01 | +0.03 | +0.09 |
-| mom 30s $ | +0.02 | +0.04 | +0.03 | +0.03 | +0.09 | +0.07 |
-| mom 60s $ | -0.06 | +0.15 | +0.01 | -0.06 | +0.09 | +0.13 |
-| kraken - coinbase $ | +0.02 | +0.05 | +0.05 | -0.09 | -0.18 | +0.10 |
-| trade flow imbalance | +0.03 | -0.04 | -0.01 | +0.08 | +0.15 | +0.21 |
-| coinbase book imbalance | -0.00 | -0.01 | -0.05 | -0.00 | +0.06 | -0.07 |
-| kalshi book imbalance | +0.04 | +0.14 | -0.00 | -0.04 | -0.06 | -0.14 |
-| kalshi mid (crowd) | -0.01 | +0.15 | +0.24 | +0.31 | +0.42 | +0.42 |
+ | -0.01 | +0.15 | +0.24 | +0.31 | +0.42 | +0.42 |
 | funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
 
 ## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
@@ -580,5 +572,24 @@ living-room-tv -> Traceback (most recent call last):
 pi-hub -> Traceback (most recent call last):
 == reverse lookup of the iPad
 Traceback (most recent call last):
+(exit 0)
+```
+
+## 2026-11-06 20:22:01 tasks/queue/088-pihole-names-refresh.sh
+```
+ALL
+  networkflush        Flush information stored in Pi-hole's network tables
+                        Add '--arp' to additionally flush the ARP table 
+== names now (address|name)
+192.168.1.106|
+192.168.1.107|pi-hub
+192.168.1.142|kylar-iphone
+192.168.1.228|sharee-iphone
+192.168.1.130|living-room-tv
+192.168.1.240|warren-ipad
+== DNS still answering?
+  [✓] FTL is listening on port 53
+     [✓] UDP (IPv4)
+     [✓] TCP (IPv4)
 (exit 0)
 ```
