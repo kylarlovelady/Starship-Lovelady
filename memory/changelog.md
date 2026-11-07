@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Device names written into Pi-hole's client table (queue 088)
+- Result: pi-hub .107, kylar-iphone .142, sharee-iphone .228, warren-ipad .240, living-room-tv .130; DNS restarted and listening. Note: .106 (second Pi address) has no name.
+- Status: done; Kylar to confirm on the dashboard.
+
 ## 2026-11-06 Queue 088: force Pi-hole to show the device names (dashboard still showed addresses after 087)
 - Where: tasks/queue/088-pihole-names-refresh.sh. Restarts Pi-hole DNS for a few seconds.
 - Status: queued.
