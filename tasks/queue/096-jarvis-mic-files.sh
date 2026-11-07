@@ -6,7 +6,6 @@ echo "== hub-mic.py"; wc -l ~/hub-mic.py; grep -v -i -E 'key|token|secret|pass' 
 echo "== mute mentions"; grep -n -i -E 'mute|muted' ~/hub-voice/voiced.py /usr/local/bin/hub-*.py ~/hub-mic.py ~/wyoming-satellite/run-hub.sh 2>/dev/null | cut -c1-200 | head -30
 echo "== mixer Mic"; amixer -c 3 sget Mic 2>&1 | head -12
 echo "== what listens on 8097"; ss -ltnp 2>/dev/null | grep -E ':8097|:8098' | cut -c1-160
-echo "== sudo without password?"; sudo -n true 2>&1 | head -1
 echo "== wake clips per hour (last 24 h) and conversations"; python3 - <<'PY'
 import glob,os,time,collections
 c=collections.Counter()
