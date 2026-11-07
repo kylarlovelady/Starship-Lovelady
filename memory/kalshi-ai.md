@@ -77,6 +77,9 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - 19:52 Kylar: every $1K-Snipe loss must be investigated and something put in place that would have prevented it (buy sooner, time the close better, skip some rounds...). Built tasks/snipe_autopsy.py (runs every ~5 min via crew_report.py on the Pi): writes memory/inbox/snipe-autopsy.md with win/loss totals per test and, for each recent LOSS, a second-by-second timeline (BTC, target, gap, running 60 s average, bids, market status) plus a plain-English guess of what would have prevented it. Claude reads it after each loss, changes ONE thing, logs it here.
 - Status 2026-11-05 19:40: built as practice-only reaction test v_snipe in markets/sim.py (v8.5): distance entry, first bet only 13+ min into the round (last ~2 min), one bet, entry cap raised to 97c for this test only (global ENTRY_MAX 80c and MAX_PRICE 92c unchanged), hold to the end, $25 UNPROVEN_CAP still applies. Gets its own pretend $1,000 account beside the others. Replay test on recorded ticks still to do. Collector restarts after the Pi pulls.
 
+## $1K-Snipe update 2026-11-07 06:20 (daily check, from inbox/snipe-autopsy.md and liq-by-second.md)
+- Test wallet $1,219.08 (started $1,000): 73 rounds, 3 buys, 3 wins, 69 skipped, 1 missed, 0 busts. The z-rule hit its trigger in 49 of 58 rounds but could buy in only 3: almost always nothing was for sale at or below 98.5c, or one side of the book was empty. Liquidity study (269 rounds): in the last 10 seconds only 0-3% of rounds had even $25 buyable on the favourite. So profit per buy is good but buys are rare; sample is 3 wins, far too small to call an edge. Practice money only.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
 

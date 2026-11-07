@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-07 Daily Claude check (06:20 Central)
+- What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
+- Status: pushed to main.
+
 ## 2026-11-06 Added todo: full room-by-room Starship bug pass
 - What: memory/todo.md and projects.md next step (Kylar asked 23:22). Status: queued, not started.
 
