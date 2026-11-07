@@ -1423,6 +1423,7 @@ css.textContent = 'html,body{margin:0;overflow:hidden;background:#02030a;overscr
   '#rooms .hit{position:absolute;padding:0;margin:0;background:transparent;border:0;border-radius:10px;cursor:pointer;pointer-events:none;outline:0}#rooms .on .hit{pointer-events:auto}#rooms .hit:hover{box-shadow:0 0 0 3px rgba(255,209,102,.85),0 0 26px rgba(255,209,102,.45) inset}' +
   '#clock{position:fixed;right:2.2vw;top:2.4vh;z-index:5;text-align:right;color:#eafcff;font-family:Orbitron,"Chakra Petch",sans-serif;padding:.35em .75em .45em;border-radius:18px;background:rgba(6,12,30,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(92,225,255,.22);text-shadow:0 0 14px rgba(92,225,255,.55);pointer-events:none}' +
   '#clock .t{font-weight:700;font-size:clamp(30px,4.4vw,72px);letter-spacing:.04em;line-height:1.05}#clock .t small{font-size:.42em;margin-left:.25em;opacity:.85}#clock .d{font-weight:500;font-size:clamp(11px,1.15vw,19px);letter-spacing:.22em;opacity:.78;margin-top:.15em}' +
+  '#micchip{position:fixed;right:2.2vw;top:calc(2.4vh + clamp(72px,8.2vw,120px));z-index:5;display:flex;align-items:center;gap:.5em;padding:.5em .9em;border-radius:999px;background:rgba(6,12,30,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(92,225,255,.22);color:#eafcff;font:600 clamp(11px,1.1vw,16px) Orbitron,sans-serif;letter-spacing:.14em;cursor:pointer;pointer-events:auto}#micchip i{width:.8em;height:.8em;border-radius:50%;background:#2fbf71;box-shadow:0 0 10px #2fbf71}#micchip.m i{background:#ff3b3b;box-shadow:0 0 10px #ff3b3b}' +
   '#intro{position:fixed;left:0;top:0;right:0;bottom:0;z-index:100;background:#02030a;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 1.6s ease;pointer-events:all}' +
   '#intro div{font-family:Orbitron,sans-serif;font-weight:900;font-size:clamp(28px,6.2vw,110px);letter-spacing:.3em;margin-right:-.3em;color:#e6fbff;text-shadow:0 0 18px #5ce1ff,0 0 48px rgba(92,225,255,.55);opacity:0;transition:opacity 1.6s ease}' +
   '#pane{position:fixed;left:0;top:0;right:0;bottom:0;z-index:60;background:#050a1c;display:none;flex-direction:column}#pane.on{display:flex}#pane .ph{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;font:600 14px Orbitron,sans-serif;letter-spacing:.12em;color:#9fb0d6;background:#0a1230}' +
@@ -1442,6 +1443,12 @@ function tickClock() {
   clock.lastChild.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
 }
 tickClock(); setInterval(tickClock, 1000);
+var chip = D.createElement('div'); chip.id = 'micchip'; chip.innerHTML = '<i></i><span>JARVIS MIC</span>'; D.body.appendChild(chip);
+chip.addEventListener('pointerdown', function (e) { e.stopPropagation(); }, true);
+chip.addEventListener('click', function () { if (window.__boards) window.__boards.open('services', 0); });
+function pollMic() { var b = (location.protocol === 'http:' || location.protocol === 'https:') ? location.protocol + '//' + location.hostname + ':8098/mic' : ''; if (!b) return; fetch(b, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (m) { chip.classList.toggle('m', !!m.muted); chip.lastChild.textContent = m.muted ? 'JARVIS MUTED' : 'JARVIS MIC'; }).catch(function () { chip.lastChild.textContent = 'JARVIS MIC'; }); }
+pollMic(); setInterval(pollMic, 8000);
+
 
 // ---------- camera ----------
 var worldEl = null;
@@ -1698,6 +1705,24 @@ var mk = null, mkT = 0;
 function getMarket(cb) { if (mk && Date.now() - mkT < 10000) return cb(mk); fetch('market.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (d) { mk = d; mkT = Date.now(); cb(d); }).catch(function () { cb(null); }); }
 function btn(label, pane) { return '<button class="btn" data-pane="' + pane + '">' + esc(label) + '</button>'; }
 
+
+function micBase() { return (location.protocol === 'http:' || location.protocol === 'https:') ? location.protocol + '//' + location.hostname + ':8098' : ''; }
+function micCall(path, post) { return fetch(micBase() + path, { method: post ? 'POST' : 'GET', cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); }); }
+function ago(t) { var m = Math.round((Date.now() / 1000 - t) / 60); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; }
+var micTab = { name: 'Jarvis mic', live: true, every: 5000, fn: function (done) {
+  micCall('/mic').then(function (m) {
+    var w = m.wake || {}, h = '<div class="c" style="border-left-color:' + (m.muted ? R : G) + ';margin-bottom:12px"><b>Home Jarvis microphone</b><span style="font-size:34px">' + (m.muted ? 'MUTED' : 'LISTENING') + '</span><i>' + (m.muted ? (m.unmute_at ? 'Turns back on ' + new Date(m.unmute_at * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : 'Stays muted until you unmute') : 'Now: ' + esc(m.state || '?')) + '</i></div>';
+    h += m.muted ? '<button class="btn" data-mic="/mic/unmute" style="font-size:22px;padding:18px 26px;background:#0d3a22;border-color:#2fbf71">UNMUTE JARVIS</button>' :
+      '<button class="btn" data-mic="/mic/mute" style="font-size:22px;padding:18px 26px;background:#4a1010;border-color:#ff3b3b">MUTE JARVIS</button>' +
+      '<button class="btn" data-mic="/mic/mute?minutes=60">Mute 1 hour</button><button class="btn" data-mic="/mic/mute?minutes=240">Mute 4 hours</button><button class="btn" data-mic="/mic/mute?minutes=until8">Mute until 8 AM</button>';
+    h += '<h3>FALSE WAKE-UPS (WATCHED AUTOMATICALLY)</h3>';
+    if (w.wakes24 === undefined) h += '<p>The wake watcher has not reported yet. It runs every 5 minutes.</p>';
+    else h += grid([card('Wake-ups, last 24 h', w.wakes24, B, w.updated ? 'checked ' + ago(w.updated) : ''), card('Woke for nothing', w.empty24, w.empty24 ? Y : G, 'noise, TV hum, nothing said'), card('Woke from us talking', w.talk24, w.talk24 ? R : G, 'people already talking before it woke'), card('Real commands', w.command24, G), card('Wake sensitivity', w.threshold === null || w.threshold === undefined ? '?' : w.threshold, B, 'higher = harder to wake'), card('Last 7 days false', (w.false7d || 0) + ' of ' + (w.wakes7d || 0), B)]) +
+      ((w.tune || []).length ? '<h3>SELF-TUNING LOG</h3>' + w.tune.map(function (x) { return '<p>' + new Date(x.t * 1000).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ': sensitivity ' + esc(x.from) + ' to ' + esc(x.to) + ' (' + esc(x.why) + ')</p>'; }).join('') : '<p>No automatic changes yet. Claude reviews this several times a day and tunes the wake sensitivity when false wake-ups keep happening.</p>');
+    done(h);
+  }).catch(function () { done('<p>The mic switch is not running on the Pi yet (it installs itself within a few minutes of an update), or this page is not on your home network or Tailscale.</p>'); });
+} };
+body.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-mic]'); if (!b) return; b.disabled = true; b.textContent = 'Working...'; micCall(b.getAttribute('data-mic'), true).then(function () { if (cur) { var ix = BOARDS[cur].tabs.indexOf(micTab); if (ix >= 0) show(ix); } }).catch(function () { b.textContent = 'Could not reach the Pi'; }); });
 var BOARDS = {
 trainboard: { title: 'KALSHI PROJECT', tabs: [
  { name: 'Betting page (full)', fn: function () { return frame('live.html'); } },
@@ -1730,10 +1755,12 @@ monitors: { title: 'PI WATCH (SECURITY OFFICE)', tabs: [
  { name: 'Alerts', fn: function (done) { var a = real().alerts, act = (a && a.active) || []; done(act.length ? act.map(function (t) { return '<div class="c" style="border-left-color:' + R + ';margin-bottom:8px"><span>' + esc(t) + '</span></div>'; }).join('') : '<div class="c" style="border-left-color:' + G + '"><span>No open alerts</span></div>'); } },
  { name: 'Devices', fn: function () { return frame(hub() + '/network'); } },
  { name: 'Family activity', fn: function () { return frame('activity.html'); } },
- { name: 'Voice assistant', fn: function (done) { var X = real().extra, J = X && X.jarvis; if (!J) return done('<p>No voice report yet.</p>'); var hang = Object.keys(J.hangups || {}).map(function (k) { return k + ' ' + J.hangups[k]; }).join(', ');
+  micTab,
+ { name: 'Voice stats', fn: function (done) { var X = real().extra, J = X && X.jarvis; if (!J) return done('<p>No voice report yet.</p>'); var hang = Object.keys(J.hangups || {}).map(function (k) { return k + ' ' + J.hangups[k]; }).join(', ');
    done(grid([card('Turns in 24 h', J.turns24 || 0, B), card('First words', J.first_avg === null || J.first_avg === undefined ? 'not measured' : J.first_avg + ' s avg', B), card('Hang-ups', hang || 'none', hang ? Y : G), card('Errors', J.errors || 0, J.errors ? R : G)])); } }
 ]},
 services: { title: 'CONTROL BOARD (WORKSHOP)', tabs: [
+ micTab,
  { name: 'Services', fn: function (done) { var X = real().extra, sv = (X && X.services) || {}, ks = Object.keys(sv); if (!ks.length) return done('<p>No service report yet.</p>');
    done('<p>Green = running. Restart controls are in the Hub tab (PIN needed).</p>' + grid(ks.map(function (k) { return card(k, sv[k], sv[k] === 'active' ? G : R); }))); } },
  { name: 'Hub controls', fn: function () { return frame(hub() + '/hub'); } },
@@ -1746,7 +1773,7 @@ function show(tabIx) {
   var b = BOARDS[cur]; if (!b) return; var t = b.tabs[tabIx];
   [].forEach.call(tabs.children, function (x, i) { x.classList.toggle('on', i === tabIx); });
   clearTimeout(timer); body.innerHTML = '<p>Loading...</p>';
-  var r = t.fn(function (html) { if (cur && BOARDS[cur].tabs[tabIx] === t) { body.innerHTML = html; if (t.live) timer = setTimeout(function () { show(tabIx); }, 15000); } });
+  var r = t.fn(function (html) { if (cur && BOARDS[cur].tabs[tabIx] === t) { body.innerHTML = html; if (t.live) timer = setTimeout(function () { show(tabIx); }, t.every || 15000); } });
   if (r && r.frame) { body.innerHTML = ''; var f = D.createElement('iframe'); f.src = r.frame; body.appendChild(f); }
 }
 function open(id, tab) {

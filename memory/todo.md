@@ -1,6 +1,11 @@
 # To do
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
+## HOME JARVIS FALSE WAKE-UPS: agents keep working on it (Kylar, 2026-11-07 12:24)
+- Kylar and Sharee talk and Jarvis wakes up; he wants a mic mute on the Starship (built 11-07: chip under the clock + Workshop Control board, tab Jarvis mic) and agents watching wake-ups and tuning on their own.
+- Watcher: tasks/jarvis_watch.py every 5 min -> memory/inbox/jarvis-wake-report.md. Claude reviews it at scheduled check-ins (4 PM, 8 PM, 11 PM, 8 AM) and, if 3+ false wake-ups in 24 h, raises the threshold by 0.05 with tasks/jarvis_tune.sh (max 0.92), noting it in changelog; lowers it if real commands get missed.
+- Bigger fixes still open: echo cancellation / better mic (Sonic XVF3800 idea), custom wake word "Penelope", the wake word model currently preloaded is alexa while the satellite asks for hey_jarvis (check which one really runs), voice ID.
+
 ## STARSHIP NEXT (Kylar by voice, 2026-11-06 night; build in text chat)
 - Kalshi board: old full betting page first (DONE 11-07, tab order); later go through that page and cut what he does not need.
 - Security Office board: Pi health (memory/temp/disk), Pi-hole status, green/red online lights, WATCHDOG PROOF (when each check last ran, warn if stale).
