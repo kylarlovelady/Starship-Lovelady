@@ -10,7 +10,7 @@ import exit_learn as X, hindsight as Hs
 D = os.environ.get("MARKET_DIR", os.path.join(os.path.expanduser("~"), "market-data"))
 def fee(p): return 0.07 * p * (1 - p)
 ENTRIES = (30, 60, 120, 180, 300, 420)
-TAKES = (0.15, 0.25, 0.40, None)
+TAKES = (0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.75, 1.0, None)
 
 
 def run_round(rows, side, t_in, take):

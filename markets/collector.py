@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v9.6 restart: flat bet-size tests $5 to $500 plus take-profit tests (Kylar 2026-11-07); phone alerts to Kylar only, Kalshi alerts muted
+# v9.7 restart: sell-at-different-percent tests (+5% to +100%), flat bet sizes $5 to $500 (Kylar 2026-11-07); alerts to Kylar only, Kalshi alerts muted
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

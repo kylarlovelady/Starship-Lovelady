@@ -73,6 +73,13 @@ VARIANTS = {
     "v_take25": ("Reaction test: bet early, sell at +25% (Kylar's idea), else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take15": ("Reaction test: bet early, sell at +15%, else hold", "distance", {"TAKE_PCT": 0.15, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take40": ("Reaction test: bet early, sell at +40%, else hold", "distance", {"TAKE_PCT": 0.40, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take5": ("Reaction test: bet early, sell at +5%, else hold", "distance", {"TAKE_PCT": 0.05, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take10": ("Reaction test: bet early, sell at +10%, else hold", "distance", {"TAKE_PCT": 0.1, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take20": ("Reaction test: bet early, sell at +20%, else hold", "distance", {"TAKE_PCT": 0.2, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take30": ("Reaction test: bet early, sell at +30%, else hold", "distance", {"TAKE_PCT": 0.3, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take50": ("Reaction test: bet early, sell at +50%, else hold", "distance", {"TAKE_PCT": 0.5, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take75": ("Reaction test: bet early, sell at +75%, else hold", "distance", {"TAKE_PCT": 0.75, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take100": ("Reaction test: bet early, sell at +100%, else hold", "distance", {"TAKE_PCT": 1.0, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take25_cheap": ("Reaction test: early bet only up to 55c, sell at +25%, else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "ENTRY_MAX": 0.55}),
     # BET SIZE TESTS (Kylar, 2026-11-07 10:22-10:23): the same entry and rule with a flat bet of $5 up to $500 per round (built in steps like any bet). Compare profit PER DOLLAR staked: size cannot create an edge, it only scales the result and the fees. A big bet can also move the price or bust the wallet; the sim limits fills to what the book shows.
     "v_hold_s5": ("Size test: hold to the end, $5 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 5.0, "FLAT_BET": 5.0}),
