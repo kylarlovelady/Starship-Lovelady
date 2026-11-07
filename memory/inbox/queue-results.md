@@ -1,9 +1,4 @@
-ing the price does not. Roughly +-0.13 is noise at this sample size.
-
-| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
-|---|---|---|---|---|---|---|
-| z (btc vs strike, in sigmas) | **0.77 (0.73 / 0.82)** | **0.85 (0.80 / 0.89)** | **0.89 (0.85 / 0.91)** | **0.93 (0.91 / 0.94)** | **0.98 (0.99 / 0.98)** | **1.00 (1.00 / 0.99)** |
-| dist $ (btc - strike) | **0.78 (0.74 / 0.82)** | **0.86 (0.81 / 0.91)** | **0.90 (0.87 / 0.91)** | **0.93 (0.92 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
+2 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
 | mom 10s $ | 0.57 (0.55 / 0.58) | 0.51 (0.52 / 0.50) | 0.49 (0.50 / 0.48) | 0.52 (0.54 / 0.49) | 0.52 (0.49 / 0.54) | 0.53 (0.55 / 0.52) |
 | mom 30s $ | **0.61 (0.62 / 0.61)** | 0.58 (0.61 / 0.56) | 0.54 (0.53 / 0.55) | 0.57 (0.66 / 0.46) | 0.58 (0.57 / 0.60) | 0.56 (0.54 / 0.58) |
 | mom 60s $ | 0.58 (0.55 / 0.60) | **0.65 (0.65 / 0.65)** | 0.56 (0.58 / 0.55) | 0.56 (0.65 / 0.47) | **0.62 (0.62 / 0.60)** | **0.63 (0.61 / 0.65)** |
@@ -540,5 +535,16 @@ CT hours 08-12         P(UP|prev UP)=45.6% (n=241)  P(UP|prev DOWN)=51.4% (n=255
 CT hours 12-16         P(UP|prev UP)=45.5% (n=244)  P(UP|prev DOWN)=53.2% (n=252)  gap=-7.7 pts  +-4.5 (1 SE)  z=-1.7
 CT hours 16-20         P(UP|prev UP)=51.5% (n=237)  P(UP|prev DOWN)=46.7% (n=259)  gap=+4.8 pts  +-4.5 (1 SE)  z=+1.1
 CT hours 20-24         P(UP|prev UP)=48.8% (n=250)  P(UP|prev DOWN)=50.4% (n=246)  gap=-1.6 pts  +-4.5 (1 SE)  z=-0.4
+(exit 0)
+```
+
+## 2026-11-06 20:10:01 tasks/queue/085-pihole-clients.sh
+```
+== devices seen in the last 24 h (address, lookups, last seen, blocked)
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sqlite3": executable file not found in $PATH
+== names Pi-hole knows (address, name)
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sqlite3": executable file not found in $PATH
+== local DNS names set (dns.hosts)
+[]
 (exit 0)
 ```
