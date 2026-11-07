@@ -1,21 +1,4 @@
-e', 'start': 1000.0, 'id': 1793935799, 'halted': None}
-== sniper switch file
-ls: cannot access '/home/kylarlovelady/market-data/sniper.on': No such file or directory
-== review 12h
-TRADE REVIEW, last 12 hours: 2136 (strategy, round) results from 42 rounds with full recordings.
 
-EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
-  v_x64216771     39    +167.36   38%   +9.5%
-  v_x44219232     39    +167.36   38%   +9.5%
-  v_x4227191      39    +167.36   38%   +9.5%
-  v_x28219981     39    +154.33   36%   +8.7%
-  v_x32221882     39    +154.33   36%   +8.7%
-  v_flow_flip     41    +135.52   37%   +6.5%
-  v_x68220541     39     +75.72   36%   +4.2%
-  v_mood_flip     40     +74.56   40%   +4.3%
-  trend           39     +51.31   28%   +5.3%
-  hold            41     +50.79   59%  +11.7%
-  v_x96220872     38     +30.03   37%   +3.3%
   v_x16217721     41     +29.69   29%   +1.7%
   v_x40223632     40     +10.40   45%   +2.8%
   v_x64216772     35      +5.15   46%   +1.9%
@@ -638,5 +621,26 @@ total wake clips 21
 {"t": 1793908429.312, "sid": "phtnri1w", "kind": "client", "what": "page_visible", "info": ""}
 {"t": 1793908431.636, "sid": "phtnri1w", "kind": "client", "what": "page_hidden", "info": ""}
 {"t": 1794019030.422, "sid": "phtnri1w", "kind": "client", "what": "page_hidden", "info": ""}
+(exit 0)
+```
+
+## 2026-11-07 12:40:01 tasks/queue/097-jarvis-install.sh
+```
+{"muted": false, "unmute_at": null, "state": "idle", "now": 1794076823.6926272, "wake": {"updated": 1794076823.6450362, "threshold": 0.7, "wakes24": 10, "empty24": 3, "talk24": 1, "command24": 6, "wakes7d": 21, "false7d": 14, "by_hour": {"12": {"empty": 1, "talk": 1, "command": 1}, "17": {"empty": 3
+
+LISTEN 0      5                                     0.0.0.0:8098       0.0.0.0:*   
+--- watcher report
+# Home Jarvis wake-up report (auto, audio stats only)
+
+Updated Sat 12:40. Wake word threshold now: 0.7. Mic muted now: False.
+
+Last 24 h: **10** wake-ups: 3 empty, 1 probably us talking, 6 real commands. Last 7 days: 21 wake-ups, 14 false.
+
+| hour | empty | talk | command |
+|---|---|---|---|
+| 02:00 | 2 | 0 | 0 |
+| 03:00 | 4 | 0 | 0 |
+| 11:00 | 2 | 0 | 1 |
+| 12:00 | 1 | 1 | 1 |
 (exit 0)
 ```
