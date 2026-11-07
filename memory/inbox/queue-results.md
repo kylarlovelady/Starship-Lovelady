@@ -1,67 +1,4 @@
- | 0.39 |
-| 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
-| 420s | 0.10 | 44 | 23% | +26.3(exit 0)
-```
-
-## 2026-11-06 03:17:44 tasks/queue/073-oracle-light.sh
-```
-               total        used        free      shared  buff/cache   available
-Mem:            8058        2589        2228          64        3391        5469
-Mem:            8058        2489        2327          63        3392        5569
-# Hindsight / oracle study (last 3 days)
-
-Rounds with a full recording, a strike and a real Kalshi result: **300** (147 UP, 153 DOWN).
-
-## A. The perfect-hindsight buy (cheapest ask of the side that won, with 3+ s left)
-
-| statistic | value |
-|---|---|
-| rounds with a usable book | 300 |
-| median cheapest winning ask | 39c |
-| average perfect-hindsight profit per contract | 61.0c (157% on cost) |
-| share of rounds where the perfect buy was 30c or less | 32% |
-| share where it was 50c or less | 78% |
-| WHEN in the round the cheapest winning ask was (seconds left) | 0-60 s: 2%, 60-180 s: 5%, 180-420 s: 15%, >420 s: 77% |
-
-Reading: the perfect buy is nearly always a *cheap* winner early in the round that you could not have known about. The rest of this report asks which signals could have pointed to it in advance.
-
-## B. Which signals predict UP/DOWN? (AUC: 0.50 = coin flip, 1.00 = perfect, below 0.50 = points the other way)
-
-Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or 0.40 or less) AND the same side of 0.50 in both halves. 'vs market' = rank correlation of the signal with (result minus Kalshi mid), i.e. does it know something the price does not. Roughly +-0.13 is noise at this sample size.
-
-| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
-|---|---|---|---|---|---|---|
-| z (btc vs strike, in sigmas) | **0.78 (0.74 / 0.83)** | **0.85 (0.80 / 0.89)** | **0.90 (0.87 / 0.91)** | **0.93 (0.92 / 0.93)** | **0.98 (0.99 / 0.98)** | **0.99 (1.00 / 0.99)** |
-| dist $ (btc - strike) | **0.78 (0.75 / 0.82)** | **0.86 (0.81 / 0.91)** | **0.90 (0.89 / 0.91)** | **0.93 (0.93 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
-| mom 10s $ | 0.57 (0.55 / 0.59) | 0.50 (0.50 / 0.50) | 0.49 (0.51 / 0.48) | 0.52 (0.53 / 0.50) | 0.52 (0.49 / 0.55) | 0.52 (0.51 / 0.53) |
-| mom 30s $ | **0.62 (0.63 / 0.61)** | 0.58 (0.60 / 0.57) | 0.54 (0.55 / 0.54) | 0.56 (0.64 / 0.47) | 0.59 (0.57 / 0.61) | 0.56 (0.52 / 0.59) |
-| mom 60s $ | 0.58 (0.56 / 0.60) | **0.66 (0.66 / 0.66)** | 0.57 (0.59 / 0.55) | 0.55 (0.63 / 0.47) | **0.62 (0.60 / 0.62)** | **0.62 (0.59 / 0.66)** |
-| kraken - coinbase $ | 0.48 (0.53 / 0.44) | 0.50 (0.50 / 0.51) | 0.53 (0.54 / 0.52) | 0.44 (0.36 / 0.53) | 0.42 (0.44 / 0.38) | 0.52 (0.52 / 0.52) |
-| trade flow imbalance | 0.50 (0.48 / 0.52) | 0.48 (0.41 / 0.54) | 0.51 (0.52 / 0.51) | 0.54 (0.55 / 0.54) | 0.58 (0.60 / 0.57) | 0.54 (0.56 / 0.53) |
-| coinbase book imbalance | 0.51 (0.65 / 0.43) | 0.47 (0.60 / 0.42) | 0.45 (0.51 / 0.40) | 0.50 (0.52 / 0.51) | 0.53 (0.60 / 0.49) | 0.49 (0.47 / 0.49) |
-| kalshi book imbalance | 0.47 (0.46 / 0.48) | 0.59 (0.58 / 0.61) | 0.46 (0.51 / 0.42) | **0.33 (0.27 / 0.38)** | **0.32 (0.34 / 0.30)** | **0.24 (0.29 / 0.20)** |
-| kalshi mid (crowd) | **0.79 (0.73 / 0.84)** | **0.86 (0.80 / 0.91)** | **0.90 (0.88 / 0.92)** | **0.93 (0.92 / 0.93)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
-| funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
-
-### Does it beat the market price? (rank correlation with result minus Kalshi mid)
-
-| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
-|---|---|---|---|---|---|---|
-| z (btc vs strike, in sigmas) | +0.01 | +0.16 | +0.26 | +0.33 | +0.44 | +0.45 |
-| dist $ (btc - strike) | +0.01 | +0.18 | +0.27 | +0.32 | +0.44 | +0.43 |
-| mom 10s $ | +0.08 | -0.07 | -0.08 | +0.01 | +0.04 | +0.09 |
-| mom 30s $ | +0.03 | +0.04 | +0.03 | +0.01 | +0.10 | +0.07 |
-| mom 60s $ | -0.06 | +0.15 | +0.03 | -0.07 | +0.10 | +0.14 |
-| kraken - coinbase $ | +0.01 | +0.06 | +0.06 | -0.08 | -0.19 | +0.09 |
-| trade flow imbalance | +0.03 | -0.05 | +0.01 | +0.09 | +0.17 | +0.20 |
-| coinbase book imbalance | -0.00 | -0.01 | -0.05 | -0.00 | +0.06 | -0.07 |
-| kalshi book imbalance | +0.03 | +0.14 | +0.01 | -0.04 | -0.06 | -0.13 |
-| kalshi mid (crowd) | +0.00 | +0.15 | +0.26 | +0.32 | +0.41 | +0.42 |
-| funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
-
-## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
-
-| left | min gap | bets | win rate | profit per $ staked | avg cost |
+| bets | win rate | profit per $ staked | avg cost |
 |---|---|---|---|---|---|
 | 600s | 0.05 | 68 | 40% | +0.8% | 0.39 |
 | 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
@@ -613,5 +550,94 @@ Reading: if take-profit rows beat the 'hold' row of the same entry and side in b
 ```
 before: {'active': True, 'strategy': 'auto', 'live': None, 'start': 1000.0}
 after: {'active': True, 'strategy': 'v_hold', 'live': None, 'start': 1000.0}
+(exit 0)
+```
+
+## 2026-11-07 12:28:02 tasks/queue/095-jarvis-home-survey.sh
+```
+== docker
+openwakeword  rhasspy/wyoming-openwakeword  Up 33 hours
+whisper  rhasspy/wyoming-whisper  Up 33 hours (healthy)
+piper  rhasspy/wyoming-piper  Up 33 hours (healthy)
+pihole  pihole/pihole:latest  Up 33 hours (healthy)
+homeassistant  ghcr.io/home-assistant/home-assistant:stable  Up 33 hours
+== units (ExecStart only)
+-- hub-satellite: active
+User=kylarlovelady
+ExecStart=/bin/bash /home/kylarlovelady/wyoming-satellite/run-hub.sh
+-- hub-voice: active
+User=kylarlovelady
+ExecStart=/home/kylarlovelady/hub-voice/.venv/bin/python /home/kylarlovelady/hub-voice/voiced.py daemon
+-- hub-watchdog: active
+ExecStart=/usr/bin/python3 /usr/local/bin/hub-watchdog.py
+== satellite process
+root        2687  1-09:13:31 .venv/bin/python3 -m wyoming_piper --uri tcp://0.0.0.0:10200 --data-dir /data --voice en_US-lessac-medium
+root        2854  1-09:13:30 .venv/bin/python3 -m wyoming_faster_whisper --uri tcp://0.0.0.0:10300 --data-dir /data --device cpu --model base-int8 --language en
+root        2859  1-09:13:30 .venv/bin/python3 -m wyoming_openwakeword --uri tcp://0.0.0.0:10400 --preload-model alexa --threshold 0.7
+kylarlo+    2951  1-09:13:30 /bin/bash /home/kylarlovelady/wyoming-satellite/run-hub.sh
+kylarlo+    3014  1-09:13:30 /home/kylarlovelady/wyoming-satellite/.venv/bin/python3 -m wyoming_satellite --name main hub --debug-recording-dir /home/kylarlovelady/voice-data/home-mic --uri tcp://127.0.0.1:10700 --mic-command /home/kylarlovelady/hub-mic.py plughw:3,0 --snd-command aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw --wake-uri tcp://127.0.0.1:10400 --wake-word-name hey_jarvis --detect-command bash -c "
+== audio capture devices
+**** List of CAPTURE Hardware Devices ****
+card 3: AC44 [MXL AC-44], device 0: USB Audio [USB Audio]
+  Subdevices: 0/1
+  Subdevice #0: subdevice #0
+== mixer (capture controls)
+card2: Simple mixer control 'PCM',0
+card3: Simple mixer control 'Mic',0
+== groups
+kylarlovelady adm dialout cdrom sudo audio video plugdev games users netdev lpadmin docker pironman5 gpio i2c spi render input
+== voice-data
+total 240
+drwx------  5 kylarlovelady kylarlovelady   4096 Nov  5 15:13 .
+drwx------ 36 kylarlovelady kylarlovelady   4096 Nov  6 03:14 ..
+drwxr-xr-x  2 kylarlovelady kylarlovelady   4096 Nov  5 05:54 clips
+-rw-r--r--  1 kylarlovelady kylarlovelady  57716 Nov  7 12:20 conversations.jsonl
+-rw-r--r--  1 kylarlovelady kylarlovelady   2426 Nov  5 05:46 events.jsonl
+drwxrwxr-x  2 kylarlovelady kylarlovelady   4096 Nov  7 12:20 home-mic
+-rw-r--r--  1 kylarlovelady kylarlovelady    111 Nov  5 06:00 hours.jsonl
+-rw-------  1 kylarlovelady kylarlovelady    292 Nov  4 22:12 keys.env
+-rw-r--r--  1 kylarlovelady kylarlovelady    321 Nov  5 05:26 labels.jsonl
+drwxr-xr-x  2 kylarlovelady kylarlovelady  12288 Nov  5 05:54 replies
+-rw-r--r--  1 kylarlovelady kylarlovelady    440 Nov  5 05:26 settings.json
+-rw-r--r--  1 kylarlovelady kylarlovelady 124749 Nov  6 20:37 trace.jsonl
+115581106260969-stt.wav
+115581106260969-wake.wav
+115944154382670-stt.wav
+115944154382670-wake.wav
+119162982453665-stt.wav
+== satellite log, last 24 h: count of key lines
+19 /tmp/sat24.log
+9
+Nov 06 13:55:16 LoveladyMainAiHub bash[3014]: WARNING:root:Event(type='error', data={'text': 'No text recognized', 'code': 'stt-no-text-recognized'}, payload=None)
+Nov 06 13:55:16 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 06 17:25:15 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 06 17:56:51 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 06 17:58:02 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 06 17:58:15 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 07 11:20:34 LoveladyMainAiHub bash[3014]: WARNING:root:Event(type='error', data={'text': 'No text recognized', 'code': 'stt-no-text-recognized'}, payload=None)
+Nov 07 11:20:34 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 07 11:26:37 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 07 12:20:16 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+Nov 07 12:20:46 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+== openwakeword container log tail
+INFO:root:Ready
+INFO:root:Ready
+INFO:root:Ready
+INFO:root:Ready
+INFO:root:Ready
+INFO:root:Ready
+INFO:root:Ready
+INFO:root:Ready
+== tailscale name/ports free?
+0.0.0.0:8123
+127.0.0.1:10200
+127.0.0.1:10300
+127.0.0.1:10400
+127.0.0.1:8099
+100.105.140.126:8097
+100.105.140.126:8095
+100.105.140.126%tailscale0:8081
+[::]:8123
+[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081
 (exit 0)
 ```
