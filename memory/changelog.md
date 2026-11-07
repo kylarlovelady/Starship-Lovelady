@@ -5,6 +5,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
 
+## 2026-11-07 Kalshi board opens on the old full betting page; voice-call plans filed
+- What: index.html (tab order: Betting page (full) first), memory/todo.md (STARSHIP NEXT). Status: pushed.
+
 ## 2026-11-06 Added todo: full room-by-room Starship bug pass
 - What: memory/todo.md and projects.md next step (Kylar asked 23:22). Status: queued, not started.
 

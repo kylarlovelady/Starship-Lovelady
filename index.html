@@ -1700,6 +1700,7 @@ function btn(label, pane) { return '<button class="btn" data-pane="' + pane + '"
 
 var BOARDS = {
 trainboard: { title: 'KALSHI PROJECT', tabs: [
+ { name: 'Betting page (full)', fn: function () { return frame('live.html'); } },
  { name: 'Overview', fn: function (done) { getMarket(function (d) {
    if (!d) return done('<p>No Kalshi data yet. The practice agent writes market.json on the Pi; this fills in when it is running.</p>');
    var run = (d.sim && d.sim.run) || {}, sc = (d.scorecard && d.scorecard.all) || {}, k = d.kalshi || {}, lv = d.live || {}, age = d.updated ? Math.round((Date.now() / 1000 - d.updated) / 60) : null;
@@ -1714,7 +1715,6 @@ trainboard: { title: 'KALSHI PROJECT', tabs: [
    (d.lessons || []).slice(0, 12).forEach(function (l) { h += '<div class="c" style="margin-bottom:8px;border-left-color:' + (l.won ? G : R) + '"><i>' + new Date(l.start * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + ' · called ' + esc(l.call) + ', went ' + esc(l.outcome) + '</i><p style="margin:4px 0 0">' + esc(l.text) + '</p></div>'; });
    var L = d.learning && d.learning.signals; if (L) { h += '<h3>WHICH SIGNALS WE TRUST</h3>'; h += grid(Object.keys(L).map(function (k) { var q = L[k]; return card(k, q.verdict, q.verdict === 'trusted' ? G : q.verdict === 'not trusted' ? R : Y, q.n + ' tested' + (q.pct !== null && q.pct !== undefined ? ', ' + q.pct + '% right' : '')); })); }
    done(h); }); } },
- { name: 'Full dashboard', fn: function () { return frame('live.html'); } },
  { name: 'Project notes', fn: function (done) { fetch('kalshi-notes.md?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.text(); }).then(function (t) { done('<pre>' + esc(t) + '</pre>'); }).catch(function () { done('<p>Notes copy not on the Pi yet. It appears after the next 5-minute report run.</p>'); }); } },
  { name: 'Voice training', fn: function (done) { done(grid([card('Today', 'Wake word practice: Hey Jarvis', B), card('Accuracy', 'Hey Jarvis 92% (sample)', Y, 'Needs more quiet-room samples'), card('Next', 'Penelope wake word later', B)]) + '<p>Real numbers will replace these samples later.</p>'); } }
 ]},

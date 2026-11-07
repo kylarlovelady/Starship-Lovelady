@@ -1,6 +1,14 @@
 # To do
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
+## STARSHIP NEXT (Kylar by voice, 2026-11-06 night; build in text chat)
+- Kalshi board: old full betting page first (DONE 11-07, tab order); later go through that page and cut what he does not need.
+- Security Office board: Pi health (memory/temp/disk), Pi-hole status, green/red online lights, WATCHDOG PROOF (when each check last ran, warn if stale).
+- Captain's Office: project status (what waits on whom) plus checks list with last-passed times.
+- Safe: token usage estimate (Claude, voice assistant/OpenAI) plus tap-through to the provider billing pages; exact balance maybe later via an admin key Kylar creates on the Pi.
+- One room per project (Kalshi office with its own agent, freeze drying office, more later); Claude is Captain reporting over them; real agents need a per-agent budget and ask-before-spend (under $100/month overall).
+- Tomorrow-ish: Kylar sends links/screenshots/project list; offline AI model idea (storage/RAM question, wait before buying); desktop PC (Best Buy gaming, white, RGB): run spec check, then clean and optimize before using it for big jobs (Pi stays the always-on brain). Finish and test current things before starting new projects.
+
 ## STARSHIP: GO OVER EVERY ROOM AND FIX BUGS (Kylar, 2026-11-06 23:22)
 - Walk through each room one by one (Conference, Captain's Office, Security Office, Training Room, Workshop, Data Archive, Sleeping Quarters, corridors) zoomed in on phone and desktop. For each: every clickable works, text fits, nothing overlaps or ghosts, zoom/drag feels right, the board tabs show real data.
 - Known to check: zoom-in glitches Kylar saw (11-06), Hub tabs (iframes) blank or PIN problems, fly-to leaves the room low on tall phone screens, sample numbers still on Voice training tab, candle overlapping the Screen saver board.
