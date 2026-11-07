@@ -17,9 +17,11 @@ floor = background noise level (16-bit scale, 0 to 32767); speech% = share of th
 | Fri 17:58:08 | 53029210591923-wake.wav | 2.0 | 13939 | 1845 | 417 | 54 | 0.2 |
 | Fri 17:58:15 | 53029210591923-stt.wav | 6.7 | 11225 | 670 | 300 | 11 | 2.2 |
 | Sat 11:20:21 | 53042121034015-wake.wav | 2.0 | 4718 | 799 | 387 | 15 | 0.1 |
-| Sat 11:25:38 | 53042121034015-stt.wav | 315.6 | 16400 | 420 | 251 | 6 | 0.4 |
+| Sat 11:26:12 | 53042121034015-stt.wav | 350.6 | 16400 | 422 | 251 | 6 | 0.0 |
+| Sat 11:26:12 | 115581106260969-wake.wav | 2.0 | 2281 | 364 | 249 | 3 | 0.0 |
+| Sat 11:26:37 | 115581106260969-stt.wav | 25.3 | 4097 | 435 | 286 | 2 | 0.3 |
 
-Median background noise floor: 300. Clips with less than 0.8 s of tail quiet: 9 of 14.
+Median background noise floor: 292. Clips with less than 0.8 s of tail quiet: 11 of 16.
 
 ## Satellite restarts by the watchdog (last 24 h)
 none
