@@ -73,6 +73,13 @@ VARIANTS = {
     "v_take15": ("Reaction test: bet early, sell at +15%, else hold", "distance", {"TAKE_PCT": 0.15, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take40": ("Reaction test: bet early, sell at +40%, else hold", "distance", {"TAKE_PCT": 0.40, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take25_cheap": ("Reaction test: early bet only up to 55c, sell at +25%, else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "ENTRY_MAX": 0.55}),
+    # BET SIZE TESTS (Kylar, 2026-11-07 10:22): same entry and rule, different maximum stake per round (the cap also limits adds). Compare profit PER DOLLAR staked: size cannot create an edge, it only scales it and the fees.
+    "v_hold_s5": ("Size test: hold to the end, max $5 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 5}),
+    "v_hold_s10": ("Size test: hold to the end, max $10 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 10}),
+    "v_hold_s50": ("Size test: hold to the end, max $50 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 50}),
+    "v_hold_s100": ("Size test: hold to the end, max $100 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 100}),
+    "v_take25_s10": ("Size test: sell at +25%, max $10 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 10}),
+    "v_take25_s50": ("Size test: sell at +25%, max $50 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 50}),
     # SNIPING (Kylar, 2026-11-05): one favourite buy in the last ~2 minutes (13+ min into the 15), price allowed up to 97c, hold to the end. Practice only; the cap stays at UNPROVEN_CAP.
     "v_snipe": ("Reaction test: SNIPE one late favourite buy (last 2 min, up to 97\u00a2), hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 780, "MAX_TRADES": 1, "ENTRY_MAX": 0.97, "MAX_PRICE": 0.97}),
     # SNIPING ALL-IN (Kylar, 2026-11-05 19:41): the whole $1,000 wallet on the favourite in the last ~15 s of every round, hold to the end. Practice only. Whatever the book cannot fill stays in cash.

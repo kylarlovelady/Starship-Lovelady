@@ -5,6 +5,10 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
 
+## 2026-11-07 Kalshi agent v9.5: take-profit and bet-size practice tests (Kylar's ideas), restart; checks scheduled 8 PM and 8 AM
+- What: markets/sim.py new setting TAKE_PCT (sell the whole bet once it is up X% after fees) and 4 take-profit tests (v_take15, v_take25, v_take40, v_take25_cheap) plus 6 bet-size tests (v_hold_s5/s10/s50/s100, v_take25_s10/s50); markets/collector.py restart marker v9.5; markets/take_profit_study.py (backtest, queue 092) and queue 091 (72 h and 7 day review). Live trading stays OFF.
+- Status: pushed; the Pi restarts market-agent when it pulls. Results come from queue 091/092 and the daily digest.
+
 ## 2026-11-07 Kalshi board opens on the old full betting page; voice-call plans filed
 - What: index.html (tab order: Betting page (full) first), memory/todo.md (STARSHIP NEXT). Status: pushed.
 
