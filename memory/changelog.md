@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Queue 086: retry of 085 (the Pi-hole container has no sqlite3; now uses pihole-FTL sqlite3). dns.hosts is empty, so no names are set yet.
+- Status: queued.
+
 ## 2026-11-06 Queue 085: list Pi-hole devices (read-only) to find the iPad address, before naming devices
 - Where: tasks/queue/085-pihole-clients.sh; result lands in memory/inbox/queue-results.md
 - Status: queued; next script sets names (kylar-iphone .142, sharee-iphone .228, living-room-tv .130, warren-ipad).
