@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Queue 088: force Pi-hole to show the device names (dashboard still showed addresses after 087)
+- Where: tasks/queue/088-pihole-names-refresh.sh. Restarts Pi-hole DNS for a few seconds.
+- Status: queued.
+
 ## 2026-11-06 Naming devices in Pi-hole (queue 087)
 - What: iPad found at 192.168.1.240; sets names pi-hub, kylar-iphone, sharee-iphone, warren-ipad, living-room-tv as local DNS names. Where: tasks/queue/087-pihole-names.sh, memory/home-network.md.
 - Status: queued.
