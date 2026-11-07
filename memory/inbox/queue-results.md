@@ -1,5 +1,4 @@
- | -0.01 | +0.15 | +0.24 | +0.31 | +0.42 | +0.42 |
-| funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
+| +0.11 |
 
 ## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
 
@@ -593,3 +592,6 @@ ALL
      [✓] TCP (IPv4)
 (exit 0)
 ```
+
+## 2026-11-06 20:31:01 tasks/queue/089-ha-notify-targets.sh
+REFUSED: contains a command on the deny list
