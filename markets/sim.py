@@ -53,6 +53,7 @@ UNPROVEN_CAP = 25.0     # no strategy may put more than this into one round unti
 AUTO_MIN_ROUNDS = 80    # rounds a strategy needs before the Auto wallet may follow it
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
+FLAT_BET = 0.0          # size test: bet exactly this many dollars per round (in steps) whenever the strategy wants in, ignoring the edge-based sizing (0 = off)
 TAKE_PCT = 0.0          # reaction test (Kylar 2026-11-07): sell the whole bet as soon as it is up this share of its cost after fees at the price it can sell for (0 = off)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
 ALL_IN = 0              # reaction test only: bet the WHOLE wallet on the favourite, every round, no edge test, no staging (sniping test); the book depth still limits the fill
@@ -73,13 +74,18 @@ VARIANTS = {
     "v_take15": ("Reaction test: bet early, sell at +15%, else hold", "distance", {"TAKE_PCT": 0.15, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take40": ("Reaction test: bet early, sell at +40%, else hold", "distance", {"TAKE_PCT": 0.40, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take25_cheap": ("Reaction test: early bet only up to 55c, sell at +25%, else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "ENTRY_MAX": 0.55}),
-    # BET SIZE TESTS (Kylar, 2026-11-07 10:22): same entry and rule, different maximum stake per round (the cap also limits adds). Compare profit PER DOLLAR staked: size cannot create an edge, it only scales it and the fees.
-    "v_hold_s5": ("Size test: hold to the end, max $5 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 5}),
-    "v_hold_s10": ("Size test: hold to the end, max $10 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 10}),
-    "v_hold_s50": ("Size test: hold to the end, max $50 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 50}),
-    "v_hold_s100": ("Size test: hold to the end, max $100 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 100}),
-    "v_take25_s10": ("Size test: sell at +25%, max $10 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 10}),
-    "v_take25_s50": ("Size test: sell at +25%, max $50 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 50}),
+    # BET SIZE TESTS (Kylar, 2026-11-07 10:22-10:23): the same entry and rule with a flat bet of $5 up to $500 per round (built in steps like any bet). Compare profit PER DOLLAR staked: size cannot create an edge, it only scales the result and the fees. A big bet can also move the price or bust the wallet; the sim limits fills to what the book shows.
+    "v_hold_s5": ("Size test: hold to the end, $5 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 5.0, "FLAT_BET": 5.0}),
+    "v_hold_s10": ("Size test: hold to the end, $10 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 10.0, "FLAT_BET": 10.0}),
+    "v_hold_s25": ("Size test: hold to the end, $25 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 25.0, "FLAT_BET": 25.0}),
+    "v_hold_s50": ("Size test: hold to the end, $50 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 50.0, "FLAT_BET": 50.0}),
+    "v_hold_s100": ("Size test: hold to the end, $100 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 100.0, "FLAT_BET": 100.0}),
+    "v_hold_s250": ("Size test: hold to the end, $250 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0}),
+    "v_hold_s500": ("Size test: hold to the end, $500 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 500.0, "FLAT_BET": 500.0}),
+    "v_take25_s10": ("Size test: sell at +25%, $10 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 10.0, "FLAT_BET": 10.0}),
+    "v_take25_s50": ("Size test: sell at +25%, $50 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 50.0, "FLAT_BET": 50.0}),
+    "v_take25_s250": ("Size test: sell at +25%, $250 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 250.0, "FLAT_BET": 250.0}),
+    "v_take25_s500": ("Size test: sell at +25%, $500 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 500.0, "FLAT_BET": 500.0}),
     # SNIPING (Kylar, 2026-11-05): one favourite buy in the last ~2 minutes (13+ min into the 15), price allowed up to 97c, hold to the end. Practice only; the cap stays at UNPROVEN_CAP.
     "v_snipe": ("Reaction test: SNIPE one late favourite buy (last 2 min, up to 97\u00a2), hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 780, "MAX_TRADES": 1, "ENTRY_MAX": 0.97, "MAX_PRICE": 0.97}),
     # SNIPING ALL-IN (Kylar, 2026-11-05 19:41): the whole $1,000 wallet on the favourite in the last ~15 s of every round, hold to the end. Practice only. Whatever the book cannot fill stays in cash.
@@ -88,7 +94,7 @@ STRATS.update({k: v[0] for k, v in VARIANTS.items()})
 _STATIC_V = set(VARIANTS)
 _DYN = {"mt": None, "keys": set()}
 _OV_OK = {"STOP_ON": (0, 1), "STOP_PCT": (0.1, 0.9), "STOP_SMALL": (0, 100), "EXIT_ON": (0, 1), "EXIT_P": (3, 80), "EXIT_D": (2, 40), "MAX_TRADES": (1, 12),
-          "STAGE_GAP": (5, 300), "ODDS_SELL": (0, 1), "ODDS_MARGIN": (0.0, 0.2), "ENTRY_AFTER": (0, 600), "FLIP": (0, 1), "TAKE_PCT": (0.0, 2.0), "MIN_PROFIT_USD": (0.0, 10.0)}
+          "STAGE_GAP": (5, 300), "ODDS_SELL": (0, 1), "ODDS_MARGIN": (0.0, 0.2), "ENTRY_AFTER": (0, 600), "FLIP": (0, 1), "TAKE_PCT": (0.0, 2.0), "FLAT_BET": (0.0, 1000.0), "MIN_PROFIT_USD": (0.0, 10.0)}
 _BASES = ("distance", "signals", "trend", "flow", "mood")
 
 
@@ -470,6 +476,8 @@ def size(edge, bal, pos_cost, mult=1.0, ref=None):
     ref = ref or START
     if ALL_IN:
         return max(0.0, bal)                                  # sniping all-in test: the whole wallet; the book depth and the cash left decide the fill
+    if FLAT_BET > 0:
+        return max(0.0, min(FLAT_BET - pos_cost, bal))       # size test: the same dollar amount every round, whatever the edge
     mult *= max(0.35, min(1.0, (bal + pos_cost) / ref))     # a shrinking wallet bets smaller, so it lasts more rounds
     if mult <= 0:
         return 0.0
@@ -955,7 +963,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
