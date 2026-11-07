@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Queue 089 was refused (the queue never reads key files). Replaced by markets/ha_phones.py that Kylar runs himself on the Pi
+- Status: waiting for Kylar to run it and name his phone.
+
 ## 2026-11-06 Alerts to Kylar's phone only (Kylar: Sharee must not get notifications)
 - What: markets/alerts.py now sends only to phones listed in ~/market-data/alert_phone.txt (if the file exists); queue 089 lists the phones and which automations notify, to pick Kylar's. Not active until the file is written and the agent restarts.
 - Status: step 1 of 2.
