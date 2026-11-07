@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 To-do added: Pi-hole per-device history, log delete, site/app alerts
+- Where: memory/todo.md (Open)
+- Status: plan written, not built.
+
 ## 2026-11-06 Business idea filed: coop cam livestream with donate-to-feed
 - Where: memory/projects/coop-cam-stream.md (new), one line in memory/business.md, a row in memory/projects.md.
 - Status: idea.
