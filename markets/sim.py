@@ -53,6 +53,7 @@ UNPROVEN_CAP = 25.0     # no strategy may put more than this into one round unti
 AUTO_MIN_ROUNDS = 80    # rounds a strategy needs before the Auto wallet may follow it
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
+TAKE_PCT = 0.0          # reaction test (Kylar 2026-11-07): sell the whole bet as soon as it is up this share of its cost after fees at the price it can sell for (0 = off)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
 ALL_IN = 0              # reaction test only: bet the WHOLE wallet on the favourite, every round, no edge test, no staging (sniping test); the book depth still limits the fill
 VARIANTS = {
@@ -67,6 +68,11 @@ VARIANTS = {
     "v_mood_flip": ("Reaction test: bet the opposite of the Mood strategy", "mood", {"FLIP": 1}),
     "v_flow_flip": ("Reaction test: bet the opposite of the Flow strategy", "flow", {"FLIP": 1}),
     "v_late": ("Reaction test: wait 5 minutes before the first bet", "distance", {"ENTRY_AFTER": 300}),
+    # TAKE-PROFIT EARLY (Kylar, 2026-11-07 10:20): bet early, sell everything the moment the bet is up X% after fees, otherwise hold to the end. No loss-cutting, no odds-selling.
+    "v_take25": ("Reaction test: bet early, sell at +25% (Kylar's idea), else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take15": ("Reaction test: bet early, sell at +15%, else hold", "distance", {"TAKE_PCT": 0.15, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take40": ("Reaction test: bet early, sell at +40%, else hold", "distance", {"TAKE_PCT": 0.40, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    "v_take25_cheap": ("Reaction test: early bet only up to 55c, sell at +25%, else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "ENTRY_MAX": 0.55}),
     # SNIPING (Kylar, 2026-11-05): one favourite buy in the last ~2 minutes (13+ min into the 15), price allowed up to 97c, hold to the end. Practice only; the cap stays at UNPROVEN_CAP.
     "v_snipe": ("Reaction test: SNIPE one late favourite buy (last 2 min, up to 97\u00a2), hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 780, "MAX_TRADES": 1, "ENTRY_MAX": 0.97, "MAX_PRICE": 0.97}),
     # SNIPING ALL-IN (Kylar, 2026-11-05 19:41): the whole $1,000 wallet on the favourite in the last ~15 s of every round, hold to the end. Practice only. Whatever the book cannot fill stays in cash.
@@ -75,7 +81,7 @@ STRATS.update({k: v[0] for k, v in VARIANTS.items()})
 _STATIC_V = set(VARIANTS)
 _DYN = {"mt": None, "keys": set()}
 _OV_OK = {"STOP_ON": (0, 1), "STOP_PCT": (0.1, 0.9), "STOP_SMALL": (0, 100), "EXIT_ON": (0, 1), "EXIT_P": (3, 80), "EXIT_D": (2, 40), "MAX_TRADES": (1, 12),
-          "STAGE_GAP": (5, 300), "ODDS_SELL": (0, 1), "ODDS_MARGIN": (0.0, 0.2), "ENTRY_AFTER": (0, 600), "FLIP": (0, 1)}
+          "STAGE_GAP": (5, 300), "ODDS_SELL": (0, 1), "ODDS_MARGIN": (0.0, 0.2), "ENTRY_AFTER": (0, 600), "FLIP": (0, 1), "TAKE_PCT": (0.0, 2.0), "MIN_PROFIT_USD": (0.0, 10.0)}
 _BASES = ("distance", "signals", "trend", "flow", "mood")
 
 
@@ -942,7 +948,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
@@ -1061,6 +1067,11 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
                                                          "sale_net": round(sell_now - 0.0, 4), "peak": round(pk0, 4), "live": bool(_LIVE)}) + "\n")
                             except OSError:
                                 pass
+                if not sold and TAKE_PCT > 0 and pname != "hold" and pos["c"] > 0:      # take profit early at a fixed gain (reaction test v_take*)
+                    avg_t = pos["cost"] / pos["c"]
+                    if sell_now - avg_t >= TAKE_PCT * avg_t:
+                        if sell(a, ask, bid, "Taking profit: the bet is up %d%% after fees (paid %s\u00a2, can sell for %s\u00a2), so it sells now and keeps the gain." % (round(100 * (sell_now - avg_t) / avg_t), c_(avg_t), c_(sell_now))):
+                            sold = True; act = "sold"; w["no_more"] = True
                 if not sold and STOP_ON and pname != "hold" and pos["c"] > 0:      # cut the loss: do not ride a losing bet to the end just because the round is ending
                     loss_ = pos["cost"] / pos["c"] - sell_now
                     avg_ = pos["cost"] / pos["c"]
