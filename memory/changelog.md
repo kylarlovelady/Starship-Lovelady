@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Added todo: full room-by-room Starship bug pass
+- What: memory/todo.md and projects.md next step (Kylar asked 23:22). Status: queued, not started.
+
 ## 2026-11-06 Starship boards with tabs: Kalshi (Training Room), Screen saver editor (Captain), Pi Watch (Security), Control board (Workshop); tap fix
 - What: index.html. Clicking those wall boards opens a full panel with tabs. KALSHI (Training Room wall): Overview, Strategies, Lessons (real numbers from market.json), Full dashboard (live.html), Project notes (tasks/crew_report.py now copies memory/kalshi-ai.md to ~/crew-web/kalshi-notes.md), Voice training. SCREEN SAVER (new board, Captain's Office, back wall): Layout and Look editors from the Hub, plus notes. PI WATCH (Security Office monitor wall): Pi health, Alerts, Devices, Family activity, Voice assistant. CONTROL BOARD (Workshop services rack): service lights, Hub controls, Janitor, Memory.
 - Zoom bug fixed: the room insides were redrawn every 1.4 s, which could swallow a tap on a phone; taps are now read on release. Crossfade between ship and room is shorter (less ghosting). Touch callout and tap highlight off.

@@ -1,6 +1,11 @@
 # To do
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 
+## STARSHIP: GO OVER EVERY ROOM AND FIX BUGS (Kylar, 2026-11-06 23:22)
+- Walk through each room one by one (Conference, Captain's Office, Security Office, Training Room, Workshop, Data Archive, Sleeping Quarters, corridors) zoomed in on phone and desktop. For each: every clickable works, text fits, nothing overlaps or ghosts, zoom/drag feels right, the board tabs show real data.
+- Known to check: zoom-in glitches Kylar saw (11-06), Hub tabs (iframes) blank or PIN problems, fly-to leaves the room low on tall phone screens, sample numbers still on Voice training tab, candle overlapping the Screen saver board.
+- Then: Hub merge leftovers (control board restart buttons), Pi screen saver.
+
 ## Open
 - 2026-11-06 FRIENDLY ACTIVITY VIEW (Kylar) FIRST VERSION BUILT 2026-11-06 (activity.html on :8095; still to do: delete per device, per-app alerts, grouping tweaks, name the Unknown list):  a page on the Hub (Pi-hole data) showing each device's activity in 12-hour time (not 24-hour) and with plain-English site/app names instead of raw domains, e.g. googlevideo.com = YouTube video, rbxcdn.com = Roblox, doubleclick.net = ads. Plan: a built-in map of common domains to app names (YouTube, Netflix, Roblox, TikTok, Apple, Google, ads/trackers) plus the AI summarising unknown domains once and caching the answer; group by app so 500 lookups read as 'YouTube, 20 min'; filter by device name (kylar-iphone, sharee-iphone, warren-ipad, living-room-tv); delete button per device; alerts per app (see PI-HOLE WATCHING AND ALERTS). Pi-hole's own page cannot show 12-hour time, so this is our own view.
 - 2026-11-06 NOTIFICATIONS TO KYLAR ONLY (Kylar): Sharee's phone must get none (she keeps admin in Home Assistant). DONE 2026-11-06 in code (alerts.py to HA_LIVE_DEVICE only, Kalshi alerts muted, alerts_check Pi-problems only). Still to do: confirm with Kylar that Sharee gets nothing from us and he gets Pi-problem alerts (run markets/ha_phones.py if HA_LIVE_DEVICE is not set), then find any Home Assistant automations/scripts/Jarvis tools that notify all phones or Sharee's and point them at Kylar only; remove Sharee from notification groups/targets; test one alert.
