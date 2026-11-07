@@ -1,90 +1,4 @@
-2% | +25.6% | 0.33 |
-| 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
-| 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
-| 420s | 0.10 | 44 | 23% | +26.3% | 0.18 |
-| 420s | 0.20 | 3 | 0% | -100.0% | 0.09 |
-| 300s | 0.05 | 77 | 25% | -4.3% | 0.26 |
-| 300s | 0.10 | 36 | 19% | -4.6% | 0.20 |
-| 300s | 0.20 | 2 | 50% | +411.5% | 0.10 |
-| 180s | 0.05 | 63 | 29% | +1.9% | 0.28 |
-| 180s | 0.10 | 32 | 31% | +30.1% | 0.24 |
-| 180s | 0.20 | 1 | 100% | +490.3% | 0.17 |
-| 90s | 0.05 | 66 | 17% | -11.6% | 0.19 |
-| 90s | 0.10 | 35 | 11% | -23.3% | 0.15 |
-| 90s | 0.20 | 6 | 0% | -100.0% | 0.09 |
-| 45s | 0.05 | 35 | 23% | +42.0% | 0.16 |
-| 45s | 0.10 | 33 | 24% | +52.9% | 0.16 |
-| 45s | 0.20 | 21 | 14% | +4.1% | 0.14 |
-
-## How much to trust this
-
-- 307 rounds, many signals x checkpoints: a few will look good by luck. Only a signal that stays on the same side in both halves, at several checkpoints, deserves a real test.
-- Hindsight always finds a great trade. The test that matters is walk-forward: pick the rule on older rounds, test it on newer ones, after fees.
-- Practice only. Nothing here changes any setting.
-(exit 0)
-```
-
-## 2026-11-06 03:17:44 tasks/queue/072-oracle-check.sh
-```
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5459 Nov  6 03:16 /home/kylarlovelady/starship/memory/inbox/oracle-study.md
--rw-rw-r-- 1 kylarlovelady kylarlovelady 5459 Nov  6 03:16 /tmp/oracle-study.out
-366M	/home/kylarlovelady/market-data
-agent_trades.json
-alerts.log
-archive
-calendar.json
-calls.jsonl
-coach_rules.json
-config.json
-entry_stats.json
-env
-exit_rules.json
-exits.jsonl
-hindsight.jsonl
-history
-innovations.jsonl
-island.json
-kalshi_key.pem
-kalshi_raw.json
-kalshi_sync.log
-lab.log
-lab_log.jsonl
-# Hindsight / oracle study (last 7 days)
-
-Rounds with a full recording, a strike and a real Kalshi result: **307** (149 UP, 158 DOWN).
-
-## A. The perfect-hindsight buy (cheapest ask of the side that won, with 3+ s left)
-
-| statistic | value |
-|---|---|
-| rounds with a usable book | 307 |
-| median cheapest winning ask | 39c |
-| average perfect-hindsight profit per contract | 61.1c (157% on cost) |
-| share of rounds where the perfect buy was 30c or less | 33% |
-| share where it was 50c or less | 78% |
-| WHEN in the round the cheapest winning ask was (seconds left) | 0-60 s: 2%, 60-180 s: 5%, 180-420 s: 15%, >420 s: 76% |
-
-Reading: the perfect buy is nearly always a *cheap* winner early in the round that you could not have known about. The rest of this report asks which signals could have pointed to it in advance.
-
-## B. Which signals predict UP/DOWN? (AUC: 0.50 = coin flip, 1.00 = perfect, below 0.50 = points the other way)
-
-Each cell: AUC all rounds (older half / newer half). **Bold** = 0.60 or more (or 0.40 or less) AND the same side of 0.50 in both halves. 'vs market' = rank correlation of the signal with (result minus Kalshi mid), i.e. does it know something the price does not. Roughly +-0.13 is noise at this sample size.
-
-| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
-|---|---|---|---|---|---|---|
-| z (btc vs strike, in sigmas) | **0.77 (0.73 / 0.82)** | **0.85 (0.80 / 0.89)** | **0.89 (0.85 / 0.91)** | **0.93 (0.91 / 0.94)** | **0.98 (0.99 / 0.98)** | **1.00 (1.00 / 0.99)** |
-| dist $ (btc - strike) | **0.78 (0.74 / 0.82)** | **0.86 (0.81 / 0.91)** | **0.90 (0.87 / 0.91)** | **0.93 (0.92 / 0.93)** | **0.98 (0.99 / 0.97)** | **0.99 (1.00 / 0.99)** |
-| mom 10s $ | 0.57 (0.55 / 0.58) | 0.51 (0.52 / 0.50) | 0.49 (0.50 / 0.48) | 0.52 (0.54 / 0.49) | 0.52 (0.49 / 0.54) | 0.53 (0.55 / 0.52) |
-| mom 30s $ | **0.61 (0.62 / 0.61)** | 0.58 (0.61 / 0.56) | 0.54 (0.53 / 0.55) | 0.57 (0.66 / 0.46) | 0.58 (0.57 / 0.60) | 0.56 (0.54 / 0.58) |
-| mom 60s $ | 0.58 (0.55 / 0.60) | **0.65 (0.65 / 0.65)** | 0.56 (0.58 / 0.55) | 0.56 (0.65 / 0.47) | **0.62 (0.62 / 0.60)** | **0.63 (0.61 / 0.65)** |
-| kraken - coinbase $ | 0.48 (0.52 / 0.44) | 0.49 (0.48 / 0.52) | 0.52 (0.53 / 0.51) | 0.43 (0.32 / 0.55) | 0.42 (0.44 / 0.40) | 0.51 (0.48 / 0.55) |
-| trade flow imbalance | 0.50 (0.49 / 0.51) | 0.48 (0.43 / 0.53) | 0.50 (0.51 / 0.51) | 0.53 (0.52 / 0.55) | 0.57 (0.58 / 0.56) | 0.55 (0.59 / 0.52) |
-| coinbase book imbalance | 0.51 (0.69 / 0.41) | 0.47 (0.61 / 0.42) | 0.45 (0.55 / 0.39) | 0.50 (0.54 / 0.51) | 0.53 (0.64 / 0.48) | 0.49 (0.47 / 0.49) |
-| kalshi book imbalance | 0.48 (0.48 / 0.47) | 0.59 (0.57 / 0.61) | 0.45 (0.51 / 0.41) | **0.33 (0.29 / 0.37)** | **0.33 (0.35 / 0.30)** | **0.24 (0.31 / 0.19)** |
-| kalshi mid (crowd) | **0.78 (0.72 / 0.83)** | **0.86 (0.80 / 0.91)** | **0.90 (0.87 / 0.92)** | **0.93 (0.91 / 0.94)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
-| funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
-
-### Does it beat the market price? (rank correlation with result minus Kalshi mid)
+rice? (rank correlation with result minus Kalshi mid)
 
 | signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
 |---|---|---|---|---|---|---|
@@ -593,5 +507,105 @@ REFUSED: contains a command on the deny list
 ```
 wrote /home/kylarlovelady/crew-web/activity.html devices: kylar-iphone, living-room-tv, sharee-iphone, warren-ipad unknown domains: 137
 -rw-rw-r-- 1 kylarlovelady kylarlovelady 31235 Nov  6 20:43 /home/kylarlovelady/crew-web/activity.html
+(exit 0)
+```
+
+## 2026-11-07 10:22:01 tasks/queue/091-kalshi-review-long.sh
+```
+=== review last 72 hours
+TRADE REVIEW, last 72 hours: 10992 (strategy, round) results from 242 rounds with full recordings.
+
+EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
+  v_hold         198    +790.65   55%  +18.1%
+  v_x60222031    167    +427.65   51%   +7.8%
+  v_x96220861    175    +401.29   46%   +6.0%
+  v_one_shot     197    +199.29   55%  +14.1%
+  v_x88221261    131    +185.64   39%   +4.4%
+  v_late         145    +185.07   39%   +3.8%
+  v_x12229262    159    +175.03   50%   +4.9%
+  v_x64216772    197    +163.11   55%   +9.3%
+  hold           241    +151.58   56%   +6.1%
+  v_x60222032    175    +146.60   55%  +10.3%
+  v_x40223631    166    +109.84   52%   +8.0%
+  v_x40223632    187     +84.45   45%   +4.4%
+  v_no_cut       198     +14.35   51%   +0.2%
+  v_snipe_all      1      +2.70  100%   +0.9%
+  v_x80218932    188     -11.97   48%   -0.6%
+  v_x64216771    198     -17.52   42%   -0.2%
+  v_flow_flip    227     -18.27   35%   -0.1%
+  v_x96220872    176     -44.22   38%   -0.9%
+  v_snipe         68     -62.94   79%  -14.2%
+  v_x24220781    179     -68.39   47%   -3.6%
+  v_cut_loose    198     -82.66   45%   -1.4%
+  v_x76218991    163     -96.05   46%   -6.0%
+  v_x76218992    163     -96.05   46%   -6.0%
+  v_x8220762     183    -103.57   42%   -1.8%
+  v_x52220781    131    -103.59   40%   -2.6%
+  v_x28219982    199    -104.77   40%   -2.1%
+  trend          212    -134.06   39%   -2.6%
+  v_x219211      194    -166.67   39%   -2.4%
+  v_x68220542    172    -167.64   37%   -4.1%
+  v_x72222451    191    -175.71   39%   -2.6%
+  mood           207    -180.27   41%   -2.3%
+  v_x36215122    119    -180.92   42%   -5.6%
+  swing          241    -190.95   40%   -1.6%
+  v_x80218931    187    -204.65   39%   -3.1%
+  v_x16217721    204    -210.09   30%   -2.1%
+  flow           209    -216.35   41%   -4.0%
+  v_x52220782    127    -218.38   41%   -5.9%
+  v_x36215121    192    -229.13   36%   -3.5%
+  v_x28219981    200    -257.56   40%   -2.5%
+  signals        203    -285.88   41%   -6.2%
+  v_x12229261    159    -319.39   35%   -8.9%
+  v_x219212      195    -328.46   38%   -3.3%
+=== review last 168 hours
+TRADE REVIEW, last 168 hours: 12088 (strategy, round) results from 366 rounds with full recordings.
+
+EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
+  v_x60222031    167    +427.65   51%   +7.8%
+  v_x96220861    175    +401.29   46%   +6.0%
+  v_x88221261    131    +185.64   39%   +4.4%
+  v_x12229262    159    +175.03   50%   +4.9%
+  v_x64216772    197    +163.11   55%   +9.3%
+  v_x60222032    175    +146.60   55%  +10.3%
+  v_hold         232    +127.74   53%   +2.1%
+  v_x40223631    166    +109.84   52%   +8.0%
+  v_x40223632    187     +84.45   45%   +4.4%
+  v_snipe_all      1      +2.70  100%   +0.9%
+  v_x80218932    188     -11.97   48%   -0.6%
+  v_x64216771    198     -17.52   42%   -0.2%
+  v_flow_flip    227     -18.27   35%   -0.1%
+  v_x96220872    176     -44.22   38%   -0.9%
+  v_one_shot     232     -61.36   53%   -3.2%
+  v_snipe         68     -62.94   79%  -14.2%
+  v_x24220781    179     -68.39   47%   -3.6%
+  v_x76218991    163     -96.05   46%   -6.0%
+  v_x76218992    163     -96.05   46%   -6.0%
+  v_x8220762     183    -103.57   42%   -1.8%
+  v_x52220781    131    -103.59   40%   -2.6%
+  v_x28219982    199    -104.77   40%   -2.1%
+  hold           356    -156.92   53%   -2.3%
+  v_x219211      194    -166.67   39%   -2.4%
+  v_x68220542    172    -167.64   37%   -4.1%
+  v_x72222451    191    -175.71   39%   -2.6%
+  v_x36215122    119    -180.92   42%   -5.6%
+  v_late         166    -197.33   39%   -2.7%
+  v_x80218931    187    -204.65   39%   -3.1%
+  v_x16217721    204    -210.09   30%   -2.1%
+  v_x52220782    127    -218.38   41%   -5.9%
+  v_x36215121    192    -229.13   36%   -3.5%
+  v_x28219981    200    -257.56   40%   -2.5%
+  v_x12229261    159    -319.39   35%   -8.9%
+  v_x219212      195    -328.46   38%   -3.3%
+  v_mood_flip    223    -334.60   39%   -3.3%
+  v_x32221882    176    -335.96   39%   -3.8%
+  v_x68220541    173    -352.75   39%   -4.1%
+  v_x44219232    191    -358.58   39%   -3.7%
+  v_x32221881    176    -457.93   39%   -4.6%
+  v_x16217722    187    -500.01   33%  -10.7%
+  v_no_cut       232    -515.59   50%   -6.4%
+=== config now
+run.json {"active": true, "id": 1793935799, "strategy": "auto", "start": 1000.0}
+config.json {"weights": {"book": 0.25, "momentum": 0.2, "whales": 0.2, "bigtrades": 0.15, "news": 0.1, "fng": 0.05, "funding": 0.05}, "threshold": 12.0, "min_bet": 5.0, "cap": 0, "edge_min": 0.03, "max_trades": 6.0, "slice": 0.1, "min_price": 0.08, "max_price": 0.92, "aggression": 50.0, "floor": 0, "entry_max": 0.8, "entry_min": 0.15}
 (exit 0)
 ```
