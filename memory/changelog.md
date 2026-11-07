@@ -5,6 +5,10 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
 
+## 2026-11-07 Kalshi results and decision: hold to the end on the main wallet (queue 094), v9.8
+- What: 72 h review and take-profit backtest read (details in memory/kalshi-ai.md Plan 2026-11-07). Selling at +25% loses vs holding. Main practice wallet switched to v_hold by queue 094; two later-entry hold tests added; marker v9.8. Live OFF.
+- Status: pushed; runs on the Pi within minutes. 8 PM and 8 AM checks scheduled.
+
 ## 2026-11-07 Kalshi agent v9.5: take-profit and bet-size practice tests (Kylar's ideas), restart; checks scheduled 8 PM and 8 AM
 - What: markets/sim.py new setting TAKE_PCT (sell the whole bet once it is up X% after fees) and 4 take-profit tests (v_take15, v_take25, v_take40, v_take25_cheap) plus 11 flat bet-size tests ($5,10,25,50,100,250,500 per round on hold-to-end: v_hold_s*; $10,50,250,500 on sell-at-+25%: v_take25_s*; new setting FLAT_BET, restart marker v9.6); markets/collector.py restart marker v9.5; markets/take_profit_study.py (backtest, queue 092) and queue 091 (72 h and 7 day review). Also (10:25, Kylar): sell-at-different-percent tests v_take5/10/20/30/50/75/100 and a wider backtest (queue 093). Marker v9.7. Live trading stays OFF.
 - Status: pushed; the Pi restarts market-agent when it pulls. Results come from queue 091/092 and the daily digest.

@@ -80,6 +80,9 @@ VARIANTS = {
     "v_take50": ("Reaction test: bet early, sell at +50%, else hold", "distance", {"TAKE_PCT": 0.5, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take75": ("Reaction test: bet early, sell at +75%, else hold", "distance", {"TAKE_PCT": 0.75, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
     "v_take100": ("Reaction test: bet early, sell at +100%, else hold", "distance", {"TAKE_PCT": 1.0, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25}),
+    # LATER-ENTRY HOLD TESTS (2026-11-07 backtest: favourite bought 120 s in and held was the best cell, +4.9% per $, still inside the noise): same distance entry, no selling, wait before the first bet.
+    "v_hold_after60": ("Reaction test: hold to the end, first bet after 1 minute", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 60}),
+    "v_hold_after120": ("Reaction test: hold to the end, first bet after 2 minutes", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "ENTRY_AFTER": 120}),
     "v_take25_cheap": ("Reaction test: early bet only up to 55c, sell at +25%, else hold", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "ENTRY_MAX": 0.55}),
     # BET SIZE TESTS (Kylar, 2026-11-07 10:22-10:23): the same entry and rule with a flat bet of $5 up to $500 per round (built in steps like any bet). Compare profit PER DOLLAR staked: size cannot create an edge, it only scales the result and the fees. A big bet can also move the price or bust the wallet; the sim limits fills to what the book shows.
     "v_hold_s5": ("Size test: hold to the end, $5 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 5.0, "FLAT_BET": 5.0}),
