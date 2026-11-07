@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 To-do added: friendly Pi-hole activity view (12-hour time, plain-English site names)
+- Where: memory/todo.md
+- Status: planned; notifications fix is first.
+
 ## 2026-11-06 Queue 089 was refused (the queue never reads key files). Replaced by markets/ha_phones.py that Kylar runs himself on the Pi
 - Status: waiting for Kylar to run it and name his phone.
 
