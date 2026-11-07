@@ -13,6 +13,8 @@ except Exception: pass
 try:
     subprocess.run(["python3", os.path.join(R, "tasks", "pihole_activity.py")], capture_output=True, timeout=90)   # private friendly Pi-hole activity page (~/crew-web/activity.html, tailnet only)
 except Exception: pass
+try: shutil.copyfile(os.path.join(R, "memory", "kalshi-ai.md"), os.path.join(W, "kalshi-notes.md"))   # Kalshi project notes for the Training Room board (public repo text only)
+except OSError: pass
 for n in ("hub-extra.json", "hub-alerts.json", "index.html"):
     try: shutil.copyfile(os.path.join(R, n), os.path.join(W, n))
     except OSError: pass

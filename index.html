@@ -481,6 +481,7 @@ FT(Wt, 'E', uy(mc), 0.64, 'TODAY', 7, '#ffd166');
 FT(Wt, 'E', uy(mc), 0.255, 'No excuses. Only uptime.', 7, '#ffd166');
 hitBox('declog', 'Decision log', L0, 0, 0.68, L1, 0.1, 3.13, 8); hitBox('crewboard', 'Crew board', 4.95, 0, 0.68, 6.65, 0.1, 3.13, 8); hitBox('mission', 'Mission board', 0, M0, 0.68, 0.1, M1, 3.13, 8);
 trophyG('trophy:captain', 'ACHIEVEMENTS', 7.6, 2.8, [4, 2, 1], true);
+boardW(10.7, 12.6); FT(Wt, 'E', uy(11.65), 0.85, 'SCREEN SAVER', 8, '#ffd166'); Wt.decals.push(R('E', uy(10.9), uy(12.4), 0.3, 0.7, '#12284a', '#5ce1ff', 1)); Wt.decals.push(R('E', uy(11.0), uy(11.6), 0.55, 0.62, '#5ce1ff')); FT(Wt, 'E', uy(11.65), 0.42, 'EDIT CLOCK', 7, '#7be0ff'); hitBox('saver', 'Screen saver editor', 0, 10.7, 0.68, 0.1, 12.6, 3.13, 8);
 [6.5, 11.5].forEach((y) => { Bx(0.0, y - 0.2, 0.06, 0.4, 0.62, '#c9a227', 1.55); Bx(0.06, y - 0.04, 0.26, 0.08, 0.06, '#c9a227', 1.62); Cy(0.36, y, 0.13, 0.06, '#c9a227', 1.6); Cy(0.36, y, 0.065, 0.4, '#f2efe6', 1.66); Cy(0.36, y, 0.035, 0.13, '#ffb030', 2.06, { top: '#ffe080' }); glow(0.36, y, 2.15, 30, '#ffd166', 0.14); glow(0.36, y, 2.15, 14, '#ffd166', 0.3); });
 Cy(0.55, 0.65, 0.22, 0.12, '#3a3f4a', 0); Cy(0.55, 0.65, 0.04, 2.7, '#c9a227', 0.12); Cy(0.55, 0.65, 0.09, 0.12, '#ffd166', 2.8);
 const fd = []; for (let i = 0; i < 13; i++) fd.push(R('E', 0, 1, i / 13, (i + 1) / 13, i % 2 === 0 ? '#f2efe6' : '#b22234'));
@@ -630,7 +631,7 @@ N.decals.push(R('S', ux(1.0), ux(6.4), 0.2, 0.92, '#0a1426', '#c9a227', 2));
 N.decals.push(R('S', ux(1.1), ux(6.3), 0.8, 0.9, '#3a2f12'));
 [[1.5, 3.0, 0.55], [3.4, 4.9, 0.55], [5.0, 6.0, 0.55], [2.2, 4.2, 0.3]].forEach((b) => N.decals.push(R('S', ux(b[0]), ux(b[1]), b[2], b[2] + 0.13, '#12284a', '#5ce1ff', 1)));
 N.decals.push(R('S', ux(3.0), ux(3.4), 0.6, 0.62, '#5ce1ff')); N.decals.push(R('S', ux(4.9), ux(5.0), 0.6, 0.62, '#5ce1ff')); N.decals.push(R('S', ux(4.2), ux(4.4), 0.43, 0.55, '#5ce1ff'));
-FT(N, 'S', ux(3.7), 0.85, 'TRAINING', 10, '#ffd166');
+FT(N, 'S', ux(3.7), 0.85, 'KALSHI', 10, '#ffd166');
 hitBox('trainboard', 'Training board', 1.0, 0, 0.68, 6.4, 0.1, 3.13, 8);
 const bs = []; for (let r = 0; r < 4; r++) for (let k = 0; k < 8; k++) { const u0 = 0.07 + k * 0.11, v0 = 0.07 + r * 0.23; bs.push(R('E', u0, u0 + 0.09, v0, v0 + 0.19, ['#c0302a', '#2f5a9a', '#c9a227', '#3a7a4a'][(k + r) % 4], '#0a1426', 0.8)); }
 Bx(0, 1.2, 0.55, 2.4, 2.4, '#4a2c1a', 0, { decals: [R('E', 0.02, 0.98, 0.02, 0.98, '#241810', '#c9a227', 2)].concat(bs) });
@@ -1389,6 +1390,7 @@ return o;
 }
 
 }
+window.__REAL = REAL;
 window.__shipApi = {
 KS: KS, ROOMS: ROOMS,
 centre: (id) => { const r = ROOMS.filter((q) => q.built === id)[0]; if (!r) return null; return [440 + ((r.x + r.w / 2) - (r.y + r.d / 2)) * 44 * KS, 230 + ((r.x + r.w / 2) + (r.y + r.d / 2)) * 22 * KS - 1.5 * 44 * KS, r]; },
@@ -1413,7 +1415,7 @@ function kfit() { return Math.min(W / SHIP_W, H / SHIP_H) * 0.96; }
 function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 function hash(a, b, c) { var h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x7f4a7c15, 0xc2b2ae35) ^ Math.imul(c + 0x165667b1, 0x27d4eb2f); h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12; h = Math.imul(h, 0x297a2d39); h ^= h >>> 15; return (h >>> 0) / 4294967296; }
 var css = D.createElement('style');
-css.textContent = 'html,body{margin:0;overflow:hidden;background:#02030a;overscroll-behavior:none}body{cursor:grab;-webkit-user-select:none;user-select:none}body.drag{cursor:grabbing}' +
+css.textContent = 'html,body{margin:0;overflow:hidden;background:#02030a;overscroll-behavior:none;touch-action:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}body{cursor:grab;-webkit-user-select:none;user-select:none}body.drag{cursor:grabbing}' +
   '#zoom-root{position:fixed!important;left:0;top:0;width:100vw!important;height:100vh!important;background:transparent!important;touch-action:none!important;z-index:1;overflow:hidden}' +
   '#sky{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:0}' +
   '#rooms{position:fixed;left:0;top:0;width:2440px;height:1400px;transform-origin:0 0;pointer-events:none;z-index:2}' +
@@ -1489,7 +1491,8 @@ addEventListener('pointermove', function (e) {
     if (d0 > 0) { cam.x -= (mx1 - mx0) / cam.k; cam.y -= (my1 - my0) / cam.k; zoomAt(mx1, my1, cam.k * d1 / d0); }
   }
 }, true);
-function up(e) { if (!ptrs[e.pointerId]) return; delete ptrs[e.pointerId]; if (!Object.keys(ptrs).length) { down = false; D.body.classList.remove('drag'); if (moved > 7) supp = Date.now() + 300; } }
+function up(e) { if (!ptrs[e.pointerId]) return; delete ptrs[e.pointerId]; if (!Object.keys(ptrs).length) { down = false; D.body.classList.remove('drag'); if (moved > 7) supp = Date.now() + 300; else if (e.type === 'pointerup') tapAt(e.clientX, e.clientY); } }
+function tapAt(x, y) { var els = D.elementsFromPoint(x, y), b = null; for (var i = 0; i < els.length; i++) { if (els[i].classList && els[i].classList.contains('hit')) { b = els[i]; break; } } if (!b) return; var comp = window.__ship; if (comp) comp.setState({ open: b.getAttribute('data-open'), scene: b.getAttribute('data-room'), prev: null }); }
 addEventListener('pointerup', up, true); addEventListener('pointercancel', up, true);
 addEventListener('wheel', function (e) {
   if (inUi(e)) return; e.preventDefault(); anim = null;
@@ -1603,7 +1606,7 @@ function buildRoom(id, hull) {
 }
 function updateRooms(now) {
   var api = window.__shipApi; if (!api) return; var hulls = api.hulls(); if (!hulls.length) return;
-  var o = smooth((cam.k - 1.25) / 0.7);
+  var o = smooth((cam.k - 1.55) / 0.35);
   hulls.forEach(function (h) {
     var id = h.id; if (!id || id === 'wifi') return;
     var el = rl[id], poly = hullOf(h);
@@ -1618,10 +1621,6 @@ function updateRooms(now) {
     if (!down && now - el.__t > 1400) { var rb = buildRoom(id, poly); if (rb) { var ri = el.querySelector('.ri'); ri.innerHTML = rb.html; ri.style.transform = 'translate(' + rb.tx.toFixed(2) + 'px,' + rb.ty.toFixed(2) + 'px) scale(' + window.__shipApi.KS + ')'; el.__t = now; } }
   });
 }
-roomsEl.addEventListener('click', function (e) {
-  var b = e.target.closest && e.target.closest('.hit'); if (!b || Date.now() < supp) return;
-  var comp = window.__ship; if (comp) comp.setState({ open: b.getAttribute('data-open'), scene: b.getAttribute('data-room'), prev: null });
-});
 
 // ---------- hub pages open on top of the ship ----------
 var HUB = (location.protocol === 'http:' || location.protocol === 'https:') ? location.protocol + '//' + location.hostname + ':8081' : '';
@@ -1666,6 +1665,109 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 window.__nav = { fly: fly, pane: openPane, home: home, cam: cam, meteor: spawn, goTo: goTo, closePane: closePane };
+})();
+</script>
+<script>
+/* BOARDS (Kylar 2026-11-06): click a board on the wall, get a full panel with tabs. Native tabs show real numbers from the Pi's JSON files;
+   "Full" tabs open the real pages (Kalshi dashboard, Hub pages) inside the panel. */
+(function () {
+'use strict';
+var D = document;
+var css = D.createElement('style');
+css.textContent = '#board{position:fixed;inset:0;z-index:70;background:rgba(3,6,16,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center}#board.on{display:flex}' +
+'#board .bx{width:min(1100px,96vw);height:min(860px,94vh);background:#0a1230;border:2px solid #2a3a6b;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 80px #000;color:#e8eeff;font-family:"Chakra Petch",system-ui,sans-serif}' +
+'#board .bh{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0e1a42;border-bottom:1px solid #2a3a6b}#board .bt{font:700 clamp(14px,2vw,20px) Orbitron,sans-serif;letter-spacing:.1em;color:#ffd166}' +
+'#board .bc{font:600 22px system-ui;color:#e8f6ff;background:#10223e;border:2px solid #5ce1ff;border-radius:10px;min-width:46px;min-height:42px;cursor:pointer}' +
+'#board .tabs{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;background:#081028;border-bottom:1px solid #1b2a56;-webkit-overflow-scrolling:touch}#board .tab{flex:none;font:600 15px "Chakra Petch",system-ui;color:#9fb0d6;background:#101c44;border:1px solid #2a3a6b;border-radius:999px;padding:9px 16px;min-height:42px;cursor:pointer}#board .tab.on{color:#06101e;background:#5ce1ff;border-color:#5ce1ff}' +
+'#board .body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px;position:relative;touch-action:pan-y;-webkit-user-select:text;user-select:text}#board iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b1220}' +
+'#board .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:12px}#board .c{background:#101c44;border:1px solid #2a3a6b;border-left:6px solid #3a5a8a;border-radius:12px;padding:10px 12px}#board .c b{display:block;font-size:13px;color:#9fb0d6;letter-spacing:.06em;text-transform:uppercase}#board .c span{display:block;font-size:20px;font-weight:700;margin-top:3px;word-break:break-word}#board .c i{display:block;font-style:normal;font-size:13px;color:#9fb0d6;margin-top:3px}' +
+'#board p{margin:8px 0;line-height:1.45;font-size:16px}#board h3{margin:14px 0 6px;font:700 15px Orbitron,sans-serif;letter-spacing:.1em;color:#5ce1ff}#board pre{white-space:pre-wrap;font:14px/1.5 "Chakra Petch",system-ui;background:#081028;border:1px solid #1b2a56;border-radius:10px;padding:12px}' +
+'#board a.btn,#board button.btn{display:inline-block;margin:4px 6px 4px 0;font:600 16px "Chakra Petch",system-ui;color:#e8f6ff;background:#14204a;border:2px solid #5ce1ff;border-radius:12px;padding:12px 16px;min-height:46px;cursor:pointer;text-decoration:none}';
+D.head.appendChild(css);
+var el = D.createElement('div'); el.id = 'board'; el.innerHTML = '<div class="bx"><div class="bh"><span class="bt"></span><button class="bc" aria-label="Close">&#10005;</button></div><div class="tabs"></div><div class="body"></div></div>'; D.body.appendChild(el);
+var bt = el.querySelector('.bt'), tabs = el.querySelector('.tabs'), body = el.querySelector('.body'), cur = null, timer = null;
+var G = '#2fbf71', Y = '#ffd166', R = '#ff3b3b', B = '#3a5a8a';
+function esc(s) { return String(s === undefined || s === null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function card(k, v, edge, sub) { return '<div class="c" style="border-left-color:' + (edge || B) + '"><b>' + esc(k) + '</b><span>' + esc(v) + '</span>' + (sub ? '<i>' + esc(sub) + '</i>' : '') + '</div>'; }
+function grid(a) { return '<div class="g">' + a.join('') + '</div>'; }
+function real() { return window.__REAL || {}; }
+function hub() { return (location.protocol === 'http:' || location.protocol === 'https:') ? location.protocol + '//' + location.hostname + ':8081' : ''; }
+function frame(u) { return { frame: u }; }
+function money(v) { return (v === null || v === undefined || isNaN(v)) ? '?' : (v < 0 ? '-$' : '$') + Math.abs(Number(v)).toFixed(2); }
+var mk = null, mkT = 0;
+function getMarket(cb) { if (mk && Date.now() - mkT < 10000) return cb(mk); fetch('market.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (d) { mk = d; mkT = Date.now(); cb(d); }).catch(function () { cb(null); }); }
+function btn(label, pane) { return '<button class="btn" data-pane="' + pane + '">' + esc(label) + '</button>'; }
+
+var BOARDS = {
+trainboard: { title: 'KALSHI PROJECT', tabs: [
+ { name: 'Overview', fn: function (done) { getMarket(function (d) {
+   if (!d) return done('<p>No Kalshi data yet. The practice agent writes market.json on the Pi; this fills in when it is running.</p>');
+   var run = (d.sim && d.sim.run) || {}, sc = (d.scorecard && d.scorecard.all) || {}, k = d.kalshi || {}, lv = d.live || {}, age = d.updated ? Math.round((Date.now() / 1000 - d.updated) / 60) : null;
+   var h = grid([card('Practice wallet', money(run.equity), run.pnl >= 0 ? G : R, 'Cash ' + money(run.bal) + ' · started ' + money(run.start)), card('Practice profit', money(run.pnl), run.pnl >= 0 ? G : R, (run.windows || 0) + ' rounds, ' + (run.trades || 0) + ' trades'),
+    card('Bitcoin now', d.price ? '$' + Number(d.price).toFixed(0) : '?', B, k.strike ? 'Target ' + Number(k.strike).toFixed(0) : ''), card('Kalshi says Up', k.yes_pct !== undefined ? k.yes_pct + '%' : '?', B, k.ticker || ''),
+    card('Our model says Up', d.p_model !== undefined && d.p_model !== null ? Math.round(d.p_model * 100) + '%' : '?', B, 'Lean: ' + (lv.lean || 'none')), card('Calls right (all time)', sc.pct !== undefined ? sc.pct + '%' : '?', sc.pct >= 55 ? G : Y, (sc.right || 0) + ' of ' + (sc.scored || 0)),
+    card('Live trading', run.live ? 'ON' : 'OFF (practice only)', run.live ? R : G, 'Real money: nothing is spent'), card('Data age', age === null ? '?' : age + ' min', age !== null && age < 10 ? G : Y)]);
+   if (d.note) h += '<p>' + esc(d.note) + '</p>'; done(h); }); } },
+ { name: 'Strategies', fn: function (done) { getMarket(function (d) { var s = d && d.sim && d.sim.strategies; if (!s || !s.length) return done('<p>No strategy results yet.</p>');
+   done('<p>Six practice strategies each trade a pretend $1,000 wallet.</p>' + grid(s.map(function (q) { return card(q.label, money(q.bal), q.pnl >= 0 ? G : R, 'Profit ' + money(q.pnl) + ' · wins ' + q.win_pct + '% · ' + q.trades + ' trades'); }))); }); } },
+ { name: 'Lessons', fn: function (done) { getMarket(function (d) { if (!d) return done('<p>No data yet.</p>'); var h = '<h3>RECENT LESSONS</h3>';
+   (d.lessons || []).slice(0, 12).forEach(function (l) { h += '<div class="c" style="margin-bottom:8px;border-left-color:' + (l.won ? G : R) + '"><i>' + new Date(l.start * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + ' · called ' + esc(l.call) + ', went ' + esc(l.outcome) + '</i><p style="margin:4px 0 0">' + esc(l.text) + '</p></div>'; });
+   var L = d.learning && d.learning.signals; if (L) { h += '<h3>WHICH SIGNALS WE TRUST</h3>'; h += grid(Object.keys(L).map(function (k) { var q = L[k]; return card(k, q.verdict, q.verdict === 'trusted' ? G : q.verdict === 'not trusted' ? R : Y, q.n + ' tested' + (q.pct !== null && q.pct !== undefined ? ', ' + q.pct + '% right' : '')); })); }
+   done(h); }); } },
+ { name: 'Full dashboard', fn: function () { return frame('live.html'); } },
+ { name: 'Project notes', fn: function (done) { fetch('kalshi-notes.md?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.text(); }).then(function (t) { done('<pre>' + esc(t) + '</pre>'); }).catch(function () { done('<p>Notes copy not on the Pi yet. It appears after the next 5-minute report run.</p>'); }); } },
+ { name: 'Voice training', fn: function (done) { done(grid([card('Today', 'Wake word practice: Hey Jarvis', B), card('Accuracy', 'Hey Jarvis 92% (sample)', Y, 'Needs more quiet-room samples'), card('Next', 'Penelope wake word later', B)]) + '<p>Real numbers will replace these samples later.</p>'); } }
+]},
+saver: { title: 'SCREEN SAVER EDITOR', tabs: [
+ { name: 'Layout (move the clock)', fn: function () { return frame(hub() + '/layout'); } },
+ { name: 'Look (colors and fonts)', fn: function () { return frame(hub() + '/settings'); } },
+ { name: 'About', fn: function (done) { done('<p>This edits what the Pi screen shows over the wallpaper: the clock, date and weather boxes. The Hub PIN is asked inside the panel.</p><p>Coming next: a frosted bubble behind the words and an automatic placer that puts the time and info in the quietest spots of each wallpaper.</p>'); } }
+]},
+monitors: { title: 'PI WATCH (SECURITY OFFICE)', tabs: [
+ { name: 'Pi health', fn: function (done) { var X = real().extra, pi = X && X.pi, sv = (X && X.services) || {}; if (!X) return done('<p>Waiting for the Pi report.</p>');
+   var bad = Object.keys(sv).filter(function (k) { return sv[k] !== 'active'; }); var ago = X.time ? Math.round((Date.now() / 1000 - X.time) / 60) : null;
+   done(grid([card('Temperature', (pi && pi.temp) || '?', G), card('Memory', (pi && pi.mem) || '?', G), card('Disk', (pi && pi.disk) || '?', G), card('Uptime', (pi && pi.uptime) || '?', B), card('Services', bad.length ? 'Not running: ' + bad.join(', ') : 'All running', bad.length ? R : G, Object.keys(sv).length + ' watched'), card('Report age', ago === null ? '?' : ago + ' min', ago !== null && ago < 90 ? G : Y)])); } },
+ { name: 'Alerts', fn: function (done) { var a = real().alerts, act = (a && a.active) || []; done(act.length ? act.map(function (t) { return '<div class="c" style="border-left-color:' + R + ';margin-bottom:8px"><span>' + esc(t) + '</span></div>'; }).join('') : '<div class="c" style="border-left-color:' + G + '"><span>No open alerts</span></div>'); } },
+ { name: 'Devices', fn: function () { return frame(hub() + '/network'); } },
+ { name: 'Family activity', fn: function () { return frame('activity.html'); } },
+ { name: 'Voice assistant', fn: function (done) { var X = real().extra, J = X && X.jarvis; if (!J) return done('<p>No voice report yet.</p>'); var hang = Object.keys(J.hangups || {}).map(function (k) { return k + ' ' + J.hangups[k]; }).join(', ');
+   done(grid([card('Turns in 24 h', J.turns24 || 0, B), card('First words', J.first_avg === null || J.first_avg === undefined ? 'not measured' : J.first_avg + ' s avg', B), card('Hang-ups', hang || 'none', hang ? Y : G), card('Errors', J.errors || 0, J.errors ? R : G)])); } }
+]},
+services: { title: 'CONTROL BOARD (WORKSHOP)', tabs: [
+ { name: 'Services', fn: function (done) { var X = real().extra, sv = (X && X.services) || {}, ks = Object.keys(sv); if (!ks.length) return done('<p>No service report yet.</p>');
+   done('<p>Green = running. Restart controls are in the Hub tab (PIN needed).</p>' + grid(ks.map(function (k) { return card(k, sv[k], sv[k] === 'active' ? G : R); }))); } },
+ { name: 'Hub controls', fn: function () { return frame(hub() + '/hub'); } },
+ { name: 'Janitor', fn: function () { return frame(hub() + '/janitor'); } },
+ { name: 'Memory', fn: function () { return frame(hub() + '/memory'); } }
+]}
+};
+
+function show(tabIx) {
+  var b = BOARDS[cur]; if (!b) return; var t = b.tabs[tabIx];
+  [].forEach.call(tabs.children, function (x, i) { x.classList.toggle('on', i === tabIx); });
+  clearTimeout(timer); body.innerHTML = '<p>Loading...</p>';
+  var r = t.fn(function (html) { if (cur && BOARDS[cur].tabs[tabIx] === t) { body.innerHTML = html; if (t.live) timer = setTimeout(function () { show(tabIx); }, 15000); } });
+  if (r && r.frame) { body.innerHTML = ''; var f = D.createElement('iframe'); f.src = r.frame; body.appendChild(f); }
+}
+function open(id, tab) {
+  var b = BOARDS[id]; if (!b) return; cur = id; bt.textContent = b.title; tabs.innerHTML = '';
+  b.tabs.forEach(function (t, i) { var x = D.createElement('button'); x.className = 'tab'; x.type = 'button'; x.textContent = t.name; x.addEventListener('click', function () { show(i); }); tabs.appendChild(x); });
+  el.classList.add('on'); show(tab || 0);
+}
+function close() { el.classList.remove('on'); cur = null; clearTimeout(timer); body.innerHTML = ''; }
+el.querySelector('.bc').addEventListener('click', close);
+el.addEventListener('pointerdown', function (e) { if (e.target === el) close(); });
+body.addEventListener('click', function (e) { var p = e.target.closest && e.target.closest('[data-pane]'); if (p && window.__nav) window.__nav.pane(p.getAttribute('data-pane')); });
+addEventListener('keydown', function (e) { if (e.key === 'Escape' && el.classList.contains('on')) { close(); e.stopImmediatePropagation(); } }, true);
+['pointerdown', 'wheel', 'touchstart'].forEach(function (n) { el.addEventListener(n, function (e) { e.stopPropagation(); }, { passive: true }); });
+// route clicks on those wall boards here instead of the old small sheets
+var tries = setInterval(function () {
+  var c = window.__ship; if (!c || c.__bpatched) { if (c) clearInterval(tries); return; }
+  c.__bpatched = true; var orig = c.setState.bind(c);
+  c.setState = function (s, cb) { if (s && s.open && BOARDS[s.open]) { open(s.open); s = Object.assign({}, s, { open: null }); } return orig(s, cb); };
+  clearInterval(tries);
+}, 300);
+window.__boards = { open: open, close: close, ids: Object.keys(BOARDS) };
 })();
 </script>
 </body>

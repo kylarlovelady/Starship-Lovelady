@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Starship boards with tabs: Kalshi (Training Room), Screen saver editor (Captain), Pi Watch (Security), Control board (Workshop); tap fix
+- What: index.html. Clicking those wall boards opens a full panel with tabs. KALSHI (Training Room wall): Overview, Strategies, Lessons (real numbers from market.json), Full dashboard (live.html), Project notes (tasks/crew_report.py now copies memory/kalshi-ai.md to ~/crew-web/kalshi-notes.md), Voice training. SCREEN SAVER (new board, Captain's Office, back wall): Layout and Look editors from the Hub, plus notes. PI WATCH (Security Office monitor wall): Pi health, Alerts, Devices, Family activity, Voice assistant. CONTROL BOARD (Workshop services rack): service lights, Hub controls, Janitor, Memory.
+- Zoom bug fixed: the room insides were redrawn every 1.4 s, which could swallow a tap on a phone; taps are now read on release. Crossfade between ship and room is shorter (less ghosting). Touch callout and tap highlight off.
+- Status: tested here (phone size, boards open, no script errors). Hub tabs (iframes) cannot be tested from here; Kylar to confirm. Goes live on the Pi within ~5 min of the push.
+
 ## 2026-11-06 Starship rebuilt as one endless space (v1: sky, zoom, drag, clock, meteors, intro)
 - What: index.html. Removed the TABS ship, the header text and the isolated room view. Added an endless starfield you can drag (mouse, touch, arrow keys) and zoom (wheel, pinch, + / -; 0 or double-click = fit). Zoomed all the way out the ship is a speck; zooming in brings it to the middle, and rooms open up in place with their clickable items. 12-hour Orbitron clock in a frosted bubble (top right). Meteor on the hour, comet at :30, shooting star at :15 and :45, random spots. First visit per session: THE STARSHIP fades in, holds 3 s, fades out, ship flies in.
 - Hub pages (Network, Janitor, Memory, Layout, Look, Markets, Activity) open as a full-screen panel from room items (Esc or X closes). Control board and read-only Hub status are NOT done yet.
