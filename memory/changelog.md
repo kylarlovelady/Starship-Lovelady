@@ -5,6 +5,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
 
+## 2026-11-07 Home Jarvis install confirmed on the Pi; wake threshold 0.7 -> 0.8 (queue 098)
+- What: queue 097 installed the mic switch (port 8098 listening) and watcher; first report: 21 wake-ups in 7 days, 14 false (6 at 2-4 AM). Queue 098 raises the threshold to 0.8 with automatic restore. Status: queued; result to be read at the 4 PM review.
+
 ## 2026-11-07 Home Jarvis: mic switch on the Starship, false wake-up watcher, wake sensitivity tuner
 - What: tasks/jarvis_mic.py (web switch on Pi port 8098, tailnet/home Wi-Fi only; mute, unmute, mute 1 h / 4 h / until 8 AM; uses the existing ~/hub-dashboard/muted file that hub-mic.py, the OLED and the lights already honour); tasks/jarvis_watch.py (every 5 min: labels each wake-up from audio stats as empty / us talking / real command, writes ~/crew-web/jarvis-wake.json and memory/inbox/jarvis-wake-report.md); tasks/jarvis_tune.sh (changes the openwakeword --threshold between 0.55 and 0.92, restores on failure, logs); tasks/jarvis_install.sh + queue 097 (cron keep-alive). Starship: a small JARVIS MIC chip under the clock (green = listening, red = muted, tap to open) and a Jarvis mic tab first on the Workshop Control board (and Security Office Pi Watch) with big Mute/Unmute and the false wake-up numbers.
 - Findings (queues 095/096): wake word model openWakeWord threshold 0.7 in Docker; mic via hub-mic.py; only 21 wake clips recorded in about 2 days; satellite restarts by itself if killed.
