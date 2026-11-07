@@ -1,11 +1,4 @@
-rice? (rank correlation with result minus Kalshi mid)
-
-| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
-|---|---|---|---|---|---|---|
-| z (btc vs strike, in sigmas) | -0.00 | +0.16 | +0.24 | +0.32 | +0.45 | +0.45 |
-| dist $ (btc - strike) | +0.01 | +0.18 | +0.26 | +0.31 | +0.44 | +0.43 |
-| mom 10s $ | +0.08 | -0.05 | -0.08 | -0.01 | +0.03 | +0.09 |
-| mom 30s $ | +0.02 | +0.04 | +0.03 | +0.03 | +0.09 | +0.07 |
+3 | +0.09 | +0.07 |
 | mom 60s $ | -0.06 | +0.15 | +0.01 | -0.06 | +0.09 | +0.13 |
 | kraken - coinbase $ | +0.02 | +0.05 | +0.05 | -0.09 | -0.18 | +0.10 |
 | trade flow imbalance | +0.03 | -0.04 | -0.01 | +0.08 | +0.15 | +0.21 |
@@ -607,5 +600,15 @@ EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
 === config now
 run.json {"active": true, "id": 1793935799, "strategy": "auto", "start": 1000.0}
 config.json {"weights": {"book": 0.25, "momentum": 0.2, "whales": 0.2, "bigtrades": 0.15, "news": 0.1, "fng": 0.05, "funding": 0.05}, "threshold": 12.0, "min_bet": 5.0, "cap": 0, "edge_min": 0.03, "max_trades": 6.0, "slice": 0.1, "min_price": 0.08, "max_price": 0.92, "aggression": 50.0, "floor": 0, "entry_max": 0.8, "entry_min": 0.15}
+(exit 0)
+```
+
+## 2026-11-07 10:25:02 tasks/queue/092-take-profit-study.sh
+```
+
+Average over every entry time and side: hold -3.9%; take +15% -8.0%; take +25% -8.0%; take +40% -7.4%.
+
+Reading: if take-profit rows beat the 'hold' row of the same entry and side in both halves, the idea helps; if not, it is just selling winners early and paying the fee twice.
+108 /home/kylarlovelady/starship/memory/inbox/take-profit-study.md
 (exit 0)
 ```
