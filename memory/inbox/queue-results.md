@@ -1,11 +1,4 @@
-| +0.11 |
-
-## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
-
-| left | min gap | bets | win rate | profit per $ staked | avg cost |
-|---|---|---|---|---|---|
-| 600s | 0.05 | 69 | 41% | +1.5% | 0.40 |
-| 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
+2% | +25.6% | 0.33 |
 | 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
 | 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
 | 420s | 0.10 | 44 | 23% | +26.3% | 0.18 |
@@ -595,3 +588,10 @@ ALL
 
 ## 2026-11-06 20:31:01 tasks/queue/089-ha-notify-targets.sh
 REFUSED: contains a command on the deny list
+
+## 2026-11-06 20:43:01 tasks/queue/090-pihole-activity-now.sh
+```
+wrote /home/kylarlovelady/crew-web/activity.html devices: kylar-iphone, living-room-tv, sharee-iphone, warren-ipad unknown domains: 137
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 31235 Nov  6 20:43 /home/kylarlovelady/crew-web/activity.html
+(exit 0)
+```
