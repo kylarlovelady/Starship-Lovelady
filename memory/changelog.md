@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Friendly Pi-hole activity page built (12-hour time, plain-English names, per device)
+- What: tasks/pihole_activity.py reads Pi-hole's database and writes ~/crew-web/activity.html (about 250 known sites/apps in tasks/pihole_names.json, unknown ones listed at the bottom for Claude to name). crew_report.py refreshes it every 5 minutes. Page is on the tailnet only: http://loveladymainaihub.taild703ca.ts.net:8095/activity.html . PRIVACY: browsing history is never written into this public repo.
+- Not done yet: alerts per app, delete a device's history, blocking for Warren's iPad (todo.md).
+- Status: pushed; queue 090 builds the first copy.
+
 ## 2026-11-06 Alert phone set on the Pi: only mobile_app_kylars_phone (Sharee's phone is mobile_app_sharees_iphone, not used by our alerts)
 - Done by Kylar running markets/ha_phones.py set. Where: ~/market-data/alert_phone.txt on the Pi (not in repo).
 - Status: done; Kylar to say if Sharee still gets anything (then it is a Home Assistant automation).

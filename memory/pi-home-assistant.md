@@ -72,3 +72,5 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 - 2026-11-06 Pi-hole rollout: Sharee's iPhone (192.168.1.228) connected and blocking. Next: iPad, then TVs after hardening.
 
 - 2026-11-06 Alerts: our alerts go ONLY to notify.mobile_app_kylars_phone (file ~/market-data/alert_phone.txt on the Pi). Sharee's is mobile_app_sharees_iphone: only Home Assistant's own device notifications (Blink, thermostat) may go to her. Kalshi alerts muted; phone pushes only for Pi problems. Change with: python3 ~/starship/markets/ha_phones.py set NAME | all.
+
+- 2026-11-06 Friendly Pi-hole activity page: http://loveladymainaihub.taild703ca.ts.net:8095/activity.html (tailnet only; built by tasks/pihole_activity.py from Pi-hole's database; site names in tasks/pihole_names.json; own overrides in ~/crew-web/my-site-names.json on the Pi). Never copy its contents into the repo.

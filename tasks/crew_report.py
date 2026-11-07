@@ -10,6 +10,9 @@ out = {"time": now}
 try:
     import subprocess; subprocess.run(["python3", os.path.join(R, "tasks", "projects_board.py")], capture_output=True, timeout=20)   # adds the Projects board rows to hub-extra.json
 except Exception: pass
+try:
+    subprocess.run(["python3", os.path.join(R, "tasks", "pihole_activity.py")], capture_output=True, timeout=90)   # private friendly Pi-hole activity page (~/crew-web/activity.html, tailnet only)
+except Exception: pass
 for n in ("hub-extra.json", "hub-alerts.json", "index.html"):
     try: shutil.copyfile(os.path.join(R, n), os.path.join(W, n))
     except OSError: pass
