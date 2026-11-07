@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-06 Alerts to Kylar's phone only (Kylar: Sharee must not get notifications)
+- What: markets/alerts.py now sends only to phones listed in ~/market-data/alert_phone.txt (if the file exists); queue 089 lists the phones and which automations notify, to pick Kylar's. Not active until the file is written and the agent restarts.
+- Status: step 1 of 2.
+
 ## 2026-11-06 Device names written into Pi-hole's client table (queue 088)
 - Result: pi-hub .107, kylar-iphone .142, sharee-iphone .228, warren-ipad .240, living-room-tv .130; DNS restarted and listening. Note: .106 (second Pi address) has no name.
 - Status: done; Kylar to confirm on the dashboard.

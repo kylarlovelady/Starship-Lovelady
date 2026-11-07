@@ -43,6 +43,14 @@ def _targets(base, token):
     for d in _call(base + "/api/services", token):
         if d.get("domain") == "notify":
             names += [s for s in (d.get("services") or {}) if s.startswith("mobile_app_")]
+    # Kylar only (2026-11-06): if alert_phone.txt exists (one notify service name per line, e.g. mobile_app_xxx), send ONLY to those.
+    # If the file is missing, behave as before. If the file exists but matches no phone, send to nobody rather than to everyone.
+    try:
+        allow = [l.strip() for l in open(os.path.join(DIR, "alert_phone.txt")) if l.strip() and not l.startswith("#")]
+    except OSError:
+        allow = None
+    if allow is not None:
+        names = [n for n in names if n in allow]
     _svc.update({"t": time.time(), "names": names})
     return names
 
