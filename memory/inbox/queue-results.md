@@ -1,19 +1,4 @@
-3 | +0.09 | +0.07 |
-| mom 60s $ | -0.06 | +0.15 | +0.01 | -0.06 | +0.09 | +0.13 |
-| kraken - coinbase $ | +0.02 | +0.05 | +0.05 | -0.09 | -0.18 | +0.10 |
-| trade flow imbalance | +0.03 | -0.04 | -0.01 | +0.08 | +0.15 | +0.21 |
-| coinbase book imbalance | -0.00 | -0.01 | -0.05 | -0.00 | +0.06 | -0.07 |
-| kalshi book imbalance | +0.04 | +0.14 | -0.00 | -0.04 | -0.06 | -0.14 |
-| kalshi mid (crowd) | -0.01 | +0.15 | +0.24 | +0.31 | +0.42 | +0.42 |
-| funding rate | -0.02 | -0.01 | -0.03 | -0.02 | -0.01 | +0.11 |
-
-## C. Simple edge rule: model chance Phi(z) vs the Kalshi ask, buy the side with the bigger gap if gap > threshold (after fee), hold to the result
-
-| left | min gap | bets | win rate | profit per $ staked | avg cost |
-|---|---|---|---|---|---|
-| 600s | 0.05 | 69 | 41% | +1.5% | 0.40 |
-| 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
-| 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
+ | 0.39 |
 | 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
 | 420s | 0.10 | 44 | 23% | +26.3(exit 0)
 ```
@@ -610,5 +595,23 @@ Average over every entry time and side: hold -3.9%; take +15% -8.0%; take +25% -
 
 Reading: if take-profit rows beat the 'hold' row of the same entry and side in both halves, the idea helps; if not, it is just selling winners early and paying the fee twice.
 108 /home/kylarlovelady/starship/memory/inbox/take-profit-study.md
+(exit 0)
+```
+
+## 2026-11-07 10:28:02 tasks/queue/093-take-profit-study-wide.sh
+```
+
+Rules positive in the whole sample, in BOTH halves, and with a 90% range above zero: **0** of 264 (with this many rules tried, a couple would pass by luck alone).
+
+Average over every entry time and side: hold -3.9%; take +5% -8.1%; take +10% -7.9%; take +15% -8.0%; take +20% -8.1%; take +25% -8.0%; take +30% -7.9%; take +40% -7.4%; take +50% -6.8%; take +75% -6.4%; take +100% -5.9%.
+
+Reading: if take-profit rows beat the 'hold' row of the same entry and side in both halves, the idea helps; if not, it is just selling winners early and paying the fee twice.
+(exit 0)
+```
+
+## 2026-11-07 10:29:30 tasks/queue/094-run-hold-to-end.sh
+```
+before: {'active': True, 'strategy': 'auto', 'live': None, 'start': 1000.0}
+after: {'active': True, 'strategy': 'v_hold', 'live': None, 'start': 1000.0}
 (exit 0)
 ```
