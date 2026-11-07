@@ -1,6 +1,4 @@
-| bets | win rate | profit per $ staked | avg cost |
-|---|---|---|---|---|---|
-| 600s | 0.05 | 68 | 40% | +0.8% | 0.39 |
++0.8% | 0.39 |
 | 600s | 0.10 | 31 | 42% | +25.6% | 0.33 |
 | 600s | 0.20 | 4 | 50% | +27.0% | 0.39 |
 | 420s | 0.05 | 89 | 29% | +5.1% | 0.28 |
@@ -641,3 +639,6 @@ INFO:root:Ready
 [fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081
 (exit 0)
 ```
+
+## 2026-11-07 12:31:01 tasks/queue/096-jarvis-mic-files.sh
+REFUSED: sudo is not allowed in queue scripts
