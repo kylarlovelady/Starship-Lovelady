@@ -1,13 +1,4 @@
-** | **0.33 (0.35 / 0.30)** | **0.24 (0.31 / 0.19)** |
-| kalshi mid (crowd) | **0.78 (0.72 / 0.83)** | **0.86 (0.80 / 0.91)** | **0.90 (0.87 / 0.92)** | **0.93 (0.91 / 0.94)** | **0.97 (0.98 / 0.96)** | **0.97 (1.00 / 0.93)** |
-| funding rate | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) | 0.50 (0.50 / 0.50) |
-
-### Does it beat the market price? (rank correlation with result minus Kalshi mid)
-
-| signal | 600s left | 420s left | 300s left | 180s left | 90s left | 45s left |
-|---|---|---|---|---|---|---|
-| z (btc vs strike, in sigmas) | -0.00 | +0.16 | +0.24 | +0.32 | +0.45 | +0.45 |
-| dist $ (btc - strike) | +0.01 | +0.18 | +0.26 | +0.31 | +0.44 | +0.43 |
+| +0.43 |
 | mom 10s $ | +0.08 | -0.05 | -0.08 | -0.01 | +0.03 | +0.09 |
 | mom 30s $ | +0.02 | +0.04 | +0.03 | +0.03 | +0.09 | +0.07 |
 | mom 60s $ | -0.06 | +0.15 | +0.01 | -0.06 | +0.09 | +0.13 |
@@ -573,5 +564,21 @@ fe80::8064:fff:fe79:13c4||
 fe80::44aa:1cff:fe5a:a4cb||
 == local DNS names set (dns.hosts)
 []
+(exit 0)
+```
+
+## 2026-11-06 20:16:01 tasks/queue/087-pihole-names.sh
+```
+[ 192.168.1.107 pi-hub, 192.168.1.142 kylar-iphone, 192.168.1.228 sharee-iphone, 192.168.1.240 warren-ipad, 192.168.1.130 living-room-tv ]
+== dns.hosts now
+[ 192.168.1.107 pi-hub, 192.168.1.142 kylar-iphone, 192.168.1.228 sharee-iphone, 192.168.1.240 warren-ipad, 192.168.1.130 living-room-tv ]
+== name lookups via Pi-hole
+kylar-iphone -> Traceback (most recent call last):
+sharee-iphone -> Traceback (most recent call last):
+warren-ipad -> Traceback (most recent call last):
+living-room-tv -> Traceback (most recent call last):
+pi-hub -> Traceback (most recent call last):
+== reverse lookup of the iPad
+Traceback (most recent call last):
 (exit 0)
 ```
