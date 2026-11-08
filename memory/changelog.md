@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Kitchen screen case v3
+- Fixed v2 flaw (pod floated case off the wall), cable fit review, vents and speaker slots; added 90 degree HDMI adapter to buy list. Status: draft, dry fit needed.
+
 ## 2026-11-08 Kitchen screen case v2
 - Rebuilt around the maker's real dimensions and port layout (hardware/kitchen-screen-case). Added screw assortment to buy list. Status: draft, needs ruler check of mounting holes and a test print.
 
