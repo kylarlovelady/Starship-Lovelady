@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Queued Pi probe 101-slicer-probe.sh
+- Kylar wants prints sliced on the Pi and sent to his Bambu printer (AMS, ASA in slot A3). Probe checks slicer options and finds the printer on the LAN. Result lands in memory/inbox/queue-results.md. Printer LAN access code stays on the Pi, never in the repo.
+
 ## 2026-11-08 Kitchen screen case: FINAL = 38 mm slim build (Kylar chose thinner)
 - Bare Pi 5 + Active Cooler on 4 plate posts, no kit case. Vent path: door B + door C slots in, 4 plate grille slots, 6 top louvers out (added one). 46 checks pass, 8 meshes watertight.
 - Print set zip now holds stl_slim parts. Viewer opens on 38 mm. 49 mm kept as an unused option. Check Pi temp after a day.
