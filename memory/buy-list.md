@@ -19,6 +19,7 @@ Bought items stay here under "Bought" with the date. Nothing is deleted.
 | Kitchen screen (living room build) | 27W USB-C power supply (5V/5A) or 2-port charger that also feeds the screen | Pi 5 needs 5A; one cord out of the frame | 2026-11-08 |
 | Kitchen screen (living room build) | microSD 32GB+ (A2) | Pi OS | 2026-11-08 |
 | Kitchen screen (living room build) | Micro-HDMI to HDMI cable about 6 in; USB-A to USB-C cable about 6 in (touch) | Short internal cables, hidden in the 3D-printed ASA shell | 2026-11-08 |
+| Kitchen screen (living room build) | M2.5 and M3 screw assortment (M2.5 x 12 mm x4 for the screen, M3 x 10 mm x4 for the case halves), optional brass heat-set inserts | Screw the screen and the two case halves together | 2026-11-08 |
 | Pi hardening | Battery backup (UPS) for the Pi, separate small power supply, Ethernet run | Pi always on, independent of the big PC | 2026-11-07 |
 
 ## Bought

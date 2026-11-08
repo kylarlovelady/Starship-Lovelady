@@ -51,3 +51,5 @@ Started 2026-11-07 (Kylar by voice, from a photo of the living room). Owner: Kyl
 
 ## Done
 (nothing yet)
+
+- 2026-11-08 case v2: real screen data (235x142x8; all ports on one short edge; ONE USB-C 'Touch & Power', full-size HDMI-IN, 3.5mm audio out; speakers on the rear top; M2.5 mounting points near the corners). Case now 277x154 mm, 20.2 mm slab, 44.2 mm at the pod, with a 30 mm cable bay on the port side, screen held by 4 M2.5 posts, speaker sound slots in the top rim. Only ONE USB cable is needed (2nd SUNGUY is spare). Hole positions are estimates from the diagram; not compiled in OpenSCAD yet.

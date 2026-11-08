@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Kitchen screen case v2
+- Rebuilt around the maker's real dimensions and port layout (hardware/kitchen-screen-case). Added screw assortment to buy list. Status: draft, needs ruler check of mounting holes and a test print.
+
 ## 2026-11-08 Kitchen screen case draft
 - Added hardware/kitchen-screen-case (scad + blueprint). Status: draft, needs screen measurements and a test print; OpenSCAD compile not checked.
 
