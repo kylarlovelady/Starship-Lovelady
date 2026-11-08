@@ -22,6 +22,15 @@ Started 2026-11-07 (Kylar by voice, from a photo of the living room). Owner: Kyl
 - Power: 1000 W+ ATX 3.1 supply with the native 12V-2x6 cable for a 5090; two intake and two exhaust fans minimum; plan airflow for the cubby (open back or vented sides, no sealed cabinet).
 - Wiring: use power over Ethernet (PoE). One Cat6 cable per spot (wall touchscreen, calendar, later a camera or speaker) from one PoE switch, with a PoE splitter or a PoE-powered panel at the far end. For running cable in walls: Cat6 (use in-wall rated CM/CL2 cable), fish tape or glow rods, stud finder, low-voltage mounting brackets (old-work), wall plates with keystone jacks or brush plates, drywall saw. Safety: stay away from mains wiring in the walls, do not run network cable alongside it, check for studs and fire blocks, and consider an electrician or low-voltage installer for any in-wall work Kylar is unsure about.
 
+## Kitchen/living room screen plan 2026-11-08 (Kylar)
+- Screen he already owns: GeekPi 10.1 in, 1024x600 IPS, capacitive touch, built-in dual speakers (bought Oct 16). Touch does not work now: these panels need a separate USB cable from the computer for touch (HDMI carries picture and sound only). First check: is a USB cable running to the panel's touch port?
+- Goal: mount where the KEYS holder is, as few cords as possible. Wire route over the doorway (photo) is long; studs may force an attic run.
+- Plan A (no wall/attic run): small Pi behind the panel on Wi-Fi, one short power cable to a kitchen outlet, touch and HDMI are short cables inside the mount. Screen shows the Starship/dashboard from the main Pi over the network.
+- Plan B: one Cat6 with PoE to a splitter behind the panel (power and network in one cable).
+- Truly wireless is not possible for a lit screen (it needs power); closest is Wi-Fi plus one power cable.
+- Speakers: panel speakers first; pebble speakers (check if USB is power only; Pi 5 has no headphone jack so a USB audio dongle is needed) on a shelf later. Jarvis answers and chimes go to the panel or pebbles; music routes to the Lovesac via Music Assistant plus a small network streamer or Bluetooth (later step).
+- Needed from Kylar: is there an outlet near the key holder; pebble speaker model; which cables came with the screen.
+
 ## Open questions for Kylar
 1. Cubby measurements (width, height, depth, clearance) and whether the back/sides are open.
 2. Budget for stage 1 (case, PSU, board, CPU, 64 GB RAM, starter NVMe) and for the graphics card.

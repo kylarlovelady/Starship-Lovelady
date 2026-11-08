@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Living room: kitchen screen plan
+- Wrote Plan A/B for the GeekPi touch screen at the key holder (living-room-build.md). Status: waiting on outlet/cable answers.
+
 ## 2026-11-08 Starship zoomed rooms: removed stray agents and candle
 - Removed the three agents queued outside the Captain's Office door and the agents/Captain seated in the Conference Room chairs in the zoomed-in room view (agents live in their own rooms). Removed the wall candle that sat on the Screen saver board. Status: pushed, page loads with no errors.
 
