@@ -1480,7 +1480,7 @@ function home(ms) { goTo(SHIP[0], SHIP[1], kfit(), ms || 800); }
 
 // ---------- pointer / wheel / pinch ----------
 var ptrs = {}, vel = { x: 0, y: 0 }, moved = 0, last = null;
-function inUi(e) { var t = e.target; return !!(t && t.closest && (t.closest('.sheet') || t.closest('#pane'))); }
+function inUi(e) { var t = e.target; return !!(t && t.closest && (t.closest('.sheet') || t.closest('#pane') || t.closest('#board'))); }
 addEventListener('pointerdown', function (e) {
   if (inUi(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
   ptrs[e.pointerId] = { x: e.clientX, y: e.clientY }; down = true; moved = 0; anim = null; vel.x = vel.y = 0;
@@ -1499,7 +1499,7 @@ addEventListener('pointermove', function (e) {
   }
 }, true);
 function up(e) { if (!ptrs[e.pointerId]) return; delete ptrs[e.pointerId]; if (!Object.keys(ptrs).length) { down = false; D.body.classList.remove('drag'); if (moved > 7) supp = Date.now() + 300; else if (e.type === 'pointerup') tapAt(e.clientX, e.clientY); } }
-function tapAt(x, y) { var els = D.elementsFromPoint(x, y), b = null; for (var i = 0; i < els.length; i++) { if (els[i].classList && els[i].classList.contains('hit')) { b = els[i]; break; } } if (!b) return; var comp = window.__ship; if (comp) comp.setState({ open: b.getAttribute('data-open'), scene: b.getAttribute('data-room'), prev: null }); }
+function tapAt(x, y) { var bd = D.getElementById('board'); if ((bd && bd.classList.contains('on')) || pane.classList.contains('on') || Date.now() < (window.__noTapUntil || 0)) return; var els = D.elementsFromPoint(x, y), b = null; for (var i = 0; i < els.length; i++) { if (els[i].classList && els[i].classList.contains('hit')) { b = els[i]; break; } } if (!b) return; var comp = window.__ship; if (comp) comp.setState({ open: b.getAttribute('data-open'), scene: b.getAttribute('data-room'), prev: null }); }
 addEventListener('pointerup', up, true); addEventListener('pointercancel', up, true);
 addEventListener('wheel', function (e) {
   if (inUi(e)) return; e.preventDefault(); anim = null;
@@ -1613,7 +1613,7 @@ function buildRoom(id, hull) {
 }
 function updateRooms(now) {
   var api = window.__shipApi; if (!api) return; var hulls = api.hulls(); if (!hulls.length) return;
-  var o = smooth((cam.k - 1.55) / 0.35);
+  var o = smooth((cam.k - 1.55) / 0.12);
   hulls.forEach(function (h) {
     var id = h.id; if (!id || id === 'wifi') return;
     var el = rl[id], poly = hullOf(h);
@@ -1781,7 +1781,7 @@ function open(id, tab) {
   b.tabs.forEach(function (t, i) { var x = D.createElement('button'); x.className = 'tab'; x.type = 'button'; x.textContent = t.name; x.addEventListener('click', function () { show(i); }); tabs.appendChild(x); });
   el.classList.add('on'); show(tab || 0);
 }
-function close() { el.classList.remove('on'); cur = null; clearTimeout(timer); body.innerHTML = ''; }
+function close() { window.__noTapUntil = Date.now() + 500; el.classList.remove('on'); cur = null; clearTimeout(timer); body.innerHTML = ''; }
 el.querySelector('.bc').addEventListener('click', close);
 el.addEventListener('pointerdown', function (e) { if (e.target === el) close(); });
 body.addEventListener('click', function (e) { var p = e.target.closest && e.target.closest('[data-pane]'); if (p && window.__nav) window.__nav.pane(p.getAttribute('data-pane')); });

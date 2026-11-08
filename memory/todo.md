@@ -76,3 +76,11 @@ Open items on top. When finished, move the line to Done with the date (never del
 - 2026-11-06 reviewed in the sniper/close studies (was: Kalshi: review 12 h results in the morning....)
 
 - [ ] 2026-11-06 Galaxy Note 20 Ultra repurpose: Kylar asked for ideas (terminal / screen / sensors / Linux). Ask: truck or home, has SIM, which carrier model. Termux + Tailscale needs no unlock; full Linux needs an unlocked bootloader (US Snapdragon models are locked).
+
+## Starship video review 2026-11-08 (still open)
+- Clock and Jarvis mic chip cover wall boards when zoomed in.
+- Tap highlight is a plain rectangle that clips (library, captain).
+- Candle overlaps the Screen saver board.
+- Crew achievements and other boards still show sample data.
+- Screen saver editor: preview text tiny on phone.
+- Crew sprites at the door cut off at the bottom when zoomed.

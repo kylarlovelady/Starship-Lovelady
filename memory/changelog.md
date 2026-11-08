@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Starship video review (Kylar's screen recording)
+- Fixed: closing a board (e.g. Screen saver editor) also opened the Crew achievements board under it (tap fell through to the room). Taps are now ignored while a board or pane is open and for half a second after closing.
+- Fixed: ghosting double image while zooming into a room (room layer fade window made much shorter).
+- Seen in the video, still open (filed in todo.md): clock and mic chip cover wall boards when zoomed; hit highlight box is a plain rectangle that clips; crew-achievements and other boards still show sample data; candle overlaps Screen saver board; tiny text in the editor preview; sprites cut off at the door when zoomed. Status: first two fixed and pushed.
+
 ## 2026-11-08 Daily Claude check (06:20 Central)
 - What: read inbox (no new Jarvis notes; wake report, home mic report, Kalshi digest and snipe autopsy already recorded), Pi status green and fresh (sync 06:00), queue 098 ran (wake threshold now 0.8). Refreshed projects.md, wrote brief.md. Nothing due today; API location check is due tomorrow. Pi untouched, no orders placed.
 - Status: pushed to main (see git log).
