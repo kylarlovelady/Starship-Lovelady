@@ -1,15 +1,4 @@
- -3.5%
-  v_one_shot      33     -26.54   39%  -13.4%
-  v_x60222031     34     -31.36   38%   -3.0%
-  v_no_cut        34     -48.98   44%   -4.3%
-  v_late          25     -54.40   32%   -8.1%
-  v_x88221261     25     -54.40   32%   -8.1%
-  flow            35     -59.72   31%  -10.5%
-  v_x80218932     38     -60.76   39%  -16.8%
-  v_x24220781     38     -60.76   39%  -16.8%
-  v_x76218991     38     -60.76   39%  -16.8%
-  v_x76218992     38     -60.76   39%  -16.8%
-  v_x24220782     39     -79.50   31%   -5.0%
+0782     39     -79.50   31%   -5.0%
   v_x72222452     39     -86.56   31%   -5.5%
   v_x44219231     39     -86.56   31%   -5.5%
   v_x88221262     39     -86.56   31%   -5.5%
@@ -657,5 +646,28 @@ arch: aarch64; python: Python 3.13.5
 ## 2026-11-08 13:13:01 tasks/queue/100-build-case-v6.sh
 ```
 node is not installed on this Pi
+(exit 0)
+```
+
+## 2026-11-08 13:46:01 tasks/queue/101-slicer-probe.sh
+```
+arch: aarch64  os: Debian GNU/Linux 13 (trixie)  ram: 8058 MB  disk free: 200G
+flatpak: no
+snap: no
+orca-slicer: no
+bambu-studio: no
+prusa-slicer: no
+slic3r: no
+mosquitto_pub: no
+curl: /usr/bin/curl
+prusa-slicer:
+  Installed: (none)
+  Candidate: 2.9.2+dfsg-1
+slic3r:
+  Installed: (none)
+  Candidate: (none)
+ModuleNotFoundError: No module named 'paho'
+printers seen on LAN (ssdp, 4s):
+none: TimeoutError
 (exit 0)
 ```
