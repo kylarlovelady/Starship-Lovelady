@@ -1,0 +1,6 @@
+Kitchen screen case v6: print notes (black ASA)
+Parts (stl/): body_left, body_right (plate down), faceplate_left, faceplate_right (face down), door_A, door_B, door_C (stand upright, use a brim), feet_x4 (or use rubber pads).
+Settings: 0.2 mm layers, 3 perimeters, 15% infill, enclosure closed, brim on the faceplates and doors. Tabs under the screen have 45 degree supports built in; no support needed.
+Print door_A and body_left first. Check that the door swings and the M3 x 30 pin slides in from the front (top) with the faceplate off. The pin screws into the lowest knuckle, which is 2.7 mm so the thread bites.
+Hardware: 20 x M2.5 x 12 (faceplate), 4 x M2.5 4 to 8 mm (screen tabs, pick the length at the dry fit), 4 x M2.5 x 20 (join the halves), 3 x M3 x 30 (hinge pins).
+Not confirmed yet: screw hole positions and standoff height on the back of the screen, Pi kit case size and position, plug lengths. Dry fit with the real parts before printing everything.

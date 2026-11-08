@@ -1,6 +1,12 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Kitchen screen case v6 (print-ready files, 3D viewer, CAD pipeline)
+- What: new generator (hardware/cad-kit/csg.mjs + hardware/kitchen-screen-case/v6/case.mjs) replaces the uncompiled SCAD (moved to old/). Outputs watertight STLs in v6/stl: body left/right halves (split so any bed over 160 mm works), faceplate halves, doors A/B/C, feet. Faceplate screws on (20 x M2.5 x 12), doors hinge on vertical M3 x 30 pins hidden under the faceplate, symmetric 18 mm side bays, corner tabs hold the screen (v5 posts were 34 mm tall and could not be reached by a 12 mm screw: fixed).
+- Checks (v6/verify.mjs): doors swing clear 0 to 110 deg, screen/Pi/speakers/driver board/USB-C plug fit, all meshes watertight. Open: HDMI adapter + straight plug needs about 50 mm, bay gives 36 to 37 (maybe buy a short flexible right-angle HDMI extension); screw hole positions, standoff height (3 mm assumed), Pi case size are estimates until the Nov 10 dry fit.
+- Also: interactive 3D viewer (v6/viewer.html, published as an artifact), blueprint.png v6, cad-kit README + example + generic STL viewer (view.mjs), queue jobs 099-cad-setup.sh (Pi Python CAD toolbox) and 100-build-case-v6.sh (rebuild and check on the Pi). Cart: supply swapped to SANOOV 27W $10.99; subtotal $245.64.
+- Status: built and checked here; NOT yet printed or dry-fitted.
+
 ## 2026-11-08 Kitchen screen case v5
 - Screw-on front faceplate (8 black M2.5 x 12), two hinged side/bottom doors (M3 x 30 hinge pins), 6 mm walls, vents kept (top slots, fan grille, speaker slots, door intake). Buy: 6-pack angled HDMI adapter, Kernmax M2.5 screw kit. Status: draft, NOT test-compiled; print one hinge first; door B position depends on the Nov 10 dry fit.
 

@@ -1,0 +1,169 @@
+<title>Kitchen Screen Case</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: a CAD-style viewport with a part/spec rail; the viewport leads, the rail is the reference sheet. */
+:root{--bg:#eceff3;--panel:#f8f9fb;--fg:#1b2230;--muted:#5d6779;--line:#d3d9e2;--accent:#c2570c;--ok:#1d7a4a;--warn:#a36200;--vp1:#f6f8fb;--vp2:#cfd6e0;--chip:#e3e8ef;
+--case:#34363d;--display:#2c6fd6;--f-display:"Barlow Semi Condensed",system-ui,sans-serif;--f-body:"IBM Plex Sans",system-ui,sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161d;--panel:#171c25;--fg:#e6eaf1;--muted:#97a1b3;--line:#2a3140;--accent:#ff9f4a;--ok:#4cc38a;--warn:#e6b44c;--vp1:#2c3441;--vp2:#161b24;--chip:#232a37;--case:#3b3e47;--display:#3d86f0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161d;--panel:#171c25;--fg:#e6eaf1;--muted:#97a1b3;--line:#2a3140;--accent:#ff9f4a;--ok:#4cc38a;--warn:#e6b44c;--vp1:#2c3441;--vp2:#161b24;--chip:#232a37;--case:#3b3e47;--display:#3d86f0;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--f-body);margin:0;padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font:600 26px/1.1 var(--f-display);letter-spacing:.01em;margin:0}
+h2{font:600 15px/1.2 var(--f-display);letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;color:var(--muted)}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;padding-block:14px 10px}
+header p{margin:0;color:var(--muted);font-size:13px}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start;padding-bottom:28px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+.vp{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,var(--vp1),var(--vp2));height:min(70vh,640px);min-height:340px;touch-action:none}
+canvas{width:100%;height:100%;display:block}
+.bar{position:absolute;left:8px;right:8px;display:flex;flex-wrap:wrap;gap:6px}
+.bar.top{top:8px}.bar.bot{bottom:8px;align-items:center}
+button,.chip{font:500 12px var(--f-mono);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:4px;padding:5px 9px;cursor:pointer}
+button:hover{border-color:var(--accent)}button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+:root[data-theme="dark"] button[aria-pressed="true"]{color:#1a1206}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button[aria-pressed="true"]{color:#1a1206}}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sl{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:4px 9px;font:500 12px var(--f-mono)}
+.sl input{width:110px;accent-color:var(--accent)}
+.rail{display:flex;flex-direction:column;gap:18px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{padding:5px 6px 5px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:500 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ok{color:var(--ok);font-family:var(--f-mono)}.warn{color:var(--warn);font-family:var(--f-mono)}
+ul{margin:0;padding-left:18px}li{margin:3px 0}
+.tg{display:flex;flex-wrap:wrap;gap:6px}
+.note{color:var(--muted);font-size:12.5px;margin:8px 0 0}
+</style>
+<header><h1>Kitchen Screen Case</h1><p>v6 for the GeekPi 10.1 in touch screen + Pi 5 &middot; drag to rotate, scroll or pinch to zoom, right-drag or two fingers to pan</p></header>
+<div class="wrap">
+ <div class="vp" id="vp"><canvas id="gl"></canvas>
+  <div class="bar top" id="views"></div>
+  <div class="bar bot">
+   <label class="sl" for="ex">Explode <input id="ex" type="range" min="0" max="100" value="0"></label>
+   <span id="doorbtns" class="tg"></span>
+  </div>
+ </div>
+ <div class="rail">
+  <section class="card"><h2>Show</h2><div class="tg" id="tg"></div><p class="note" id="msg"></p></section>
+  <section class="card"><h2>Print parts</h2>
+   <table><tr><th>Part</th><th>Size mm</th><th>Print</th></tr>
+    <tr><td>Body, left half</td><td class="n">144 x 157 x 45</td><td>plate down</td></tr>
+    <tr><td>Body, right half</td><td class="n">144 x 155 x 45</td><td>plate down</td></tr>
+    <tr><td>Faceplate, 2 halves</td><td class="n">142 x 155 x 4</td><td>face down</td></tr>
+    <tr><td>Doors A, B, C</td><td class="n">114 x 8 x 30</td><td>upright, brim</td></tr>
+    <tr><td>Feet x4</td><td class="n">&#8960; 14 x 4</td><td>or rubber pads</td></tr></table>
+   <p class="note">Black ASA. 4 mm walls minimum, 3 perimeters, 15% infill. Halves fit any bed over 160 mm. The assembled case is 283.8 x 154.8 x 49 mm, 53 mm off the wall with feet.</p></section>
+  <section class="card"><h2>Hardware</h2><ul>
+   <li>20 &times; M2.5 &times; 12 black cap screws, faceplate</li>
+   <li>4 &times; M2.5, 4 to 8 mm, screen to the corner tabs (length set at the dry fit)</li>
+   <li>4 &times; M2.5 &times; 20, joins the two halves</li>
+   <li>3 &times; M3 &times; 30, door hinge pins (yours)</li>
+   <li>2 wall screws for the keyholes, 150 mm apart</li></ul></section>
+  <section class="card"><h2>Fit checks</h2>
+   <table>
+    <tr><td>Doors A, B, C swing 0 to 110&deg;</td><td class="ok">clear</td></tr>
+    <tr><td>Screen, faceplate, 8 mm thickness</td><td class="ok">clear</td></tr>
+    <tr><td>Pi kit case, 64 x 95 x 31, left strip</td><td class="ok">clear</td></tr>
+    <tr><td>Both speaker pads, driver board</td><td class="ok">clear</td></tr>
+    <tr><td>USB-C right-angle plug, 17 mm bay</td><td class="ok">clear</td></tr>
+    <tr><td>All parts watertight, no open edges</td><td class="ok">8 of 8</td></tr>
+    <tr><td>HDMI adapter + straight plug</td><td class="warn">tight</td></tr></table>
+   <p class="note">The adapter plus a straight full-size HDMI plug needs roughly 50 mm past the port. The case has 36 mm down the edge or 37 mm toward the wall. A short flexible right-angle HDMI extension solves it. Hole positions, plug lengths and the Pi case size are estimates until the Nov 10 dry fit.</p></section>
+ </div>
+</div>
+<script>
+const DATA=__DATA__;
+(function(){
+const M=DATA.meta, cv=document.getElementById('gl'), gl=cv.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:true});
+const msg=document.getElementById('msg');
+if(!gl){msg.textContent='This browser has no WebGL2, so the 3D view cannot draw. Open the page in a current Safari or Chrome.';return;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function hex(h){h=h.replace('#','');if(h.length==3)h=h.split('').map(c=>c+c).join('');return[0,2,4].map(i=>parseInt(h.substr(i,2),16)/255);}
+const VS=`#version 300 es
+in vec3 p;uniform mat4 uM,uV,uP;out vec3 vp,wp;
+void main(){vec4 w=uM*vec4(p,1.);wp=w.xyz;vec4 v=uV*w;vp=v.xyz;gl_Position=uP*v;}`;
+const FS=`#version 300 es
+precision highp float;in vec3 vp,wp;uniform vec3 uC,uC2;uniform float uEm,uSpec,uMode;out vec4 o;
+void main(){vec3 n=normalize(cross(dFdx(vp),dFdy(vp)));if(n.z<0.)n=-n;vec3 v=normalize(-vp);
+vec3 L1=normalize(vec3(-.5,.7,.6)),L2=normalize(vec3(.7,.2,.5)),L3=normalize(vec3(0.,-.6,.5));
+float d=max(dot(n,L1),0.)*.62+max(dot(n,L2),0.)*.28+max(dot(n,L3),0.)*.18;
+float hemi=.28+.12*n.y;vec3 c=uC;if(uMode>.5){c=mix(uC2,uC,clamp((wp.y+70.)/140.,0.,1.));}
+vec3 h1=normalize(L1+v);float sp=pow(max(dot(n,h1),0.),48.)*uSpec;float rim=pow(1.-max(dot(n,v),0.),3.)*.18;
+vec3 col=c*(hemi+d)+vec3(sp)+vec3(rim)*(.4+c)+c*uEm;o=vec4(col,1.);}`;
+function sh(t,s){const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x;}
+const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);gl.useProgram(pr);
+const U={};['uM','uV','uP','uC','uC2','uEm','uSpec','uMode'].forEach(n=>U[n]=gl.getUniformLocation(pr,n));
+const loc=gl.getAttribLocation(pr,'p');
+function mkMesh(f32){const vao=gl.createVertexArray();gl.bindVertexArray(vao);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,f32,gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,0,0);return{vao,n:f32.length/3};}
+function boxMesh(x0,x1,y0,y1,z0,z1){const q=[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]];
+ const f=[[0,1,2,3],[5,4,7,6],[4,0,3,7],[1,5,6,2],[3,2,6,7],[4,5,1,0]],a=[];
+ f.forEach(F=>{[0,1,2,0,2,3].forEach(i=>a.push(...q[F[i]]));});return mkMesh(new Float32Array(a));}
+function cylMesh(cx,cy,r,z0,z1,n){const a=[];for(let i=0;i<n;i++){const t0=2*Math.PI*i/n,t1=2*Math.PI*(i+1)/n;const x0=cx+r*Math.cos(t0),y0=cy+r*Math.sin(t0),x1=cx+r*Math.cos(t1),y1=cy+r*Math.sin(t1);
+ a.push(x0,y0,z0,x1,y1,z0,x1,y1,z1,x0,y0,z0,x1,y1,z1,x0,y0,z1,cx,cy,z1,x0,y0,z1,x1,y1,z1,cx,cy,z0,x1,y1,z0,x0,y0,z0);}return mkMesh(new Float32Array(a));}
+function dec(b64){const s=atob(b64),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);const i16=new Int16Array(u.buffer),f=new Float32Array(i16.length);for(let i=0;i<i16.length;i++)f[i]=i16[i]/100;return f;}
+// ---- parts ----
+const ox=M.ox,oy=M.oy,zS=M.zS,zTop=M.zTop,W=M.P.W,H=M.P.H,T=M.P.T;
+const parts=[];const groups={};
+function add(o){o.mesh=o.mesh||mkMesh(dec(DATA.parts[o.id].b64));o.off=o.off||[0,0,0];o.ex=o.ex||[0,0,0];o.ang=0;o.tgt=0;parts.push(o);(groups[o.g]=groups[o.g]||[]).push(o);return o;}
+add({id:'body_left',g:'case',c:'case',spec:.5});add({id:'body_right',g:'case',c:'case',spec:.5,ex:[30,0,0]});parts[0].ex=[-30,0,0];
+add({id:'faceplate_left',g:'face',c:'case',spec:.6,off:[0,0,zTop],ex:[-30,0,70]});add({id:'faceplate_right',g:'face',c:'case',spec:.6,off:[0,0,zTop],ex:[30,0,70]});
+[['door_A',[-1,0]],['door_B',[0,-1]],['door_C',[1,0]]].forEach(([id,n])=>add({id,g:'doors',c:'case',spec:.6,ex:[n[0]*40,n[1]*40,0],door:DATA.doors[id]}));
+const fx=ox-16,fy=oy-16;[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([i,j])=>add({mesh:cylMesh(i*fx,j*fy,7,-4,0,28),g:'feet',c:'case',spec:.2,ex:[0,0,-25]}));
+add({mesh:boxMesh(-W/2,W/2,-H/2,H/2,zS,zS+T),g:'screen',c:'scr',spec:.3,ex:[0,0,35]});
+add({mesh:boxMesh(-111.4,111.4,-62.6,62.6,zS+T,zS+T+.2),g:'screen',c:'disp',spec:.4,em:.55,grad:1,ex:[0,0,35]});
+add({mesh:boxMesh(-114,-50,-49,46,zS-31,zS),g:'pi',c:'pi',spec:.5,ex:[0,0,14]});
+add({mesh:boxMesh(-43,39,-35,19,zS-6,zS),g:'pi',c:'brd',spec:.2,ex:[0,0,14]});
+[-60,62].forEach(c=>add({mesh:boxMesh(c-15,c+15,45,62,zS-12,zS),g:'pi',c:'spk',spec:.2,ex:[0,0,14]}));
+add({mesh:boxMesh(-W/2-17,-W/2,-6,3,zS+1,zS+6),g:'cab',c:'usb',spec:.3,ex:[-25,0,35]});
+add({mesh:boxMesh(-W/2-14,-W/2,-43,-27,zS+.5,zS+6.5),g:'cab',c:'hdmi',spec:.3,ex:[-25,0,35]});
+add({mesh:boxMesh(-ox*1.6,ox*1.6,-oy*1.6,oy*1.6,-4.3,-4.1),g:'wall',c:'wall',spec:0,ex:[0,0,-25]});
+const tg=document.getElementById('tg');const vis={case:1,face:1,doors:1,feet:1,screen:1,pi:0,cab:0,wall:0};
+const labels={case:'Case body',face:'Faceplate',doors:'Doors',feet:'Feet',screen:'Screen',pi:'Pi, board, speakers',cab:'Plugs',wall:'Wall'};
+Object.keys(labels).forEach(k=>{const b=document.createElement('button');b.textContent=labels[k];b.setAttribute('aria-pressed',vis[k]?'true':'false');b.onclick=()=>{vis[k]=vis[k]?0:1;b.setAttribute('aria-pressed',vis[k]?'true':'false');};tg.appendChild(b);});
+msg.textContent='Screen, Pi, speakers and plugs are stand-ins at their estimated positions. Turn the faceplate off to look inside, then use Door A, B, C to swing the doors open.';
+// ---- doors ----
+const dbtn=document.getElementById('doorbtns');
+const dn={door_A:'Door A',door_B:'Door B',door_C:'Door C'};
+Object.keys(dn).forEach(id=>{const b=document.createElement('button');b.textContent=dn[id];b.setAttribute('aria-pressed','false');b.onclick=()=>{const p=parts.find(x=>x.id===id);p.tgt=p.tgt?0:100;b.setAttribute('aria-pressed',p.tgt?'true':'false');};dbtn.appendChild(b);});
+// ---- camera ----
+const cam={az:.62,el:.32,d:560,t:[0,0,18]};const presets={Front:[0,0],Back:[Math.PI,0],Left:[-Math.PI/2,0],Right:[Math.PI/2,0],Top:[0,1.5],Iso:[.62,.32]};
+const vb=document.getElementById('views');Object.keys(presets).forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{goal={az:presets[k][0],el:presets[k][1]};};vb.appendChild(b);});
+let goal=null;
+function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
+function persp(fov,a,n,f){const t=1/Math.tan(fov/2);return new Float32Array([t/a,0,0,0,0,t,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]);}
+function look(e,t,u){let z=[e[0]-t[0],e[1]-t[1],e[2]-t[2]];let l=Math.hypot(...z);z=z.map(x=>x/l);let x=[u[1]*z[2]-u[2]*z[1],u[2]*z[0]-u[0]*z[2],u[0]*z[1]-u[1]*z[0]];l=Math.hypot(...x);x=x.map(v=>v/l);const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+ return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1]);}
+function model(p,e){let tx=p.off[0]+p.ex[0]*e,ty=p.off[1]+p.ex[1]*e,tz=p.off[2]+p.ex[2]*e;const a=p.ang*Math.PI/180,c=Math.cos(a),s=Math.sin(a);let m=[c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1];
+ if(p.door){const [px,py]=p.door.pivot;m[12]=px-(c*px-s*py);m[13]=py-(s*px+c*py);}m[12]+=tx;m[13]+=ty;m[14]+=tz;return new Float32Array(m);}
+let cols={};function readCols(){const base=hex(css('--case'));cols={case:base,scr:[.05,.06,.08],disp:hex(css('--display')),pi:[.78,.34,.12],brd:[.1,.55,.3],spk:[.9,.62,.15],usb:[.95,.75,.2],hdmi:[.25,.55,.95],wall:[.82,.8,.76]};const bgc=hex(css('--bg'));if(bgc[0]+bgc[1]+bgc[2]<1.2){cols.wall=[.2,.22,.27];}}
+// ---- render ----
+function size(){const r=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);const w=Math.max(2,Math.round(r.width*d)),h=Math.max(2,Math.round(r.height*d));if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;}}
+const ex=document.getElementById('ex');let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;size();readCols();
+ if(goal){const k=1-Math.pow(.0005,dt);let da=goal.az-cam.az;da=Math.atan2(Math.sin(da),Math.cos(da));cam.az+=da*k;cam.el+=(goal.el-cam.el)*k;if(Math.abs(da)<.002&&Math.abs(goal.el-cam.el)<.002)goal=null;}
+ parts.forEach(p=>{if(p.door){p.ang+=(p.tgt-p.ang)*(1-Math.pow(.002,dt));}});
+ gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+ const ce=Math.cos(cam.el),eye=[cam.t[0]+cam.d*ce*Math.sin(cam.az),cam.t[1]+cam.d*Math.sin(cam.el),cam.t[2]+cam.d*ce*Math.cos(cam.az)];
+ const V=look(eye,cam.t,[0,1,0]),Pm=persp(.7,cv.width/cv.height,20,3000);gl.uniformMatrix4fv(U.uV,false,V);gl.uniformMatrix4fv(U.uP,false,Pm);
+ const e=ex.value/100;
+ parts.forEach(p=>{if(!vis[p.g])return;const c=cols[p.c]||[.5,.5,.5];gl.uniform3fv(U.uC,c);gl.uniform3fv(U.uC2,p.grad?[.07,.12,.3]:c);gl.uniform1f(U.uEm,p.em||0);gl.uniform1f(U.uSpec,p.spec||0);gl.uniform1f(U.uMode,p.grad?1:0);
+  gl.uniformMatrix4fv(U.uM,false,model(p,e));gl.bindVertexArray(p.mesh.vao);if(p.g==='wall')gl.disable(gl.CULL_FACE);gl.drawArrays(gl.TRIANGLES,0,p.mesh.n);gl.enable(gl.CULL_FACE);});
+ requestAnimationFrame(frame);}
+// ---- input ----
+const ptr=new Map();let lastD=0,lastC=null;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY,b:e.button,s:e.shiftKey});goal=null;});
+cv.addEventListener('pointerup',e=>{ptr.delete(e.pointerId);lastD=0;lastC=null;});cv.addEventListener('pointercancel',e=>{ptr.delete(e.pointerId);lastD=0;lastC=null;});
+function pan(dx,dy){const k=cam.d*.0011;const ca=Math.cos(cam.az),sa=Math.sin(cam.az);cam.t[0]-=(ca*dx)*k;cam.t[2]+=(sa*dx)*k;cam.t[1]+=dy*k;}
+cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;
+ if(ptr.size===1){if(p.b===2||p.s){pan(dx,dy);}else{cam.az-=dx*.006;cam.el=Math.max(-1.5,Math.min(1.5,cam.el+dy*.006));}p.x=e.clientX;p.y=e.clientY;}
+ else if(ptr.size===2){p.x=e.clientX;p.y=e.clientY;const a=[...ptr.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),c=[(a[0].x+a[1].x)/2,(a[0].y+a[1].y)/2];
+  if(lastD)cam.d=Math.max(120,Math.min(1400,cam.d*lastD/d));if(lastC)pan(c[0]-lastC[0],c[1]-lastC[1]);lastD=d;lastC=c;}});
+cv.addEventListener('wheel',e=>{e.preventDefault();cam.d=Math.max(120,Math.min(1400,cam.d*Math.exp(e.deltaY*.001)));},{passive:false});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('dblclick',()=>{goal={az:.62,el:.32};cam.d=560;cam.t=[0,0,18];});
+requestAnimationFrame(frame);
+})();
+</script>

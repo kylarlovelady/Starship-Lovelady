@@ -1,0 +1,21 @@
+// node view.mjs out.html a.stl b.stl ...   -> self-contained orbit viewer (WebGL2)
+import fs from 'fs';
+const [out,...files]=process.argv.slice(2); const parts=[];
+for(const f of files){ const b=fs.readFileSync(f); const n=b.readUInt32LE(80); const a=new Int16Array(n*9); let o=84,i=0; for(let t=0;t<n;t++){ o+=12; for(let k=0;k<9;k++){ a[i++]=Math.round(b.readFloatLE(o)*100); o+=4; } o+=2; } parts.push({name:f.split('/').pop().replace('.stl',''),n,b64:Buffer.from(a.buffer).toString('base64')}); }
+const html=`<title>Part Viewer</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;background:#1b2130;color:#dfe6f2;font:13px system-ui}canvas{width:100%;height:100%;display:block;touch-action:none}#l{position:fixed;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}button{background:#2b3445;color:#dfe6f2;border:1px solid #46526a;border-radius:4px;padding:5px 9px}button.off{opacity:.4}</style><canvas id=c></canvas><div id=l></div><script>
+const P=${JSON.stringify(parts)};const c=document.getElementById('c'),gl=c.getContext('webgl2');
+const vs='#version 300 es\\nin vec3 p;uniform mat4 V,Q;out vec3 v;void main(){vec4 w=V*vec4(p,1.);v=w.xyz;gl_Position=Q*w;}';
+const fs='#version 300 es\\nprecision highp float;in vec3 v;out vec4 o;void main(){vec3 n=normalize(cross(dFdx(v),dFdy(v)));if(n.z<0.)n=-n;float d=max(dot(n,normalize(vec3(-.5,.7,.6))),0.)*.7+max(dot(n,normalize(vec3(.7,.2,.5))),0.)*.3+.25;o=vec4(vec3(.62,.66,.72)*d,1.);}';
+function S(t,s){const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);return x}const g=gl.createProgram();gl.attachShader(g,S(gl.VERTEX_SHADER,vs));gl.attachShader(g,S(gl.FRAGMENT_SHADER,fs));gl.linkProgram(g);gl.useProgram(g);
+const M=P.map(q=>{const s=atob(q.b64),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);const a=new Int16Array(u.buffer),f=new Float32Array(a.length);for(let i=0;i<a.length;i++)f[i]=a[i]/100;const vao=gl.createVertexArray();gl.bindVertexArray(vao);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,f,gl.STATIC_DRAW);const l=gl.getAttribLocation(g,'p');gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,3,gl.FLOAT,false,0,0);return{vao,n:f.length/3,on:1,f}});
+let mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];M.forEach(m=>{for(let i=0;i<m.f.length;i+=3)for(let k=0;k<3;k++){mn[k]=Math.min(mn[k],m.f[i+k]);mx[k]=Math.max(mx[k],m.f[i+k]);}});
+const T=mn.map((a,i)=>(a+mx[i])/2),R=Math.hypot(...mn.map((a,i)=>mx[i]-a));let az=.6,el=.4,d=R*1.6;
+document.getElementById('l').append(...P.map((q,i)=>{const b=document.createElement('button');b.textContent=q.name;b.onclick=()=>{M[i].on^=1;b.className=M[i].on?'':'off'};return b}));
+let dn=null;c.onpointerdown=e=>{dn=[e.clientX,e.clientY];c.setPointerCapture(e.pointerId)};c.onpointerup=()=>dn=null;c.onpointermove=e=>{if(!dn)return;az-=(e.clientX-dn[0])*.006;el=Math.max(-1.5,Math.min(1.5,el+(e.clientY-dn[1])*.006));dn=[e.clientX,e.clientY]};c.onwheel=e=>{e.preventDefault();d*=Math.exp(e.deltaY*.001)};
+function look(e,t){let z=e.map((x,i)=>x-t[i]);let l=Math.hypot(...z);z=z.map(x=>x/l);let x=[z[2],0,-z[0]];l=Math.hypot(...x)||1;x=x.map(v=>v/l);const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1])}
+function fr(){c.width=c.clientWidth*devicePixelRatio;c.height=c.clientHeight*devicePixelRatio;gl.viewport(0,0,c.width,c.height);gl.clearColor(.1,.12,.17,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+const ce=Math.cos(el),e=[T[0]+d*ce*Math.sin(az),T[1]+d*Math.sin(el),T[2]+d*ce*Math.cos(az)];gl.uniformMatrix4fv(gl.getUniformLocation(g,'V'),false,look(e,T));
+const a=c.width/c.height,t=1/Math.tan(.35);gl.uniformMatrix4fv(gl.getUniformLocation(g,'Q'),false,new Float32Array([t/a,0,0,0,0,t,0,0,0,0,-1.002,-1,0,0,-R*.02,0]));
+M.forEach(m=>{if(m.on){gl.bindVertexArray(m.vao);gl.drawArrays(gl.TRIANGLES,0,m.n)}});requestAnimationFrame(fr)}fr();
+</script>`;
+fs.writeFileSync(out,html); console.log('wrote',out,(html.length/1e6).toFixed(2),'MB');
