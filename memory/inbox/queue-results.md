@@ -1,9 +1,4 @@
-  +1.9%
-  v_x40223631     35      +5.15   46%   +1.9%
-  v_x219212       39      +3.98   33%   +0.2%
-  v_x96220861     36      -4.44   42%   -0.4%
-  v_snipe         24     -11.03   79%   -7.4%
-  run             24     -11.03   79%   -7.4%
+ -11.03   79%   -7.4%
   v_x12229262     35     -19.25   46%   -2.3%
   v_x36215122     25     -21.55   36%   -3.5%
   v_one_shot      33     -26.54   39%  -13.4%
@@ -648,5 +643,15 @@ container up with threshold 0.8
 active
 openwakeword Up 14 seconds
 active
+(exit 0)
+```
+
+## 2026-11-08 13:01:01 tasks/queue/099-cad-setup.sh
+```
+manifold3d ok
+trimesh 5.2.0 numpy 2.5.4
+boolean test volume 968.8 genus 0
+openscad on this Pi: not installed
+arch: aarch64; python: Python 3.13.5
 (exit 0)
 ```
