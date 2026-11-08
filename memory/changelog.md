@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Cable routing for the kitchen screen
+- USB-C up, HDMI down along the edge; pocket 18 mm and taller. Status: dry fit pending.
+
 ## 2026-11-08 Kitchen screen case v4
 - Thin symmetric frame, no cable bay, Pi kit case taped behind. Status: draft, dry fit needed.
 

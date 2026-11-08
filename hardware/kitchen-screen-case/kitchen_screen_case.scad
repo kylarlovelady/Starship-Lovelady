@@ -14,8 +14,8 @@ rear_room = 34;       // depth behind the screen: Pi kit case about 31 mm tall +
 foot_h = 4;           // feet: air gap behind the case and room for the wall-screw heads
 
 hole_in = 7;          // M2.5 screen hole distance from each screen corner (ESTIMATE, CHECK)
-port_top = 20;  port_bot = 112;   // ports run from 20 to 112 mm below the screen's top edge (switch 25, audio 53, USB-C 72, HDMI 106; ESTIMATES)
-pocket_d = 17;        // how far the plugs stick out past the screen's left edge with 90-degree plugs (CHECK)
+port_top = 20;  port_bot = 123;   // ports run from 20 to 112 mm below the screen's top edge (switch 25, audio 53, USB-C 72, HDMI 106; ESTIMATES)
+pocket_d = 18;        // how far the plugs stick out past the screen's left edge with 90-degree plugs (CHECK)
 spk_a = 54; spk_b = 175;          // speaker centers from the right edge, back view
 keyhole_dx = 150; keyhole_y = 60;
 m25 = 2.5; m3 = 3.0;
