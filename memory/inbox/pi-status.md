@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 2 days, 11 hours, 15 minutes; temp 42.2'C; throttled flags 0x0 (0x0 is clean); memory 39%; disk 10%
+- up 2 days, 11 hours, 45 minutes; temp 45.0'C; throttled flags 0x0 (0x0 is clean); memory 39%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 15 hours; whisper Up 2 days (healthy); piper Up 2 days (healthy); pihole Up 2 days (healthy); homeassistant Up 2 days
+- containers: openwakeword Up 16 hours; whisper Up 2 days (healthy); piper Up 2 days (healthy); pihole Up 2 days (healthy); homeassistant Up 2 days
 
 ## Sync and schedule
-- Pi repo copy at: e4e9cba 30 minutes ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: 7ed7082 24 minutes ago: Kitchen case: cord exit moved to the right bay
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue, series-catalog, jarvis-mic, jarvis-watch
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (23 min ago), first lines:
+- supervisor report (53 min ago), first lines:
     MARKET AGENT PROGRESS  Sun 08 Nov 14:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_take100   +99.33 over  110 rounds, wins 65%   (+30.62 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 41.9 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 42.4 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 
