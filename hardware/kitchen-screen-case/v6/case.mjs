@@ -88,6 +88,8 @@ export function buildBody(log=()=>{}){
   if(VARIANT==='slim') for(const [x,y] of PI_HOLES) holes.push(zcyl(x,y,1.1,backT+PI_BOSS-6,backT+PI_BOSS+1,14));  // M2.5 pilot holes in the Pi posts
   // fan grille in the plate, under the Pi
   for(let i=(VARIANT==='slim'?1:0);i<(VARIANT==='slim'?5:7);i++){ const x=-107+i*9; holes.push(box(x-1.5,x+1.5,-47.9,45.9,-1,backT+1)); }
+  // power cord exit: 8 mm slot through the bottom wall under the left bay (x -133.5..-125.5) (single cable to the wall outlet)
+  holes.push(box(-133.5,-125.5,-oy-1,-oy+wall+1,backT+1,zTop-12));
   // keyholes
   for(const sx of [-1,1]){ const x=sx*75,y=58; holes.push(zcyl(x,y,4.5,-1,backT+1,24), box(x-2.5,x+2.5,y-9,y,-1,backT+1)); }
   // top exhaust louvers (slanted), speaker slots
