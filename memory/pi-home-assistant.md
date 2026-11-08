@@ -74,3 +74,7 @@ Updated 2026-11-04. Imported from the old "Hub Notes" doc (kept as an untouched 
 - 2026-11-06 Alerts: our alerts go ONLY to notify.mobile_app_kylars_phone (file ~/market-data/alert_phone.txt on the Pi). Sharee's is mobile_app_sharees_iphone: only Home Assistant's own device notifications (Blink, thermostat) may go to her. Kalshi alerts muted; phone pushes only for Pi problems. Change with: python3 ~/starship/markets/ha_phones.py set NAME | all.
 
 - 2026-11-06 Friendly Pi-hole activity page: http://loveladymainaihub.taild703ca.ts.net:8095/activity.html (tailnet only; built by tasks/pihole_activity.py from Pi-hole's database; site names in tasks/pihole_names.json; own overrides in ~/crew-web/my-site-names.json on the Pi). Never copy its contents into the repo.
+
+## Room satellites plan 2026-11-08 (Kylar)
+- Owns 3x Pi Zero 2 W (ordered Oct 16) meant as per-room Jarvis satellites (mic and speaker only, no screens in the bedrooms). Wake word and speech run on the main Pi, so the Zero only streams audio and plays replies: fine for that job. Kylar worried they are too weak; check, do not replace yet.
+- Needs per room: proper mic array or USB speakerphone (echo cancel avoids self-wake), speaker, headers if using a HAT. Test one before ordering more.

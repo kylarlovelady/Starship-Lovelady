@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Room satellite plan noted
+- Pi Zero 2 W judged fine as audio-only satellites; mic quality is the real issue. Filed in pi-home-assistant.md.
+
 ## 2026-11-08 Buy list: kitchen screen parts
 - Added Pi 5 4GB kit, 27W supply/charger, microSD, short cables. Prices not yet checked. Status: waiting on Kylar's outlet/cable answers.
 
