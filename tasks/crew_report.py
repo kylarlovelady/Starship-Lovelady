@@ -6,6 +6,12 @@ H = os.path.expanduser("~"); R = os.path.join(H, "starship"); W = os.path.join(H
 def rd(p):
     try: return open(p, encoding="utf-8", errors="replace").read()
     except OSError: return ""
+# ONE-TIME HEAL (2026-11-07): the Jarvis mic switch was first started from inside the task queue and inherited its lock, which blocks every later queue script. Stop it once; the cron keep-alive restarts it cleanly within a minute.
+try:
+    _f = os.path.join(H, ".queue-lock-healed")
+    if not os.path.exists(_f):
+        import subprocess as _sp; _sp.run(["pkill", "-f", "tasks/jarvis_mic.py"], timeout=10); open(_f, "w").write("1")
+except Exception: pass
 out = {"time": now}
 try:
     import subprocess; subprocess.run(["python3", os.path.join(R, "tasks", "projects_board.py")], capture_output=True, timeout=20)   # adds the Projects board rows to hub-extra.json
