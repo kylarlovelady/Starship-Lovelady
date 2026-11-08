@@ -10,6 +10,12 @@ Bought items stay here under "Bought" with the date. Nothing is deleted.
 | Truck (Expedition) | Sensor bracket / brush guard | Expedition fix | 2026-11-05 |
 | Truck (Expedition) | Rear bumper guard | Expedition fix | 2026-11-05 |
 | Truck (F-250) | Dyno tune | Powerstroke tune | 2026-11-05 |
+| Living room build | Wall touch-screen Pi panel with good speakers (keys-holder spot) | Family control panel: screensaver, cameras, Home Assistant lights | 2026-11-07 |
+| Living room build | Digital calendar for the wall above the tower | Calendar spot | 2026-11-07 |
+| Living room build | PoE switch, in-wall rated Cat6, PoE splitters or PoE-powered panels | One cable per spot instead of power plus network | 2026-11-07 |
+| Living room build | Wall-fishing kit: fish tape or glow rods, stud finder, old-work low-voltage brackets, keystone wall plates, drywall saw | Run the cables inside the walls | 2026-11-07 |
+| Living room build | Case (aluminum look, window, lights), 1000 W+ PSU, motherboard, CPU, 64 GB RAM (RAM is very expensive right now), NVMe, graphics card (24 to 32 GB) | New compact AI computer for the TV-stand cubby. NOT decided: needs cubby measurements and budget first | 2026-11-07 |
+| Pi hardening | Battery backup (UPS) for the Pi, separate small power supply, Ethernet run | Pi always on, independent of the big PC | 2026-11-07 |
 
 ## Bought
 (none yet)
