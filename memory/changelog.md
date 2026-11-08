@@ -1,5 +1,9 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kitchen screen case: FINAL = 38 mm slim build (Kylar chose thinner)
+- Bare Pi 5 + Active Cooler on 4 plate posts, no kit case. Vent path: door B + door C slots in, 4 plate grille slots, 6 top louvers out (added one). 46 checks pass, 8 meshes watertight.
+- Print set zip now holds stl_slim parts. Viewer opens on 38 mm. 49 mm kept as an unused option. Check Pi temp after a day.
+
 ## 2026-11-08 Kitchen screen case v6: screw holes matched to the bought screws
 - Faceplate M2.5 x 10 (20), seam bolts M2.5 x 16 (4, pilot in right half), screen-tab M2.5 x 4 (4, counterbore deepened), hinge pins M3x30 (3). Verified by volume checks on both builds, all pass; meshes watertight.
 - Files: hardware/kitchen-screen-case/v6 (case.mjs, verify.mjs, viewer.html, PRINT-NOTES.txt, zip), blueprint.png. Status: ready to print; dry fit Nov 10 still to confirm standoff height 3 mm, hole positions, HDMI chain.

@@ -91,7 +91,7 @@ export function buildBody(log=()=>{}){
   // keyholes
   for(const sx of [-1,1]){ const x=sx*75,y=58; holes.push(zcyl(x,y,4.5,-1,backT+1,24), box(x-2.5,x+2.5,y-9,y,-1,backT+1)); }
   // top exhaust louvers (slanted), speaker slots
-  for(let i=0;i<5;i++){ const cx=-112+i*8.5, cy=oy-wall/2; const a=20*Math.PI/180, hl=(wall+4)/2, hw=1.3;
+  for(let i=-1;i<5;i++){ const cx=-112+i*8.5, cy=oy-wall/2; const a=20*Math.PI/180, hl=(wall+4)/2, hw=1.3;
     const pts=[[-hw,-hl],[hw,-hl],[hw,hl],[-hw,hl]].map(([u,v])=>[cx+u*Math.cos(a)-v*Math.sin(a), cy+u*Math.sin(a)+v*Math.cos(a)]);
     holes.push(zprism(pts,backT+6,zS-3)); }
   for(const c of P.spk) holes.push(box(c-13,c+13,oy-wall-1,oy+1,zS-12,zS-1.6));

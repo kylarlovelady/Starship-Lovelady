@@ -60,6 +60,7 @@ ul{margin:0;padding-left:18px}li{margin:3px 0}
   <section class="card"><h2>Hardware</h2><ul>
    <li>20 &times; M2.5 &times; 10 black cap screws, faceplate (6 of them also latch the doors)</li>
    <li>4 &times; M2.5 &times; 4 mm (the shortest in the kit is fine), screen to the corner tabs, head down in the back counterbore</li>
+   <li>4 &times; M2.5 &times; 6, Pi 5 to its four plate posts (38 mm build)</li>
    <li>4 &times; M2.5 &times; 16, joins the two halves</li>
    <li>3 &times; M3 &times; 30, door hinge pins (yours)</li>
    <li id="pihw"></li>
@@ -117,7 +118,7 @@ function cylMesh(cx,cy,r,z0,z1,n){const a=[];for(let i=0;i<n;i++){const t0=2*Mat
  a.push(x0,y0,z0,x1,y1,z0,x1,y1,z1,x0,y0,z0,x1,y1,z1,x0,y0,z1,cx,cy,z1,x0,y0,z1,x1,y1,z1,cx,cy,z0,x1,y1,z0,x0,y0,z0);}return mkMesh(new Float32Array(a));}
 function dec(b64){const s=atob(b64),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);const i16=new Int16Array(u.buffer),f=new Float32Array(i16.length);for(let i=0;i<i16.length;i++)f[i]=i16[i]/100;return f;}
 // ---- parts ----
-let parts=[],groups={},M=null,D=null,variant='standard';
+let parts=[],groups={},M=null,D=null,variant='slim';
 function load(v){variant=v;D=DATA.variants[v];M=D.meta;parts=[];groups={};
 const ox=M.ox,oy=M.oy,zS=M.zS,zTop=M.zTop,W=M.P.W,H=M.P.H,T=M.P.T,backT=M.backT;
 function add(o){o.mesh=o.mesh||mkMesh(dec(D.parts[o.id].b64));o.off=o.off||[0,0,0];o.ex=o.ex||[0,0,0];o.ang=0;o.tgt=0;parts.push(o);(groups[o.g]=groups[o.g]||[]).push(o);return o;}
@@ -134,7 +135,7 @@ add({mesh:boxMesh(-W/2-17,-W/2,-6,3,zS+1,zS+6),g:'cab',c:'usb',spec:.3,ex:[-25,0
 add({mesh:boxMesh(-W/2-14,-W/2,-43,-27,zS+.5,zS+6.5),g:'cab',c:'hdmi',spec:.3,ex:[-25,0,35]});
 add({mesh:boxMesh(-ox*1.6,ox*1.6,-oy*1.6,oy*1.6,-4.3,-4.1),g:'wall',c:'wall',spec:0,ex:[0,0,-25]});
 }
-load('standard');
+load('slim');
 const tg=document.getElementById('tg');const vis={case:1,face:1,doors:1,feet:1,screen:1,pi:0,cab:0,wall:0};
 const labels={case:'Case body',face:'Faceplate',doors:'Doors',feet:'Feet',screen:'Screen',pi:'Pi, board, speakers',cab:'Plugs',wall:'Wall'};
 Object.keys(labels).forEach(k=>{const b=document.createElement('button');b.textContent=labels[k];b.setAttribute('aria-pressed',vis[k]?'true':'false');b.onclick=()=>{vis[k]=vis[k]?0:1;b.setAttribute('aria-pressed',vis[k]?'true':'false');};tg.appendChild(b);});
@@ -147,7 +148,7 @@ Object.keys(dn).forEach(id=>{const b=document.createElement('button');b.textCont
 // ---- camera ----
 const cam={az:.62,el:.32,d:560,t:[0,0,18]};const presets={Front:[0,0],Back:[Math.PI,0],Left:[-Math.PI/2,0],Right:[Math.PI/2,0],Top:[0,1.5],Iso:[.62,.32]};
 const vb=document.getElementById('views');
-[['standard','49 mm'],['slim','38 mm']].forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.dataset.v=k;b.setAttribute('aria-pressed',k==='standard'?'true':'false');b.onclick=()=>{load(k);ex.value=0;document.querySelectorAll('#views button[data-v]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===k?'true':'false'));document.querySelectorAll('#doorbtns button').forEach(x=>x.setAttribute('aria-pressed','false'));setInfo();};vb.appendChild(b);});Object.keys(presets).forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{goal={az:presets[k][0],el:presets[k][1]};};vb.appendChild(b);});
+[['slim','38 mm (print this)'],['standard','49 mm (kit case)']].forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.dataset.v=k;b.setAttribute('aria-pressed',k==='slim'?'true':'false');b.onclick=()=>{load(k);ex.value=0;document.querySelectorAll('#views button[data-v]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===k?'true':'false'));document.querySelectorAll('#doorbtns button').forEach(x=>x.setAttribute('aria-pressed','false'));setInfo();};vb.appendChild(b);});Object.keys(presets).forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{goal={az:presets[k][0],el:presets[k][1]};};vb.appendChild(b);});
 let goal=null;
 function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
 function persp(fov,a,n,f){const t=1/Math.tan(fov/2);return new Float32Array([t/a,0,0,0,0,t,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]);}
