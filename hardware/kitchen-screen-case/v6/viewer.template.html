@@ -47,37 +47,49 @@ ul{margin:0;padding-left:18px}li{margin:3px 0}
   </div>
  </div>
  <div class="rail">
+  <section class="card"><h2>Thickness</h2><p style="margin:0" id="thick"></p><p class="note" id="thick2"></p></section>
   <section class="card"><h2>Show</h2><div class="tg" id="tg"></div><p class="note" id="msg"></p></section>
   <section class="card"><h2>Print parts</h2>
    <table><tr><th>Part</th><th>Size mm</th><th>Print</th></tr>
-    <tr><td>Body, left half</td><td class="n">144 x 157 x 45</td><td>plate down</td></tr>
-    <tr><td>Body, right half</td><td class="n">144 x 155 x 45</td><td>plate down</td></tr>
+    <tr><td>Body, left half</td><td class="n" id="dl">145 x 158 x 45</td><td>plate down</td></tr>
+    <tr><td>Body, right half</td><td class="n" id="dr">145 x 155 x 45</td><td>plate down</td></tr>
     <tr><td>Faceplate, 2 halves</td><td class="n">142 x 155 x 4</td><td>face down</td></tr>
-    <tr><td>Doors A, B, C</td><td class="n">114 x 8 x 30</td><td>upright, brim</td></tr>
+    <tr><td>Doors A, B, C</td><td class="n">114 x 12 x 30</td><td>upright, brim</td></tr>
     <tr><td>Feet x4</td><td class="n">&#8960; 14 x 4</td><td>or rubber pads</td></tr></table>
-   <p class="note">Black ASA. 4 mm walls minimum, 3 perimeters, 15% infill. Halves fit any bed over 160 mm. The assembled case is 283.8 x 154.8 x 49 mm, 53 mm off the wall with feet.</p></section>
+   <p class="note">Black ASA, 0.2 mm layers, 3 perimeters, 15% infill. Halves fit any bed over 160 mm. 283.8 mm wide and 154.8 mm tall once joined.</p></section>
   <section class="card"><h2>Hardware</h2><ul>
-   <li>20 &times; M2.5 &times; 12 black cap screws, faceplate</li>
+   <li>20 &times; M2.5 &times; 12 black cap screws, faceplate (6 of them also latch the doors)</li>
    <li>4 &times; M2.5, 4 to 8 mm, screen to the corner tabs (length set at the dry fit)</li>
    <li>4 &times; M2.5 &times; 20, joins the two halves</li>
    <li>3 &times; M3 &times; 30, door hinge pins (yours)</li>
+   <li id="pihw"></li>
    <li>2 wall screws for the keyholes, 150 mm apart</li></ul></section>
+  <section class="card"><h2>How the screen stays put</h2><ul>
+   <li>4 corner tabs sit behind the screen at its mounting holes. An M2.5 screw through each tab threads into the screen's own posts.</li>
+   <li>The faceplate lip overlaps the screen's front border by 4 mm, so the screen cannot come forward even if a screw loosens.</li>
+   <li>The pocket walls hold it sideways with 0.4 mm play. A strip of foam tape under the lip stops any rattle.</li></ul></section>
+  <section class="card"><h2>Hinges</h2><ul>
+   <li>3 knuckles, 9.8 mm each, wall 2.8 mm around the pin. The M3 &times; 30 passes the top two and threads into the bottom one.</li>
+   <li>The head sits 1.6 mm into the top knuckle and 1.8 mm into the faceplate, so nothing sticks out.</li>
+   <li>To open a door: take out its 2 latch screws in the faceplate, then swing it.</li></ul></section>
   <section class="card"><h2>Fit checks</h2>
    <table>
     <tr><td>Doors A, B, C swing 0 to 110&deg;</td><td class="ok">clear</td></tr>
-    <tr><td>Screen, faceplate, 8 mm thickness</td><td class="ok">clear</td></tr>
-    <tr><td>Pi kit case, 64 x 95 x 31, left strip</td><td class="ok">clear</td></tr>
-    <tr><td>Both speaker pads, driver board</td><td class="ok">clear</td></tr>
+    <tr><td>Screen and faceplate</td><td class="ok">clear</td></tr>
+    <tr><td id="pichk">Pi</td><td class="ok">clear</td></tr>
+    <tr><td>Speaker pads, driver board</td><td class="ok">clear</td></tr>
     <tr><td>USB-C right-angle plug, 17 mm bay</td><td class="ok">clear</td></tr>
+    <tr><td>Hinge pins: shank, head, thread bite</td><td class="ok">fit</td></tr>
+    <tr><td>All 20 faceplate screws have wall around them</td><td class="ok">20 of 20</td></tr>
     <tr><td>All parts watertight, no open edges</td><td class="ok">8 of 8</td></tr>
     <tr><td>HDMI adapter + straight plug</td><td class="warn">tight</td></tr></table>
-   <p class="note">The adapter plus a straight full-size HDMI plug needs roughly 50 mm past the port. The case has 36 mm down the edge or 37 mm toward the wall. A short flexible right-angle HDMI extension solves it. Hole positions, plug lengths and the Pi case size are estimates until the Nov 10 dry fit.</p></section>
+   <p class="note">The adapter plus a straight full-size HDMI plug needs roughly 50 mm past the port. The bay gives 36 mm down the edge or 26 to 37 mm toward the wall. A short flexible right-angle HDMI extension solves it. Hole positions, plug lengths and the Pi case size are estimates until the Nov 10 dry fit.</p></section>
  </div>
 </div>
 <script>
 const DATA=__DATA__;
 (function(){
-const M=DATA.meta, cv=document.getElementById('gl'), gl=cv.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:true});
+const cv=document.getElementById('gl'), gl=cv.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:true});
 const msg=document.getElementById('msg');
 if(!gl){msg.textContent='This browser has no WebGL2, so the 3D view cannot draw. Open the page in a current Safari or Chrome.';return;}
 function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
@@ -105,32 +117,37 @@ function cylMesh(cx,cy,r,z0,z1,n){const a=[];for(let i=0;i<n;i++){const t0=2*Mat
  a.push(x0,y0,z0,x1,y1,z0,x1,y1,z1,x0,y0,z0,x1,y1,z1,x0,y0,z1,cx,cy,z1,x0,y0,z1,x1,y1,z1,cx,cy,z0,x1,y1,z0,x0,y0,z0);}return mkMesh(new Float32Array(a));}
 function dec(b64){const s=atob(b64),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);const i16=new Int16Array(u.buffer),f=new Float32Array(i16.length);for(let i=0;i<i16.length;i++)f[i]=i16[i]/100;return f;}
 // ---- parts ----
-const ox=M.ox,oy=M.oy,zS=M.zS,zTop=M.zTop,W=M.P.W,H=M.P.H,T=M.P.T;
-const parts=[];const groups={};
-function add(o){o.mesh=o.mesh||mkMesh(dec(DATA.parts[o.id].b64));o.off=o.off||[0,0,0];o.ex=o.ex||[0,0,0];o.ang=0;o.tgt=0;parts.push(o);(groups[o.g]=groups[o.g]||[]).push(o);return o;}
+let parts=[],groups={},M=null,D=null,variant='standard';
+function load(v){variant=v;D=DATA.variants[v];M=D.meta;parts=[];groups={};
+const ox=M.ox,oy=M.oy,zS=M.zS,zTop=M.zTop,W=M.P.W,H=M.P.H,T=M.P.T,backT=M.backT;
+function add(o){o.mesh=o.mesh||mkMesh(dec(D.parts[o.id].b64));o.off=o.off||[0,0,0];o.ex=o.ex||[0,0,0];o.ang=0;o.tgt=0;parts.push(o);(groups[o.g]=groups[o.g]||[]).push(o);return o;}
 add({id:'body_left',g:'case',c:'case',spec:.5});add({id:'body_right',g:'case',c:'case',spec:.5,ex:[30,0,0]});parts[0].ex=[-30,0,0];
 add({id:'faceplate_left',g:'face',c:'case',spec:.6,off:[0,0,zTop],ex:[-30,0,70]});add({id:'faceplate_right',g:'face',c:'case',spec:.6,off:[0,0,zTop],ex:[30,0,70]});
-[['door_A',[-1,0]],['door_B',[0,-1]],['door_C',[1,0]]].forEach(([id,n])=>add({id,g:'doors',c:'case',spec:.6,ex:[n[0]*40,n[1]*40,0],door:DATA.doors[id]}));
+[['door_A',[-1,0]],['door_B',[0,-1]],['door_C',[1,0]]].forEach(([id,n])=>add({id,g:'doors',c:'case',spec:.6,ex:[n[0]*40,n[1]*40,0],door:D.doors[id]}));
 const fx=ox-16,fy=oy-16;[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([i,j])=>add({mesh:cylMesh(i*fx,j*fy,7,-4,0,28),g:'feet',c:'case',spec:.2,ex:[0,0,-25]}));
 add({mesh:boxMesh(-W/2,W/2,-H/2,H/2,zS,zS+T),g:'screen',c:'scr',spec:.3,ex:[0,0,35]});
 add({mesh:boxMesh(-111.4,111.4,-62.6,62.6,zS+T,zS+T+.2),g:'screen',c:'disp',spec:.4,em:.55,grad:1,ex:[0,0,35]});
-add({mesh:boxMesh(-114,-50,-49,46,zS-31,zS),g:'pi',c:'pi',spec:.5,ex:[0,0,14]});
+if(v==='slim'){add({mesh:boxMesh(-113,-57,-44.5,40.5,backT+3.5,backT+3.5+17.5),g:'pi',c:'pi',spec:.5,ex:[0,0,14]});}else{add({mesh:boxMesh(-114,-50,-49,46,zS-31,zS),g:'pi',c:'pi',spec:.5,ex:[0,0,14]});}
 add({mesh:boxMesh(-43,39,-35,19,zS-6,zS),g:'pi',c:'brd',spec:.2,ex:[0,0,14]});
 [-60,62].forEach(c=>add({mesh:boxMesh(c-15,c+15,45,62,zS-12,zS),g:'pi',c:'spk',spec:.2,ex:[0,0,14]}));
 add({mesh:boxMesh(-W/2-17,-W/2,-6,3,zS+1,zS+6),g:'cab',c:'usb',spec:.3,ex:[-25,0,35]});
 add({mesh:boxMesh(-W/2-14,-W/2,-43,-27,zS+.5,zS+6.5),g:'cab',c:'hdmi',spec:.3,ex:[-25,0,35]});
 add({mesh:boxMesh(-ox*1.6,ox*1.6,-oy*1.6,oy*1.6,-4.3,-4.1),g:'wall',c:'wall',spec:0,ex:[0,0,-25]});
+}
+load('standard');
 const tg=document.getElementById('tg');const vis={case:1,face:1,doors:1,feet:1,screen:1,pi:0,cab:0,wall:0};
 const labels={case:'Case body',face:'Faceplate',doors:'Doors',feet:'Feet',screen:'Screen',pi:'Pi, board, speakers',cab:'Plugs',wall:'Wall'};
 Object.keys(labels).forEach(k=>{const b=document.createElement('button');b.textContent=labels[k];b.setAttribute('aria-pressed',vis[k]?'true':'false');b.onclick=()=>{vis[k]=vis[k]?0:1;b.setAttribute('aria-pressed',vis[k]?'true':'false');};tg.appendChild(b);});
 msg.textContent='Screen, Pi, speakers and plugs are stand-ins at their estimated positions. Turn the faceplate off to look inside, then use Door A, B, C to swing the doors open.';
+const ex=document.getElementById('ex');
 // ---- doors ----
 const dbtn=document.getElementById('doorbtns');
 const dn={door_A:'Door A',door_B:'Door B',door_C:'Door C'};
 Object.keys(dn).forEach(id=>{const b=document.createElement('button');b.textContent=dn[id];b.setAttribute('aria-pressed','false');b.onclick=()=>{const p=parts.find(x=>x.id===id);p.tgt=p.tgt?0:100;b.setAttribute('aria-pressed',p.tgt?'true':'false');};dbtn.appendChild(b);});
 // ---- camera ----
 const cam={az:.62,el:.32,d:560,t:[0,0,18]};const presets={Front:[0,0],Back:[Math.PI,0],Left:[-Math.PI/2,0],Right:[Math.PI/2,0],Top:[0,1.5],Iso:[.62,.32]};
-const vb=document.getElementById('views');Object.keys(presets).forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{goal={az:presets[k][0],el:presets[k][1]};};vb.appendChild(b);});
+const vb=document.getElementById('views');
+[['standard','49 mm'],['slim','38 mm']].forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.dataset.v=k;b.setAttribute('aria-pressed',k==='standard'?'true':'false');b.onclick=()=>{load(k);ex.value=0;document.querySelectorAll('#views button[data-v]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===k?'true':'false'));document.querySelectorAll('#doorbtns button').forEach(x=>x.setAttribute('aria-pressed','false'));setInfo();};vb.appendChild(b);});Object.keys(presets).forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{goal={az:presets[k][0],el:presets[k][1]};};vb.appendChild(b);});
 let goal=null;
 function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
 function persp(fov,a,n,f){const t=1/Math.tan(fov/2);return new Float32Array([t/a,0,0,0,0,t,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]);}
@@ -141,7 +158,7 @@ function model(p,e){let tx=p.off[0]+p.ex[0]*e,ty=p.off[1]+p.ex[1]*e,tz=p.off[2]+
 let cols={};function readCols(){const base=hex(css('--case'));cols={case:base,scr:[.05,.06,.08],disp:hex(css('--display')),pi:[.78,.34,.12],brd:[.1,.55,.3],spk:[.9,.62,.15],usb:[.95,.75,.2],hdmi:[.25,.55,.95],wall:[.82,.8,.76]};const bgc=hex(css('--bg'));if(bgc[0]+bgc[1]+bgc[2]<1.2){cols.wall=[.2,.22,.27];}}
 // ---- render ----
 function size(){const r=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);const w=Math.max(2,Math.round(r.width*d)),h=Math.max(2,Math.round(r.height*d));if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;}}
-const ex=document.getElementById('ex');let last=performance.now();
+let last=performance.now();
 function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;size();readCols();
  if(goal){const k=1-Math.pow(.0005,dt);let da=goal.az-cam.az;da=Math.atan2(Math.sin(da),Math.cos(da));cam.az+=da*k;cam.el+=(goal.el-cam.el)*k;if(Math.abs(da)<.002&&Math.abs(goal.el-cam.el)<.002)goal=null;}
  parts.forEach(p=>{if(p.door){p.ang+=(p.tgt-p.ang)*(1-Math.pow(.002,dt));}});
@@ -164,6 +181,8 @@ cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;
 cv.addEventListener('wheel',e=>{e.preventDefault();cam.d=Math.max(120,Math.min(1400,cam.d*Math.exp(e.deltaY*.001)));},{passive:false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 cv.addEventListener('dblclick',()=>{goal={az:.62,el:.32};cam.d=560;cam.t=[0,0,18];});
+function setInfo(){const sl=variant==='slim';document.getElementById('thick').innerHTML=sl?'<b>38 mm</b> thick, 42 mm off the wall with the feet. Bare Pi 5 with its active cooler on four posts.':'<b>49 mm</b> thick, 53 mm off the wall with the feet. Pi stays in its kit case, taped to the screen.';document.getElementById('thick2').textContent=sl?'Slim: no kit case, so no tape. The Pi screws to the plate; its USB-C and micro-HDMI edge faces the left bay.':'Standard: the 31 mm kit case sets the depth. Switch to 38 mm above to see the slim build.';document.getElementById('dl').textContent=sl?'145 x 158 x 34':'145 x 158 x 45';document.getElementById('dr').textContent=sl?'145 x 155 x 34':'145 x 155 x 45';document.getElementById('pihw').textContent=sl?'4 \u00d7 M2.5 \u00d7 8, Pi 5 to the plate posts':'Double-sided tape for the Pi kit case, foam tape for the screen';document.getElementById('pichk').textContent=sl?'Bare Pi 5 + cooler on posts, 56 x 85 x 17':'Pi kit case, 64 x 95 x 31, left strip';}
+setInfo();
 requestAnimationFrame(frame);
 })();
 </script>

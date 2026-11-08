@@ -1,6 +1,11 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Kitchen screen case v6 final (Pi stays in its kit case)
+- Kylar: slimmer was wanted, but the Pi stays in its kit case, taped inside (to the screen back by default). So STANDARD 49 mm is the print set (hardware/kitchen-screen-case/v6/stl, zip in the same folder). A 38 mm bare-Pi build exists in v6/stl_slim (optional, unused).
+- Review fixes: hinge holes were drawn as radius instead of diameter (knuckle walls were 1 mm and the pin would not bite): now r4.5 knuckles, 2.8 mm wall, pin threads into a 2.7 mm tapped bottom knuckle, head recessed in knuckle and faceplate. Door latch holes did not line up with the faceplate screws: fixed, all 20 screws verified to have wall around them. Mesh micro-slivers cleaned: all parts watertight.
+- Status: built and checked here; NOT yet printed. Next: dry fit Nov 10, hinge test print (door A + left half).
+
 ## 2026-11-08 Kitchen screen case v6 (print-ready files, 3D viewer, CAD pipeline)
 - What: new generator (hardware/cad-kit/csg.mjs + hardware/kitchen-screen-case/v6/case.mjs) replaces the uncompiled SCAD (moved to old/). Outputs watertight STLs in v6/stl: body left/right halves (split so any bed over 160 mm works), faceplate halves, doors A/B/C, feet. Faceplate screws on (20 x M2.5 x 12), doors hinge on vertical M3 x 30 pins hidden under the faceplate, symmetric 18 mm side bays, corner tabs hold the screen (v5 posts were 34 mm tall and could not be reached by a 12 mm screw: fixed).
 - Checks (v6/verify.mjs): doors swing clear 0 to 110 deg, screen/Pi/speakers/driver board/USB-C plug fit, all meshes watertight. Open: HDMI adapter + straight plug needs about 50 mm, bay gives 36 to 37 (maybe buy a short flexible right-angle HDMI extension); screw hole positions, standoff height (3 mm assumed), Pi case size are estimates until the Nov 10 dry fit.

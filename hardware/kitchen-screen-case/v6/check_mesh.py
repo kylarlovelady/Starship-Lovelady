@@ -1,5 +1,6 @@
 import json, collections, sys
-tris=json.load(open('_parts.mjs.json'))
+import sys
+tris=json.load(open(sys.argv[1]))
 def key(v): return (round(v[0]*1e4),round(v[1]*1e4),round(v[2]*1e4))
 for name,t in tris.items():
     e=collections.Counter(); degenerate=0

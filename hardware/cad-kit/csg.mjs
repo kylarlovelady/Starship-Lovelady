@@ -99,7 +99,14 @@ Solid.prototype.cleanTris=function(){
     const m=ring.length; for(let i=1;i<m-1;i++){ const a=ring[0],b=ring[i],c=ring[i+1];
       const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]], w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
       if(Math.hypot(u[1]*w[2]-u[2]*w[1],u[2]*w[0]-u[0]*w[2],u[0]*w[1]-u[1]*w[0])<1e-9) { out.push([a,b,c]); continue; } out.push([a,b,c]); } }
-  return out; };
+  // merge vertices closer than 1.5 micrometres (BSP leaves micro-slivers) and drop collapsed triangles
+  const key2=v=>Math.round(v[0]*1e4)+','+Math.round(v[1]*1e4)+','+Math.round(v[2]*1e4), rep=new Map(), g2=new Map(), c2=1e-2, tol=1.5e-3;
+  const cell2=v=>[Math.floor(v[0]/c2),Math.floor(v[1]/c2),Math.floor(v[2]/c2)];
+  const R=v=>{ const k=key2(v); if(rep.has(k)) return rep.get(k); const [a,b,c]=cell2(v); let hit=null;
+    for(let x=a-1;x<=a+1&&!hit;x++) for(let y=b-1;y<=b+1&&!hit;y++) for(let z=c-1;z<=c+1&&!hit;z++){ const L=g2.get(x+','+y+','+z); if(L) for(const q of L) if(Math.abs(q[0]-v[0])<tol&&Math.abs(q[1]-v[1])<tol&&Math.abs(q[2]-v[2])<tol){ hit=q; break; } }
+    if(!hit){ hit=v; const gk=a+','+b+','+c; (g2.get(gk)||g2.set(gk,[]).get(gk)).push(v); } rep.set(k,hit); return hit; };
+  const res=[]; for(const t of out){ const a=R(t[0]),b=R(t[1]),c=R(t[2]); if(a===b||b===c||a===c) continue; res.push([a,b,c]); }
+  return res; };
 export function stlBinary(tris){ const buf=Buffer.alloc(84+50*tris.length); buf.write('kitchen screen case v6',0); buf.writeUInt32LE(tris.length,80); let o=84;
   for(const t of tris){ const a=t[0],b=t[1],c=t[2]; const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];
     let nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx; const l=Math.hypot(nx,ny,nz)||1; nx/=l;ny/=l;nz/=l;
