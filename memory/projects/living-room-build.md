@@ -33,6 +33,9 @@ Started 2026-11-07 (Kylar by voice, from a photo of the living room). Owner: Kyl
 
 - 2026-11-08: Kylar owns 3x Raspberry Pi Zero 2 W (ordered Oct 16, for the other rooms); one can drive the kitchen screen. Limits: 512 MB RAM (animated Starship scene will be slow; use a light page), one micro-USB data port (touch plus pebbles needs a hub), mini-HDMI. Pebble speakers are USB-A only.
 
+- 2026-11-08: Case draft for the kitchen screen in hardware/kitchen-screen-case/ (kitchen_screen_case.scad parametric, blueprint.png). Two ASA parts (frame + back with Pi pod), vents bottom-in/top-out, wall keyholes, 247 x 154 mm, 19.4 mm slab, 43.4 mm at the pod. NOT test-compiled (no OpenSCAD here); dimensions assumed until Kylar measures the screen.
+- Parts cart (11-08): SANOOV Pi 5 4GB kit, Pi 27W supply, SanDisk 64GB, Alvin's micro-HDMI cable, SUNGUY 2-pack USB-A to USB-C 1 ft; VHB tape already owned.
+
 ## Open questions for Kylar
 1. Cubby measurements (width, height, depth, clearance) and whether the back/sides are open.
 2. Budget for stage 1 (case, PSU, board, CPU, 64 GB RAM, starter NVMe) and for the graphics card.

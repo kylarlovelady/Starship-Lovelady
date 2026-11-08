@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Kitchen screen case draft
+- Added hardware/kitchen-screen-case (scad + blueprint). Status: draft, needs screen measurements and a test print; OpenSCAD compile not checked.
+
 ## 2026-11-08 Room satellite plan noted
 - Pi Zero 2 W judged fine as audio-only satellites; mic quality is the real issue. Filed in pi-home-assistant.md.
 
