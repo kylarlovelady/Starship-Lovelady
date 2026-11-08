@@ -33,7 +33,7 @@ function doorCuts(d){ // things cut from the body
   return c;
 }
 function doorBodyAdds(d){ const [cx,cy]=W2(d,0,P.axisOff); return [zcyl(cx,cy,P.barrelR,zb[0],zb[1],32), zcyl(cx,cy,P.barrelR,zb[4],zb[5],32)]; }
-function doorHoles(d){ const [cx,cy]=W2(d,0,P.axisOff); return [zcyl(cx,cy,1.35,zb[0]-2.5,zb[1]+0.1,24), zcyl(cx,cy,1.7,zb[4]-0.1,zb[5]+1,24), zcyl(cx,cy,3.0,zb[5]-1.6,zb[5]+1,24)]; }  // tapped 2.7 mm (r1.35) hole runs 2.5 mm past the stack; head sits 1.6 mm into the top knuckle
+function doorHoles(d){ const [cx,cy]=W2(d,0,P.axisOff); return [zcyl(cx,cy,1.3,zb[0]-2.5,zb[1]+0.1,24), zcyl(cx,cy,1.7,zb[4]-0.1,zb[5]+1,24), zcyl(cx,cy,3.0,zb[5]-1.6,zb[5]+1,24)]; }  // tapped 2.7 mm (r1.35) hole runs 2.5 mm past the stack; head sits 1.6 mm into the top knuckle
 export function doorSolid(d, extras){
   const [cx,cy]=W2(d,0,P.axisOff), hv=wall/2-0.1;
   let s=zprism(polyUV(d,rect(5.3,d.L-0.2,-hv,hv)),zb[0],zb[5]-0.2);
@@ -48,7 +48,7 @@ const doorVents=(s,d)=>{ // vent slots through the door thickness (vertical slot
 const doorBcord=(s,d)=>{ s=doorVents(s,d); return s; };
 
 // ---- faceplate screw layout (centre lines of the walls) ----
-const topX=[-125,-75,-25,25,75,125], botX=[-125,25,75,125];
+const topX=[-125,-90,-30,30,90,125], botX=[-125,25,75,125];
 export const fpts=[ ...topX.map(x=>[x,oy-wall/2]), ...botX.map(x=>[x,-(oy-wall/2)]),
   ...[-66,66].map(y=>[-(ox-wall/2),y]), ...[-66,66].map(y=>[(ox-wall/2),y]),
   ...Object.values(DOORS).flatMap(d=>d.latch.map(u=>W2(d,u,0))) ];   // door latches are faceplate screws that pass into the door's top edge
@@ -82,9 +82,9 @@ export function buildBody(log=()=>{}){
   for(const k of ['A','B','C']) holes.push(...doorHoles(DOORS[k]));
   // tab screw holes (M2.5 clearance + head counterbore from the back)
   for(const sx of [-1,1]) for(const sy of [-1,1]){ const x=sx*(W/2-P.holeX), y=sy>0?H/2-P.holeTop:-(H/2-P.holeBot);
-    holes.push(zcyl(x,y,1.4,zt0-1,zt1+1,18), zcyl(x,y,2.7,zt0-1,zt0+1.4,18)); }
+    holes.push(zcyl(x,y,1.4,zt0-1,zt1+1,18), zcyl(x,y,2.7,zt0-6,zt0+1.4,18)); }
   // seam bolts (M2.5 x 20): clearance in the left half, pilot in the right; heads counterbored on the left face
-  for(const sy of [-1,1]) for(const z of [backT+6,zS-8]){ const y=sy*(hy-5); holes.push(extrude(circ(y,z,1.4,16),(u,v,w)=>[w,u,v],-11,10.5), extrude(circ(y,z,2.7,16),(u,v,w)=>[w,u,v],-11,-7.5)); }
+  for(const sy of [-1,1]) for(const z of [backT+6,zS-8]){ const y=sy*(hy-5); holes.push(extrude(circ(y,z,1.4,16),(u,v,w)=>[w,u,v],-11,-0.05), extrude(circ(y,z,1.1,16),(u,v,w)=>[w,u,v],0.05,10.5), extrude(circ(y,z,2.7,16),(u,v,w)=>[w,u,v],-11,-8)); }   // M2.5 x 16: clearance + head recess in the left half, pilot in the right
   if(VARIANT==='slim') for(const [x,y] of PI_HOLES) holes.push(zcyl(x,y,1.1,backT+PI_BOSS-6,backT+PI_BOSS+1,14));  // M2.5 pilot holes in the Pi posts
   // fan grille in the plate, under the Pi
   for(let i=(VARIANT==='slim'?1:0);i<(VARIANT==='slim'?5:7);i++){ const x=-107+i*9; holes.push(box(x-1.5,x+1.5,-47.9,45.9,-1,backT+1)); }
@@ -94,9 +94,9 @@ export function buildBody(log=()=>{}){
   for(let i=0;i<5;i++){ const cx=-112+i*8.5, cy=oy-wall/2; const a=20*Math.PI/180, hl=(wall+4)/2, hw=1.3;
     const pts=[[-hw,-hl],[hw,-hl],[hw,hl],[-hw,hl]].map(([u,v])=>[cx+u*Math.cos(a)-v*Math.sin(a), cy+u*Math.sin(a)+v*Math.cos(a)]);
     holes.push(zprism(pts,backT+6,zS-3)); }
-  for(const c of P.spk) holes.push(box(c-13,c+13,oy-wall-1,oy+1,zS-12,zS-1));
+  for(const c of P.spk) holes.push(box(c-13,c+13,oy-wall-1,oy+1,zS-12,zS-1.6));
   // faceplate pilot holes in the wall tops and later the door latch holes are in the doors
-  for(const [x,y] of fpts) holes.push(zcyl(x,y,1.1,zTop-10,zTop+1,14));
+  for(const [x,y] of fpts) holes.push(zcyl(x,y,1.1,zTop-9.5,zTop+1,14));
   b=subAll(b,holes); log('holes');
   return b;
 }
@@ -107,7 +107,7 @@ export function buildFace(){
   // accent groove around the window
   const ring=zprism(rrect(0,0,wx+6,wy+6,3,8),plateT-0.6,plateT+1).sub(zprism(rrect(0,0,wx+4,wy+4,2.5,8),plateT-1,plateT+2));
   f=f.sub(ring);
-  for(const [x,y] of fpts){ f=f.sub(zcyl(x,y,1.4,-1,plateT+1,14)).sub(zcyl(x,y,2.5,plateT-2.2,plateT+1,16)); }
+  for(const [x,y] of fpts){ f=f.sub(zcyl(x,y,1.4,-1,plateT+1,14)).sub(zcyl(x,y,2.5,plateT-2.7,plateT+1,16)); }
   for(const k of ['A','B','C']){ const d=DOORS[k]; const [cx,cy]=W2(d,0,P.axisOff); f=f.sub(zcyl(cx,cy,3.3,-1,1.8,18)); }  // pockets for the M3 pin heads
   return f;
 }

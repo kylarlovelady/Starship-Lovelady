@@ -13,7 +13,7 @@ def outline(ax): ax.add_patch(FancyBboxPatch((-ox,-oy),2*ox,2*oy,boxstyle='round
 topX=[-125,-75,-25,25,75,125]; botX=[-125,-104,-74,25,75,125]
 pts=[(x,oy-3) for x in topX]+[(x,-(oy-3)) for x in botX]+[(-(ox-3),y) for y in (-66,0,48,66)]+[((ox-3),y) for y in (-66,-48,0,66)]
 # FRONT
-ax=fig.add_axes([0.02,0.52,0.60,0.42]); setup(ax,'FRONT VIEW: faceplate screws on with 20 black M2.5 x 12 screws; side bays hold the ports',(-160,160),(-96,96)); outline(ax)
+ax=fig.add_axes([0.02,0.52,0.60,0.42]); setup(ax,'FRONT VIEW: faceplate screws on with 20 black M2.5 x 10 screws; side bays hold the ports',(-160,160),(-96,96)); outline(ax)
 ax.add_patch(Rectangle((-113.5,-67),227,134,fc='#06101f',ec=LN,lw=1,ls='--'))
 ax.add_patch(Rectangle((-W/2,-H/2),W,H,fc='none',ec=GR,lw=1,ls=':')); ax.text(0,0,'SCREEN 235 x 142 x 8\nwindow 227 x 134',color=TX,ha='center',va='center',fontsize=11)
 for x,y in pts: ax.add_patch(Circle((x,y),2.5,fc='#222',ec=AC,lw=1))
@@ -37,7 +37,7 @@ ax.text(0,-oy+10,'feet 4 mm (or rubber pads)',color=OR,fontsize=8,ha='center')
 ax.add_patch(Rectangle((36,-oy),76,6,fc='none',ec=OR,lw=2)); ax.text(74,-oy-8,'door B: intake slots, M3 hinge pin',color=OR,fontsize=8,ha='center')
 ax.add_patch(Rectangle((ox-6,-55),6,110,fc='none',ec=OR,lw=2)); ax.add_patch(Rectangle((-ox,-55),6,110,fc='none',ec=OR,lw=2))
 for (x,y) in [(-(ox-3),-55),(ox-3,55),(-36,-(oy-3))]: ax.add_patch(Circle((mx(x),y),3.4,fc=AC,ec=AC)); 
-ax.text(-30,0,'split line x = 0:\ntwo printed halves,\n4 x M2.5 x 20 bolts\ninside top and bottom walls',color=TX,fontsize=8,ha='center',alpha=.7)
+ax.text(-30,0,'split line x = 0:\ntwo printed halves,\n4 x M2.5 x 16 bolts\ninside top and bottom walls',color=TX,fontsize=8,ha='center',alpha=.7)
 # SIDE section
 ax=fig.add_axes([0.64,0.40,0.34,0.54]); setup(ax,'SIDE SECTION (through the Pi strip)',(-14,66),(-96,96))
 zf=zTop+plateT
@@ -48,6 +48,6 @@ ax.add_patch(Rectangle((zTop,-oy),plateT,2*oy,fc='#10223e',ec=OR,lw=1.5)); ax.te
 ax.add_patch(Rectangle((-foot,-oy+8),foot,14,fc=LN)); 
 ax.plot([38,38],[-oy,oy],color=PK,ls='--',lw=1.5); ax.text(38,oy+3,'slim 38',color=PK,fontsize=8,ha='center'); ax.add_patch(Rectangle((backT+3.5,-44.5),17.5,85,fc='none',ec=PK,lw=1)); 
 dh(ax,0,zf,-oy-6,f'{zf:.0f} mm'); dh(ax,-foot,zf,-oy-20,f'{zf+foot:.0f} mm from the wall'); ax.text(-12,-oy-30,'WALL',color=TX,fontsize=9); ax.text(zf-8,-oy-30,'FRONT',color=TX,fontsize=9)
-fig.text(0.645,0.33,'v6 FINAL (two builds, same parts except the body depth)\n- STANDARD 49 mm: Pi stays in its kit case, taped to the screen\n- SLIM 38 mm: bare Pi 5 + cooler on 4 plate posts (pink outline)\n- Faceplate screws on: 20 x M2.5 x 12; 6 of them latch the doors\n- Doors A, C (side bays) and B (bottom): vertical hinge, your M3 x 30\n  threads into the bottom knuckle; knuckle wall 2.8 mm; head hides in\n  the top knuckle and the faceplate\n- Screen: 4 corner tabs + M2.5 into its posts, faceplate lip clamps\n  the front border, 0.4 mm side play\n- Two printed halves (each under 145 mm), 4 x M2.5 x 20 join them\n\nCHECKED: doors swing clear 0 to 110 deg, screen/Pi/speakers/plugs\nclear, hinge pins fit, all 20 screws have wall around them, 8 of 8\nmeshes watertight\n\nTO CONFIRM AT THE NOV 10 DRY FIT\n- screw hole positions, standoff height (3 mm assumed)\n- HDMI adapter + straight plug needs about 50 mm; bay gives 26-37\n  -> short flexible right-angle HDMI extension if it is tight\n- Pi kit case size / Pi position',color=TX,fontsize=8.4,va='top',family='monospace')
+fig.text(0.645,0.33,'v6 FINAL (two builds, same parts except the body depth)\n- STANDARD 49 mm: Pi stays in its kit case, taped to the screen\n- SLIM 38 mm: bare Pi 5 + cooler on 4 plate posts (pink outline)\n- Faceplate screws on: 20 x M2.5 x 10; 6 of them latch the doors\n- Doors A, C (side bays) and B (bottom): vertical hinge, your M3 x 30\n  threads into the bottom knuckle; knuckle wall 2.8 mm; head hides in\n  the top knuckle and the faceplate\n- Screen: 4 corner tabs + M2.5 x 4 into its posts, faceplate lip clamps\n  the front border, 0.4 mm side play\n- Two printed halves (each under 145 mm), 4 x M2.5 x 16 join them\n\nCHECKED: doors swing clear 0 to 110 deg, screen/Pi/speakers/plugs\nclear, hinge pins fit, all 20 screws have wall around them, 8 of 8\nmeshes watertight\n\nTO CONFIRM AT THE NOV 10 DRY FIT\n- screw hole positions, standoff height (3 mm assumed)\n- HDMI adapter + straight plug needs about 50 mm; bay gives 26-37\n  -> short flexible right-angle HDMI extension if it is tight\n- Pi kit case size / Pi position',color=TX,fontsize=8.4,va='top',family='monospace')
 fig.text(0.02,0.995,'KITCHEN SCREEN CASE v6 final  |  GeekPi 10.1 + Pi 5 kit case  |  black ASA  |  mm',color=AC,fontsize=14,weight='bold',va='top')
 fig.savefig('blueprint.png',dpi=105,facecolor=BG); print('ok')

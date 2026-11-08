@@ -1,5 +1,5 @@
 // Fit and collision checks for v6 (every number is a volume in mm^3 that SHOULD be ~0).
-import {zcyl} from './csg.mjs';
+import {zcyl,extrude,circ} from './csg.mjs';
 import {buildBody,buildFace,doorSolid,DOORS,P,hx,hy,ox,oy,zS,zTop,VARIANT,PI_BOSS,fpts} from './case.mjs';
 import {box} from './csg.mjs';
 const backT=P.backT;
@@ -24,6 +24,23 @@ chk('cable run up the wing (x -134..-119, y -8..50, z 8..30) vs body', box(-134,
 // every faceplate screw must find material around its pilot hole (wall or door), 6 mm wall = ideal 16.7 mm3 for a 1.6 mm ring, 8 mm deep
 { let worst=1e9, wi=null; const allSolid=body; for(const [x,y] of fpts){ const ring=zcyl(x,y,1.6,zTop-8,zTop,16); let m=vol(ring.and(body)); for(const k of 'ABC') m+=vol(ring.and(doors[k])); if(m<worst){worst=m;wi=[x,y];} }
   rows.push([`faceplate screws: weakest of ${fpts.length} holds`,worst>10?0:99,`${worst.toFixed(1)} mm3 of plastic around the thread at (${wi.map(n=>n.toFixed(0))}); ideal about 34`]); }
+// screws: every screw is modelled (M2.5 cap head: 4.5 dia x 2.5, shank 2.5 dia) and must pass its clearance hole and bite its pilot
+{ let worstHead=0, minBite=1e9, worstShank=0;
+  for(const [x,y] of fpts){ const shank=zcyl(x,y,1.25,zTop+1.3-10,zTop+1.3,16), head=zcyl(x,y,2.25,zTop+1.3,zTop+4,16);
+    const inFace=vol(shank.and(face))+vol(head.and(face)); worstHead=Math.max(worstHead,inFace);
+    const faceShank=vol(zcyl(x,y,1.25,zTop,zTop+1.3,16).and(face)); worstShank=Math.max(worstShank,faceShank);
+    let bite=vol(shank.and(body)); for(const k of 'ABC') bite+=vol(shank.and(doors[k])); minBite=Math.min(minBite,bite); }
+  rows.push([`${fpts.length} faceplate screws (M2.5 x 10): shank + head pass the faceplate holes`,Math.max(worstHead,worstShank),'0 = no interference']);
+  rows.push([`${fpts.length} faceplate screws: smallest thread bite in wall or door`,minBite>5?0:99,`${minBite.toFixed(1)} mm3 (needs more than 5)`]); }
+{ let bad=0,minBite=1e9; for(const sy of [-1,1]) for(const z of [backT+6,zS-8]){ const y=sy*(hy-5);
+    const shank=extrude(circ(y,z,1.25,16),(u,v,w)=>[w,u,v],-8,8), head=extrude(circ(y,z,2.25,16),(u,v,w)=>[w,u,v],-10.5,-8);
+    const left=body.and(box(-400,-0.05,-300,300,-50,100)), right=body.and(box(0.05,400,-300,300,-50,100));
+    bad=Math.max(bad,vol(shank.and(left)),vol(head.and(left))); minBite=Math.min(minBite,vol(shank.and(right))); }
+  rows.push(['4 seam bolts (M2.5 x 16): clear the left half, head fits its recess',bad,'0 = no interference']);
+  rows.push(['4 seam bolts: thread bite in the right half',minBite>5?0:99,`${minBite.toFixed(1)} mm3 (needs more than 5)`]); }
+{ let bad=0; for(const sx of [-1,1]) for(const sy of [-1,1]){ const x=sx*(P.W/2-P.holeX), y=sy>0?P.H/2-P.holeTop:-(P.H/2-P.holeBot); const zt1=zS-P.so_h;
+    bad=Math.max(bad,vol(zcyl(x,y,1.25,zt1-3+1.4,zt1+2.4,16).and(body)), vol(zcyl(x,y,2.25,zt1-3-1.1,zt1-3+1.4,16).and(body))); }
+  rows.push(['4 screen-tab screws (M2.5 x 4, head down in counterbore): shank and head clear the tab holes',bad,'0 = no interference']); }
 // hinge pin (M3 x 30, head 5.5 x 3) in each door: shank must clear the door and the clearance holes
 
 for(const k of 'ABC'){ const d=DOORS[k]; const [cx,cy]=W2(d,0,P.axisOff); const z=P.zb;
