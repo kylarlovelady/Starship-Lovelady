@@ -1,6 +1,10 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Daily Claude check (06:20 Central)
+- What: read inbox (no new Jarvis notes; wake report, home mic report, Kalshi digest and snipe autopsy already recorded), Pi status green and fresh (sync 06:00), queue 098 ran (wake threshold now 0.8). Refreshed projects.md, wrote brief.md. Nothing due today; API location check is due tomorrow. Pi untouched, no orders placed.
+- Status: pushed to main (see git log).
+
 ## 2026-11-07 Daily Claude check (06:20 Central)
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
