@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kitchen case: 4 ready-to-print plate files (Kylar chose grouped prints, no auto-eject)
+- hardware/kitchen-screen-case/v6/plates/: plate1 body_left+door_A (hinge test first), plate2 body_right+door_C+door_B, plate3 faceplate_left, plate4 faceplate_right+feet. Faceplates flipped face-down; volumes checked against originals. Kylar has Bambu Studio on his Windows desktop; slicing there. Pi slicer route parked; auto-eject idea parked (big ASA parts, risk to toolhead).
+
 ## 2026-11-08 Kitchen case: cord exit moved to the RIGHT side (Kylar)
 - 8 mm slot now through the bottom wall under the right bay (x 125.5..133.5); cord crosses the case along the bottom behind the Pi (y -58..-50, 7 mm high), checks pass. Old left slot removed.
 
