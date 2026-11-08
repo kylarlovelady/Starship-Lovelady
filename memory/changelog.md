@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Kitchen screen case v5
+- Screw-on front faceplate (8 black M2.5 x 12), two hinged side/bottom doors (M3 x 30 hinge pins), 6 mm walls, vents kept (top slots, fan grille, speaker slots, door intake). Buy: 6-pack angled HDMI adapter, Kernmax M2.5 screw kit. Status: draft, NOT test-compiled; print one hinge first; door B position depends on the Nov 10 dry fit.
+
 ## 2026-11-08 Cable routing for the kitchen screen
 - USB-C up, HDMI down along the edge; pocket 18 mm and taller. Status: dry fit pending.
 
