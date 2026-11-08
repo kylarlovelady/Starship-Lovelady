@@ -31,6 +31,8 @@ Started 2026-11-07 (Kylar by voice, from a photo of the living room). Owner: Kyl
 - Speakers: panel speakers first; pebble speakers (check if USB is power only; Pi 5 has no headphone jack so a USB audio dongle is needed) on a shelf later. Jarvis answers and chimes go to the panel or pebbles; music routes to the Lovesac via Music Assistant plus a small network streamer or Bluetooth (later step).
 - Needed from Kylar: is there an outlet near the key holder; pebble speaker model; which cables came with the screen.
 
+- 2026-11-08: Kylar owns 3x Raspberry Pi Zero 2 W (ordered Oct 16, for the other rooms); one can drive the kitchen screen. Limits: 512 MB RAM (animated Starship scene will be slow; use a light page), one micro-USB data port (touch plus pebbles needs a hub), mini-HDMI. Pebble speakers are USB-A only.
+
 ## Open questions for Kylar
 1. Cubby measurements (width, height, depth, clearance) and whether the back/sides are open.
 2. Budget for stage 1 (case, PSU, board, CPU, 64 GB RAM, starter NVMe) and for the graphics card.
