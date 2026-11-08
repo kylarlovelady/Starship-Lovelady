@@ -86,6 +86,12 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - Pre-registered rules for the 8 PM and 8 AM checks (so we do not chase luck): a test is PROMISING with 100+ rounds, profit per $ above +5%, and positive in both halves of its rounds; DEAD with 100+ rounds below -8%. Take-profit variants stay only if they beat v_hold per $ by 3+ points. Size variants are compared per dollar staked, never by total profit. Do not promote anything to the main wallet on one day of data. Do not add more variants than we can read: skip near-duplicate v_x* clones.
 - Not yet tried: maker (resting) orders when 150+ rounds have a tape; fair-value with the 60 s average; hour-of-day filters.
 
+## Update 2026-11-08 08:00 (first full day after the 11-07 changes; practice money only)
+- Main practice wallet ("run", now v_hold): 92 rounds, +$72 (+3.3% per $, 63% right) vs -$150 the day before. Plain hold-to-end variants: v_hold +2.3%, v_hold_after60 +14.2% (67 rounds, 70% right), v_hold_after120 +14.7% (66 rounds, 71%), sized tests v_hold_s10..s500 all +5% to +9% per $ (identical entries scaled, so they are ONE sample of 68 rounds, not seven).
+- Take-profit tests (68 rounds): v_take5 -4.1% (87% of bets triggered, still loses), v_take10 -11.5%, v_take15 -3.6%, v_take20 -5.7%, v_take25 -0.6%, v_take30 +2.7%, v_take40 +5.6%, v_take50 +1.2%, v_take75 +5.1%, v_take100 +6.2%. Quick sells do not beat holding; the higher the target the closer to plain hold. v_take25_cheap -51% on 20 rounds (dead early). v_cut_tight -9.3%, v_no_cut -3.2%, v_snipe -17% (45 rounds).
+- By the pre-registered rules nothing is PROMISING yet (needs 100+ rounds in both halves above +5%). v_cut_tight is DEAD (below -8%). No restart and no parameter change today. All the hold-based numbers come from the same ~68 rounds since noon yesterday, so one lucky half-day could explain them.
+- Next: let the later-entry holds (after60/after120) reach 100+ rounds (about 6 more hours of rounds), then check halves. Do not promote anything before that.
+
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
 

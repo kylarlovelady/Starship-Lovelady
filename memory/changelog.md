@@ -9,6 +9,9 @@ Claude adds an entry every time it changes something, so any conversation, Jarvi
 - What: read inbox (no new Jarvis notes; studies and status files already recorded), Pi status all green and fresh (sync 06:00), nothing due today or tomorrow. Added the $1K-Snipe update to kalshi-ai.md, refreshed projects.md, wrote brief.md. Pi untouched, no orders placed.
 - Status: pushed to main.
 
+## 2026-11-08 8 AM check: Kalshi results, Jarvis threshold 0.8 live
+- Queue resumed after the lock heal; queue 098 set wake threshold 0.8 at 23:07 (no false wake-ups overnight, versus 6 at 2-4 AM before). Kalshi: see memory/kalshi-ai.md Update 2026-11-08. No agent changes today.
+
 ## 2026-11-07 Task queue stuck since 12:40: found and healed
 - Cause: queue 097 started the Jarvis mic switch from inside the queue, so it inherited the queue's lock (/tmp/queue.lock) and every later script (098 wake threshold 0.7 -> 0.8) never ran. The mic switch itself kept working. Fix: tasks/crew_report.py (runs from cron every 5 min) stops that process once; cron keep-alive restarts it cleanly; tasks/jarvis_install.sh no longer starts it itself. Status: pushed; queue should resume within about 8 min. Threshold is still 0.7 until 098 runs. Backup if still stuck: Kylar runs `pkill -f jarvis_mic.py` on the Pi.
 
