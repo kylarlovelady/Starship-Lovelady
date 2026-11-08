@@ -1,8 +1,4 @@
-
-  v_x16217721     41     +29.69   29%   +1.7%
-  v_x40223632     40     +10.40   45%   +2.8%
-  v_x64216772     35      +5.15   46%   +1.9%
-  v_x60222032     35      +5.15   46%   +1.9%
+  +1.9%
   v_x40223631     35      +5.15   46%   +1.9%
   v_x219212       39      +3.98   33%   +0.2%
   v_x96220861     36      -4.44   42%   -0.4%
@@ -642,5 +638,15 @@ Last 24 h: **10** wake-ups: 3 empty, 1 probably us talking, 6 real commands. Las
 | 03:00 | 4 | 0 | 0 |
 | 11:00 | 2 | 0 | 1 |
 | 12:00 | 1 | 1 | 1 |
+(exit 0)
+```
+
+## 2026-11-07 23:07:02 tasks/queue/098-jarvis-tune-080.sh
+```
+old threshold: 0.7 new: 0.8
+container up with threshold 0.8
+active
+openwakeword Up 14 seconds
+active
 (exit 0)
 ```
