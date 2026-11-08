@@ -1,6 +1,4 @@
- -11.03   79%   -7.4%
-  v_x12229262     35     -19.25   46%   -2.3%
-  v_x36215122     25     -21.55   36%   -3.5%
+ -3.5%
   v_one_shot      33     -26.54   39%  -13.4%
   v_x60222031     34     -31.36   38%   -3.0%
   v_no_cut        34     -48.98   44%   -4.3%
@@ -653,5 +651,11 @@ trimesh 5.2.0 numpy 2.5.4
 boolean test volume 968.8 genus 0
 openscad on this Pi: not installed
 arch: aarch64; python: Python 3.13.5
+(exit 0)
+```
+
+## 2026-11-08 13:13:01 tasks/queue/100-build-case-v6.sh
+```
+node is not installed on this Pi
 (exit 0)
 ```
