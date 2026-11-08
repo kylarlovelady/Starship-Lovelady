@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kitchen case: cord exit moved to the RIGHT side (Kylar)
+- 8 mm slot now through the bottom wall under the right bay (x 125.5..133.5); cord crosses the case along the bottom behind the Pi (y -58..-50, 7 mm high), checks pass. Old left slot removed.
+
 ## 2026-11-08 Kitchen case: single power cord exit added (slim final)
 - 8 mm cord slot through the bottom wall under the left bay (x -133.5..-125.5); cord runs down the left wing from the Pi USB-C. Checks added and pass (48 on slim). Case fits the 12 in cubby (290 mm wide incl. doors); side doors can't swing in place, lift off keyholes to open. Pi slicer probe result: Pi 5 aarch64, no slicer installed, prusa-slicer apt available (needs sudo, asked Kylar to run it).
 

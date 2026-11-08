@@ -19,8 +19,10 @@ for(const c of P.spk) chk(`speaker pad at x=${c} (30x17x12) vs body`, box(c-15,c
 chk('driver board bump (82x54x6) vs body', box(-43,39,-35,19,zS-6,zS), body);
 chk('USB-C right-angle plug zone (x -135..-117.9, y -8..1) vs body', box(-135,-hx,-8,1,zS,zS+7), body);
 chk('USB-C zone vs door A', box(-135,-hx,-8,1,zS,zS+7), doors.A);
-chk('cord run down the left wing to the bottom exit (x -134..-123, y -71..-4) vs body', box(-134,-123,-71,-4,backT+5,zS-6), body);
-chk('cord exit slot (x -133..-126, y -77..-71) is open', box(-133,-126,-oy-0.5,-oy+5.5,backT+3,zS-6), body);
+chk('cord run: left wing down from the plug (x -134..-123, y -58..-4)', box(-134,-123,-58,-4,backT+2,backT+9), body);
+chk('cord run: across the bottom behind the Pi (x -134..134, y -58..-50, 7 mm high)', box(-134,134,-58,-50,backT+2,backT+9), body);
+chk('cord run: down the right wing to the exit (x 123..134, y -71..-50)', box(123,134,-71,-50,backT+2,backT+9), body);
+chk('cord exit slot (x 126..133, y -77..-71) is open', box(126,133,-oy-0.5,-oy+5.5,backT+3,zS-6), body);
 chk('cable run up the wing (x -134..-119, y -8..50, z 8..30) vs body', box(-134,-119,-8,50,backT+5,zS-6), body);
 
 // every faceplate screw must find material around its pilot hole (wall or door), 6 mm wall = ideal 16.7 mm3 for a 1.6 mm ring, 8 mm deep
