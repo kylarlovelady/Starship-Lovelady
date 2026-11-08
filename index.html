@@ -482,7 +482,7 @@ FT(Wt, 'E', uy(mc), 0.255, 'No excuses. Only uptime.', 7, '#ffd166');
 hitBox('declog', 'Decision log', L0, 0, 0.68, L1, 0.1, 3.13, 8); hitBox('crewboard', 'Crew board', 4.95, 0, 0.68, 6.65, 0.1, 3.13, 8); hitBox('mission', 'Mission board', 0, M0, 0.68, 0.1, M1, 3.13, 8);
 trophyG('trophy:captain', 'ACHIEVEMENTS', 7.6, 2.8, [4, 2, 1], true);
 boardW(10.7, 12.6); FT(Wt, 'E', uy(11.65), 0.85, 'SCREEN SAVER', 8, '#ffd166'); Wt.decals.push(R('E', uy(10.9), uy(12.4), 0.3, 0.7, '#12284a', '#5ce1ff', 1)); Wt.decals.push(R('E', uy(11.0), uy(11.6), 0.55, 0.62, '#5ce1ff')); FT(Wt, 'E', uy(11.65), 0.42, 'EDIT CLOCK', 7, '#7be0ff'); hitBox('saver', 'Screen saver editor', 0, 10.7, 0.68, 0.1, 12.6, 3.13, 8);
-[6.5, 11.5].forEach((y) => { Bx(0.0, y - 0.2, 0.06, 0.4, 0.62, '#c9a227', 1.55); Bx(0.06, y - 0.04, 0.26, 0.08, 0.06, '#c9a227', 1.62); Cy(0.36, y, 0.13, 0.06, '#c9a227', 1.6); Cy(0.36, y, 0.065, 0.4, '#f2efe6', 1.66); Cy(0.36, y, 0.035, 0.13, '#ffb030', 2.06, { top: '#ffe080' }); glow(0.36, y, 2.15, 30, '#ffd166', 0.14); glow(0.36, y, 2.15, 14, '#ffd166', 0.3); });
+[6.5].forEach((y) => { Bx(0.0, y - 0.2, 0.06, 0.4, 0.62, '#c9a227', 1.55); Bx(0.06, y - 0.04, 0.26, 0.08, 0.06, '#c9a227', 1.62); Cy(0.36, y, 0.13, 0.06, '#c9a227', 1.6); Cy(0.36, y, 0.065, 0.4, '#f2efe6', 1.66); Cy(0.36, y, 0.035, 0.13, '#ffb030', 2.06, { top: '#ffe080' }); glow(0.36, y, 2.15, 30, '#ffd166', 0.14); glow(0.36, y, 2.15, 14, '#ffd166', 0.3); });
 Cy(0.55, 0.65, 0.22, 0.12, '#3a3f4a', 0); Cy(0.55, 0.65, 0.04, 2.7, '#c9a227', 0.12); Cy(0.55, 0.65, 0.09, 0.12, '#ffd166', 2.8);
 const fd = []; for (let i = 0; i < 13; i++) fd.push(R('E', 0, 1, i / 13, (i + 1) / 13, i % 2 === 0 ? '#f2efe6' : '#b22234'));
 fd.push(R('E', 0, 0.42, 0.46, 1, '#3c3b6e')); for (let r = 0; r < 4; r++) for (let k = 0; k < 3; k++) fd.push(R('E', 0.05 + k * 0.12, 0.09 + k * 0.12, 0.52 + r * 0.115, 0.56 + r * 0.115, '#ffffff'));
@@ -512,7 +512,7 @@ hitBox('tray', 'Paper tray', 7.55 + ex, 3.3 + ey, 0.95, 8.3 + ex, 3.9 + ey, 1.6,
 Bx(5.2 + ex, 5.2 + ey, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(5.2 + ex, 5.9 + ey, 0.8, 0.15, 1.1, '#8a3b2a'); Bx(7.0 + ex, 5.2 + ey, 0.8, 0.7, 0.5, '#8a3b2a'); Bx(7.0 + ex, 5.9 + ey, 0.8, 0.15, 1.1, '#8a3b2a');
 Pe(6.5 + ex, 2.3 + ey, { shirt: '#1f2f5a', kind: 'captain', mood: st.mood }); hitPerson('captain', 'The Captain', 6.5 + ex, 2.3 + ey);
 Bx(GX - 0.3, RD - 0.1, 0.6, 0.2, 0.3, st.busy ? '#ff4b3e' : '#2fbf71', 2.48);
-[['mechanic', 2.7], ['librarian', 4.0], ['trainer', 5.3]].forEach((w) => { const a = agent(w[0]); const wy = RD + 1.0; Pe(w[1], wy, { shirt: a.color, kind: w[0] === 'librarian' ? 'librarian' : w[0] === 'mechanic' ? 'engineer' : 'plain', hair: '#5a3a22' }); T(w[1], wy, 2.75, '?', 18, '#ffd166'); hitPerson('ask:' + w[0], a.name + ' waiting', w[1], wy); });
+
 
 return { kicker: 'COMMAND BRIDGE / CAPTAIN (THE LEADER)', title: "THE CAPTAIN'S OFFICE", sub: 'Sample numbers. Use Show clickable to see what you can tap.' };
 }
@@ -576,8 +576,8 @@ FT(ap, 'S', 0.5, 0.74, 'NEXT', 6, '#7be0ff'); FT(ap, 'S', 0.5, 0.42, '4:00 am', 
 hitBox('agenda', 'Next meeting', 7.95, 12.0, 0, 9.05, 12.4, 1.75, 10);
 if (m) {
 const kd = (k) => (k === 'security' ? 'police' : k === 'mechanic' ? 'engineer' : k === 'librarian' ? 'librarian' : 'plain');
-ags.forEach((a, i) => { const west = i < 2, y = ys[i % 2]; Pe(west ? 2.9 : 7.1, y, { shirt: a.color, zoff: 0.45, seated: true, face: west ? 'SE' : 'NW', kadd: west ? 0.3 : 0.6, kind: kd(a.k), hair: '#4a3a2a' }); });
-Pe(5.05, 12.2, { shirt: '#1f2f5a', zoff: 0.45, seated: true, face: 'NE', kadd: 0.9, kind: 'captain' });
+
+
 }
 return { kicker: 'CONFERENCE ROOM', title: 'THE CONFERENCE ROOM', sub: 'Agents and the Captain only. Tap the big screen for the live meeting, the filing cabinet for past ones.' };
 }

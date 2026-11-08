@@ -1,6 +1,9 @@
 # Changelog: what Claude did (newest first)
 Claude adds an entry every time it changes something, so any conversation, Jarvis, or Kylar can see the history. Format: date, what, where, status (built / tested here / installed on Pi / confirmed by Kylar).
 
+## 2026-11-08 Starship zoomed rooms: removed stray agents and candle
+- Removed the three agents queued outside the Captain's Office door and the agents/Captain seated in the Conference Room chairs in the zoomed-in room view (agents live in their own rooms). Removed the wall candle that sat on the Screen saver board. Status: pushed, page loads with no errors.
+
 ## 2026-11-08 Starship video review (Kylar's screen recording)
 - Fixed: closing a board (e.g. Screen saver editor) also opened the Crew achievements board under it (tap fell through to the room). Taps are now ignored while a board or pane is open and for half a second after closing.
 - Fixed: ghosting double image while zooming into a room (room layer fade window made much shorter).
