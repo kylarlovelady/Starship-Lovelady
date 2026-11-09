@@ -35,12 +35,10 @@ def overlay(pw, ph, serif, sans, heading, footer, fields):
     spaced(c, cx, y, footer.upper(), sans, 5.6, 1.1, GREY)
     c.save(); buf.seek(0); return PdfReader(buf).pages[0]
 def imprint(pw, ph, sans):
-    """Small 'LOVELADY LLC' on the last page, bottom right on the page-number baseline (Kylar, 2026-11-09: off the back cover, tiny on the last page)."""
+    """Last page (Kylar, 2026-11-09 10:34): blank white page, no lines, no page number, just a tiny grey LOVELADY LLC centred near the bottom."""
     buf = io.BytesIO(); c = canvas.Canvas(buf, pagesize=(pw, ph)); text = "LOVELADY LLC"; size, track = 5.6, 1.1
-    w = sum(pdfmetrics.stringWidth(ch, sans, size) for ch in text) + track * (len(text) - 1)
-    c.setFillColorRGB(*GREY); c.setFont(sans, size); x = pw - 0.6 * 72 - w
-    for ch in text:
-        c.drawString(x, 0.45 * 72 - 2, ch); x += pdfmetrics.stringWidth(ch, sans, size) + track
+    c.setFillColorRGB(1, 1, 1); c.rect(0, 0, pw, ph, stroke=0, fill=1)
+    spaced(c, pw / 2, 0.6 * 72, text, sans, size, track, GREY)
     c.save(); buf.seek(0); return PdfReader(buf).pages[0]
 def run(slug):
     d = f"{STUDIO}/books/{slug}/out"; ip = d + "/interior.pdf"; orig = d + "/interior-orig.pdf"

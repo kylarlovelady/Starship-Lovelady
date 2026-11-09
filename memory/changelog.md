@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 10:37 KDP last page changed: blank page, tiny centred LOVELADY LLC (built, waiting on Pi)
+- tasks/kdp_owner.py: last page is now plain white (no lines, no page number) with LOVELADY LLC small and grey, centred near the bottom. Tested on a dummy PDF. Queue 104 will build it when the Pi is back online.
+
 ## 2026-11-09 10:22 Home Wi-Fi outage (Kylar at work)
 - Pi silent since its 09:00 sync (no 09:30 or 10:00 sync, queue 104 not picked up). Kylar says the Wi-Fi went out again. Queue 104 (KDP rebuild) is in the repo and will run by itself within a few minutes of the Pi coming back online; no action needed. Kalshi practice agent cannot reach Kalshi while the line is down, so expect a gap in its rounds. Status: waiting on the internet.
 
