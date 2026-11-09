@@ -1,100 +1,4 @@
-t repr     : MemoryError()
-lost sys.stderr
-(exit 0)
-```
-
-## 2026-11-06 14:19:01 tasks/queue/081-maker-study2-light.sh
-```
-Mem:            8058        2626        2423          74        3168        5431
-# Stricter maker study (fills need a real trade on the tape), last 3 days
-
-Rounds with a full recording, a tape and a real result: **28**. Orders are 1 contract; post 1c above the best bid; wait 120 s; hold to the result.
-
-| entry | possible orders | skipped (spread under 2c) | filled | fill rate | win rate (filled) | win rate (all posted) | avg maker price | maker profit/$ (1.75% fee) | maker profit/$ (0 fee) | taker profit/$ same orders | taker profit/$ filled only |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| 60 s in | 0 | 56 | 0 | | | | | | | | |
-| 120 s in | 0 | 56 | 0 | | | | | | | | |
-| 180 s in | 0 | 56 | 0 | | | | | | | | |
-
-## How to read it
-
-- Fill rate: the share of resting orders a real seller actually hit. The first study assumed much higher.
-- If the win rate of FILLED orders is lower than for ALL posted orders, we get filled mostly when we are wrong (adverse selection) and the maker saving is partly an illusion.
-- 'taker profit/$ filled only' is the fair comparison: the same orders that filled, bought at the ask instead. Maker beats taker only if maker profit/$ is higher there.
-- The 1.75% maker fee is from one article (dev.to) and should be confirmed with a real fill. Practice only; sample is a few hundred orders, so small differences are noise.
-(exit 0)
-```
-
-## 2026-11-06 14:20:31 tasks/queue/082-longshot-test.sh
-```
-# Longshot hypothesis test (cheap side 3 to 7 minutes out), last 5 days
-
-Rounds with a full recording and a real result: **450**.
-
-| seconds left | price ceiling | bets | wins | avg price | profit per $ | 90% range (bootstrap) | older half | newer half | days positive |
-|---|---|---|---|---|---|---|---|---|---|
-| 420 | 10c | 81 | 5 | 6c | -4% | -63% to +72% | +82% (42) | -100% (39) | 1 of 5 |
-| 420 | 15c | 114 | 7 | 8c | -27% | -69% to +20% | +35% (55) | -80% (59) | 1 of 5 |
-| 420 | 20c | 157 | 18 | 11c | +3% | -31% to +43% | +42% (72) | -28% (85) | 1 of 5 |
-| 300 | 10c | 108 | 6 | 6c | -3% | -62% to +60% | +97% (49) | -72% (59) | 1 of 5 |
-| 300 | 15c | 135 | 12 | 7c | +25% | -27% to +83% | +91% (66) | -39% (69) | 4 of 5 |
-| 300 | 20c | 173 | 17 | 10c | +2% | -35% to +40% | +41% (83) | -32% (90) | 3 of 5 |
-| 240 | 10c | 103 | 2 | 6c | -65% | -100% to -26% | -62% (51) | -68% (52) | 1 of 5 |
-| 240 | 15c | 128 | 6 | 7c | -34% | -77% to +11% | +15% (64) | -79% (64) | 3 of 5 |
-| 240 | 20c | 157 | 14 | 9c | -4% | -40% to +36% | +33% (80) | -44% (77) | 3 of 5 |
-| 180 | 10c | 91 | 6 | 6c | +13% | -60% to +86% | -17% (43) | +37% (48) | 2 of 5 |
-| 180 | 15c | 111 | 9 | 7c | +13% | -42% to +78% | +30% (54) | -3% (57) | 3 of 5 |
-| 180 | 20c | 140 | 15 | 9c | +13% | -30% to +63% | +31% (66) | -2% (74) | 3 of 5 |
-
-## Per day for the 300 s / 15c rule (Central calendar days)
-
-| day | bets | wins | profit per $ |
-|---|---|---|---|
-| 11-02 | 3 | 1 | +284% |
-| 11-03 | 43 | 4 | +29% |
-| 11-04 | 41 | 4 | +51% |
-| 11-05 | 38 | 3 | +4% |
-| 11-06 | 10 | 0 | -100% |
-
-## Reading this
-
-- Pays about 10 to 1 when it hits, so results swing hard: a few wins decide everything. Trust only a 90% range that stays above zero AND the same sign in both halves and on most days.
-- Practice only; nothing changes in the agent. If it holds, the next step is a small forward test as its own practice strategy, small stakes.
-(exit 0)
-```
-
-## 2026-11-06 15:16:01 tasks/queue/083-series-catalog.sh
-```
-started; progress so far:
-(exit 0)
-```
-
-## 2026-11-06 15:37:02 tasks/queue/084-series-nightly-install.sh
-```
-installed: runs every night at 4:40 am
-40 4 * * * flock -n /tmp/series_catalog.lock bash $HOME/starship/tasks/series_catalog_daily.sh >> $HOME/market-data/series_catalog.log 2>&1 # series-catalog
-== BTC lag-1 check
-rounds: 2936 span days: 31.0 UP share: 48.6%
-all                    P(UP|prev UP)=47.6% (n=1424)  P(UP|prev DOWN)=49.4% (n=1506)  gap=-1.8 pts  +-1.8 (1 SE)  z=-1.0
-older half             P(UP|prev UP)=49.5% (n=734)  P(UP|prev DOWN)=50.5% (n=731)  gap=-1.0 pts  +-2.6 (1 SE)  z=-0.4
-newer half             P(UP|prev UP)=45.7% (n=690)  P(UP|prev DOWN)=48.4% (n=775)  gap=-2.7 pts  +-2.6 (1 SE)  z=-1.0
-after UP,UP            P(UP)=46.7% (n=677)
-after DOWN,DOWN        P(UP)=49.9% (n=759)
-CT hours 00-04         P(UP|prev UP)=50.0% (n=228)  P(UP|prev DOWN)=49.3% (n=225)  gap=+0.7 pts  +-4.7 (1 SE)  z=+0.1
-CT hours 04-08         P(UP|prev UP)=44.2% (n=224)  P(UP|prev DOWN)=45.7% (n=269)  gap=-1.5 pts  +-4.5 (1 SE)  z=-0.3
-CT hours 08-12         P(UP|prev UP)=45.6% (n=241)  P(UP|prev DOWN)=51.4% (n=255)  gap=-5.7 pts  +-4.5 (1 SE)  z=-1.3
-CT hours 12-16         P(UP|prev UP)=45.5% (n=244)  P(UP|prev DOWN)=53.2% (n=252)  gap=-7.7 pts  +-4.5 (1 SE)  z=-1.7
-CT hours 16-20         P(UP|prev UP)=51.5% (n=237)  P(UP|prev DOWN)=46.7% (n=259)  gap=+4.8 pts  +-4.5 (1 SE)  z=+1.1
-CT hours 20-24         P(UP|prev UP)=48.8% (n=250)  P(UP|prev DOWN)=50.4% (n=246)  gap=-1.6 pts  +-4.5 (1 SE)  z=-0.4
-(exit 0)
-```
-
-## 2026-11-06 20:10:01 tasks/queue/085-pihole-clients.sh
-```
-== devices seen in the last 24 h (address, lookups, last seen, blocked)
-OCI runtime exec failed: exec failed: unable to start container process: exec: "sqlite3": executable file not found in $PATH
-== names Pi-hole knows (address, name)
-OCI runtime exec failed: exec failed: unable to start container process: exec: "sqlite3": executable file not found in $PATH
+e to start container process: exec: "sqlite3": executable file not found in $PATH
 == local DNS names set (dns.hosts)
 []
 (exit 0)
@@ -617,6 +521,78 @@ WALLET CURVE v_hold_s100 (pretend money, after fees): 134 settled rounds, Sat 07
   5 worst rounds: -100, -100, -100, -100, -100
   longest losing streak: 4 rounds
   by hour (local): 00:-67(4)  01:-78(4)  02:+8(4)  03:+124(4)  04:-295(4)  05:+212(4)  06:+52(4)  07:-295(4)  08:-36(4)  09:-60(4)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+3(7)  20:-355(6)  21:-7(4)  22:+81(4)  23:+192(4)
+
+LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+```
+(exit 0)
+```
+
+## 2026-11-09 04:07:01 tasks/queue/103-kalshi-wallet-curve-overnight.sh
+```
+wrote /home/kylarlovelady/starship/memory/inbox/kalshi-wallet-curve.md (66 lines)
+# Kalshi wallet curve (queue 103, Mon 09 04:07, practice money only)
+
+```
+WALLET CURVE v_hold_s500 (pretend money, after fees): 162 settled rounds, Sat 07 10:30 to Mon 09 03:45, 3 unsettled skipped
+  profit now +6435.92 | peak +7353.71 (Mon 09 03:00) | worst drop 5307.01 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 917.79 from the peak
+  wins 102 (63%), avg win +278.14, avg loss -365.58, avg stake 298.49, avg entry price 54.2 c
+  entry price  0- 40 c:  31 rounds, won  32%, profit  +6057.53
+  entry price 40- 60 c:  44 rounds, won  61%, profit   -109.43
+  entry price 60- 80 c:  87 rounds, won  75%, profit   +487.82
+  bet UP  :  88 rounds, won  60%, profit   -914.72
+  bet DOWN:  74 rounds, won  66%, profit  +7350.64
+  5 best rounds: +2430, +2108, +2107, +1971, +1852  (= 163% of total profit)
+  5 worst rounds: -500, -500, -500, -500, -500
+  longest losing streak: 4 rounds
+  by hour (local): 00:-785(7)  01:+852(8)  02:+2046(7)  03:+1791(8)  04:-1095(4)  05:+1058(4)  06:+238(4)  07:-1146(4)  08:-208(4)  09:-304(4)  10:-570(6)  11:+2656(8)  12:-512(8)  13:+1459(8)  14:+2968(8)  15:-1263(7)  16:+292(8)  17:-863(8)  18:+543(8)  19:+33(7)  20:-2252(8)  21:-1081(8)  22:+2004(8)  23:+575(8)
+
+LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+  Sun 08 20:00  DOWN 3071 @ 15c  stake    472  result UP     -499.87  total  +3282.57
+  Sun 08 20:15  DOWN 2758 @ 17c  stake    473  result UP     -499.99  total  +2782.58
+  Sun 08 20:31  DOWN    8 @ 66c  stake      5  result DOWN     +2.59  total  +2785.17
+  Sun 08 20:45  UP   2757 @ 17c  stake    473  result DOWN   -499.95  total  +2285.22
+  Sun 08 21:00  DOWN   10 @ 50c  stake      5  result DOWN     +4.82  total  +2290.04
+  Sun 08 21:15  DOWN  729 @ 67c  stake    488  result UP     -499.41  total  +1790.63
+  Sun 08 21:30  DOWN 2351 @ 20c  stake    474  result UP     -499.90  total  +1290.73
+  Sun 08 21:45  DOWN    7 @ 72c  stake      5  result DOWN     +1.86  total  +1292.59
+  Sun 08 22:00  UP      9 @ 59c  stake      5  result UP       +3.53  total  +1296.12
+  Sun 08 22:16  UP   2474 @ 19c  stake    473  result DOWN   -499.99  total   +796.13
+  Sun 08 22:30  DOWN 2607 @ 18c  stake    473  result DOWN  +2107.13  total  +2903.26
+  Sun 08 22:46  UP      9 @ 60c  stake      5  result DOWN     -5.56  total  +2897.70
+  Sun 08 23:00  DOWN  634 @ 78c  stake    492  result DOWN   +134.10  total  +3031.80
+  Sun 08 23:15  UP   2758 @ 17c  stake    473  result DOWN   -499.89  total  +2531.91
+  Sun 08 23:30  UP      9 @ 60c  stake      5  result DOWN     -5.56  total  +2526.35
+  Sun 08 23:45  UP      9 @ 58c  stake      5  result UP       +3.62  total  +2529.97
+  Mon 09 00:00  UP      9 @ 56c  stake      5  result UP       +3.80  total  +2533.77
+  Mon 09 00:15  DOWN    7 @ 76c  stake      5  result DOWN     +1.59  total  +2535.36
+  Mon 09 00:45  DOWN  763 @ 64c  stake    487  result UP     -499.65  total  +2035.71
+  Mon 09 01:00  UP   2471 @ 19c  stake    473  result DOWN   -499.95  total  +1535.76
+  Mon 09 01:15  DOWN 1780 @ 27c  stake    478  result DOWN  +1280.07  total  +2815.83
+  Mon 09 01:30  UP      9 @ 61c  stake      5  result UP       +3.36  total  +2819.19
+  Mon 09 01:45  DOWN  947 @ 51c  stake    483  result DOWN   +447.15  total  +3266.34
+  Mon 09 02:00  UP   2471 @ 19c  stake    473  result UP    +1971.08  total  +5237.42
+  Mon 09 02:16  UP      9 @ 60c  stake      5  result UP       +3.44  total  +5240.86
+  Mon 09 02:30  UP     10 @ 50c  stake      5  result UP       +4.82  total  +5245.68
+  Mon 09 03:00  DOWN 2608 @ 18c  stake    473  result DOWN  +2108.03  total  +7353.71
+  Mon 09 03:15  UP   2196 @ 18c  stake    399  result DOWN   -421.55  total  +6932.16
+  Mon 09 03:30  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +6935.87
+  Mon 09 03:45  DOWN 2373 @ 20c  stake    473  result UP     -499.95  total  +6435.92
+
+RUNNING TOTAL every 10 rounds: -502, +970, -1256, +63, +629, +517, +1303, +1506, -344, +1132, +1947, +5603, +4280, +1293, +2535, +6932
+
+---- v_hold_s100 (same entries, 1/5 the size) ----
+WALLET CURVE v_hold_s100 (pretend money, after fees): 162 settled rounds, Sat 07 10:30 to Mon 09 03:45, 3 unsettled skipped
+  profit now +1232.04 | peak +1428.16 (Mon 09 03:00) | worst drop 1037.55 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 196.12 from the peak
+  wins 102 (63%), avg win +58.06, avg loss -78.17, avg stake 63.47, avg entry price 54.2 c
+  entry price  0- 40 c:  31 rounds, won  32%, profit  +1138.55
+  entry price 40- 60 c:  44 rounds, won  61%, profit    -71.95
+  entry price 60- 80 c:  87 rounds, won  75%, profit   +165.44
+  bet UP  :  88 rounds, won  60%, profit   -367.87
+  bet DOWN:  74 rounds, won  66%, profit  +1599.91
+  5 best rounds: +469, +406, +406, +379, +358  (= 164% of total profit)
+  5 worst rounds: -100, -100, -100, -100, -100
+  longest losing streak: 4 rounds
+  by hour (local): 00:-161(7)  01:+170(8)  02:+396(7)  03:+334(8)  04:-295(4)  05:+212(4)  06:+52(4)  07:-295(4)  08:-36(4)  09:-60(4)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+3(7)  20:-453(8)  21:-200(8)  22:+385(8)  23:+119(8)
 
 LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
 ```
