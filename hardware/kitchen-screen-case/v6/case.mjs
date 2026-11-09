@@ -34,6 +34,7 @@ function doorCuts(d){ // things cut from the body
 }
 function doorBodyAdds(d){ const [cx,cy]=W2(d,0,P.axisOff); return [zcyl(cx,cy,P.barrelR,zb[0],zb[1],32), zcyl(cx,cy,P.barrelR,zb[4],zb[5],32)]; }
 function doorHoles(d){ const [cx,cy]=W2(d,0,P.axisOff); return [zcyl(cx,cy,1.3,zb[0]-2.5,zb[1]+0.1,24), zcyl(cx,cy,1.7,zb[4]-0.1,zb[5]+1,24), zcyl(cx,cy,3.0,zb[5]-1.6,zb[5]+1,24)]; }  // tapped 2.7 mm (r1.35) hole runs 2.5 mm past the stack; head sits 1.6 mm into the top knuckle
+const pryNotch=(d)=>{ const [px,py]=W2(d,d.L,wall/2); return zcyl(px,py,3.5,zb[0]+8,zb[5]-8,20); };   // thumbnail/screwdriver pry groove across the seam at each door's free end (half in the door, half in the wall)
 export function doorSolid(d, extras){
   const [cx,cy]=W2(d,0,P.axisOff), hv=wall/2-0.1;
   let s=zprism(polyUV(d,rect(5.3,d.L-0.2,-hv,hv)),zb[0],zb[5]-0.2);
@@ -41,6 +42,7 @@ export function doorSolid(d, extras){
   s=s.union(zcyl(cx,cy,P.doorBarrelR,zb[2],zb[3],32));
   s=s.sub(zcyl(cx,cy,1.7,zb[2]-1,zb[3]+1,24));
   for(const lu of d.latch){ const [lx,ly]=W2(d,lu,0); s=s.sub(zcyl(lx,ly,1.1,zb[5]-0.2-9,zb[5]+1,14)); }
+  s=s.sub(pryNotch(d));
   return extras?extras(s,d):s;
 }
 const doorVents=(s,d)=>{ // vent slots through the door thickness (vertical slots)
@@ -90,6 +92,7 @@ export function buildBody(log=()=>{}){
   for(let i=(VARIANT==='slim'?1:0);i<(VARIANT==='slim'?5:7);i++){ const x=-107+i*9; holes.push(box(x-1.5,x+1.5,-47.9,45.9,-1,backT+1)); }
   // power cord exit: 8 mm slot through the bottom wall under the RIGHT bay (x 125.5..133.5); the cord crosses the case along the bottom, behind the screen (single cable to the wall outlet)
   holes.push(box(125.5,133.5,-oy-1,-oy+wall+1,backT+1,zTop-12));
+  for(const k of ['A','B','C']) holes.push(pryNotch(DOORS[k]));   // pry grooves in the wall beside each door's free end
   // keyholes
   for(const sx of [-1,1]){ const x=sx*75,y=58; holes.push(zcyl(x,y,4.5,-1,backT+1,24), box(x-2.5,x+2.5,y-9,y,-1,backT+1)); }
   // top exhaust louvers (slanted), speaker slots

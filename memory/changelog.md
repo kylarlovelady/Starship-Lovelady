@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kitchen case: pry grooves on the doors (Kylar: no way to grab a door)
+- 7 mm round vertical groove (z 12..26) across the seam at each door's free end, half in the door and half in the wall, so a screwdriver tip or fingernail can pry the door out once the 2 latch screws are out. 50 checks pass, plates/viewer/zips rebuilt.
+
 ## 2026-11-08 Kitchen case: stud height measured (3.6 mm), plates rebuilt
 - so_h 3 -> 3.6 mm (photo of the stud edge-on against the tape). Tab screws M2.5 x 4 reach 2.4 mm into the studs. make_plates.py added (rebuilds plates/ from stl_slim). Plates, viewer, zips regenerated; 50 checks pass. Open: stud thread size (assumed M2.5, test with one screw).
 
