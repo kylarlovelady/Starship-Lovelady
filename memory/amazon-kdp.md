@@ -103,4 +103,4 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 ## Next titles (Kylar, 2026-11-09 10:58), same 4 colours each
 - Order: Lab Operator, Distribution Operator, Technical Advisor, Training Coordinator, Scheduler, Trainer, Engineer, Operations Leader, Production Director, Process Technician, Administrative Specialist, Board Operator, EH&S Technician. That is 13 titles x 4 colours = 52 new books; with the 4 live Process Operator books the series totals 56.
 - To do when starting: add each title to tasks/kdp_series.json under "titles" (two lines, role, log words, job keyword); the longer line spans 78% of the cover width. Lab Operator is already in the file. Check long ones (Administrative Specialist, EH&S Technician) fit and the spine reads well.
-
+- 2026-11-09 11:00 (Kylar): more titles will come later. He MIGHT drop Production Director (undecided; keep it on the list until he says drop). If dropped: 12 new titles = 48 new books, 52 with Process Operator.
