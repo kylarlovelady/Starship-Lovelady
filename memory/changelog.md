@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:05 Projects: Steam Deck idea added
+- memory/projects/steam-deck.md + projects.md row; cross-linked from laser-cnc.md. Status: idea, waiting on Kylar for model and first use.
+
 ## 2026-11-09 12:00 Projects: laser engraver and tabletop CNC machine added (idea)
 - memory/projects.md row + new memory/projects/laser-cnc.md. Status: idea, waiting on Kylar for what to make and budget.
 
