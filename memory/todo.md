@@ -84,3 +84,10 @@ Open items on top. When finished, move the line to Done with the date (never del
 - Crew achievements and other boards still show sample data.
 - Screen saver editor: preview text tiny on phone.
 - Crew sprites at the door cut off at the bottom when zoomed.
+
+## Added 2026-11-09 04:30 (Kylar by voice in the truck)
+- STARSHIP REWORK (center of everything): start from 3 questions on open (what needs me now / how are the money things / what is printing), plus a plain menu that jumps to any room. Add three offices: KDP (sales, live books, what to print or write next), Kalshi (wallets, today profit, health), Bambu Labs (current print, time left, next plate). Fix zoom bugs (rooms too small, boards overlapping, jumbled info). Build layout first, wire one data feed at a time (KDP sales and printer need real data sources).
+- CREW THAT WORKS ALONE: each agent gets a standing job on a schedule, writes what it did for the morning, checks and fixes its own work, hard limits (no real money moves, nothing deleted, spend under $100 a month; anything past limits goes to Kylar for yes/no). Kylar has GitHub and TikTok finds about agent workers to send in text; Claude reviews each: what it does, fit for Starship, effort.
+- KDP: all four colours of Process Operator are live on Amazon (Kylar, 2026-11-09). Update amazon-kdp.md once he confirms the Lab Operator state.
+- Market check for selling the case (see business.md).
+- Voice calls cannot read or write files; anything said by voice is saved here when Kylar opens the text chat. A 7 AM phone reminder holds the same list as backup.

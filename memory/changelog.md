@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 04:30 Notes from Kylar's morning voice drive filed (built, pushed)
+- kalshi-ai.md (overnight result, design rules, jobs owed), business.md (case-selling idea), projects/3d-printing.md (hinge failure, support settings, recipe), todo.md (Starship rework, crew plan), amazon-kdp.md (all four colours live), projects.md rows. Queue 103 result read.
+
 - 2026-11-09 04:08 Claude: queued tasks/queue/103-kalshi-wallet-curve-overnight.sh (rerun of 102) to get the overnight Kalshi breakdown for Kylar. Status: queued, result lands in memory/inbox/kalshi-wallet-curve.md.
 
 ## 2026-11-08 20:42 Kalshi: Kylar's sizing rule and plan filed

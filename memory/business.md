@@ -20,3 +20,8 @@ Updated 2026-11-04 (imported from Hub Notes, Nov 2 voice call).
 
 ## Done
 (Finished items go here with the date, newest first. Never delete.)
+
+## Idea: sell the kitchen screen case (Kylar by voice, 2026-11-09)
+- Kylar likes the case (GeekPi 10.1" screen + Pi 5, slim 38 mm, ASA, 4 plates) and is thinking of selling it on Etsy: parts kit or fully assembled with his screws, shipped. Worry: 40 orders would take a month on one printer. Friend with 8 printers can print overflow and share profit. Selling the files (Etsy digital, MakerWorld, Printables, Cults3D) is the low-effort fallback; Kylar leans to making and shipping. He may change his mind.
+- Rough numbers (Claude estimate, unconfirmed): ~250-300 g ASA (about $5-6), 12-14 h printer time per case, plus screws, box, Etsy fees. Cap stock or use made-to-order with a 2-week ship time. State clearly it fits the GeekPi 10.1" screen and a Pi 5 only.
+- Order: finish and dry-fit the first case, tweak, lock the design, write the exact print settings as a recipe (a friend's copies must match; test ASA on his printers first), then decide. Claude to do a market check (similar Pi screen cases on Etsy, price range, search interest) in text.

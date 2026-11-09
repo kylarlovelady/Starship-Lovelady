@@ -95,3 +95,5 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 - Per book at KDP: Create Hardcover, paste the listing text, upload the title's interior.pdf (same file for every colour) and that colour's cover.pdf, Launch Previewer, Approve, price, publish. Claude sends the PDFs by copying them into memory/inbox/kdp-preview/<slug>/ (queue job) and attaching them.
 - Status: Process Operator A navy and B green IN REVIEW; C burgundy and E orchid to list; Lab Operator A/B/C/E built, to list.
 - 2026-11-05 23:28 PAUSED by Kylar: only 2 books at a time for now. Process Operator navy (A) and forest green (B) are submitted and in review; nothing else to list until he reports how the review went. Next when he is back: C burgundy, E orchid purple, then Lab Operator.
+
+- 2026-11-09 (Kylar by voice): all four colours of the Process Operator book are now live on Amazon. Family saw them. (Lab Operator state unconfirmed.)
