@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:15 Drone: low and far noted (range design + line-of-sight rule)
+- memory/projects/drone.md updated.
+
 ## 2026-11-09 12:12 Drone: purpose fun, Steam Deck as controller
 - memory/projects/drone.md updated; projects.md row updated. Waiting on payload and budget.
 

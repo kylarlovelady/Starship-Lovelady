@@ -11,6 +11,7 @@ Added 2026-11-09 (Kylar by text). Status: idea. Nothing chosen or bought.
 ## Answers so far (Kylar, 2026-11-09 12:07)
 - Purpose: fun (hobby, no business use, so Part 107 is not needed unless that changes).
 - The Steam Deck IS the controller (sticks and triggers fly it), not just a screen. He would enjoy building a printed attachment for the Deck (for example a holder for the radio/telemetry module, antenna and video receiver, powered from the Deck's USB-C).
+- Wants to fly low (not high) but FAR (2026-11-09 12:08). Claude notes (unconfirmed): long range design = efficient big slow props (also quiet), a large battery (Li-ion 21700 packs are common for long range), a light frame, and a long-range radio link (900 MHz class, for example ELRS 915 or a 900 MHz telemetry radio with a good antenna). Flying low shortens radio range because of trees, buildings and ground. Legal limit to check: US recreational rules require keeping the drone in visual line of sight (or using a visual observer when flying FPV), so "far" in practice means as far as he can see it, unless he gets an FAA waiver or goes the Part 107 route. Land and permission matter too (private property, no flying over people).
 - Still unanswered: payload weight and what it carries, budget, buy-a-frame vs design-own-frame.
 
 ## First ideas (Claude, unconfirmed; to research with current prices before buying)
