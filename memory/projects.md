@@ -15,7 +15,7 @@ One line per project. Status: idea / in progress / stalled / done. Finish what i
 | Sell the kitchen screen case (Etsy kit or files; friend with 8 printers as overflow) | idea | Finish and dry-fit case, lock design, write print recipe, Claude does Etsy market check | business.md |
 | Laser engraver + tabletop CNC machine | idea | Kylar says what he wants to make and his budget; Claude researches models, prices, safety and space | projects/laser-cnc.md |
 | Steam Deck as a Starship device (terminal, print station, CNC/laser controller) | idea | Model is LCD; Kylar says what to try first; Claude picks one and walks him through it | projects/steam-deck.md |
-| Quiet payload drone (printed parts, camera + thermal camera, Steam Deck control) | idea | purpose=fun, Deck is the controller (printed attachment wanted); Kylar answers payload and budget; Claude researches parts, drafts a staged plan, checks FAA rules | projects/drone.md |
+| Quiet payload drone (printed parts, camera + thermal camera, Steam Deck control) | idea (parked 11-09 by Kylar, research later) | purpose=fun, Deck is the controller (printed attachment wanted); Kylar answers payload and budget; Claude researches parts, drafts a staged plan, checks FAA rules | projects/drone.md |
 | Coop cam livestream with donate-to-feed | idea | Pick platform (YouTube first), test one camera | projects/coop-cam-stream.md |
 | Freeze-drying business | idea | Pick containers, label template | projects/freeze-drying.md |
 | 3D printing | idea | Fill in details | projects/3d-printing.md |

@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:27 Drone parked for later (Kylar)
+- memory/projects/drone.md and projects.md: research starts only when he asks.
+
 ## 2026-11-09 12:25 Drone: no budget set; working payload target 1 kg
 - memory/projects/drone.md updated.
 

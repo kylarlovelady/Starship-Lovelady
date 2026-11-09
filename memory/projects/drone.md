@@ -36,7 +36,8 @@ Added 2026-11-09 (Kylar by text). Status: idea. Nothing chosen or bought.
 - Budget, and whether he wants to buy a proven frame and print only add-ons, or design the frame himself.
 
 ## Next step
-- Kylar answers the questions; Claude researches parts and prices and drafts a staged plan: bench test one motor and prop for thrust and noise, then a small test frame, then the full build.
+- PARKED by Kylar 2026-11-09 12:16: save for later, do not start the parts research until he asks.
+- When he asks: - Kylar answers the questions; Claude researches parts and prices and drafts a staged plan: bench test one motor and prop for thrust and noise, then a small test frame, then the full build.
 
 ## Done
 (nothing yet)
