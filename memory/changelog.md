@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kitchen case: screen mount holes corrected from the real screen
+- Measured on Kylar's screen (photos with tape): black back plate 235 x 142 mm, 4 gold studs (identical, two under the kickstand brackets), centres 4 mm in from each edge, so 227 x 134 mm apart. Model had 6/7/5 mm; set to 4/4/4 (case.mjs P.holeX/holeTop/holeBot). Verify passes (50 on slim). Still unknown: stud height (3 mm assumed) and thread size (M2.5 assumed). Plate STLs not rebuilt yet; rebuild after stud height is known.
+
 ## 2026-11-08 Kitchen case: 4 ready-to-print plate files (Kylar chose grouped prints, no auto-eject)
 - hardware/kitchen-screen-case/v6/plates/: plate1 body_left+door_A (hinge test first), plate2 body_right+door_C+door_B, plate3 faceplate_left, plate4 faceplate_right+feet. Faceplates flipped face-down; volumes checked against originals. Kylar has Bambu Studio on his Windows desktop; slicing there. Pi slicer route parked; auto-eject idea parked (big ASA parts, risk to toolhead).
 
