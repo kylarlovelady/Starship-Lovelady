@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 20:45 Kalshi swing explained (Kylar asked)
+- Read queue 102 output; summary filed in memory/kalshi-ai.md ("Big wallet swing explained"). v_hold_s500 peaked +$6,103 at 4:30 PM, now +$2,783; driven by cheap-side ~16c bets of ~$472 (2 wins +$4,282, 7 losses -$500 each since 3 PM). Live OFF. Kylar will move back to voice chat.
+
 ## 2026-11-08 Kalshi: wallet curve tool + queued job 102 (Kylar asked what the big wallet did)
 - markets/wallet_curve.py (read-only): replays one practice strategy round by round from trades.jsonl (profit, peak, worst drop, latest rounds, by entry price/side/hour). Queue job 102 runs it for v_hold_s500 and v_hold_s100; output lands in memory/inbox/queue-results.md. Live stays OFF.
 - Pi status 19:07 showed v_hold_s500 +4784 over 130 rounds, -490 over the last 4 rounds.
