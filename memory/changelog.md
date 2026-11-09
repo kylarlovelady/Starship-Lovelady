@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:00 Projects: laser engraver and tabletop CNC machine added (idea)
+- memory/projects.md row + new memory/projects/laser-cnc.md. Status: idea, waiting on Kylar for what to make and budget.
+
 ## 2026-11-09 11:00 KDP: next 13 titles filed (52 books) in amazon-kdp.md
 
 ## 2026-11-09 10:37 KDP last page changed: blank page, tiny centred LOVELADY LLC (built, waiting on Pi)
