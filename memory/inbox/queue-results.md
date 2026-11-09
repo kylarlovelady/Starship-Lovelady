@@ -1,125 +1,4 @@
-0782     39     -79.50   31%   -5.0%
-  v_x72222452     39     -86.56   31%   -5.5%
-  v_x44219231     39     -86.56   31%   -5.5%
-  v_x88221262     39     -86.56   31%   -5.5%
-  v_x52220781     27     -98.53   30%  -14.0%
-  v_x8220761      39    -109.77   31%   -6.5%
-  v_x4227192      39    -118.76   28%   -7.3%
-  v_x52220782     26    -120.69   27%  -18.5%
-  v_hold          34    -123.94   41%  -16.7%
-  v_x16217722     39    -138.46   23%  -16.5%
-  v_x32221881     39    -154.10   31%   -7.3%
-  v_x219211       36    -154.25   33%  -14.6%
-  v_x72222451     36    -154.25   33%  -14.6%
-  v_x80218931     36    -154.25   33%  -14.6%
-  v_cut_loose     34    -162.93   29%  -16.7%
-  v_cut_tight     32    -165.15    9%  -43.3%
-  v_adds          34    -179.19   15%  -28.3%
-  swing           41    -179.70   41%   -9.4%
-  signals         34    -183.58   21%  -27.9%
-  mood            34    -187.66   21%  -19.9%
-(exit 0)
-```
-
-## 2026-11-06 14:10:01 tasks/queue/078-implied-vol-study.sh
-```
-# Kalshi pricing study (implied volatility, calibration, spreads), last 4 days
-
-Rounds with a full recording and a strike: **479** (414 with a real result).
-
-Settlement = average of the last 60 index prices vs the strike (CF Benchmarks), so inside the last minute part of the answer is already locked in. Sigma below is in dollars per square-root-second.
-
-## A. Implied vs realized volatility (only seconds where the price is between 5c and 95c and BTC is at least $1 from the strike)
-
-| seconds left | samples | median implied sigma | median realized sigma (trailing 60 s) | median ratio implied/realized |
-|---|---|---|---|---|
-| 600-840 | 7601 | 4.95 | 5.70 | 0.86 |
-| 420-600 | 8152 | 4.85 | 6.18 | 0.80 |
-| 300-420 | 4750 | 4.65 | 5.85 | 0.79 |
-| 180-300 | 3815 | 4.45 | 5.63 | 0.78 |
-| 90-180 | 1993 | 3.75 | 5.58 | 0.68 |
-| 45-90 | 494 | 3.04 | 6.05 | 0.51 |
-| 15-45 | 55 | 2.45 | 6.16 | 0.38 |
-
-Ratio near 1.0 = the market prices with the volatility Bitcoin is actually showing. Above 1 = the market assumes MORE movement than recent (cheaper favourite). Below 1 = it assumes less movement (dearer favourite). A ratio that changes a lot with time left shows how makers adjust near the close.
-
-## B. Calibration: price said p (YES mid), how often did YES win? (one sample per round per checkpoint)
-
-| left | YES mid bucket | rounds | YES won | avg mid | gap (won - mid) | profit per $ buying the CHEAPER side at its ask | profit per $ buying the DEARER side at its ask |
-|---|---|---|---|---|---|---|---|
-| 420s | 0-20c | 79 | 13% | 10c | +2c | +13.8% | -3.7% |
-| 420s | 20-40c | 64 | 34% | 29c | +5c | +11.5% | -10.1% |
-| 420s | 40-60c | 48 | 38% | 49c | -12c | -21.4% | +10.1% |
-| 420s | 60-80c | 53 | 66% | 72c | -6c | +14.1% | -10.8% |
-| 420s | 80-100c | 69 | 83% | 89c | -7c | +47.3% | -8.3% |
-| 300s | 0-20c | 98 | 14% | 8c | +6c | +57.4% | -7.3% |
-| 300s | 20-40c | 49 | 27% | 28c | -2c | -11.6% | -0.4% |
-| 300s | 40-60c | 43 | 51% | 51c | +0c | +4.7% | -11.5% |
-| 300s | 60-80c | 33 | 58% | 70c | -12c | +31.9% | -19.7% |
-| 300s | 80-100c | 88 | 93% | 92c | +1c | -21.0% | +0.5% |
-| 180s | 0-20c | 113 | 12% | 5c | +6c | +111.4% | -8.8% |
-| 180s | 20-40c | 29 | 34% | 31c | +4c | +5.4% | -8.0% |
-| 180s | 40-60c | 31 | 32% | 48c | -16c | +16.1% | -21.1% |
-| 180s | 60-80c | 39 | 64% | 70c | -6c | +12.2% | -10.8% |
-| 180s | 80-100c | 99 | 95% | 94c | +1c | -22.8% | +0.7% |
-| 90s | 0-20c | 126 | 4% | 5c | -1c | -21.2% | +0.4% |
-| 90s | 20-40c | 22 | 32% | 28c | +3c | +5.1% | -7.3% |
-| 90s | 40-60c | 13 | 85% | 50c | +34c | -34.6% | +20.6% |
-| 90s | 60-80c | 17 | 88% | 71c | +18c | -62.4% | +21.6% |
-| 90s | 80-100c | 88 | 99% | 96c | +3c | -72.5% | +4.2% |
-| 45s | 0-20c | 94 | 4% | 2c | +2c | +105.1% | -8.3% |
-| 45s | 20-40c | 9 | 56% | 30c | +26c | +73.5% | -38.3% |
-| 45s | 80-100c | 72 | 99% | 97c | +2c | -53.5% | +2.4% |
-
-## C. What the quotes cost (ask minus bid, in cents)
-
-| seconds left | samples | median spread | 90th percentile |
-|---|---|---|---|
-| 600-840 | 7995 | 1.0c | 1.0c |
-| 420-600 | 8753 | 1.0c | 1.0c |
-| 300-420 | 5864 | 1.0c | 1.0c |
-| 180-300 | 5793 | 1.0c | 1.0c |
-| 90-180 | 3909 | 0.1c | 1.0c |
-| 45-90 | 1297 | 0.1c | 1.0c |
-| 15-45 | 284 | 0.1c | 1.0c |
-
-| BTC distance from strike | samples | median spread |
-|---|---|---|
-| $0-25 | 6804 | 1.0c |
-| $25-50 | 5708 | 1.0c |
-| $50-75 | 4456 | 1.0c |
-| $75-100 | 2863 | 1.0c |
-| $100-125 | 1773 | 1.0c |
-| $125-150 | 1094 | 1.0c |
-| $150-175 | 590 | 1.0c |
-| $175-200 | 349 | 1.0c |
-| $200-225 | 695 | 1.0c |
-
-## Reading this
-
-- Practice only; nothing here changes a setting. About 300 rounds: gaps under a few cents per bucket are noise.
-- Look for a bias that repeats across time-left checkpoints and price buckets, and then test it forward on new rounds.
-(exit 0)
-```
-
-## 2026-11-06 14:10:41 tasks/queue/079-wallet-back-to-auto.sh
-```
-before: {'active': True, 'live': None, 'strategy': 'v_snipe', 'start': 1000.0}
-after: {'active': True, 'live': None, 'strategy': 'auto', 'start': 1000.0} backup run.json.bak-1793995841
-(exit 0)
-```
-
-## 2026-11-06 14:10:41 tasks/queue/080-maker-study2.sh
-```
-Traceback (most recent call last):
-  File "/home/kylarlovelady/starship/markets/maker_study2.py", line 43, in <module>
-    for l in f:
-  File "<frozen codecs>", line 325, in decode
-object address  : 0x7fff12bcd180
-object refcount : 3
-object type     : 0x9f3d78
-object type name: MemoryError
-object repr     : MemoryError()
+t repr     : MemoryError()
 lost sys.stderr
 (exit 0)
 ```
@@ -669,5 +548,77 @@ slic3r:
 ModuleNotFoundError: No module named 'paho'
 printers seen on LAN (ssdp, 4s):
 none: TimeoutError
+(exit 0)
+```
+
+## 2026-11-08 20:31:01 tasks/queue/102-kalshi-wallet-curve.sh
+```
+wrote /home/kylarlovelady/starship/memory/inbox/kalshi-wallet-curve.md (66 lines)
+# Kalshi wallet curve (queue 102, Sun 08 20:31, practice money only)
+
+```
+WALLET CURVE v_hold_s500 (pretend money, after fees): 134 settled rounds, Sat 07 10:30 to Sun 08 20:15, 0 unsettled skipped
+  profit now +2782.58 | peak +6103.14 (Sun 08 16:30) | worst drop 3320.56 (Sun 08 16:30 -> Sun 08 20:15) | drop right now 3320.56 from the peak
+  wins 85 (63%), avg win +238.66, avg loss -357.21, avg stake 307.48, avg entry price 56.1 c
+  entry price  0- 40 c:  20 rounds, won  30%, profit  +2012.40
+  entry price 40- 60 c:  37 rounds, won  54%, profit   -580.88
+  entry price 60- 80 c:  77 rounds, won  77%, profit  +1351.06
+  bet UP  :  74 rounds, won  62%, profit   -475.92
+  bet DOWN:  60 rounds, won  65%, profit  +3258.50
+  5 best rounds: +2430, +1852, +1850, +1029, +545  (= 277% of total profit)
+  5 worst rounds: -500, -500, -500, -500, -500
+  longest losing streak: 4 rounds
+  by hour (local): 00:-291(4)  01:-379(4)  02:+66(4)  03:+601(4)  04:-1095(4)  05:+1058(4)  06:+238(4)  07:-1146(4)  08:-208(4)  09:-304(4)  10:-570(6)  11:+2656(8)  12:-512(8)  13:+1459(8)  14:+2968(8)  15:-1263(7)  16:+292(8)  17:-863(8)  18:+543(8)  19:+33(7)  20:-1754(6)  21:-89(4)  22:+399(4)  23:+943(4)
+
+LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+  Sun 08 12:45  DOWN   10 @ 50c  stake      5  result UP       -5.18  total  +1926.69
+  Sun 08 13:00  DOWN  729 @ 67c  stake    488  result DOWN   +229.28  total  +2155.97
+  Sun 08 13:15  UP      9 @ 58c  stake      5  result UP       +3.62  total  +2159.59
+  Sun 08 13:30  UP      8 @ 68c  stake      5  result UP       +2.43  total  +2162.02
+  Sun 08 13:45  UP    784 @ 62c  stake    487  result UP     +284.44  total  +2446.46
+  Sun 08 14:00  UP    930 @ 52c  stake    483  result DOWN   -499.66  total  +1946.80
+  Sun 08 14:15  UP   2930 @ 16c  stake    472  result UP    +2430.04  total  +4376.84
+  Sun 08 14:30  DOWN   10 @ 50c  stake      5  result DOWN     +4.82  total  +4381.66
+  Sun 08 14:45  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +4385.37
+  Sun 08 15:00  UP   2927 @ 16c  stake    472  result DOWN   -499.84  total  +3885.53
+  Sun 08 15:15  UP   1213 @ 18c  stake    222  result DOWN   -234.77  total  +3650.76
+  Sun 08 15:30  DOWN  965 @ 50c  stake    483  result DOWN   +465.20  total  +4115.96
+  Sun 08 16:00  UP      7 @ 73c  stake      5  result UP       +1.79  total  +4117.75
+  Sun 08 16:15  DOWN 2352 @ 20c  stake    474  result DOWN  +1852.08  total  +5969.83
+  Sun 08 16:30  DOWN  633 @ 78c  stake    492  result DOWN   +133.31  total  +6103.14
+  Sun 08 16:45  DOWN  709 @ 69c  stake    489  result UP     -499.83  total  +5603.31
+  Sun 08 17:00  UP    664 @ 74c  stake    491  result UP     +164.39  total  +5767.70
+  Sun 08 17:15  UP      9 @ 59c  stake      5  result UP       +3.53  total  +5771.23
+  Sun 08 17:30  UP   1939 @ 25c  stake    477  result DOWN   -499.93  total  +5271.30
+  Sun 08 17:45  DOWN    9 @ 62c  stake      6  result DOWN     +3.27  total  +5274.57
+  Sun 08 18:00  UP   2928 @ 16c  stake    472  result DOWN   -499.92  total  +4774.65
+  Sun 08 18:18  UP      7 @ 77c  stake      5  result UP       +1.52  total  +4776.17
+  Sun 08 18:30  DOWN    9 @ 58c  stake      5  result DOWN     +3.62  total  +4779.79
+  Sun 08 18:45  UP     10 @ 52c  stake      5  result UP       +4.62  total  +4784.41
+  Sun 08 19:00  UP    823 @ 59c  stake    485  result DOWN   -499.43  total  +4284.98
+  Sun 08 19:15  UP     10 @ 50c  stake      5  result DOWN     -5.18  total  +4279.80
+  Sun 08 19:30  DOWN 3121 @ 15c  stake    472  result UP     -499.87  total  +3779.93
+  Sun 08 19:45  UP      8 @ 67c  stake      5  result UP       +2.51  total  +3782.44
+  Sun 08 20:00  DOWN 3071 @ 15c  stake    472  result UP     -499.87  total  +3282.57
+  Sun 08 20:15  DOWN 2758 @ 17c  stake    473  result UP     -499.99  total  +2782.58
+
+RUNNING TOTAL every 10 rounds: -502, +970, -1256, +63, +629, +517, +1303, +1506, -344, +1132, +1947, +5603, +4280
+
+---- v_hold_s100 (same entries, 1/5 the size) ----
+WALLET CURVE v_hold_s100 (pretend money, after fees): 134 settled rounds, Sat 07 10:30 to Sun 08 20:15, 0 unsettled skipped
+  profit now +539.46 | peak +1190.39 (Sun 08 16:30) | worst drop 650.93 (Sun 08 16:30 -> Sun 08 20:15) | drop right now 650.93 from the peak
+  wins 85 (63%), avg win +50.82, avg loss -77.16, avg stake 65.55, avg entry price 56.2 c
+  entry price  0- 40 c:  20 rounds, won  30%, profit   +390.39
+  entry price 40- 60 c:  37 rounds, won  54%, profit   -184.77
+  entry price 60- 80 c:  77 rounds, won  77%, profit   +333.84
+  bet UP  :  74 rounds, won  62%, profit   -259.05
+  bet DOWN:  60 rounds, won  65%, profit   +798.51
+  5 best rounds: +469, +358, +356, +199, +182  (= 290% of total profit)
+  5 worst rounds: -100, -100, -100, -100, -100
+  longest losing streak: 4 rounds
+  by hour (local): 00:-67(4)  01:-78(4)  02:+8(4)  03:+124(4)  04:-295(4)  05:+212(4)  06:+52(4)  07:-295(4)  08:-36(4)  09:-60(4)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+3(7)  20:-355(6)  21:-7(4)  22:+81(4)  23:+192(4)
+
+LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+```
 (exit 0)
 ```
