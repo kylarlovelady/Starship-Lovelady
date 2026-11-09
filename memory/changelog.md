@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 10:22 Home Wi-Fi outage (Kylar at work)
+- Pi silent since its 09:00 sync (no 09:30 or 10:00 sync, queue 104 not picked up). Kylar says the Wi-Fi went out again. Queue 104 (KDP rebuild) is in the repo and will run by itself within a few minutes of the Pi coming back online; no action needed. Kalshi practice agent cannot reach Kalshi while the line is down, so expect a gap in its rounds. Status: waiting on the internet.
+
 ## 2026-11-09 09:30 KDP: Lovelady LLC off the back cover, small on the last page (queued, waiting on Pi)
 - tasks/kdp_build.py: back-cover text removed. tasks/kdp_owner.py: tiny grey LOVELADY LLC on the last interior page, bottom right on the page-number line (tested on a dummy PDF). Queue 104 rebuilds all 8 books and copies cover.pdf, interior.pdf and a last-page preview into memory/inbox/kdp-preview/<slug>/. The KDP author field stays Lovelady LLC (tasks/kdp_series.json) unless Kylar says otherwise. Live Process Operator books need the new cover and interior re-uploaded at KDP (goes back through review).
 
