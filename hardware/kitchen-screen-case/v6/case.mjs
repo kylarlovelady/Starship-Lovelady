@@ -4,7 +4,7 @@ import {Solid,box,zcyl,zprism,xprism,yprism,rrect,rect,circ,extrude,stlBinary} f
 import fs from 'fs';
 export const P = {
   W:235, H:142, T:8, fit:0.4, wall:6, wing:18, backT:2.6, rear:(process.env.CASE_VARIANT==='slim'?23:34), plateT:4, bez:4, R:8,
-  so_h:3,            // screen standoff height behind the screen (ESTIMATE: brass posts in the maker's photo)
+  so_h:3.6,          // gold stud height off the back plate, measured on the real screen 2026-11-08 (about 3.6 mm)
   holeX:4, holeTop:4, holeBot:4,   // stud centres 4 mm in from the plate edge, measured on the real screen 2026-11-08 (plate 235 x 142)
   barrelR:4.5, doorBarrelR:4.4, socketR:4.9, axisOff:1.5,   // hinge knuckles r4.5 (2.8 mm wall around the M3 hole), flush with the inside face
   spk:[-60,62],      // speaker centres, front view x (from the maker's diagram)

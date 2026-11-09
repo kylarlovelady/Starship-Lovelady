@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kitchen case: stud height measured (3.6 mm), plates rebuilt
+- so_h 3 -> 3.6 mm (photo of the stud edge-on against the tape). Tab screws M2.5 x 4 reach 2.4 mm into the studs. make_plates.py added (rebuilds plates/ from stl_slim). Plates, viewer, zips regenerated; 50 checks pass. Open: stud thread size (assumed M2.5, test with one screw).
+
 ## 2026-11-08 Kitchen case: screen mount holes corrected from the real screen
 - Measured on Kylar's screen (photos with tape): black back plate 235 x 142 mm, 4 gold studs (identical, two under the kickstand brackets), centres 4 mm in from each edge, so 227 x 134 mm apart. Model had 6/7/5 mm; set to 4/4/4 (case.mjs P.holeX/holeTop/holeBot). Verify passes (50 on slim). Still unknown: stud height (3 mm assumed) and thread size (M2.5 assumed). Plate STLs not rebuilt yet; rebuild after stud height is known.
 
