@@ -9,6 +9,8 @@ Added 2026-11-09 (Kylar: he owns a Steam Deck and would like to use it or integr
 - Remote desk to the Pi (SSH, VNC, or the repo and queue) over Tailscale, and a Kalshi/agent dashboard.
 - Jarvis client or a push-to-talk terminal for the voice assistant.
 
+- Drone ground station and screen (see projects/drone.md).
+
 ## Next step
 - Kylar says what he wants it to do first (model known: LCD). Then Claude picks one idea and builds the steps one at a time.
 

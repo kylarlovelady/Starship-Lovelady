@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:10 Projects: quiet payload drone idea added
+- memory/projects/drone.md + projects.md row; linked from steam-deck.md. Status: idea, waiting on Kylar's answers (payload, purpose, budget).
+
 ## 2026-11-09 12:05 Projects: Steam Deck idea added
 - memory/projects/steam-deck.md + projects.md row; cross-linked from laser-cnc.md. Status: idea, waiting on Kylar for model and first use.
 
