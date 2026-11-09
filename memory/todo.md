@@ -1,7 +1,7 @@
 # To do
 
 ## Added 2026-11-09 10:31 (Kylar)
-- KDP: UPLOAD THE NEW COVERS AND INTERIORS to Amazon KDP for the 4 live Process Operator books (navy, forest green, burgundy, orchid purple): LOVELADY LLC is off the back cover and small on the last page. Waiting on the Pi to finish the rebuild (queue 104; Pi offline since 09:00, home Wi-Fi out). Files will be in memory/inbox/kdp-preview/<slug>/ (cover.pdf, interior.pdf, last-page.png). Per book at KDP: Edit content, replace manuscript (interior.pdf) and cover (cover.pdf), Launch Previewer, Approve, Publish; it goes back through review. Same pass: fix the navy title ('Process operator' lowercase o). Lab Operator not listed yet, so it just gets the new files when listed.
+- KDP: UPLOAD THE NEW COVERS AND INTERIORS to Amazon KDP for the 4 live Process Operator books (navy, forest green, burgundy, orchid purple): LOVELADY LLC is off the back cover and small on the last page. Waiting on the Pi to finish the rebuild (queue 104; Pi offline since 09:00, home Wi-Fi out). Files will be in memory/inbox/kdp-preview/<slug>/ (cover.pdf, interior.pdf, last-page.png). Per book at KDP: Edit content, replace manuscript (interior.pdf) and cover (cover.pdf), Launch Previewer, Approve, Publish; it goes back through review. Navy title lowercase o already fixed by Kylar 2026-11-09. KDP hardcovers cannot print inside the cover (endpapers blank), so the LLC mark is on the last interior page, facing the inside of the back cover. Lab Operator not listed yet, so it just gets the new files when listed.
 
 Open items on top. When finished, move the line to Done with the date (never delete). Dropped items go to _archive.md.
 

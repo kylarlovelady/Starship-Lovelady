@@ -98,3 +98,4 @@ Cover size check: studio formula (spine = pages x 0.0025 cream + 0.189; width = 
 
 - 2026-11-09 (Kylar by voice): all four colours of the Process Operator book are now live on Amazon. Family saw them. (Lab Operator state unconfirmed.)
 - 2026-11-09 09:14 (Kylar): take LOVELADY LLC off the back cover; put it real small on the last page instead. Build changed (queue 104); next: Kylar re-uploads cover and interior for the 4 live Process Operator colours. Possible same-pass fix: navy title shows as 'Process operator' in KDP.
+- 2026-11-09 10:33 Kylar fixed the navy title (capital O). He wanted LLC 'inside the back hardcover'; KDP cannot print endpapers, so it goes on the last interior page.
