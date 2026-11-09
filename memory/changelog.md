@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 09:30 KDP: Lovelady LLC off the back cover, small on the last page (queued, waiting on Pi)
+- tasks/kdp_build.py: back-cover text removed. tasks/kdp_owner.py: tiny grey LOVELADY LLC on the last interior page, bottom right on the page-number line (tested on a dummy PDF). Queue 104 rebuilds all 8 books and copies cover.pdf, interior.pdf and a last-page preview into memory/inbox/kdp-preview/<slug>/. The KDP author field stays Lovelady LLC (tasks/kdp_series.json) unless Kylar says otherwise. Live Process Operator books need the new cover and interior re-uploaded at KDP (goes back through review).
+
 ## 2026-11-09 06:25 Daily check (filed, pushed)
 - Read all inbox files; Pi healthy, all services active, notes sync fresh (06:00). Filed take-profit, longshot and maker study results into kalshi-ai.md. Updated projects.md (KDP unblocked, Kalshi API key due today) and wrote brief.md. Flags: Kalshi snapshot/sim files last written ~04:00 (agent alive); nothing stalled over 3 days. No Pi or Kalshi actions taken.
 

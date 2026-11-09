@@ -61,7 +61,7 @@ def book(slug, l1, l2, bg, fg):
                 els.append(el(id=f"{tag}{k}{j}", type="rect", x=px(x), y=py(y), w=px(w), h=py(h), bold=False, font=""))
     frame("f", g["fx0"]); frame("k", g["bx0"])
     els.append(el(id="sp1", panel="spine", x=0, y=0, w=100, h=10, size=15, text=f"{l1} {l2}"))
-    els.append(el(id="b1", panel="back", x=2, y=96.8, w=40, h=4, size=8, text="Lovelady LLC", bold=False, align="left", font=IFONT))
+    # 2026-11-09 Kylar: no "Lovelady LLC" on the back cover; it now goes small on the last interior page (tasks/kdp_owner.py)
     return {"name": slug, "title": f"{l1.title()} {l2.title()}", "subtitle": "", "author": "Lovelady LLC", "paper": "cream", "pages": 120,
         "cover": {"bg": bg, "pattern": "none", "pattern_color": "#999999", "frame": False, "frame_color": fg, "font": TFONT, "text": fg, "barcode_box": False, "elements": els},
         "inside": {"font": IFONT, "color": "#222222", "page_bg": "#ffffff", "style": "lines", "line_color": "#8f8f8f", "line_width": 0.5, "spacing": 0.3125, "dash": False,

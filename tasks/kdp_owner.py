@@ -34,6 +34,14 @@ def overlay(pw, ph, serif, sans, heading, footer, fields):
     y -= 6
     spaced(c, cx, y, footer.upper(), sans, 5.6, 1.1, GREY)
     c.save(); buf.seek(0); return PdfReader(buf).pages[0]
+def imprint(pw, ph, sans):
+    """Small 'LOVELADY LLC' on the last page, bottom right on the page-number baseline (Kylar, 2026-11-09: off the back cover, tiny on the last page)."""
+    buf = io.BytesIO(); c = canvas.Canvas(buf, pagesize=(pw, ph)); text = "LOVELADY LLC"; size, track = 5.6, 1.1
+    w = sum(pdfmetrics.stringWidth(ch, sans, size) for ch in text) + track * (len(text) - 1)
+    c.setFillColorRGB(*GREY); c.setFont(sans, size); x = pw - 0.6 * 72 - w
+    for ch in text:
+        c.drawString(x, 0.45 * 72 - 2, ch); x += pdfmetrics.stringWidth(ch, sans, size) + track
+    c.save(); buf.seek(0); return PdfReader(buf).pages[0]
 def run(slug):
     d = f"{STUDIO}/books/{slug}/out"; ip = d + "/interior.pdf"; orig = d + "/interior-orig.pdf"
     if not os.path.exists(ip) and not os.path.exists(orig): print("skip", slug, "no interior"); return
@@ -45,6 +53,8 @@ def run(slug):
         if i == 0:
             pw, ph = float(p.mediabox.width), float(p.mediabox.height)
             p.merge_page(overlay(pw, ph, engine.fn(TF, False), engine.fn(SF, False), "", "If found, please return to the owner.", ["Name", "Phone", "Email", "Company"]))
+        if i == len(r.pages) - 1:
+            p.merge_page(imprint(float(p.mediabox.width), float(p.mediabox.height), engine.fn(SF, False)))
         w.add_page(p)
     w.write(ip); print("owner page refined:", slug, len(r.pages), "pages")
 if __name__ == "__main__":
