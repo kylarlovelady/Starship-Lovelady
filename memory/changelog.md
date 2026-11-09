@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:20 Drone: property is thin and long, wooded
+- memory/projects/drone.md updated (range and line-of-sight consequences).
+
 ## 2026-11-09 12:17 Drone: flying site is grandma's 200 acres
 - memory/projects/drone.md updated.
 
