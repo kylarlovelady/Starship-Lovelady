@@ -4,7 +4,6 @@ floor = background noise level (16-bit scale, 0 to 32767); speech% = share of th
 
 | time | clip | secs | peak | avg | floor | speech% | tail quiet |
 |---|---|---|---|---|---|---|---|
-| Fri 17:56:42 | 51061957613883-wake.wav | 2.0 | 3293 | 521 | 292 | 12 | 0.8 |
 | Fri 17:56:51 | 51061957613883-stt.wav | 9.3 | 8681 | 706 | 328 | 17 | 0.8 |
 | Fri 17:57:51 | 52957987082214-wake.wav | 2.0 | 3146 | 461 | 310 | 1 | 0.7 |
 | Fri 17:58:02 | 52957987082214-stt.wav | 11.5 | 6301 | 716 | 320 | 22 | 1.2 |
@@ -34,8 +33,9 @@ floor = background noise level (16-bit scale, 0 to 32767); speech% = share of th
 | Sun 17:17:50 | 223373401127497-stt.wav | 41.9 | 15502 | 709 | 272 | 21 | 1.9 |
 | Sun 17:18:11 | 223430050932482-wake.wav | 2.0 | 9295 | 727 | 281 | 16 | 0.3 |
 | Sun 17:18:21 | 223430050932482-stt.wav | 10.5 | 10158 | 909 | 280 | 40 | 2.8 |
+| Sun 18:55:12 | 223448106993952-wake.wav | 2.0 | 1979 | 350 | 244 | 3 | 0.7 |
 
-Median background noise floor: 286. Clips with less than 0.8 s of tail quiet: 24 of 36.
+Median background noise floor: 286. Clips with less than 0.8 s of tail quiet: 25 of 37.
 
 ## Satellite restarts by the watchdog (last 24 h)
 Nov 08 17:17:50 LoveladyMainAiHub python3[2953]: stuck in listening for 41s, restarting satellite
