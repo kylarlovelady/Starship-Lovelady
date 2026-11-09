@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 06:25 Daily check (filed, pushed)
+- Read all inbox files; Pi healthy, all services active, notes sync fresh (06:00). Filed take-profit, longshot and maker study results into kalshi-ai.md. Updated projects.md (KDP unblocked, Kalshi API key due today) and wrote brief.md. Flags: Kalshi snapshot/sim files last written ~04:00 (agent alive); nothing stalled over 3 days. No Pi or Kalshi actions taken.
+
 ## 2026-11-09 04:30 Notes from Kylar's morning voice drive filed (built, pushed)
 - kalshi-ai.md (overnight result, design rules, jobs owed), business.md (case-selling idea), projects/3d-printing.md (hinge failure, support settings, recipe), todo.md (Starship rework, crew plan), amazon-kdp.md (all four colours live), projects.md rows. Queue 103 result read.
 
