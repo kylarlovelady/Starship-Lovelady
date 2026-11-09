@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 12:12 Drone: purpose fun, Steam Deck as controller
+- memory/projects/drone.md updated; projects.md row updated. Waiting on payload and budget.
+
 ## 2026-11-09 12:10 Projects: quiet payload drone idea added
 - memory/projects/drone.md + projects.md row; linked from steam-deck.md. Status: idea, waiting on Kylar's answers (payload, purpose, budget).
 

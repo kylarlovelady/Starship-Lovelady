@@ -8,10 +8,16 @@ Added 2026-11-09 (Kylar by text). Status: idea. Nothing chosen or bought.
 - A good camera plus maybe a thermal camera.
 - Controlled from his Steam Deck (LCD model, see steam-deck.md).
 
+## Answers so far (Kylar, 2026-11-09 12:07)
+- Purpose: fun (hobby, no business use, so Part 107 is not needed unless that changes).
+- The Steam Deck IS the controller (sticks and triggers fly it), not just a screen. He would enjoy building a printed attachment for the Deck (for example a holder for the radio/telemetry module, antenna and video receiver, powered from the Deck's USB-C).
+- Still unanswered: payload weight and what it carries, budget, buy-a-frame vs design-own-frame.
+
 ## First ideas (Claude, unconfirmed; to research with current prices before buying)
 - Quiet and lifting heavy pull in the same direction: large, slow-turning props on low-KV motors, more than four motors if needed, and a frame that keeps vibration down. Prop choice matters more for noise than anything else.
 - Frame: carbon-fibre tubes for the arms, printed hubs, mounts and payload brackets (ASA or PETG-CF; PLA softens too easily). Print the camera and payload mounts first as they are the safest start.
 - Flight controller: an ArduPilot-class board (open, supports payload, gimbal, return-to-home). Companion computer (a small Pi) can run the cameras.
+- Deck as the controller (Claude, unconfirmed): in Desktop Mode, QGroundControl can map the Deck's sticks to a joystick and send them to an ArduPilot drone over a MAVLink telemetry radio link. This needs testing for lag and what the drone does when the link drops (set a safe failsafe: hover, then return home). A regular RC radio link as backup is the safer plan for the first flights.
 - Ground station on the Steam Deck: Desktop Mode runs Linux flight-control apps (Mission Planner or QGroundControl); the Deck needs a telemetry link and a video link to the drone. Sticks on the Deck can be mapped as a joystick. A dedicated radio is the safer primary control; the Deck can be the screen and mission planner at first.
 - Cameras: a stabilised main camera on a gimbal; a thermal module (small thermal cores exist for hobby use). Check resolution and frame rate versus price, and whether video can be sent live to the Deck.
 
