@@ -1,5 +1,7 @@
 # Changelog: what Claude did (newest first)
 
+- 2026-11-09 04:08 Claude: queued tasks/queue/103-kalshi-wallet-curve-overnight.sh (rerun of 102) to get the overnight Kalshi breakdown for Kylar. Status: queued, result lands in memory/inbox/kalshi-wallet-curve.md.
+
 ## 2026-11-08 20:42 Kalshi: Kylar's sizing rule and plan filed
 - memory/kalshi-ai.md: bigger bets when signals agree, smaller when weak; check the $5 vs ~$480 rounds against signal agreement. Plan: run tonight, new API key Mon Nov 9, then adjustments. Live OFF.
 
