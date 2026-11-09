@@ -145,3 +145,8 @@ Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 - Read: matches the 2026-11-06 forward test (cheap-side/longshot rule not proven, sign flipped between older and newer half). About 0.5 standard errors: indistinguishable from luck. Nothing live; do not size up on this.
 - Open question for next session: many rounds stake only ~$5 while others stake ~$480 (strategy `distance` entry sizing under FLAT_BET); find out why and whether the $5 rounds are a min-bet/cap quirk.
 - Reminder: Mon Nov 9 the Kalshi API location check expires (redo + new key; keys never in the repo).
+
+## Kylar's sizing rule, restated (2026-11-08 20:39)
+- Bigger bets when the signals line up and the agent is very confident; smaller bets when signals are weak or disagree. Kylar thinks the ~$5 rounds in the $500 test are the "few good signals" rounds. Claude to CHECK this against the data (do the $5 rounds have weaker/disagreeing signals than the ~$480 rounds? FLAT_BET in sim.py is meant to ignore edge sizing, so a $5 round may instead be a probe or cap quirk). Keep the rule either way: stake grows with agreement of signals, and the cap lifts only when a confidence bucket proves itself on unseen rounds.
+- Plan (Kylar): let practice run tonight, get the new Kalshi API key Mon Nov 9, then make adjustments. Live stays OFF. Claude offered a forward test of cheap-side (15-25c) bets capped at $25; waiting for Kylar's go.
+

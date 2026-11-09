@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 20:42 Kalshi: Kylar's sizing rule and plan filed
+- memory/kalshi-ai.md: bigger bets when signals agree, smaller when weak; check the $5 vs ~$480 rounds against signal agreement. Plan: run tonight, new API key Mon Nov 9, then adjustments. Live OFF.
+
 ## 2026-11-08 20:45 Kalshi swing explained (Kylar asked)
 - Read queue 102 output; summary filed in memory/kalshi-ai.md ("Big wallet swing explained"). v_hold_s500 peaked +$6,103 at 4:30 PM, now +$2,783; driven by cheap-side ~16c bets of ~$472 (2 wins +$4,282, 7 losses -$500 each since 3 PM). Live OFF. Kylar will move back to voice chat.
 
