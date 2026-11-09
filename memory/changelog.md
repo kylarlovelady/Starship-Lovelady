@@ -1,5 +1,9 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-08 Kalshi: wallet curve tool + queued job 102 (Kylar asked what the big wallet did)
+- markets/wallet_curve.py (read-only): replays one practice strategy round by round from trades.jsonl (profit, peak, worst drop, latest rounds, by entry price/side/hour). Queue job 102 runs it for v_hold_s500 and v_hold_s100; output lands in memory/inbox/queue-results.md. Live stays OFF.
+- Pi status 19:07 showed v_hold_s500 +4784 over 130 rounds, -490 over the last 4 rounds.
+
 ## 2026-11-08 Kitchen case: pry grooves on the doors (Kylar: no way to grab a door)
 - 7 mm round vertical groove (z 12..26) across the seam at each door's free end, half in the door and half in the wall, so a screwdriver tip or fingernail can pry the door out once the 2 latch screws are out. 50 checks pass, plates/viewer/zips rebuilt.
 
