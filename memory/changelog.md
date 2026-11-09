@@ -1,5 +1,7 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 11:00 KDP: next 13 titles filed (52 books) in amazon-kdp.md
+
 ## 2026-11-09 10:37 KDP last page changed: blank page, tiny centred LOVELADY LLC (built, waiting on Pi)
 - tasks/kdp_owner.py: last page is now plain white (no lines, no page number) with LOVELADY LLC small and grey, centred near the bottom. Tested on a dummy PDF. Queue 104 will build it when the Pi is back online.
 
