@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-10 07:00 Kalshi: drawdown-throttle forward tests added (built, pushed; Pi restarts the practice agent after pull; practice only, live OFF)
+- Kylar: "make the changes to win more, adjust without me telling you." markets/sim.py: new DD_THROTTLE (stake halves when a wallet is 20% of start below its own peak, quarters at 40%); new wallets v_hold_s250_dd and v_hold_s250_cheap100_dd. markets/collector.py marker v10.0. Compiled and loaded OK; not run against live rounds here. Why: Monday's replay (kalshi-size-rules.md) shows flat $250 and cheap-side cap $100 beat the $500 wallet's drawdown (worst drop about $1.6-1.8K vs $5.3K) with similar profit/$; throttle targets the losing-streak damage. Still no proven edge; the autonomous rule is below.
+
 ## 2026-11-10 06:25 Daily check (filed, pushed)
 - Read all inbox files (no new Jarvis notes). Pi healthy (all services active, 42 C, disk 10%, sync 06:00). Flag: v_hold_s500 fell from +$6,407 to +$519 (224 rounds); recorded in kalshi-ai.md and projects.md. Kalshi API key overdue since Nov 9. Phone Jarvis idle 81 h, home wake-ups 2 in 24 h. Nothing stalled over 3 days. Wrote brief.md. No Pi or Kalshi actions taken.
 

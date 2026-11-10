@@ -1,5 +1,8 @@
 # To do
 
+## Added 2026-11-10 (Kylar: adjust Kalshi without me telling you)
+- Daily check: report round counts for v_hold_s250_cheap100, _agree, _dd, _cheap100_dd; Wed Nov 11 pick winners and retire losers (rule in kalshi-ai.md Status). Live stays OFF until Kylar says yes.
+
 ## Added 2026-11-09 20:42 (Kalshi)
 - Review the two forward tests (v_hold_s250_cheap100 and v_hold_s250_agree) against v_hold_s250 on the same rounds around Wed Nov 11 morning, once they have about 100 rounds. The daily 6:17 am check should mention how many rounds they have. Also owed: new Kalshi API key (expired/expiring Nov 9; steps one at a time, key never in the repo) and the Kylar decision on live stake sized from the account.
 

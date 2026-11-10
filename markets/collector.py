@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v9.9 restart: forward tests v_hold_s250_cheap100 (long shots capped at $100) and v_hold_s250_agree (stake sized by signal agreement, Kylar rule), BUY log now records book depth (sz) (Kylar go 2026-11-09 20:22); live still OFF
+# v10.0 restart: forward tests v_hold_s250_dd and v_hold_s250_cheap100_dd (drawdown throttle) added after v_hold_s500 gave back ~$5,900 (Claude 2026-11-10); live still OFF
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches
