@@ -1,5 +1,4 @@
-e to start container process: exec: "sqlite3": executable file not found in $PATH
-== local DNS names set (dns.hosts)
+)
 []
 (exit 0)
 ```
@@ -596,5 +595,11 @@ WALLET CURVE v_hold_s100 (pretend money, after fees): 162 settled rounds, Sat 07
 
 LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
 ```
+(exit 0)
+```
+
+## 2026-11-09 19:31:01 tasks/queue/104-kdp-llc-last-page.sh
+```
+KDP rebuild started in the background
 (exit 0)
 ```
