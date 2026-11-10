@@ -1,13 +1,4 @@
- -r 22050 -c 1 -f S16_LE -t raw --wake-uri tcp://127.0.0.1:10400 --wake-word-name hey_jarvis --detect-command bash -c "
-== audio capture devices
-**** List of CAPTURE Hardware Devices ****
-card 3: AC44 [MXL AC-44], device 0: USB Audio [USB Audio]
-  Subdevices: 0/1
-  Subdevice #0: subdevice #0
-== mixer (capture controls)
-card2: Simple mixer control 'PCM',0
-card3: Simple mixer control 'Mic',0
-== groups
+ps
 kylarlovelady adm dialout cdrom sudo audio video plugdev games users netdev lpadmin docker pironman5 gpio i2c spi render input
 == voice-data
 total 240
@@ -504,5 +495,19 @@ SAME RULES, FIRST HALF vs SECOND HALF of the rounds (does the ranking hold on ro
   G. opposite of Kylar: $250 if signals DISAGREE, $100 if agree                    first     +493   second    +4704
   H. size by price: $50 under 40c, $250 40-60c, $400 over 60c                      first    +2368   second    +5276
 ```
+(exit 0)
+```
+
+## 2026-11-09 20:25:02 tasks/queue/108-kalshi-check-restart.sh
+```
+agent: active
+Nov 09 20:24:05 LoveladyMainAiHub python3[2080]: collector updated, restarting
+0
+      1 "s": "v_flow_flip"
+      1 "s": "v_hold_s5"
+      1 "s": "v_snipe"
+      1 "s": "v_x16217721"
+      1 "s": "v_x36215122"
+sim.json read: [Errno 2] No such file or directory: '/home/kylarlovelady/market-data/sim.json'
 (exit 0)
 ```
