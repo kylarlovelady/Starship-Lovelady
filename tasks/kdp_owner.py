@@ -37,7 +37,6 @@ def overlay(pw, ph, serif, sans, heading, footer, fields):
 def imprint(pw, ph, sans):
     """Last page (Kylar, 2026-11-09 10:34): blank white page, no lines, no page number, just a tiny grey LOVELADY LLC centred near the bottom."""
     buf = io.BytesIO(); c = canvas.Canvas(buf, pagesize=(pw, ph)); text = "LOVELADY LLC"; size, track = 5.6, 1.1
-    c.setFillColorRGB(1, 1, 1); c.rect(0, 0, pw, ph, stroke=0, fill=1)
     spaced(c, pw / 2, 0.6 * 72, text, sans, size, track, GREY)
     c.save(); buf.seek(0); return PdfReader(buf).pages[0]
 def run(slug):
@@ -52,7 +51,7 @@ def run(slug):
             pw, ph = float(p.mediabox.width), float(p.mediabox.height)
             p.merge_page(overlay(pw, ph, engine.fn(TF, False), engine.fn(SF, False), "", "If found, please return to the owner.", ["Name", "Phone", "Email", "Company"]))
         if i == len(r.pages) - 1:
-            p.merge_page(imprint(float(p.mediabox.width), float(p.mediabox.height), engine.fn(SF, False)))
+            p = imprint(float(p.mediabox.width), float(p.mediabox.height), engine.fn(SF, False))  # replace the page: no hidden lines or page number underneath
         w.add_page(p)
     w.write(ip); print("owner page refined:", slug, len(r.pages), "pages")
 if __name__ == "__main__":

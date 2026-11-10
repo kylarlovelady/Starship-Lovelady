@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 20:05 KDP rebuild landed from the Pi; last-page fix; files sent to Kylar (done)
+- Pi finished queue 104 at 19:54 after Wi-Fi came back (all 8 books in memory/inbox/kdp-preview/<slug>/). Back covers have no text. The Pi's last page had a hidden page number under the white overlay, so I fixed tasks/kdp_owner.py to REPLACE the last page, and replaced page 120 in all 8 interior.pdf files (pages 1-119 text identical). Interior is the same for every colour. Sent Kylar the 4 Process Operator covers and the interior. Next: Kylar uploads them at KDP (todo.md).
+
 ## 2026-11-09 12:27 Drone parked for later (Kylar)
 - memory/projects/drone.md and projects.md: research starts only when he asks.
 
