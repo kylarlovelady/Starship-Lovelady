@@ -1,26 +1,28 @@
-# Morning brief, Mon 2026-11-09 (written 6:25 am Central)
+# Morning brief, Tue 2026-11-10 (written 6:25 am Central)
 
 ## What happened since yesterday
-- The Pi is healthy: every service running, cool (40 C), disk 10% full, nothing failed, up 3 days. Notes sync is working (last one 6:00 am).
-- Home Jarvis: wake-up bar is still 0.8. Last 24 hours had 6 wake-ups: 4 empty (all 2 to 3 am), 2 real commands. Better than the 11 the day before. No change needed.
-- Phone Jarvis: no chats for about 57 hours, no errors. First words still about 1.6 seconds.
-- Kalshi practice agent: running, live trading OFF. The $500 "hold to the end" version is up about $6,400 over 170 rounds, but nearly all of that came from cheap-side bets that win about 1 in 3. Promising, not proven. Today's tests: selling early for profit lost about 10% in every setting, and the long-shot and maker tests were inconclusive.
-- KDP: you said all four Process Operator colours are live. Nice. It is no longer waiting.
+- The Pi is healthy: every service running, cool (42 C), disk 10% full, nothing failed, up 4 days. Notes sync is working (last one 6:00 am).
+- Kalshi practice agent: running, live trading OFF. The big "hold to the end" profit mostly went away overnight: the $500 version is now only +$519 over 224 rounds (it was +$6,407 yesterday morning, and lost about $995 in just the last 4 rounds). That fits what we said: it is a lottery on cheap-side bets, not a proven edge. Nothing real was at risk.
+- Home Jarvis: wake-up bar still 0.8. Last 24 hours had 2 wake-ups, both empty (2 to 3 am). No change needed.
+- Phone Jarvis: no chats for about 81 hours, no errors. First words about 1.6 seconds.
 - Pi-hole is up; its stats stay blank until it gets its password.
 
 ## What is broken or needs a look
-- Kalshi data files (snapshots, sim windows) last wrote around 4 am. The agent itself is alive, so likely just their schedule. I will check again tomorrow.
+- Kalshi API key expired yesterday (Nov 9) and is not renewed yet. Practice agent does not need it; your real-fills file does.
+- Kalshi data files last wrote around 4 am (agent alive, probably just their schedule).
 - Home mic clips still end too short, so Jarvis can wait too long for you to finish. Needs a test at home.
 
 ## What you need to do (phone friendly)
-1. TODAY: redo the Kalshi API location check on kalshi.com (Profile, API keys) and make a new key. It expires today. Tell me when you start and I will walk you through it one step at a time.
-2. Send the Note 20 Ultra model number and your SIM choice for the cell Wi-Fi unit.
+1. Tell me "start Kalshi key" when you have a few minutes and I will walk you through it one step at a time.
+2. When you can: upload the 4 new Process Operator covers and interior to KDP; tell me the plate 1 reprint result and the dry fit.
+3. Still owed from you: Note 20 Ultra model number and SIM choice for the cell Wi-Fi unit.
 (On the Pi when convenient: bash ~/starship/tasks/pihole_key.sh)
 
 ## Coming up
-- Tomorrow (Nov 10): dry fit of the kitchen screen case (plate 1 is being reprinted with supports).
+- Today: kitchen screen case dry fit.
+- Wed Nov 11 morning: review the two Kalshi forward tests (about 100 rounds each).
 - Safety: the F-250 pitman arm needs torquing before you drive it.
 - Nov 24: ElevenLabs decision (renews Nov 26).
 
 ## Next thing Claude works on
-Read the Kalshi agent code and report each signal, its weight, and whether bet size follows agreement. Then the new API key with you, then the Starship room-by-room bug pass.
+Read the Kalshi agent code and report each signal, its weight, and whether bet size follows agreement; then the new API key with you; then the Starship room-by-room bug pass.

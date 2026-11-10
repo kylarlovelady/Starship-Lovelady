@@ -2,6 +2,7 @@
 Updated 2026-11-04. Details and code: markets/PLAN.md. Imported from Hub Notes.
 
 ## Status
+- 2026-11-10 06:22 (daily check): v_hold_s500 profit fell to +$519 over 224 rounds at 05:07 (was +$6,407 at 170 rounds on 11-09; peak +$7,353 on 11-09 03:00); v_hold_s250 +$213. Last 4 rounds alone: -$995 (s500). Big $500 bets on cheap sides swing hard both ways, so treat the earlier profit as luck until the forward tests say otherwise. Live stays OFF; do not size live money from this.
 - PRACTICE (fake) money only; live mode OFF. Kalshi account connected (Ed25519 key on the Pi, read+trade only, no transfers); the API location verification must be redone weekly (current one expires Nov 9).
 - Service `market-agent` (collector.py), restart only when collector.py changes (bump line-2 "# vN restart" marker). Data ~/market-data. Live View http://loveladymainaihub.taild703ca.ts.net:8095/live.html . Cron: crew-update, market-lab (every 3 h), supervisor hourly (runs innovate.py).
 - Honest findings: no signal or strategy has beaten price plus fees. 24 h review (Nov 4): `run` lost $548, nearly all from $25-100 bets (1 win in 12); bets under $25 roughly break-even. After the $50 cap went in (Nov 4 afternoon) the 8 h loss was only $40. Opposite-side tests (mood/flow flip) lost more than the normal versions. Break-even needs roughly 55-57% right; goal is 55%+.

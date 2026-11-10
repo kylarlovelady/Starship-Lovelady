@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-10 06:25 Daily check (filed, pushed)
+- Read all inbox files (no new Jarvis notes). Pi healthy (all services active, 42 C, disk 10%, sync 06:00). Flag: v_hold_s500 fell from +$6,407 to +$519 (224 rounds); recorded in kalshi-ai.md and projects.md. Kalshi API key overdue since Nov 9. Phone Jarvis idle 81 h, home wake-ups 2 in 24 h. Nothing stalled over 3 days. Wrote brief.md. No Pi or Kalshi actions taken.
+
 ## 2026-11-09 21:12 End of day: Kylar picks up tomorrow morning on his way to work
 - Open for him: new Kalshi API key (steps one at a time), upload new KDP covers and interior, plate 1 hinge reprint with tree supports (tell Claude print time and whether supports show). projects.md KDP row updated.
 
