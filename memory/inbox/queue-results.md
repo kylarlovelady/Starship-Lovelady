@@ -1,38 +1,4 @@
-ps
-kylarlovelady adm dialout cdrom sudo audio video plugdev games users netdev lpadmin docker pironman5 gpio i2c spi render input
-== voice-data
-total 240
-drwx------  5 kylarlovelady kylarlovelady   4096 Nov  5 15:13 .
-drwx------ 36 kylarlovelady kylarlovelady   4096 Nov  6 03:14 ..
-drwxr-xr-x  2 kylarlovelady kylarlovelady   4096 Nov  5 05:54 clips
--rw-r--r--  1 kylarlovelady kylarlovelady  57716 Nov  7 12:20 conversations.jsonl
--rw-r--r--  1 kylarlovelady kylarlovelady   2426 Nov  5 05:46 events.jsonl
-drwxrwxr-x  2 kylarlovelady kylarlovelady   4096 Nov  7 12:20 home-mic
--rw-r--r--  1 kylarlovelady kylarlovelady    111 Nov  5 06:00 hours.jsonl
--rw-------  1 kylarlovelady kylarlovelady    292 Nov  4 22:12 keys.env
--rw-r--r--  1 kylarlovelady kylarlovelady    321 Nov  5 05:26 labels.jsonl
-drwxr-xr-x  2 kylarlovelady kylarlovelady  12288 Nov  5 05:54 replies
--rw-r--r--  1 kylarlovelady kylarlovelady    440 Nov  5 05:26 settings.json
--rw-r--r--  1 kylarlovelady kylarlovelady 124749 Nov  6 20:37 trace.jsonl
-115581106260969-stt.wav
-115581106260969-wake.wav
-115944154382670-stt.wav
-115944154382670-wake.wav
-119162982453665-stt.wav
-== satellite log, last 24 h: count of key lines
-19 /tmp/sat24.log
-9
-Nov 06 13:55:16 LoveladyMainAiHub bash[3014]: WARNING:root:Event(type='error', data={'text': 'No text recognized', 'code': 'stt-no-text-recognized'}, payload=None)
-Nov 06 13:55:16 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 06 17:25:15 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 06 17:56:51 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 06 17:58:02 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 06 17:58:15 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 07 11:20:34 LoveladyMainAiHub bash[3014]: WARNING:root:Event(type='error', data={'text': 'No text recognized', 'code': 'stt-no-text-recognized'}, payload=None)
-Nov 07 11:20:34 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 07 11:26:37 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 07 12:20:16 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
-Nov 07 12:20:46 LoveladyMainAiHub bash[3014]: INFO:root:Waiting for wake word
+h[3014]: INFO:root:Waiting for wake word
 == openwakeword container log tail
 INFO:root:Ready
 INFO:root:Ready
@@ -509,5 +475,21 @@ Nov 09 20:24:05 LoveladyMainAiHub python3[2080]: collector updated, restarting
       1 "s": "v_x16217721"
       1 "s": "v_x36215122"
 sim.json read: [Errno 2] No such file or directory: '/home/kylarlovelady/market-data/sim.json'
+(exit 0)
+```
+
+## 2026-11-09 20:31:02 tasks/queue/109-kalshi-new-wallets-check.sh
+```
+agent: active  now: 20:31
+v_hold_s250 buys: 306
+v_hold_s250_cheap100 buys: 1
+v_hold_s250_agree buys: 1
+{"t": 1794276364, "s": "v_hold_s250", "a": "BUY", "side": "UP", "c": 1444, "px": 0.16, "d": 231.04, "bal": 3383.21, "why": "Edge: it thinks UP is 28% likely but Kalshi asks 16\u00a2 (+11\u00a2 after fees).", "g": null, "ticker": "KXBTC15M-26NOV092115-15", "live": false, "ask": 0.16, "bid": 0.15, "v": 5, "q": "book", "f": {"el": 
+{"t": 1794276929, "s": "v_hold_s250", "a": "BUY", "side": "UP", "c": 10, "px": 0.54, "d": 5.4, "bal": 3377.63, "why": "Opening bet: it thinks UP is more likely (56% up) and has to bet every round.", "g": null, "ticker": "KXBTC15M-26NOV092130-30", "live": false, "ask": 0.54, "bid": 0.53, "v": 5, "q": "book", "f": {"el": 29, "left
+{"t": 1794277346, "s": "v_hold_s250", "a": "BUY", "side": "UP", "c": 1284, "px": 0.18, "d": 231.12, "bal": 3133.24, "why": "Edge: it thinks UP is 24% likely but Kalshi asks 18\u00a2 (+4\u00a2 after fees).", "g": null, "ticker": "KXBTC15M-26NOV092130-30", "live": false, "ask": 0.18, "bid": 0.17, "v": 5, "q": "book", "f": {"el": 4
+{"t": 1794277845, "s": "v_hold_s250", "a": "BUY", "side": "DOWN", "c": 8, "px": 0.7, "d": 5.6, "bal": 3127.52, "why": "Opening bet: it thinks DOWN is more likely (37% up) and has to bet every round.", "g": null, "ticker": "KXBTC15M-26NOV092145-45", "live": false, "ask": 0.31, "bid": 0.3, "v": 5, "q": "book", "f": {"el": 45, "lef
+{"t": 1794277845, "s": "v_hold_s250_cheap100", "a": "BUY", "side": "DOWN", "c": 8, "px": 0.7, "d": 5.6, "bal": 994.28, "why": "Opening bet: it thinks DOWN is more likely (37% up) and has to bet every round.", "g": null, "ticker": "KXBTC15M-26NOV092145-45", "live": false, "ask": 0.31, "bid": 0.3, "v": 5, "q": "book", "f": {"el": 
+{"t": 1794277845, "s": "v_hold_s250_agree", "a": "BUY", "side": "DOWN", "c": 8, "px": 0.7, "d": 5.6, "bal": 994.28, "why": "Opening bet: it thinks DOWN is more likely (37% up) and has to bet every round.", "g": null, "ticker": "KXBTC15M-26NOV092145-45", "live": false, "ask": 0.31, "bid": 0.3, "v": 5, "q": "book", "f": {"el": 45,
+buys with sz logged: 75
 (exit 0)
 ```
