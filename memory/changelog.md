@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 21:12 End of day: Kylar picks up tomorrow morning on his way to work
+- Open for him: new Kalshi API key (steps one at a time), upload new KDP covers and interior, plate 1 hinge reprint with tree supports (tell Claude print time and whether supports show). projects.md KDP row updated.
+
 ## 2026-11-09 20:33 Kalshi forward tests verified running (queue 109)
 - New wallets trading, depth logged. Review them after about 100 rounds. Status: running.
 
