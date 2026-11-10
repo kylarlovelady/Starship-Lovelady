@@ -1,56 +1,4 @@
-  53%   +2.1%
-  v_x40223631    166    +109.84   52%   +8.0%
-  v_x40223632    187     +84.45   45%   +4.4%
-  v_snipe_all      1      +2.70  100%   +0.9%
-  v_x80218932    188     -11.97   48%   -0.6%
-  v_x64216771    198     -17.52   42%   -0.2%
-  v_flow_flip    227     -18.27   35%   -0.1%
-  v_x96220872    176     -44.22   38%   -0.9%
-  v_one_shot     232     -61.36   53%   -3.2%
-  v_snipe         68     -62.94   79%  -14.2%
-  v_x24220781    179     -68.39   47%   -3.6%
-  v_x76218991    163     -96.05   46%   -6.0%
-  v_x76218992    163     -96.05   46%   -6.0%
-  v_x8220762     183    -103.57   42%   -1.8%
-  v_x52220781    131    -103.59   40%   -2.6%
-  v_x28219982    199    -104.77   40%   -2.1%
-  hold           356    -156.92   53%   -2.3%
-  v_x219211      194    -166.67   39%   -2.4%
-  v_x68220542    172    -167.64   37%   -4.1%
-  v_x72222451    191    -175.71   39%   -2.6%
-  v_x36215122    119    -180.92   42%   -5.6%
-  v_late         166    -197.33   39%   -2.7%
-  v_x80218931    187    -204.65   39%   -3.1%
-  v_x16217721    204    -210.09   30%   -2.1%
-  v_x52220782    127    -218.38   41%   -5.9%
-  v_x36215121    192    -229.13   36%   -3.5%
-  v_x28219981    200    -257.56   40%   -2.5%
-  v_x12229261    159    -319.39   35%   -8.9%
-  v_x219212      195    -328.46   38%   -3.3%
-  v_mood_flip    223    -334.60   39%   -3.3%
-  v_x32221882    176    -335.96   39%   -3.8%
-  v_x68220541    173    -352.75   39%   -4.1%
-  v_x44219232    191    -358.58   39%   -3.7%
-  v_x32221881    176    -457.93   39%   -4.6%
-  v_x16217722    187    -500.01   33%  -10.7%
-  v_no_cut       232    -515.59   50%   -6.4%
-=== config now
-run.json {"active": true, "id": 1793935799, "strategy": "auto", "start": 1000.0}
-config.json {"weights": {"book": 0.25, "momentum": 0.2, "whales": 0.2, "bigtrades": 0.15, "news": 0.1, "fng": 0.05, "funding": 0.05}, "threshold": 12.0, "min_bet": 5.0, "cap": 0, "edge_min": 0.03, "max_trades": 6.0, "slice": 0.1, "min_price": 0.08, "max_price": 0.92, "aggression": 50.0, "floor": 0, "entry_max": 0.8, "entry_min": 0.15}
-(exit 0)
-```
-
-## 2026-11-07 10:25:02 tasks/queue/092-take-profit-study.sh
-```
-
-Average over every entry time and side: hold -3.9%; take +15% -8.0%; take +25% -8.0%; take +40% -7.4%.
-
-Reading: if take-profit rows beat the 'hold' row of the same entry and side in both halves, the idea helps; if not, it is just selling winners early and paying the fee twice.
-108 /home/kylarlovelady/starship/memory/inbox/take-profit-study.md
-(exit 0)
-```
-
-## 2026-11-07 10:28:02 tasks/queue/093-take-profit-study-wide.sh
+wide.sh
 ```
 
 Rules positive in the whole sample, in BOTH halves, and with a 90% range above zero: **0** of 264 (with this many rules tried, a couple would pass by luck alone).
@@ -530,6 +478,41 @@ WALLET CURVE v_hold_s100 (pretend money, after fees): 186 settled rounds, Sat 07
   by hour (local): 00:-156(8)  01:+170(8)  02:+390(8)  03:+334(8)  04:-296(8)  05:+286(8)  06:-121(8)  07:-488(8)  08:+74(7)  09:-65(5)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+10(9)  20:-453(8)  21:-200(8)  22:+385(8)  23:+119(8)
 
 LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+```
+(exit 0)
+```
+
+## 2026-11-09 20:07:01 tasks/queue/106-kalshi-signal-check.sh
+```
+wrote /home/kylarlovelady/starship/memory/inbox/kalshi-signal-check.md
+# Kalshi signal check (queue 106, Mon 09 20:07, practice money only)
+
+```
+SIGNAL CHECK v_hold_s500: 186 settled rounds with a BUY
+feature keys seen: [('el', 186), ('left', 186), ('pm', 186), ('score', 186)]
+
+SIZE: 115 big rounds (stake >= $50), 71 small (< $50)
+  big   won  55%, avg price 50c, profit per $ staked +9.7%
+  small won  79%, avg price 60c, profit per $ staked +27.4%
+  reasons logged on big rounds : [('Opening bet: it thinks UP is more likely (56% up) ', 7), ('Opening bet: it thinks UP is more likely (65% up) ', 5), ('Opening bet: it thinks UP is more likely (54% up) ', 5), ('Opening bet: it thinks UP is more likely (53% up) ', 5)]
+  reasons logged on small rounds: [('Opening bet: it thinks UP is more likely (53% up) ', 5), ('Opening bet: it thinks UP is more likely (56% up) ', 5), ('Opening bet: it thinks DOWN is more likely (47% up', 5), ('Opening bet: it thinks UP is more likely (57% up) ', 4)]
+
+SIGNAL SCORE vs the bet (score > 0 leans Up). 186 rounds have a score
+  signals AGREE with the bet         108 rounds, won  66%, profit per $   +9.5%, total at the real stakes  +2977.93
+  signals DISAGREE with the bet       77 rounds, won  62%, profit per $  +12.7%, total at the real stakes  +2907.30
+  score exactly 0                      1 rounds, won   0%, profit per $ -100.0%, total at the real stakes   -499.99
+  |score| 0-10, agree                 72 rounds, won  65%, profit per $  +12.9%, total at the real stakes  +2651.28
+  |score| 0-10, disagree              57 rounds, won  63%, profit per $  +12.3%, total at the real stakes  +2204.12
+  |score| 10-25, agree                29 rounds, won  69%, profit per $  +18.9%, total at the real stakes  +1704.76
+  |score| 10-25, disagree             19 rounds, won  58%, profit per $  +14.1%, total at the real stakes   +701.39
+  |score| 25-50, agree                 7 rounds, won  57%, profit per $  -80.1%, total at the real stakes  -1378.11
+  |score| 25-50, disagree              1 rounds, won 100%, profit per $  +34.4%, total at the real stakes     +1.79
+
+CHEAP SIDE (under 40c) by agreement:
+  cheap, signals agree                19 rounds, won  32%, profit per $  +12.0%, total at the real stakes  +1002.00
+  cheap, signals disagree             16 rounds, won  25%, profit per $  +41.8%, total at the real stakes  +3055.83
+
+TIME INTO THE ROUND of the first buy: [(0, 140), (1, 29), (3, 7), (2, 5), (5, 2), (4, 2)]
 ```
 (exit 0)
 ```
