@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-10 07:40 Kalshi: signal hypothesis + selective forward tests (built, pushed; practice only)
+- Re-read the Pi's studies (oracle, implied-vol, longshot, signal-check, size-rules). Hypothesis written in kalshi-ai.md. markets/sim.py: EDGE_MIN and MIN_BET can now be overridden per variant; new wallets v_edge10_s100 and v_edge10_s100_dd (bet only on a 10c+ model edge, flat $100, hold; the second with the drawdown throttle). collector.py marker v10.1. Compiled and loaded; not run on live rounds here. Review Wed 11-11 with the 4 other forward tests.
+
 ## 2026-11-10 07:00 Kalshi: drawdown-throttle forward tests added (built, pushed; Pi restarts the practice agent after pull; practice only, live OFF)
 - Kylar: "make the changes to win more, adjust without me telling you." markets/sim.py: new DD_THROTTLE (stake halves when a wallet is 20% of start below its own peak, quarters at 40%); new wallets v_hold_s250_dd and v_hold_s250_cheap100_dd. markets/collector.py marker v10.0. Compiled and loaded OK; not run against live rounds here. Why: Monday's replay (kalshi-size-rules.md) shows flat $250 and cheap-side cap $100 beat the $500 wallet's drawdown (worst drop about $1.6-1.8K vs $5.3K) with similar profit/$; throttle targets the losing-streak damage. Still no proven edge; the autonomous rule is below.
 

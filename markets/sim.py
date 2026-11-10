@@ -101,6 +101,9 @@ VARIANTS = {
     # FORWARD TESTS (Claude, 2026-11-10, after v_hold_s500 gave back ~$5,900): both keep the $250 stake and the same entries; judge on rounds after this date.
     "v_hold_s250_dd": ("Forward test: hold to the end, $250 per round, stake halves/quarters while the wallet is down from its peak", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "DD_THROTTLE": 1.0}),
     "v_hold_s250_cheap100_dd": ("Forward test: hold to the end, $250 per round, long shots (under 40c) capped at $100, and the stake shrinks after a losing stretch", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "CHEAP_CAP": 100.0, "DD_THROTTLE": 1.0}),
+    # SELECTIVE TESTS (Claude, 2026-11-10, from oracle-study C: model-vs-ask gap >=10c gave +25% per $ at 300-600 s left but only ~30-45 bets; the 5-signal score added nothing): skip rounds with no real edge instead of betting every round, flat $100, hold to the end.
+    "v_edge10_s100": ("Forward test: only bet when the model sees 10c+ edge after fees (skips other rounds), flat $100, hold to the end", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 100.0, "FLAT_BET": 100.0, "MIN_BET": 0.0, "EDGE_MIN": 0.10}),
+    "v_edge10_s100_dd": ("Forward test: only bet on 10c+ edge, flat $100, hold, stake shrinks after a losing stretch", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 100.0, "FLAT_BET": 100.0, "MIN_BET": 0.0, "EDGE_MIN": 0.10, "DD_THROTTLE": 1.0}),
     "v_take25_s10": ("Size test: sell at +25%, $10 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 10.0, "FLAT_BET": 10.0}),
     "v_take25_s50": ("Size test: sell at +25%, $50 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 50.0, "FLAT_BET": 50.0}),
     "v_take25_s250": ("Size test: sell at +25%, $250 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 250.0, "FLAT_BET": 250.0}),
@@ -992,7 +995,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET", "CHEAP_CAP", "AGREE_SIZE", "DD_THROTTLE")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET", "CHEAP_CAP", "AGREE_SIZE", "DD_THROTTLE", "MIN_BET", "EDGE_MIN")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
