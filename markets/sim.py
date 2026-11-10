@@ -54,6 +54,8 @@ AUTO_MIN_ROUNDS = 80    # rounds a strategy needs before the Auto wallet may fol
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
 FLAT_BET = 0.0          # size test: bet exactly this many dollars per round (in steps) whenever the strategy wants in, ignoring the edge-based sizing (0 = off)
+CHEAP_CAP = 0.0         # forward test (2026-11-09): when the side costs under 40c, never put more than this many dollars into it (0 = off)
+AGREE_SIZE = 0          # forward test (2026-11-09): 1 = scale the stake by how well the signal score agrees with the side (full / 0.6 / 0.3 / 0.15), Kylar's "bigger when signals line up" rule (0 = off)
 TAKE_PCT = 0.0          # reaction test (Kylar 2026-11-07): sell the whole bet as soon as it is up this share of its cost after fees at the price it can sell for (0 = off)
 ENTRY_AFTER = 0         # do not open a bet until this many seconds into the round
 ALL_IN = 0              # reaction test only: bet the WHOLE wallet on the favourite, every round, no edge test, no staging (sniping test); the book depth still limits the fill
@@ -92,6 +94,9 @@ VARIANTS = {
     "v_hold_s100": ("Size test: hold to the end, $100 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 100.0, "FLAT_BET": 100.0}),
     "v_hold_s250": ("Size test: hold to the end, $250 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0}),
     "v_hold_s500": ("Size test: hold to the end, $500 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 500.0, "FLAT_BET": 500.0}),
+    # FORWARD TESTS (Kylar's go 2026-11-09 20:22): same distance entries and $250 stake as v_hold_s250, one change each; judge only on rounds after this date.
+    "v_hold_s250_cheap100": ("Forward test: hold to the end, $250 per round but long shots (under 40c) capped at $100", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "CHEAP_CAP": 100.0}),
+    "v_hold_s250_agree": ("Forward test: hold to the end, $250 base stake sized by how well the signals agree (Kylar's rule)", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "AGREE_SIZE": 1}),
     "v_take25_s10": ("Size test: sell at +25%, $10 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 10.0, "FLAT_BET": 10.0}),
     "v_take25_s50": ("Size test: sell at +25%, $50 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 50.0, "FLAT_BET": 50.0}),
     "v_take25_s250": ("Size test: sell at +25%, $250 per round", "distance", {"TAKE_PCT": 0.25, "STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "MIN_PROFIT_USD": 0.25, "CAP": 250.0, "FLAT_BET": 250.0}),
@@ -150,6 +155,7 @@ def log_trade(e):
         rec["ticker"] = _TK; rec["live"] = bool(_LIVE); rec["ask"] = _QUOTE[0]; rec["bid"] = _QUOTE[1]; rec["v"] = SIM_VERSION; rec["q"] = _QSRC
         if _FEAT and e.get("a") == "BUY":
             rec["f"] = {k: (round(v, 4) if isinstance(v, float) else v) for k, v in _FEAT.items() if v is not None}
+            rec["sz"] = list(_SZ)   # contracts on offer at the best Up ask / Down ask when this was bought (shows thin books)
         with open(os.path.join(_DIR, "trades.jsonl"), "a") as fh:
             fh.write(json.dumps(rec) + "\n")
     except Exception:
@@ -353,6 +359,11 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         return False
     if not (MIN_PRICE <= px <= MAX_PRICE):
         dollars = min(dollars, max(MIN_BET, FLOOR))   # no big bets on long shots or near-sure things
+    if AGREE_SIZE > 0 and _FEAT.get("score") is not None:   # forward test: bigger stake when the signals agree with this side, smaller when they do not
+        sc_ = _FEAT["score"] * (1 if side == "UP" else -1)
+        dollars *= 1.0 if sc_ >= 10 else 0.6 if sc_ > 0 else 0.3 if sc_ > -10 else 0.15
+    if CHEAP_CAP > 0 and px < 0.40:                         # forward test: cap the stake on long shots
+        dollars = min(dollars, CHEAP_CAP)
     dollars = min(dollars, a["bal"] / (1 + fee(px) / px), (CAP - used) / (1 + fee(px) / px))   # cap counts fees
     avail = _SZ[0] if side == "UP" else _SZ[1]       # cannot buy more than Kalshi has on offer at that price
     if avail is not None:
@@ -973,7 +984,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET", "CHEAP_CAP", "AGREE_SIZE")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:

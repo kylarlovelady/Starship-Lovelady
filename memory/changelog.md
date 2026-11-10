@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 20:25 Kalshi: two forward tests + book-depth logging; big profit recorded (done, pushed; Pi restarts the practice agent after pull)
+- markets/sim.py (CHEAP_CAP, AGREE_SIZE, variants v_hold_s250_cheap100 and v_hold_s250_agree, sz in BUY log), markets/collector.py marker v9.9. Compiled and unit-checked on a dummy account (stake scaling and cap behave). Live stays OFF. Check next: the agent restarted and both new wallets show rounds.
+
 ## 2026-11-09 20:15 Kalshi evening review (read-only tools, no agent change)
 - New read-only tools markets/signal_check.py and markets/size_rules.py; queues 105-107; results in memory/inbox/kalshi-wallet-curve.md, kalshi-signal-check.md, kalshi-size-rules.md; findings and decisions in memory/kalshi-ai.md. Status: waiting on Kylar's go for the logging and forward-test change; API key still owed.
 
