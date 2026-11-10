@@ -1,44 +1,4 @@
-wide.sh
-```
-
-Rules positive in the whole sample, in BOTH halves, and with a 90% range above zero: **0** of 264 (with this many rules tried, a couple would pass by luck alone).
-
-Average over every entry time and side: hold -3.9%; take +5% -8.1%; take +10% -7.9%; take +15% -8.0%; take +20% -8.1%; take +25% -8.0%; take +30% -7.9%; take +40% -7.4%; take +50% -6.8%; take +75% -6.4%; take +100% -5.9%.
-
-Reading: if take-profit rows beat the 'hold' row of the same entry and side in both halves, the idea helps; if not, it is just selling winners early and paying the fee twice.
-(exit 0)
-```
-
-## 2026-11-07 10:29:30 tasks/queue/094-run-hold-to-end.sh
-```
-before: {'active': True, 'strategy': 'auto', 'live': None, 'start': 1000.0}
-after: {'active': True, 'strategy': 'v_hold', 'live': None, 'start': 1000.0}
-(exit 0)
-```
-
-## 2026-11-07 12:28:02 tasks/queue/095-jarvis-home-survey.sh
-```
-== docker
-openwakeword  rhasspy/wyoming-openwakeword  Up 33 hours
-whisper  rhasspy/wyoming-whisper  Up 33 hours (healthy)
-piper  rhasspy/wyoming-piper  Up 33 hours (healthy)
-pihole  pihole/pihole:latest  Up 33 hours (healthy)
-homeassistant  ghcr.io/home-assistant/home-assistant:stable  Up 33 hours
-== units (ExecStart only)
--- hub-satellite: active
-User=kylarlovelady
-ExecStart=/bin/bash /home/kylarlovelady/wyoming-satellite/run-hub.sh
--- hub-voice: active
-User=kylarlovelady
-ExecStart=/home/kylarlovelady/hub-voice/.venv/bin/python /home/kylarlovelady/hub-voice/voiced.py daemon
--- hub-watchdog: active
-ExecStart=/usr/bin/python3 /usr/local/bin/hub-watchdog.py
-== satellite process
-root        2687  1-09:13:31 .venv/bin/python3 -m wyoming_piper --uri tcp://0.0.0.0:10200 --data-dir /data --voice en_US-lessac-medium
-root        2854  1-09:13:30 .venv/bin/python3 -m wyoming_faster_whisper --uri tcp://0.0.0.0:10300 --data-dir /data --device cpu --model base-int8 --language en
-root        2859  1-09:13:30 .venv/bin/python3 -m wyoming_openwakeword --uri tcp://0.0.0.0:10400 --preload-model alexa --threshold 0.7
-kylarlo+    2951  1-09:13:30 /bin/bash /home/kylarlovelady/wyoming-satellite/run-hub.sh
-kylarlo+    3014  1-09:13:30 /home/kylarlovelady/wyoming-satellite/.venv/bin/python3 -m wyoming_satellite --name main hub --debug-recording-dir /home/kylarlovelady/voice-data/home-mic --uri tcp://127.0.0.1:10700 --mic-command /home/kylarlovelady/hub-mic.py plughw:3,0 --snd-command aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw --wake-uri tcp://127.0.0.1:10400 --wake-word-name hey_jarvis --detect-command bash -c "
+ -r 22050 -c 1 -f S16_LE -t raw --wake-uri tcp://127.0.0.1:10400 --wake-word-name hey_jarvis --detect-command bash -c "
 == audio capture devices
 **** List of CAPTURE Hardware Devices ****
 card 3: AC44 [MXL AC-44], device 0: USB Audio [USB Audio]
@@ -513,6 +473,36 @@ CHEAP SIDE (under 40c) by agreement:
   cheap, signals disagree             16 rounds, won  25%, profit per $  +41.8%, total at the real stakes  +3055.83
 
 TIME INTO THE ROUND of the first buy: [(0, 140), (1, 29), (3, 7), (2, 5), (5, 2), (4, 2)]
+```
+(exit 0)
+```
+
+## 2026-11-09 20:10:02 tasks/queue/107-kalshi-size-rules.sh
+```
+wrote /home/kylarlovelady/starship/memory/inbox/kalshi-size-rules.md
+# Kalshi size rules replay (queue 107, Mon 09 20:10, practice money only)
+
+```
+SIZE RULES REPLAY on 186 settled v_hold_s500 rounds (same entries, new stakes). Treat as hints, not proof.
+
+rule                                                                                     profit worst drop  avg stake profit/$
+A. as recorded (about $5 or $480)                                                         +5385      5307        294    +9.8%
+B. flat $250 every round                                                                  +7518      1842        250   +16.2%
+C. flat $100 every round                                                                  +3007       737        100   +16.2%
+D. cheap side (<40c) capped at $100, rest $250                                            +6275      1635        222   +15.2%
+E. KYLAR: $250 if signals agree, $100 if split, $50 if disagree                           +4749      1615        166   +15.3%
+F. KYLAR strong: $400 agree and |score|>=10, $200 agree, $75 split, $25 disagree          +4768      1607        166   +15.5%
+G. opposite of Kylar: $250 if signals DISAGREE, $100 if agree                             +5197      1422        162   +17.2%
+H. size by price: $50 under 40c, $250 40-60c, $400 over 60c                               +7644      1866        289   +14.2%
+
+SAME RULES, FIRST HALF vs SECOND HALF of the rounds (does the ranking hold on rounds it did not see?)
+  B. flat $250 every round                                                         first    +1155   second    +6363
+  C. flat $100 every round                                                         first     +462   second    +2545
+  D. cheap side (<40c) capped at $100, rest $250                                   first    +1141   second    +5133
+  E. KYLAR: $250 if signals agree, $100 if split, $50 if disagree                  first    +1264   second    +3485
+  F. KYLAR strong: $400 agree and |score|>=10, $200 agree, $75 split, $25 disagree first     +697   second    +4071
+  G. opposite of Kylar: $250 if signals DISAGREE, $100 if agree                    first     +493   second    +4704
+  H. size by price: $50 under 40c, $250 40-60c, $400 over 60c                      first    +2368   second    +5276
 ```
 (exit 0)
 ```
