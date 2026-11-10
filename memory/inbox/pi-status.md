@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 3 days, 16 hours, 45 minutes; temp 42.2'C; throttled flags 0x0 (0x0 is clean); memory 41%; disk 10%
+- up 3 days, 16 hours, 49 minutes; temp 40.0'C; throttled flags 0x0 (0x0 is clean); memory 41%; disk 10%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 45 hours; whisper Up 3 days (healthy); piper Up 3 days (healthy); pihole Up 36 minutes (healthy); homeassistant Up 3 days
+- containers: openwakeword Up 45 hours; whisper Up 3 days (healthy); piper Up 3 days (healthy); pihole Up 40 minutes (healthy); homeassistant Up 3 days
 
 ## Sync and schedule
-- Pi repo copy at: fc0644a 5 minutes ago: KDP: replace last page (no hidden page number); fixed interiors for all 8 books
+- Pi repo copy at: 5870f2a 2 minutes ago: Queue 105: Kalshi wallet curve evening rerun
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue, series-catalog, jarvis-mic, jarvis-watch
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (52 min ago), first lines:
+- supervisor report (57 min ago), first lines:
     MARKET AGENT PROGRESS  Mon 09 Nov 19:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_x60222032  +125.84 over  403 rounds, wins 54%   (+0.00 over +0 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 71.4 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 71.5 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 

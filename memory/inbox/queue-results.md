@@ -1,146 +1,4 @@
-)
-[]
-(exit 0)
-```
-
-## 2026-11-06 20:13:01 tasks/queue/086-pihole-clients.sh
-```
-== devices seen in the last 24 h (address, lookups, last seen, blocked)
-127.0.0.1|9852|2026-11-06 20:12:29|0
-192.168.1.142|1435|2026-11-06 20:12:16|375
-192.168.1.228|1009|2026-11-06 17:00:25|246
-192.168.1.240|560|2026-11-06 20:06:51|52
-192.168.1.130|127|2026-11-06 20:11:37|70
-== names Pi-hole knows (address, name)
-127.0.0.1|localhost|virtual interface
-::1|localhost|virtual interface
-fe80::e197:65e6:719b:399c||Raspberry Pi (Trading) Ltd
-172.17.0.1||
-0.0.0.0||virtual interface
-ff02::16||virtual interface
-192.168.1.107||Raspberry Pi (Trading) Ltd
-fe80::469:a9ff:fed0:ac9f||
-fe80::1034:1fff:fe35:38b9||
-fe80::a405:93ff:fefe:aa3d||
-fe80::98b3:90ff:fedc:483b||
-192.168.1.142||
-192.168.1.130||Cloud Network Technology Singapore Pte. Ltd.
-fe80::a045:3bb6:47e1:55f3||Cloud Network Technology Singapore Pte. Ltd.
-192.168.1.240||
-192.168.1.228||
-fe80::c6e:c5ff:fe19:b9b5||
-fe80::1831:65ff:fe10:4206||
-fe80::8064:fff:fe79:13c4||
-fe80::44aa:1cff:fe5a:a4cb||
-== local DNS names set (dns.hosts)
-[]
-(exit 0)
-```
-
-## 2026-11-06 20:16:01 tasks/queue/087-pihole-names.sh
-```
-[ 192.168.1.107 pi-hub, 192.168.1.142 kylar-iphone, 192.168.1.228 sharee-iphone, 192.168.1.240 warren-ipad, 192.168.1.130 living-room-tv ]
-== dns.hosts now
-[ 192.168.1.107 pi-hub, 192.168.1.142 kylar-iphone, 192.168.1.228 sharee-iphone, 192.168.1.240 warren-ipad, 192.168.1.130 living-room-tv ]
-== name lookups via Pi-hole
-kylar-iphone -> Traceback (most recent call last):
-sharee-iphone -> Traceback (most recent call last):
-warren-ipad -> Traceback (most recent call last):
-living-room-tv -> Traceback (most recent call last):
-pi-hub -> Traceback (most recent call last):
-== reverse lookup of the iPad
-Traceback (most recent call last):
-(exit 0)
-```
-
-## 2026-11-06 20:22:01 tasks/queue/088-pihole-names-refresh.sh
-```
-ALL
-  networkflush        Flush information stored in Pi-hole's network tables
-                        Add '--arp' to additionally flush the ARP table 
-== names now (address|name)
-192.168.1.106|
-192.168.1.107|pi-hub
-192.168.1.142|kylar-iphone
-192.168.1.228|sharee-iphone
-192.168.1.130|living-room-tv
-192.168.1.240|warren-ipad
-== DNS still answering?
-  [✓] FTL is listening on port 53
-     [✓] UDP (IPv4)
-     [✓] TCP (IPv4)
-(exit 0)
-```
-
-## 2026-11-06 20:31:01 tasks/queue/089-ha-notify-targets.sh
-REFUSED: contains a command on the deny list
-
-## 2026-11-06 20:43:01 tasks/queue/090-pihole-activity-now.sh
-```
-wrote /home/kylarlovelady/crew-web/activity.html devices: kylar-iphone, living-room-tv, sharee-iphone, warren-ipad unknown domains: 137
--rw-rw-r-- 1 kylarlovelady kylarlovelady 31235 Nov  6 20:43 /home/kylarlovelady/crew-web/activity.html
-(exit 0)
-```
-
-## 2026-11-07 10:22:01 tasks/queue/091-kalshi-review-long.sh
-```
-=== review last 72 hours
-TRADE REVIEW, last 72 hours: 10992 (strategy, round) results from 242 rounds with full recordings.
-
-EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
-  v_hold         198    +790.65   55%  +18.1%
-  v_x60222031    167    +427.65   51%   +7.8%
-  v_x96220861    175    +401.29   46%   +6.0%
-  v_one_shot     197    +199.29   55%  +14.1%
-  v_x88221261    131    +185.64   39%   +4.4%
-  v_late         145    +185.07   39%   +3.8%
-  v_x12229262    159    +175.03   50%   +4.9%
-  v_x64216772    197    +163.11   55%   +9.3%
-  hold           241    +151.58   56%   +6.1%
-  v_x60222032    175    +146.60   55%  +10.3%
-  v_x40223631    166    +109.84   52%   +8.0%
-  v_x40223632    187     +84.45   45%   +4.4%
-  v_no_cut       198     +14.35   51%   +0.2%
-  v_snipe_all      1      +2.70  100%   +0.9%
-  v_x80218932    188     -11.97   48%   -0.6%
-  v_x64216771    198     -17.52   42%   -0.2%
-  v_flow_flip    227     -18.27   35%   -0.1%
-  v_x96220872    176     -44.22   38%   -0.9%
-  v_snipe         68     -62.94   79%  -14.2%
-  v_x24220781    179     -68.39   47%   -3.6%
-  v_cut_loose    198     -82.66   45%   -1.4%
-  v_x76218991    163     -96.05   46%   -6.0%
-  v_x76218992    163     -96.05   46%   -6.0%
-  v_x8220762     183    -103.57   42%   -1.8%
-  v_x52220781    131    -103.59   40%   -2.6%
-  v_x28219982    199    -104.77   40%   -2.1%
-  trend          212    -134.06   39%   -2.6%
-  v_x219211      194    -166.67   39%   -2.4%
-  v_x68220542    172    -167.64   37%   -4.1%
-  v_x72222451    191    -175.71   39%   -2.6%
-  mood           207    -180.27   41%   -2.3%
-  v_x36215122    119    -180.92   42%   -5.6%
-  swing          241    -190.95   40%   -1.6%
-  v_x80218931    187    -204.65   39%   -3.1%
-  v_x16217721    204    -210.09   30%   -2.1%
-  flow           209    -216.35   41%   -4.0%
-  v_x52220782    127    -218.38   41%   -5.9%
-  v_x36215121    192    -229.13   36%   -3.5%
-  v_x28219981    200    -257.56   40%   -2.5%
-  signals        203    -285.88   41%   -6.2%
-  v_x12229261    159    -319.39   35%   -8.9%
-  v_x219212      195    -328.46   38%   -3.3%
-=== review last 168 hours
-TRADE REVIEW, last 168 hours: 12088 (strategy, round) results from 366 rounds with full recordings.
-
-EVERY STRATEGY (pretend money): rounds | profit | win%% | profit per $ staked
-  v_x60222031    167    +427.65   51%   +7.8%
-  v_x96220861    175    +401.29   46%   +6.0%
-  v_x88221261    131    +185.64   39%   +4.4%
-  v_x12229262    159    +175.03   50%   +4.9%
-  v_x64216772    197    +163.11   55%   +9.3%
-  v_x60222032    175    +146.60   55%  +10.3%
-  v_hold         232    +127.74   53%   +2.1%
+  53%   +2.1%
   v_x40223631    166    +109.84   52%   +8.0%
   v_x40223632    187     +84.45   45%   +4.4%
   v_snipe_all      1      +2.70  100%   +0.9%
@@ -601,5 +459,77 @@ LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, runni
 ## 2026-11-09 19:31:01 tasks/queue/104-kdp-llc-last-page.sh
 ```
 KDP rebuild started in the background
+(exit 0)
+```
+
+## 2026-11-09 20:04:02 tasks/queue/105-kalshi-wallet-curve-evening.sh
+```
+wrote /home/kylarlovelady/starship/memory/inbox/kalshi-wallet-curve.md (66 lines)
+# Kalshi wallet curve (queue 105, Mon 09 20:04, practice money only)
+
+```
+WALLET CURVE v_hold_s500 (pretend money, after fees): 186 settled rounds, Sat 07 10:30 to Mon 09 19:45, 1 unsettled skipped
+  profit now +5385.24 | peak +7352.57 (Mon 09 03:00) | worst drop 5307.01 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 1967.33 from the peak
+  wins 119 (64%), avg win +250.67, avg loss -364.85, avg stake 284.65, avg entry price 53.8 c
+  entry price  0- 40 c:  35 rounds, won  29%, profit  +4057.83
+  entry price 40- 60 c:  56 rounds, won  66%, profit   +195.84
+  entry price 60- 80 c:  95 rounds, won  76%, profit  +1131.57
+  bet UP  : 100 rounds, won  62%, profit  -1549.08
+  bet DOWN:  86 rounds, won  66%, profit  +6934.32
+  5 best rounds: +2430, +2108, +2107, +1971, +1852  (= 194% of total profit)
+  5 worst rounds: -500, -500, -500, -500, -500
+  longest losing streak: 4 rounds
+  by hour (local): 00:-781(8)  01:+852(8)  02:+2040(8)  03:+1791(8)  04:-1123(8)  05:+1381(8)  06:-645(8)  07:-2138(8)  08:+321(7)  09:-310(5)  10:-570(6)  11:+2656(8)  12:-512(8)  13:+1459(8)  14:+2968(8)  15:-1263(7)  16:+292(8)  17:-863(8)  18:+543(8)  19:+40(9)  20:-2252(8)  21:-1081(8)  22:+2004(8)  23:+575(8)
+
+LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+  Mon 09 02:00  UP   2471 @ 19c  stake    473  result UP    +1971.08  total  +5241.84
+  Mon 09 02:16  UP      9 @ 60c  stake      5  result UP       +3.44  total  +5245.28
+  Mon 09 02:30  UP     10 @ 50c  stake      5  result UP       +4.82  total  +5250.10
+  Mon 09 02:46  DOWN    9 @ 60c  stake      5  result UP       -5.56  total  +5244.54
+  Mon 09 03:00  DOWN 2608 @ 18c  stake    473  result DOWN  +2108.03  total  +7352.57
+  Mon 09 03:15  UP   2196 @ 18c  stake    399  result DOWN   -421.55  total  +6931.02
+  Mon 09 03:30  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +6934.73
+  Mon 09 03:45  DOWN 2373 @ 20c  stake    473  result UP     -499.95  total  +6434.78
+  Mon 09 04:00  UP   3122 @ 15c  stake    472  result DOWN   -499.94  total  +5934.84
+  Mon 09 04:15  UP    964 @ 50c  stake    483  result UP     +464.22  total  +6399.06
+  Mon 09 04:30  DOWN    9 @ 60c  stake      5  result DOWN     +3.44  total  +6402.50
+  Mon 09 04:45  UP     10 @ 54c  stake      5  result UP       +4.42  total  +6406.92
+  Mon 09 05:00  DOWN  811 @ 60c  stake    486  result DOWN   +311.56  total  +6718.48
+  Mon 09 05:15  UP     10 @ 52c  stake      5  result UP       +4.62  total  +6723.10
+  Mon 09 05:30  UP      9 @ 57c  stake      5  result UP       +3.71  total  +6726.81
+  Mon 09 05:45  DOWN    8 @ 63c  stake      5  result DOWN     +2.82  total  +6729.63
+  Mon 09 06:00  DOWN 3122 @ 15c  stake    472  result UP     -499.94  total  +6229.69
+  Mon 09 06:15  UP     10 @ 52c  stake      5  result UP       +4.62  total  +6234.31
+  Mon 09 06:30  UP    317 @ 63c  stake    200  result UP     +112.11  total  +6346.42
+  Mon 09 06:45  DOWN 2760 @ 17c  stake    473  result UP     -499.95  total  +5846.47
+  Mon 09 07:00  UP   2758 @ 17c  stake    473  result DOWN   -499.87  total  +5346.60
+  Mon 09 07:15  DOWN    8 @ 63c  stake      5  result DOWN     +2.82  total  +5349.42
+  Mon 09 07:30  UP    895 @ 54c  stake    484  result DOWN   -499.49  total  +4849.93
+  Mon 09 07:45  UP     10 @ 55c  stake      6  result UP       +4.32  total  +4854.25
+  Mon 09 08:00  DOWN    9 @ 59c  stake      5  result DOWN     +3.53  total  +4857.78
+  Mon 09 08:15  UP    762 @ 64c  stake    488  result UP     +262.20  total  +5119.98
+  Mon 09 08:30  DOWN  763 @ 64c  stake    487  result DOWN   +263.25  total  +5383.23
+  Mon 09 09:00  DOWN    9 @ 58c  stake      5  result UP       -5.38  total  +5377.85
+  Mon 09 19:30  DOWN    8 @ 65c  stake      5  result DOWN     +2.67  total  +5380.52
+  Mon 09 19:45  UP     10 @ 51c  stake      5  result UP       +4.72  total  +5385.24
+
+RUNNING TOTAL every 10 rounds: -502, +970, -1256, +63, +629, +517, +1303, +1506, -344, +1132, +1947, +5603, +4280, +1293, +2535, +5245, +6723, +4854
+
+---- v_hold_s100 (same entries, 1/5 the size) ----
+WALLET CURVE v_hold_s100 (pretend money, after fees): 186 settled rounds, Sat 07 10:30 to Mon 09 19:45, 1 unsettled skipped
+  profit now +1050.33 | peak +1427.02 (Mon 09 03:00) | worst drop 1037.55 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 376.69 from the peak
+  wins 119 (64%), avg win +52.53, avg loss -77.62, avg stake 60.53, avg entry price 53.8 c
+  entry price  0- 40 c:  35 rounds, won  29%, profit   +738.81
+  entry price 40- 60 c:  56 rounds, won  66%, profit    +11.68
+  entry price 60- 80 c:  95 rounds, won  76%, profit   +299.84
+  bet UP  : 100 rounds, won  62%, profit   -475.25
+  bet DOWN:  86 rounds, won  66%, profit  +1525.58
+  5 best rounds: +469, +406, +406, +379, +358  (= 192% of total profit)
+  5 worst rounds: -100, -100, -100, -100, -100
+  longest losing streak: 4 rounds
+  by hour (local): 00:-156(8)  01:+170(8)  02:+390(8)  03:+334(8)  04:-296(8)  05:+286(8)  06:-121(8)  07:-488(8)  08:+74(7)  09:-65(5)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+10(9)  20:-453(8)  21:-200(8)  22:+385(8)  23:+119(8)
+
+LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+```
 (exit 0)
 ```
