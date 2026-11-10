@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-09 20:33 Kalshi forward tests verified running (queue 109)
+- New wallets trading, depth logged. Review them after about 100 rounds. Status: running.
+
 ## 2026-11-09 20:25 Kalshi: two forward tests + book-depth logging; big profit recorded (done, pushed; Pi restarts the practice agent after pull)
 - markets/sim.py (CHEAP_CAP, AGREE_SIZE, variants v_hold_s250_cheap100 and v_hold_s250_agree, sz in BUY log), markets/collector.py marker v9.9. Compiled and unit-checked on a dummy account (stake scaling and cap behave). Live stays OFF. Check next: the agent restarted and both new wallets show rounds.
 
