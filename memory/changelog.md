@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 05:55 Kitchen screen Pi plan filed
+- memory/projects/kitchen-screen-pi.md and projects.md row. Status: Kylar writing the SD card.
+
 ## 2026-11-10 20:30 Kitchen case: two more design issues filed (hard-to-screw back halves, weak faceplate seam)
 - memory/projects/3d-printing.md items 6 and 7.
 
