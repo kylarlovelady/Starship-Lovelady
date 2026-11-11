@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-10 20:25 Kitchen case: 5 design fixes and 3 measurements filed (Kylar's voice list)
+- memory/projects/3d-printing.md and projects.md updated. Status: waiting on measurements before any redesign.
+
 ## 2026-11-10 07:40 Kalshi: signal hypothesis + selective forward tests (built, pushed; practice only)
 - Re-read the Pi's studies (oracle, implied-vol, longshot, signal-check, size-rules). Hypothesis written in kalshi-ai.md. markets/sim.py: EDGE_MIN and MIN_BET can now be overridden per variant; new wallets v_edge10_s100 and v_edge10_s100_dd (bet only on a 10c+ model edge, flat $100, hold; the second with the drawdown throttle). collector.py marker v10.1. Compiled and loaded; not run on live rounds here. Review Wed 11-11 with the 4 other forward tests.
 
