@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 06:25 Daily check (filed, pushed)
+- Read all inbox files (no new Jarvis notes, nothing to file). Pi healthy (all services active, 40 C, disk 10%, sync 06:00). Kalshi: key still expired (day 2); forward-test counts for cheap100/agree/dd wallets not in today's files, flagged for a queue check; edge10 wallets lead but win 13%. Phone Jarvis idle 105 h, home wake-ups 3 empty. Wrote brief.md. No Pi or Kalshi actions taken.
+
 ## 2026-11-11 05:55 Kitchen screen Pi plan filed
 - memory/projects/kitchen-screen-pi.md and projects.md row. Status: Kylar writing the SD card.
 

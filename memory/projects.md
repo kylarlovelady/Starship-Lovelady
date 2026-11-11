@@ -1,5 +1,5 @@
 # Project tracker
-One line per project. Status: idea / in progress / stalled / done. Finish what is started: when something stalls, say why and what unblocks it. Updated 2026-11-10 (daily check 06:22 Central). Nothing new stalled; Kalshi API key is now 1 day overdue (expired Nov 9). Nothing stalled: KDP is unblocked (Kylar said all four Process Operator colours are live, 11-09), so next is Lab Operator. Still waiting on Kylar: cubby measurements for the living room build, SIM choice for the cell Wi-Fi unit, Note 20 model number, Lab Operator state. Phone Jarvis has had no chats for 57 h (idle, not broken).
+One line per project. Status: idea / in progress / stalled / done. Finish what is started: when something stalls, say why and what unblocks it. Updated 2026-11-11 (daily check 06:25 Central: Pi healthy, nothing newly stalled; Kalshi API key 2 days overdue, waiting on Kylar). Nothing new stalled; Kalshi API key is now 1 day overdue (expired Nov 9). Nothing stalled: KDP is unblocked (Kylar said all four Process Operator colours are live, 11-09), so next is Lab Operator. Still waiting on Kylar: cubby measurements for the living room build, SIM choice for the cell Wi-Fi unit, Note 20 model number, Lab Operator state. Phone Jarvis has had no chats for 57 h (idle, not broken).
 
 | Project | Status | Next step | File |
 |---|---|---|---|
