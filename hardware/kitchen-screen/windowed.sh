@@ -24,5 +24,6 @@ Terminal=false
 D
 chmod +x "$HOME/Desktop/$1.desktop"; }
 mk Starship "$STARSHIP"; mk Hub "$HUB"
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"; export WAYLAND_DISPLAY="$(cd "$XDG_RUNTIME_DIR" 2>/dev/null && ls -d wayland-[0-9] 2>/dev/null | head -1)"; export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"   # so it also works when run over SSH from the phone
 pkill chromium 2>/dev/null; sleep 1; nohup "$HOME/kiosk.sh" >/dev/null 2>&1 &
 echo "DONE: Starship opens in a window; Desktop icons: Starship, Hub."
