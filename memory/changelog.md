@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 15:00 Hub demo v3: Screensaver page + desktop saver mode
+- hub2/index.html: Devices | Screensaver tabs; 6 kiosk screensavers (glass clock, theme drift, starfield, dim, black, photo only), choice saved in the browser. URL #desktop-saver = glass clock over background, any tap closes it (for the Pi desktop idle screensaver; not wired yet). Fixed a v2 script error (keyboard button).
+
 ## 2026-11-11 14:45 Hub demo v2: clearer misty glass
 - hub2/index.html: see-through frosted glass, glass floating taskbar + keyboard, almost no colour, kiosk slides the menu away to a big clock/date over the background, double-tap brings it back. Demo data only.
 

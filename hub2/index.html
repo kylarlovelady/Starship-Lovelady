@@ -85,6 +85,27 @@ body.kiosk .dock{transform:translate(-50%,160%);opacity:0;pointer-events:none}
 body.kiosk .saver{opacity:1}
 body.kiosk .panel,body.kiosk .kb{display:none}
 body.kb-open .grid{padding-bottom:330px}
+.seg{display:flex;padding:5px;gap:4px;border-radius:999px;align-self:flex-start;margin-left:auto}
+.seg button{padding:10px 20px;border-radius:999px;background:transparent;border:0;font-size:15px;font-weight:500;color:var(--ink2)}
+.seg button.act{background:rgba(255,255,255,.24);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.svg-grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;align-content:start;padding:2px 2px 110px;scrollbar-width:none}
+.sv{padding:14px;display:flex;flex-direction:column;gap:10px;text-align:left}
+.sv.act{background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.12));border-color:rgba(255,255,255,.6)}
+.sv .pv{height:90px;border-radius:18px;border:1px solid rgba(255,255,255,.25);display:grid;place-items:center;font-weight:200;font-size:30px;background:rgba(0,0,0,.25);overflow:hidden}
+.sv .n{font-weight:500}.sv .s{font-size:13px;color:var(--ink2)}
+.note{font-size:13px;color:var(--ink2);padding:0 6px}
+#stars{position:fixed;inset:0;z-index:2;display:none;pointer-events:none}
+body.kiosk.sv-stars #stars{display:block}
+body.kiosk.sv-dim #bg{filter:brightness(.18)}
+body.kiosk.sv-black #bg{filter:brightness(0)}
+body.kiosk.sv-black #fx{display:none}
+body.kiosk.sv-dim .saver .g,body.kiosk.sv-black .saver .g{background:none;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+body.kiosk.sv-black .saver .t,body.kiosk.sv-dim .saver .t{font-size:clamp(48px,9vw,110px);opacity:.55}
+body.kiosk.sv-black .saver .d,body.kiosk.sv-dim .saver .d{opacity:.45}
+body.kiosk.sv-cycle #bg{transition:background 3s}
+body.kiosk.sv-nodate .saver .d{display:none}
+body.page-saver .sub,body.page-saver #grid{display:none}
+body:not(.page-saver) #svgrid,body:not(.page-saver) #svnote{display:none}
 @media(max-width:560px){.ib{width:48px;height:48px;border-radius:16px}.clock{padding:12px 18px}.dock{gap:4px;padding:6px}}
 </style>
 
@@ -92,11 +113,15 @@ body.kb-open .grid{padding-bottom:330px}
 <div id="app">
   <div class="top">
     <div class="g clock"><div class="t" id="time">--:--</div><div class="d" id="date"></div></div>
+    <div class="g seg" id="seg"><button class="act" data-p="dev">Devices</button><button data-p="sav">Screensaver</button></div>
   </div>
-  <div class="sub"><div class="chips" id="chips"></div><input class="search" id="q" placeholder="Search devices" autocomplete="off"></div>
+  <div class="sub" id="subrow"><div class="chips" id="chips"></div><input class="search" id="q" placeholder="Search devices" autocomplete="off"></div>
   <div class="grid" id="grid"></div>
+  <div class="note" id="svnote">Kiosk screensaver. Pick one, then tap Kiosk or double-tap to try it. The desktop screensaver is always the glass clock over your background.</div>
+  <div class="svg-grid" id="svgrid"></div>
 </div>
 
+<canvas id="stars"></canvas>
 <div class="g dock">
       <button class="ib" id="bMic" aria-label="Mute microphone"><svg viewBox="0 0 24 24" id="micSvg"></svg><span id="micLbl">Mic on</span></button>
       <button class="ib" id="bTheme" aria-label="Change background"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></svg><span>Theme</span></button>
@@ -203,17 +228,36 @@ function buildKb(){var k=$('kb');k.innerHTML='';
 function key(l,c,fn){var b=document.createElement('button');b.className='kk '+c;b.textContent=l;b.onmousedown=function(e){e.preventDefault()};b.onclick=fn;return b}
 function type(c){var q=$('q');if(c==='\b')q.value=q.value.slice(0,-1);else q.value+=c;q.oninput()}
 function openKb(){buildKb();$('kb').classList.add('open');document.body.classList.add('kb-open')}
-$('bKey').onclick=function(){if($('kb').classList.contains('open'))$('kb').classList.remove('open');document.body.classList.remove('kb-open');else{openKb();$('q').focus({preventScroll:true})}};
+$('bKey').onclick=function(){if($('kb').classList.contains('open')){$('kb').classList.remove('open');document.body.classList.remove('kb-open')}else{openKb();$('q').focus({preventScroll:true})}};
 $('q').addEventListener('focus',function(){if(!$('kb').classList.contains('open')){openKb();$('q').blur()}});
 /* kiosk: double tap on empty space toggles fullscreen / hides the bar */
 function kiosk(){var f=document.body.classList.contains('kiosk');document.body.classList.toggle('kiosk',!f);if(!f){$('panel').classList.remove('open');$('kb').classList.remove('open');document.body.classList.remove('kb-open')}
  try{var p=f?(document.fullscreenElement&&document.exitFullscreen()):document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){toast('Fullscreen is on the real Pi screen')})}catch(e){}
- toast(f?'Menu':'Kiosk')}
+ applySaver();toast(f?'Menu':'Kiosk')}
 $('bFull').onclick=kiosk;
-var last=0;document.addEventListener('pointerup',function(e){if(e.target.closest('.tile,.ib,.chip,.panel,.kb,.search,.th,.pill'))return;var n=Date.now();if(n-last<380){kiosk();last=0}else last=n});
+var last=0;document.addEventListener('pointerup',function(e){if(location.hash==='#desktop-saver')return;if(e.target.closest('.tile,.ib,.chip,.panel,.kb,.search,.th,.pill'))return;var n=Date.now();if(n-last<380){kiosk();last=0}else last=n});
 
+var SAVERS=[
+{k:'glass',n:'Glass clock',s:'Big clock in a glass bubble over your background',pv:'10:42'},
+{k:'cycle',n:'Theme drift',s:'Slowly changes through every theme with the clock',pv:'◐'},
+{k:'stars',n:'Starfield',s:'Drifting stars on dark glass, small clock',pv:'✦'},
+{k:'dim',n:'Dim clock',s:'Background darkened, soft clock. Easy on the eyes at night',pv:'10:42'},
+{k:'black',n:'Screen black',s:'Almost black with a faint clock. Saves the screen',pv:'●'},
+{k:'photo',n:'Photo only',s:'Just your background or family photo, no clock',pv:'▣'}];
+var saver=store('hub.saver')||'glass',cyc=null,starsOn=false;
+function applySaver(){SAVERS.forEach(function(x){document.body.classList.remove('sv-'+x.k)});document.body.classList.remove('sv-nodate');if(!document.body.classList.contains('kiosk')){stopFx();return}
+ document.body.classList.add('sv-'+saver);
+ var sv=document.querySelector('.saver');sv.style.visibility=saver==='photo'?'hidden':'visible';
+ if(saver==='cycle'){var i=0;cyc=setInterval(function(){i=(i+1)%(THEMES.length);theme=THEMES[i].k;applyTheme()},12000)}
+ if(saver==='stars')startStars()}
+function stopFx(){if(cyc){clearInterval(cyc);cyc=null;theme=store('hub.theme')||theme;applyTheme()}starsOn=false}
+function startStars(){var c=$('stars'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;var S=[];for(var i=0;i<140;i++)S.push({x:Math.random()*c.width,y:Math.random()*c.height,z:Math.random()*2+.3});starsOn=true;
+ (function f(){if(!starsOn)return;x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.8)';S.forEach(function(s){s.x-=s.z*.25;if(s.x<0)s.x=c.width;x.globalAlpha=.3+s.z/3;x.fillRect(s.x,s.y,s.z,s.z)});requestAnimationFrame(f)})()}
+function svBuild(){var g=$('svgrid');g.innerHTML='';SAVERS.forEach(function(x){var b=document.createElement('button');b.className='g sv'+(x.k===saver?' act':'');b.innerHTML='<div class="pv">'+x.pv+'</div><div class="n">'+x.n+'</div><div class="s">'+x.s+'</div>';b.onclick=function(){saver=x.k;store('hub.saver',saver);svBuild();toast(x.n+' set for kiosk')};g.appendChild(b)})}
+$('seg').onclick=function(e){var b=e.target.closest('button');if(!b)return;document.body.classList.toggle('page-saver',b.dataset.p==='sav');[].forEach.call($('seg').children,function(c){c.classList.toggle('act',c===b)})};
 try{theme=store('hub.theme')||theme;photo=store('hub.photo')}catch(e){}
 if(theme==='photo'&&!photo)theme='aurora';
-buildThemes();applyTheme();chips();render();micUI();
+svBuild();buildThemes();applyTheme();chips();render();micUI();
+if(location.hash==='#desktop-saver'){saver='glass';document.body.classList.add('kiosk');document.body.classList.add('sv-glass');document.addEventListener('pointerup',function(){try{window.close()}catch(e){}});document.querySelectorAll('.dock,#app').forEach(function(n){n.remove()})}
 })();
 </script>

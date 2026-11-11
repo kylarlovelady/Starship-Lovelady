@@ -18,6 +18,10 @@ Requested 2026-11-11 14:19 (Kylar). Status: design preview first, then wire to t
 - Mic mute: probe how Jarvis mutes (hub-voice / hub-satellite) before wiring.
 - Open questions for Kylar: which holidays first; which devices matter most on the main view; Sharee's input on the family photos.
 
+## Screensavers (Kylar 11-11 14:30)
+- Desktop screensaver = the glass clock over the chosen background (hub2/index.html#desktop-saver). To wire on the Pi: idle trigger launches it fullscreen.
+- Kiosk mode uses a separate screensaver picked on the Hub's Screensaver page (after Devices).
+
 ## Next step
 - 11-11: demo preview built (hub2/index.html in repo, also published as an artifact). Waiting for Kylar's look/feedback, then wire live. Original: preview page (demo data) for Kylar to try on his phone; probe of the Pi (queue 110: HA device types, mic mute method); then wire live control.
 
