@@ -10,7 +10,7 @@ Started 2026-11-11 (Kylar at work, has the new Pi, SD card and parts). Status: p
 5. Later: screensaver, cameras, Home Assistant lights panel (living room build in buy-list.md), speakers.
 
 ## Next step
-- Kylar writes the card and tells Claude when it is done.
+- 2026-11-11 08:00 Step 1 DONE: SD card written with Imager (Pi OS 64-bit Trixie, hostname LoveladyKitchen, user kylarlovelady, Central time, home Wi-Fi, SSH password login on, Pi Connect off). Next: card into the new Pi, assemble with the screen, power on at home (home Wi-Fi), then find it and SSH in (step 2 above).
 
 ## Done
 (nothing yet)
