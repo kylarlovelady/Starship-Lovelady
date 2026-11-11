@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 15:10 Hub screen demo page built (hub2/index.html)
+- Glass UI, themes + photo upload, clock bubble, mic mute, demo HA tiles, glass keyboard, double-tap kiosk. Demo data only; not wired to the Pi yet.
+
 ## 2026-11-11 14:25 New Hub screen: requirements filed (memory/projects/hub-screen.md)
 - Preview page and a Pi probe (queue 110) next.
 

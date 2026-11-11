@@ -19,7 +19,7 @@ Requested 2026-11-11 14:19 (Kylar). Status: design preview first, then wire to t
 - Open questions for Kylar: which holidays first; which devices matter most on the main view; Sharee's input on the family photos.
 
 ## Next step
-- Preview page (demo data) for Kylar to try on his phone; probe of the Pi (queue 110: HA device types, mic mute method); then wire live control.
+- 11-11: demo preview built (hub2/index.html in repo, also published as an artifact). Waiting for Kylar's look/feedback, then wire live. Original: preview page (demo data) for Kylar to try on his phone; probe of the Pi (queue 110: HA device types, mic mute method); then wire live control.
 
 ## Done
 (nothing yet)
