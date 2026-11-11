@@ -1,25 +1,4 @@
-oot:Ready
-INFO:root:Ready
-INFO:root:Ready
-INFO:root:Ready
-INFO:root:Ready
-INFO:root:Ready
-INFO:root:Ready
-== tailscale name/ports free?
-0.0.0.0:8123
-127.0.0.1:10200
-127.0.0.1:10300
-127.0.0.1:10400
-127.0.0.1:8099
-100.105.140.126:8097
-100.105.140.126:8095
-100.105.140.126%tailscale0:8081
-[::]:8123
-[fd7a:115c:a1e0::2f4c:8c7f]%tailscale0:8081
-(exit 0)
-```
-
-## 2026-11-07 12:31:01 tasks/queue/096-jarvis-mic-files.sh
+ tasks/queue/096-jarvis-mic-files.sh
 REFUSED: sudo is not allowed in queue scripts
 
 ## 2026-11-07 12:34:01 tasks/queue/096-jarvis-mic-files.sh
@@ -493,3 +472,14 @@ buys with sz logged: 75
 
 ## 2026-11-11 14:22:02 tasks/queue/110-hub-probe.sh
 REFUSED: contains a command on the deny list
+
+## 2026-11-11 14:40:02 tasks/queue/111-serve-hub2.sh
+```
+total 388
+drwxrwxr-x 2 kylarlovelady kylarlovelady   4096 Nov 11 14:40 .
+drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Nov 11 14:40 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  28325 Nov 11 14:40 index.html
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 357575 Nov 11 14:40 ocean.jpg
+hub2 over http 8095: 000
+(exit 0)
+```
