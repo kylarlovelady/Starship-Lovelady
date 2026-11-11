@@ -23,7 +23,7 @@ Requested 2026-11-11 14:19 (Kylar). Status: design preview first, then wire to t
 - Kiosk mode uses a separate screensaver picked on the Hub's Screensaver page (after Devices).
 
 ## Built 11-11 (v6)
-- Backgrounds: upload from phone to ~/hub-media via media_server.py :8097; cycle option; kiosk dim 8 PM-8 AM; keyboard on demand. Still demo devices; Pi top panel/title bar not glass yet; mic mute and Home Assistant not wired.
+- Backgrounds: upload from phone to ~/hub-media via media_server.py :8110; cycle option; kiosk dim 8 PM-8 AM; keyboard on demand. Still demo devices; Pi top panel/title bar not glass yet; mic mute and Home Assistant not wired.
 
 ## Next step
 - 11-11: demo preview built (hub2/index.html in repo, also published as an artifact). Waiting for Kylar's look/feedback, then wire live. Original: preview page (demo data) for Kylar to try on his phone; probe of the Pi (queue 110: HA device types, mic mute method); then wire live control.

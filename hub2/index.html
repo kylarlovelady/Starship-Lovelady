@@ -192,7 +192,7 @@ function dragScroll(el){var y0=0,s0=0,down=false;
  window.addEventListener('pointermove',function(e){if(!down)return;var dy=e.clientY-y0;if(Math.abs(dy)>6)drag.moved=true;if(drag.moved)el.scrollTop=s0-dy});
  window.addEventListener('pointerup',function(){down=false;setTimeout(function(){drag.moved=false},60)})}
 /* ---------- background engine ---------- */
-var BASE=(function(){var h=location.hostname;return(location.protocol==='http:'||location.protocol==='https:')&&h&&!/claude\.ai|claudeusercontent/.test(h)?location.protocol+'//'+h+':8097':'' })();
+var BASE=(function(){var h=location.hostname;return(location.protocol==='http:'||location.protocol==='https:')&&h&&!/claude\.ai|claudeusercontent/.test(h)?location.protocol+'//'+h+':8110':'' })();
 var online=false,LIB=[],S={current:'theme:ocean',cycle:false,minutes:5,dim_from:20,dim_to:8};
 var THEMES=[{k:'ocean',n:'Ocean waves',bg:'center/cover no-repeat url(ocean.jpg),#06101c',waves:1},
 {k:'aurora',n:'Aurora',bg:'radial-gradient(1200px 700px at 20% 10%,#2ee6a8 0,transparent 55%),radial-gradient(1000px 700px at 85% 20%,#7a5cff 0,transparent 55%),linear-gradient(160deg,#06122b,#0d2a4a 60%,#0a1a33)'},

@@ -1,10 +1,12 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 15:25 Hub media server: port 8097 was taken on the Pi, moved to 8110 (queue 116)
+
 ## 2026-11-11 15:12 Hub media server start: queue 112 refused (cron edit), replaced by 113
 - 113 starts media_server.py from crew-update.sh (runs every 3 min) instead of editing cron.
 
 ## 2026-11-11 15:20 Hub v6: backgrounds library, moving waves, dim schedule, keyboard on demand
-- hub2/index.html rewritten: Devices | Backgrounds pages; upload photos/videos from the phone to the Hub (hub2/media_server.py, port 8097, files in ~/hub-media, not in the repo); set one as background or cycle through all (minutes steppable); wave motion on Ocean; kiosk shows glass clock always and dims 8 PM to 8 AM (steppable); keyboard only appears when the search box is tapped; devices list scrolls; UTF-8 fixed (Pi showed garbled dots).
+- hub2/index.html rewritten: Devices | Backgrounds pages; upload photos/videos from the phone to the Hub (hub2/media_server.py, port 8110, files in ~/hub-media, not in the repo); set one as background or cycle through all (minutes steppable); wave motion on Ocean; kiosk shows glass clock always and dims 8 PM to 8 AM (steppable); keyboard only appears when the search box is tapped; devices list scrolls; UTF-8 fixed (Pi showed garbled dots).
 - Removed theme drift / starfield / photo-only savers. tasks/queue/112-hub-media-server.sh starts the media server (cron @reboot + watchdog).
 - Open: Pi top panel and window title bar still standard (not glass).
 

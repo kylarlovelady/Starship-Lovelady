@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Hub media library: a folder of background photos/videos plus the Hub's shared settings.
-Runs on the main Pi, port 8097, only answers private/tailnet addresses. Files live in ~/hub-media (NOT in the repo).
+Runs on the main Pi, port 8110, only answers private/tailnet addresses. Files live in ~/hub-media (NOT in the repo).
   GET /api/state  -> {files:[{name,type,size}], settings:{...}}
   GET /media/<n>  -> the file (range requests ok, so videos seek)
   POST /api/upload?name=x   (raw body)   POST /api/settings (json)   POST /api/delete (json {name})"""
@@ -113,4 +113,4 @@ class H(BaseHTTPRequestHandler):
         self.js({"error": "no such route"}, 404)
 
 if __name__ == "__main__":
-    ThreadingHTTPServer(("0.0.0.0", 8097), H).serve_forever()
+    ThreadingHTTPServer(("0.0.0.0", 8110), H).serve_forever()
