@@ -1,5 +1,10 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 15:05 Hub demo v5: blur-dissolve transitions like Kylar's screen recording; serving on the Pi
+- hub2/index.html: pages and room chips dissolve through fog (blur + fade, staggered tiles back in); kiosk dissolves the menu into the ocean instead of sliding; slow background drift; stronger glass so colours show through.
+- tasks/queue/111-serve-hub2.sh (serve at :8095/hub2/index.html via crew-update), hardware/kitchen-screen/open-hub2.sh (opens it on the screen Pi + Desktop icon 'Glass Hub').
+- Note: queue 110 hub probe was REFUSED (it reads env files). HA entity list needs another route.
+
 ## 2026-11-11 14:40 Ocean waves = desktop screensaver + default Hub background
 - Kylar's reference image (dark ocean waves) saved as hub2/ocean.jpg (1920x1080). Hub default theme 'Ocean'; hub2/index.html#desktop-saver shows it plain. Not wired to the Pi idle yet.
 
