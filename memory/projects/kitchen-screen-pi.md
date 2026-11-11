@@ -9,6 +9,9 @@ Started 2026-11-11 (Kylar at work, has the new Pi, SD card and parts). Status: p
 4. Chromium kiosk at login, full screen, pointing at the Starship page (main Pi :8095) or the Hub (:8081/hub); screen never sleeps, touch works, no cursor.
 5. Later: screensaver, cameras, Home Assistant lights panel (living room build in buy-list.md), speakers.
 
+## Progress 2026-11-11
+- 11:15 first boot done on the screen at work (the Imager user and Wi-Fi settings did NOT carry over, so Kylar created the user in the first-run wizard and put the Pi on his phone hotspot). Desktop is up and touch works. Next: run hardware/kitchen-screen/setup.sh (SSH on, no blanking, Tailscale join, Chromium kiosk to the Hub at :8081/hub; change URL on line 6 to switch pages). Software updates and the home Wi-Fi are still to do at home.
+
 ## Next step
 - 2026-11-11 08:00 Step 1 DONE: SD card written with Imager (Pi OS 64-bit Trixie, hostname LoveladyMainAiHubSCREEN (Kylar chose it; reachable as loveladymainaihubscreen.local), user kylarlovelady, Central time, home Wi-Fi, SSH password login on, Pi Connect off). Next: card into the new Pi, assemble with the screen, power on at home (home Wi-Fi), then find it and SSH in (step 2 above).
 

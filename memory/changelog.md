@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 11:35 Kitchen screen Pi: first boot done; setup script written
+- hardware/kitchen-screen/setup.sh (SSH, no blanking, Tailscale, kiosk). Pi is on Kylar's hotspot at work. projects/kitchen-screen-pi.md updated.
+
 ## 2026-11-11 08:02 Kitchen screen Pi: SD card written
 - Pi OS 64-bit, hostname LoveladyMainAiHubSCREEN, Wi-Fi and SSH set via Imager; notes in projects/kitchen-screen-pi.md. Next: first boot at home.
 
