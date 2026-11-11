@@ -1,5 +1,4 @@
-hub-state"' \
---detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
+ -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
 --stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
 --transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
 --synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
@@ -482,5 +481,15 @@ drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Nov 11 15:10 ..
 -rw-rw-r-- 1 kylarlovelady kylarlovelady 357575 Nov 11 15:10 ocean.jpg
 free space:
 200G free of 234G
+(exit 0)
+```
+
+## 2026-11-11 15:13:01 tasks/queue/114-hub-media-check.sh
+```
+process:
+state:
+
+crew-update line:
+1
 (exit 0)
 ```
