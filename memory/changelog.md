@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 14:40 Ocean waves = desktop screensaver + default Hub background
+- Kylar's reference image (dark ocean waves) saved as hub2/ocean.jpg (1920x1080). Hub default theme 'Ocean'; hub2/index.html#desktop-saver shows it plain. Not wired to the Pi idle yet.
+
 ## 2026-11-11 15:00 Hub demo v3: Screensaver page + desktop saver mode
 - hub2/index.html: Devices | Screensaver tabs; 6 kiosk screensavers (glass clock, theme drift, starfield, dim, black, photo only), choice saved in the browser. URL #desktop-saver = glass clock over background, any tap closes it (for the Pi desktop idle screensaver; not wired yet). Fixed a v2 script error (keyboard button).
 

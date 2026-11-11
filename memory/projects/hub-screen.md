@@ -19,7 +19,7 @@ Requested 2026-11-11 14:19 (Kylar). Status: design preview first, then wire to t
 - Open questions for Kylar: which holidays first; which devices matter most on the main view; Sharee's input on the family photos.
 
 ## Screensavers (Kylar 11-11 14:30)
-- Desktop screensaver = the glass clock over the chosen background (hub2/index.html#desktop-saver). To wire on the Pi: idle trigger launches it fullscreen.
+- Desktop screensaver = the ocean waves image (same as his desktop PC/laptop), hub2/ocean.jpg, shown by hub2/index.html#desktop-saver (corrected 11-11 14:32; I first thought it meant the glass clock). To wire on the Pi: idle trigger launches it fullscreen.
 - Kiosk mode uses a separate screensaver picked on the Hub's Screensaver page (after Devices).
 
 ## Next step
