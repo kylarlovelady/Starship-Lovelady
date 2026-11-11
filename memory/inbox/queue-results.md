@@ -1,7 +1,4 @@
-h[3014]: INFO:root:Waiting for wake word
-== openwakeword container log tail
-INFO:root:Ready
-INFO:root:Ready
+oot:Ready
 INFO:root:Ready
 INFO:root:Ready
 INFO:root:Ready
@@ -493,3 +490,6 @@ v_hold_s250_agree buys: 1
 buys with sz logged: 75
 (exit 0)
 ```
+
+## 2026-11-11 14:22:02 tasks/queue/110-hub-probe.sh
+REFUSED: contains a command on the deny list
