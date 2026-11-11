@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 14:45 Hub demo v2: clearer misty glass
+- hub2/index.html: see-through frosted glass, glass floating taskbar + keyboard, almost no colour, kiosk slides the menu away to a big clock/date over the background, double-tap brings it back. Demo data only.
+
 ## 2026-11-11 15:10 Hub screen demo page built (hub2/index.html)
 - Glass UI, themes + photo upload, clock bubble, mic mute, demo HA tiles, glass keyboard, double-tap kiosk. Demo data only; not wired to the Pi yet.
 
