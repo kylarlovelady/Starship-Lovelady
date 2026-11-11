@@ -1,17 +1,4 @@
-1 tasks/queue/096-jarvis-mic-files.sh
-```
-== run-hub.sh
-#!/bin/bash
-cd ~/wyoming-satellite
-script/run \
---name 'main hub' \
---debug-recording-dir '/home/kylarlovelady/voice-data/home-mic' \
---uri 'tcp://127.0.0.1:10700' \
---mic-command '/home/kylarlovelady/hub-mic.py plughw:3,0' \
---snd-command 'aplay -D plughw:2,0 -r 22050 -c 1 -f S16_LE -t raw' \
---wake-uri 'tcp://127.0.0.1:10400' \
---wake-word-name 'hey_jarvis' \
---detect-command 'bash -c "echo idle > /tmp/hub-state"' \
+hub-state"' \
 --detection-command 'bash -c "pkill -x aplay; echo listening > /tmp/hub-state; curl -s -m 2 -X POST -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
 --stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
 --transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
@@ -483,3 +470,17 @@ hub2 over http 8095: 000
 
 ## 2026-11-11 15:04:01 tasks/queue/112-hub-media-server.sh
 REFUSED: contains a command on the deny list
+
+## 2026-11-11 15:10:01 tasks/queue/113-hub-media-start.sh
+```
+
+total 404
+drwxrwxr-x 2 kylarlovelady kylarlovelady   4096 Nov 11 15:03 .
+drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Nov 11 15:10 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  35051 Nov 11 15:10 index.html
+-rw-rw-r-- 1 kylarlovelady kylarlovelady   6407 Nov 11 15:10 media_server.py
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 357575 Nov 11 15:10 ocean.jpg
+free space:
+200G free of 234G
+(exit 0)
+```
