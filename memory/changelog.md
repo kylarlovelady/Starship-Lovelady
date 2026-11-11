@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 14:25 New Hub screen: requirements filed (memory/projects/hub-screen.md)
+- Preview page and a Pi probe (queue 110) next.
+
 ## 2026-11-11 12:55 Kitchen screen: windowed mode script and requirements filed
 - hardware/kitchen-screen/windowed.sh (maximised window, desktop icons, keyboard friendly). projects/kitchen-screen-pi.md updated.
 
