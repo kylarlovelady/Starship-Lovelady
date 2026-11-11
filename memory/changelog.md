@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 12:55 Kitchen screen: windowed mode script and requirements filed
+- hardware/kitchen-screen/windowed.sh (maximised window, desktop icons, keyboard friendly). projects/kitchen-screen-pi.md updated.
+
 ## 2026-11-11 11:35 Kitchen screen Pi: first boot done; setup script written
 - hardware/kitchen-screen/setup.sh (SSH, no blanking, Tailscale, kiosk). Pi is on Kylar's hotspot at work. projects/kitchen-screen-pi.md updated.
 
