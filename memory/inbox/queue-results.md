@@ -1,7 +1,4 @@
- tasks/queue/096-jarvis-mic-files.sh
-REFUSED: sudo is not allowed in queue scripts
-
-## 2026-11-07 12:34:01 tasks/queue/096-jarvis-mic-files.sh
+1 tasks/queue/096-jarvis-mic-files.sh
 ```
 == run-hub.sh
 #!/bin/bash
@@ -483,3 +480,6 @@ drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Nov 11 14:40 ..
 hub2 over http 8095: 000
 (exit 0)
 ```
+
+## 2026-11-11 15:04:01 tasks/queue/112-hub-media-server.sh
+REFUSED: contains a command on the deny list
