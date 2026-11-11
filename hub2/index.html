@@ -17,10 +17,11 @@ body{margin:0;background:#0b1220;color:var(--ink);font-family:var(--font);overfl
 .g{background:linear-gradient(135deg,rgba(255,255,255,.16) 0,rgba(255,255,255,.04) 45%,rgba(255,255,255,.08) 100%);border:1px solid var(--edge);backdrop-filter:blur(var(--blur)) saturate(1.9) brightness(1.12);-webkit-backdrop-filter:blur(var(--blur)) saturate(1.9) brightness(1.12);box-shadow:0 12px 44px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.06),inset 0 0 22px rgba(255,255,255,.04);border-radius:28px}
 button{font:inherit;color:inherit;cursor:pointer}
 .top{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap}
-.clock{padding:14px 26px 12px;min-width:0;flex:0 1 auto}
-.clock .t{font-size:clamp(48px,9vw,96px);font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.clock{padding:6px 20px 8px;min-width:0;flex:0 0 auto;width:fit-content;align-self:flex-start;border-radius:26px}
+.clock,.saver .g{background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.015) 55%,rgba(255,255,255,.05));backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);box-shadow:0 6px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(255,255,255,.05)}
+.clock .t{font-size:clamp(44px,8vw,84px);text-shadow:0 2px 14px rgba(0,0,0,.35);font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .clock .t small{font-size:.32em;font-weight:500;margin-left:.25em;letter-spacing:0;color:var(--ink2)}
-.clock .d{font-size:clamp(14px,2.2vw,22px);color:var(--ink2);margin-top:4px;font-weight:400}
+.clock .d{font-size:clamp(14px,2vw,20px);color:var(--ink);text-shadow:0 1px 8px rgba(0,0,0,.4);margin-top:0;font-weight:400}
 .dock{position:fixed;z-index:25;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:8px;border-radius:32px;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .5s}
 .ib{width:58px;height:58px;border-radius:20px;background:var(--glass);border:1px solid var(--edge);display:grid;place-items:center;font-size:12px;font-weight:500;transition:transform .15s,background .2s;flex-direction:column;line-height:1.1;gap:2px;padding:0}
 .ib svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -75,10 +76,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .demo{position:fixed;z-index:15;left:16px;top:10px;display:none;font-size:12px;color:var(--ink2);padding:6px 12px;border-radius:999px}
 body.kiosk .demo{display:none}
 .saver{position:fixed;inset:0;z-index:3;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .8s .15s}
-.saver .g{padding:30px 56px 26px;text-align:center;border-radius:44px}
-.saver .t{font-size:clamp(72px,17vw,210px);font-weight:200;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.saver .g{padding:10px 34px 14px;text-align:center;border-radius:40px;width:fit-content}
+.saver .t{text-shadow:0 3px 24px rgba(0,0,0,.4);font-size:clamp(72px,17vw,210px);font-weight:200;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
 .saver .t small{font-size:.22em;font-weight:400;margin-left:.2em;color:var(--ink2)}
-.saver .d{font-size:clamp(18px,3.4vw,38px);font-weight:300;color:var(--ink2);margin-top:8px}
+.saver .d{font-size:clamp(18px,3.4vw,38px);font-weight:300;color:var(--ink);text-shadow:0 2px 12px rgba(0,0,0,.4);margin-top:0}
 #app{transition:filter .9s ease,opacity .8s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
 body.kiosk #app{filter:blur(26px);opacity:0;transform:scale(1.04);pointer-events:none}
 body.kiosk .dock{filter:blur(18px);opacity:0;pointer-events:none}

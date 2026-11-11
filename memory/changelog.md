@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-11 15:00 Hub: clock bubble tighter and clearer
+- hub2/index.html: bubble hugs the time/date (less padding, fit-content), much clearer glass (light blur) so the background shows through; text shadow keeps it readable over photos. Applies to the menu clock and the kiosk clock.
+
 ## 2026-11-11 15:05 Hub demo v5: blur-dissolve transitions like Kylar's screen recording; serving on the Pi
 - hub2/index.html: pages and room chips dissolve through fog (blur + fade, staggered tiles back in); kiosk dissolves the menu into the ocean instead of sliding; slow background drift; stronger glass so colours show through.
 - tasks/queue/111-serve-hub2.sh (serve at :8095/hub2/index.html via crew-update), hardware/kitchen-screen/open-hub2.sh (opens it on the screen Pi + Desktop icon 'Glass Hub').
