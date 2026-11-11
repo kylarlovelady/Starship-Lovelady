@@ -1,27 +1,4 @@
-en(d)) if os.path.exists(M) else d)
-        w.flush()
-except BrokenPipeError:
-finally:
-    p.terminate()
-== mute mentions
-/home/kylarlovelady/hub-voice/voiced.py:210:        print("Enrolling %s. Unmute the mic. Say 'Alexa' then a sentence of 3 or more seconds, 5 times." % name)
-/usr/local/bin/hub-lights.py:5:MUTE_FILE = "/home/kylarlovelady/hub-dashboard/muted"
-/usr/local/bin/hub-lights.py:21:    if os.path.exists(MUTE_FILE):
-/usr/local/bin/hub-oled.py:6:MUTE_FILE = "/home/kylarlovelady/hub-dashboard/muted"
-/usr/local/bin/hub-oled.py:85:        if os.path.exists(MUTE_FILE):
-/usr/local/bin/hub-oled.py:86:            view = ("muted", dx, dy)
-/usr/local/bin/hub-oled.py:108:            elif view[0] == "muted":
-/usr/local/bin/hub-oled.py:109:                oled.draw_text("MIC MUTED", view[1], view[2], size=fit_size(oled, "MIC MUTED", 20))
-/home/kylarlovelady/hub-mic.py:3:M = "/home/kylarlovelady/hub-dashboard/muted"
-== mixer Mic
-Simple mixer control 'Mic',0
-  Capabilities: cvolume cswitch cswitch-joined
-  Capture channels: Front Left - Front Right
-  Limits: Capture 0 - 36
-  Front Left: Capture 36 [100%] [12.00dB] [on]
-  Front Right: Capture 36 [100%] [12.00dB] [on]
-== what listens on 8097
-LISTEN 0      5                             100.105.140.126:8097       0.0.0.0:*    users:(("python3",pid=2080,fd=3)) 
+) 
 == wake clips per hour (last 24 h) and conversations
 11-05 15 1
 11-05 17 3
@@ -495,5 +472,44 @@ Traceback (most recent call last):
     ThreadingHTTPServer(("0.0.0.0", 8097), H).serve_forever()
     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.13/socketserver.py", line 457, in __init__
+(exit 0)
+```
+
+## 2026-11-11 15:19:01 tasks/queue/113-hub-media-start.sh
+```
+{"files": [], "settings": {"current": "ocean", "cycle": false, "minutes": 5, "dim_from": 20, "dim_to": 8}, "t": 1794431943}
+
+total 404
+drwxrwxr-x 2 kylarlovelady kylarlovelady   4096 Nov 11 15:03 .
+drwxr-xr-x 3 kylarlovelady kylarlovelady   4096 Nov 11 15:18 ..
+-rw-rw-r-- 1 kylarlovelady kylarlovelady  35051 Nov 11 15:19 index.html
+-rw-rw-r-- 1 kylarlovelady kylarlovelady   6407 Nov 11 15:19 media_server.py
+-rw-rw-r-- 1 kylarlovelady kylarlovelady 357575 Nov 11 15:19 ocean.jpg
+free space:
+200G free of 234G
+(exit 0)
+```
+
+## 2026-11-11 15:19:03 tasks/queue/114-hub-media-check.sh
+```
+process:
+1980217 python3 /home/kylarlovelady/starship/hub2/media_server.py
+state:
+{"files": [], "settings": {"current": "ocean", "cycle": false, "minutes": 5, "dim_from": 20, "dim_to": 8}, "t": 1794431943}
+
+crew-update line:
+1
+(exit 0)
+```
+
+## 2026-11-11 15:19:03 tasks/queue/116-hub-media-port.sh
+```
+-- who holds 8097:
+LISTEN 0      5                             100.105.140.126:8097       0.0.0.0:*    users:(("python3",pid=2080,fd=3))    
+-- running:
+1983512 python3 /home/kylarlovelady/starship/hub2/media_server.py
+-- state:
+{"files": [], "settings": {"current": "ocean", "cycle": false, "minutes": 5, "dim_from": 20, "dim_to": 8}, "t": 1794431947}
+
 (exit 0)
 ```
