@@ -1,28 +1,4 @@
- -d wake http://127.0.0.1:8080/event/wake > /dev/null"' \
---stt-stop-command 'bash -c "echo thinking > /tmp/hub-state"' \
---transcript-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/transcript > /dev/null"' \
---synthesize-command 'bash -c "curl -s -m 2 -X POST --data-binary @- http://127.0.0.1:8080/event/synthesize > /dev/null"' \
---tts-start-command 'bash -c "echo speaking > /tmp/hub-state"' \
---tts-stop-command 'bash -c "echo idle > /tmp/hub-state; curl -s -m 2 -X POST -d done http://127.0.0.1:8080/event/done > /dev/null"' \
---error-command 'bash -c "echo idle > /tmp/hub-state"'
-== hub-mic.py
-21 /home/kylarlovelady/hub-mic.py
-#!/usr/bin/env python3
-import sys, os, subprocess, signal
-M = "/home/kylarlovelady/hub-dashboard/muted"
-p = subprocess.Popen(["arecord", "-D", sys.argv[1], "-r", "16000", "-c", "1", "-f", "S16_LE", "-t", "raw"],
-                     stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-def stop(*a):
-    p.terminate()
-    sys.exit(0)
-signal.signal(signal.SIGTERM, stop)
-w = sys.stdout.buffer
-try:
-    while True:
-        d = p.stdout.read(2048)
-        if not d:
-            break
-        w.write(bytes(len(d)) if os.path.exists(M) else d)
+en(d)) if os.path.exists(M) else d)
         w.flush()
 except BrokenPipeError:
 finally:
@@ -491,5 +467,33 @@ state:
 
 crew-update line:
 1
+(exit 0)
+```
+
+## 2026-11-11 15:16:02 tasks/queue/115-hub-media-debug.sh
+```
+python: Python 3.13.5
+-- foreground test (3 s)
+Traceback (most recent call last):
+  File "/home/kylarlovelady/starship/hub2/media_server.py", line 116, in <module>
+    ThreadingHTTPServer(("0.0.0.0", 8097), H).serve_forever()
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socketserver.py", line 457, in __init__
+    self.server_bind()
+    ~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/http/server.py", line 136, in server_bind
+exit: 0
+-- tail of crew-update.sh
+cp ~/starship/markets/live.html ~/crew-web/live.html
+cp ~/starship/markets/report.html ~/crew-web/report.html
+mkdir -p ~/crew-web/hub2 && cp -r ~/starship/hub2/. ~/crew-web/hub2/
+pgrep -f hub2/media_server.py >/dev/null || nohup python3 $HOME/starship/hub2/media_server.py >/dev/null 2>&1 &
+-- after detached start
+
+Traceback (most recent call last):
+  File "/home/kylarlovelady/starship/hub2/media_server.py", line 116, in <module>
+    ThreadingHTTPServer(("0.0.0.0", 8097), H).serve_forever()
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socketserver.py", line 457, in __init__
 (exit 0)
 ```
