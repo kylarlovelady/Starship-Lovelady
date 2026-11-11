@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-10 20:30 Kitchen case: two more design issues filed (hard-to-screw back halves, weak faceplate seam)
+- memory/projects/3d-printing.md items 6 and 7.
+
 ## 2026-11-10 20:25 Kitchen case: 5 design fixes and 3 measurements filed (Kylar's voice list)
 - memory/projects/3d-printing.md and projects.md updated. Status: waiting on measurements before any redesign.
 
