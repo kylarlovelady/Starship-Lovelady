@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-12 06:25 Daily check (scheduled)
+- Read inbox and Pi status (fresh, 6:00 am): all services active, 43 C, disk 11%, no failures, no new Jarvis notes to file. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (3 days) and KDP re-upload (waiting on Kylar); Kalshi forward-test review still owed. Did not touch the Pi or Kalshi.
+
 ## 2026-11-11 15:25 Hub media server: port 8097 was taken on the Pi, moved to 8110 (queue 116)
 
 ## 2026-11-11 15:12 Hub media server start: queue 112 refused (cron edit), replaced by 113
