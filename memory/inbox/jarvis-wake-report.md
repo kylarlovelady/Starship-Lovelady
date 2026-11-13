@@ -1,8 +1,8 @@
 # Home Jarvis wake-up report (auto, audio stats only)
 
-Updated Fri 13:00. Wake word threshold now: 0.8. Mic muted now: False.
+Updated Fri 13:30. Wake word threshold now: 0.8. Mic muted now: False.
 
-Last 24 h: **2** wake-ups: 2 empty, 0 probably us talking, 0 real commands. Last 7 days: 32 wake-ups, 23 false.
+Last 24 h: **0** wake-ups: 0 empty, 0 probably us talking, 0 real commands. Last 7 days: 32 wake-ups, 23 false.
 
 | hour | empty | talk | command |
 |---|---|---|---|
