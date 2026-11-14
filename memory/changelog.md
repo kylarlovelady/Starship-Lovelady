@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-14 11:10 Queue stuck since Nov 11 15:19: the Hub media server (started by queue 116) holds the runner's lock
+- Queue 117 (Kalshi forward review + luck check, markets/forward_review.py) is pushed but cannot run until the lock is freed. Fix: Kylar runs `pkill -f hub2/media_server.py` on the main Pi; crew-update.sh restarts the server from cron within 3 min (no lock). Warning added to tasks/queue/README.md.
+
 ## 2026-11-14 06:20 Daily check (scheduled)
 - Read inbox and Pi status (fresh, 6:00 am): all services active, 40.6 C, disk 11%, no failures, no new Jarvis notes to file (inbox holds only auto reports and studies; queue-results.md has no runs since 11-11). Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (5 days) and KDP re-upload (waiting on Kylar); Kalshi forward-test review is 3 days late. Did not touch the Pi or Kalshi.
 
