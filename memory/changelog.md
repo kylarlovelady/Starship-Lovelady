@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-15 06:20 Daily check (scheduled)
+- Read inbox and Pi status (fresh, 6:00 am): all services active, 42 C, disk 11%, no failures, no new Jarvis notes to file. Found the Pi job queue still stuck since 11-11 (no queue-results after 15:19 that day), so forward review 117 has not run; brief asks Kylar for the one pkill command. v_edge10_s100 fell to +$926 over 449 rounds (was +$2,124). Wrote memory/brief.md and updated the projects.md header. Did not touch the Pi or Kalshi.
+
 ## 2026-11-14 11:10 Queue stuck since Nov 11 15:19: the Hub media server (started by queue 116) holds the runner's lock
 - Queue 117 (Kalshi forward review + luck check, markets/forward_review.py) is pushed but cannot run until the lock is freed. Fix: Kylar runs `pkill -f hub2/media_server.py` on the main Pi; crew-update.sh restarts the server from cron within 3 min (no lock). Warning added to tasks/queue/README.md.
 
