@@ -1,26 +1,4 @@
-4)  23:+943(4)
-
-LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
-  Sun 08 12:45  DOWN   10 @ 50c  stake      5  result UP       -5.18  total  +1926.69
-  Sun 08 13:00  DOWN  729 @ 67c  stake    488  result DOWN   +229.28  total  +2155.97
-  Sun 08 13:15  UP      9 @ 58c  stake      5  result UP       +3.62  total  +2159.59
-  Sun 08 13:30  UP      8 @ 68c  stake      5  result UP       +2.43  total  +2162.02
-  Sun 08 13:45  UP    784 @ 62c  stake    487  result UP     +284.44  total  +2446.46
-  Sun 08 14:00  UP    930 @ 52c  stake    483  result DOWN   -499.66  total  +1946.80
-  Sun 08 14:15  UP   2930 @ 16c  stake    472  result UP    +2430.04  total  +4376.84
-  Sun 08 14:30  DOWN   10 @ 50c  stake      5  result DOWN     +4.82  total  +4381.66
-  Sun 08 14:45  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +4385.37
-  Sun 08 15:00  UP   2927 @ 16c  stake    472  result DOWN   -499.84  total  +3885.53
-  Sun 08 15:15  UP   1213 @ 18c  stake    222  result DOWN   -234.77  total  +3650.76
-  Sun 08 15:30  DOWN  965 @ 50c  stake    483  result DOWN   +465.20  total  +4115.96
-  Sun 08 16:00  UP      7 @ 73c  stake      5  result UP       +1.79  total  +4117.75
-  Sun 08 16:15  DOWN 2352 @ 20c  stake    474  result DOWN  +1852.08  total  +5969.83
-  Sun 08 16:30  DOWN  633 @ 78c  stake    492  result DOWN   +133.31  total  +6103.14
-  Sun 08 16:45  DOWN  709 @ 69c  stake    489  result UP     -499.83  total  +5603.31
-  Sun 08 17:00  UP    664 @ 74c  stake    491  result UP     +164.39  total  +5767.70
-  Sun 08 17:15  UP      9 @ 59c  stake      5  result UP       +3.53  total  +5771.23
-  Sun 08 17:30  UP   1939 @ 25c  stake    477  result DOWN   -499.93  total  +5271.30
-  Sun 08 17:45  DOWN    9 @ 62c  stake      6  result DOWN     +3.27  total  +5274.57
+ stake      6  result DOWN     +3.27  total  +5274.57
   Sun 08 18:00  UP   2928 @ 16c  stake    472  result DOWN   -499.92  total  +4774.65
   Sun 08 18:18  UP      7 @ 77c  stake      5  result UP       +1.52  total  +4776.17
   Sun 08 18:30  DOWN    9 @ 58c  stake      5  result DOWN     +3.62  total  +4779.79
@@ -449,6 +427,47 @@ C) LUCK CHECK, all history:
      without best 3 rounds -15125.12 | without best 5 -19813.17 | without best 10% (73 rounds) -73790.58
      first half -6668.58 (Sat 07 10:30 to Wed 11 18:15) | second half -595.37 (to Mon 16 03:31)
      by day: Sat 07 +1311  Sun 08 +1219  Mon 09 -534  Tue 10 -6583  Wed 11 +1304  Thu 12 -3669  Fri 13 -622  Sat 14 -1907  Sun 15 +1679  Mon 16 +539  -> 5 of 10 days positive
+```
+(exit 0)
+```
+
+## 2026-11-16 04:31:01 tasks/queue/118-kdp-gold-pink.sh
+```
+KDP black-gold + pink build started in the background (log ~/kdp-build-fg.log)
+(exit 0)
+```
+
+## 2026-11-16 04:31:01 tasks/queue/119-news-log.sh
+```
+# News feeds probe (queue 119, Mon 16 04:31)
+
+```
+feed               cat      result
+coindesk           crypto   ok  25 items, newest 57 min old
+cointelegraph      crypto   ok  30 items, newest 100 min old
+decrypt            crypto   ok  40 items, newest 6 min old
+bitcoinmagazine    crypto   ok  10 items, newest 1171 min old
+cryptoslate        crypto   ok  10 items, newest 6 min old
+bitcoinist         crypto   ok   8 items, newest 46 min old
+gnews-bitcoin      crypto   ok 100 items, newest 17 min old
+cnbc-top           finance  ok  30 items, newest 31 min old
+cnbc-markets       finance  ok  30 items, newest 680 min old
+marketwatch        finance  ok  10 items, newest 11 min old
+yahoo-finance      finance  FAIL HTTPError: HTTP Error 404: Not Found
+fed                finance  ok  20 items, newest 3676 min old
+gnews-fed-rates    finance  ok  76 items, newest 7 min old
+theverge           tech     ok  10 items, newest 374 min old
+techcrunch         tech     ok  20 items, newest 211 min old
+arstechnica        tech     ok  20 items, newest 679 min old
+hackernews         tech     ok  20 items, newest 280 min old
+bleepingcomputer   tech     ok  15 items, newest 61 min old
+gnews-outage       tech     ok 100 items, newest 13 min old
+bbc-world          general  ok  23 items, newest 70 min old
+bbc-business       general  ok  57 items, newest 32 min old
+npr                general  ok  10 items, newest 31 min old
+gnews-breaking     general  ok  61 items, newest 10 min old
+
+news_log: 722 new headlines, 1 feeds failed, file now 722 lines
 ```
 (exit 0)
 ```
