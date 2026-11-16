@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-16 03:50 Kalshi briefing for Kylar's voice chat (no new runs: queue still stuck)
+- Gathered from the Pi's auto files only: digest (last 24 h, written 03:45 Mon), Sun brief, data status. Queue 117 (forward review + luck check) still has not run because the Hub media server holds the queue lock; needs `pkill -f hub2/media_server.py` on the Pi. Sandbox cannot reach the Pi or Kalshi directly; Kalshi key expired Nov 9.
+
 ## 2026-11-15 06:20 Daily check (scheduled)
 - Read inbox and Pi status (fresh, 6:00 am): all services active, 42 C, disk 11%, no failures, no new Jarvis notes to file. Found the Pi job queue still stuck since 11-11 (no queue-results after 15:19 that day), so forward review 117 has not run; brief asks Kylar for the one pkill command. v_edge10_s100 fell to +$926 over 449 rounds (was +$2,124). Wrote memory/brief.md and updated the projects.md header. Did not touch the Pi or Kalshi.
 
