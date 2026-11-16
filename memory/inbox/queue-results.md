@@ -1,72 +1,4 @@
-6 @ 18c  stake    399  result DOWN   -421.55  total  +6932.16
-  Mon 09 03:30  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +6935.87
-  Mon 09 03:45  DOWN 2373 @ 20c  stake    473  result UP     -499.95  total  +6435.92
-
-RUNNING TOTAL every 10 rounds: -502, +970, -1256, +63, +629, +517, +1303, +1506, -344, +1132, +1947, +5603, +4280, +1293, +2535, +6932
-
----- v_hold_s100 (same entries, 1/5 the size) ----
-WALLET CURVE v_hold_s100 (pretend money, after fees): 162 settled rounds, Sat 07 10:30 to Mon 09 03:45, 3 unsettled skipped
-  profit now +1232.04 | peak +1428.16 (Mon 09 03:00) | worst drop 1037.55 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 196.12 from the peak
-  wins 102 (63%), avg win +58.06, avg loss -78.17, avg stake 63.47, avg entry price 54.2 c
-  entry price  0- 40 c:  31 rounds, won  32%, profit  +1138.55
-  entry price 40- 60 c:  44 rounds, won  61%, profit    -71.95
-  entry price 60- 80 c:  87 rounds, won  75%, profit   +165.44
-  bet UP  :  88 rounds, won  60%, profit   -367.87
-  bet DOWN:  74 rounds, won  66%, profit  +1599.91
-  5 best rounds: +469, +406, +406, +379, +358  (= 164% of total profit)
-  5 worst rounds: -100, -100, -100, -100, -100
-  longest losing streak: 4 rounds
-  by hour (local): 00:-161(7)  01:+170(8)  02:+396(7)  03:+334(8)  04:-295(4)  05:+212(4)  06:+52(4)  07:-295(4)  08:-36(4)  09:-60(4)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+3(7)  20:-453(8)  21:-200(8)  22:+385(8)  23:+119(8)
-
-LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
-```
-(exit 0)
-```
-
-## 2026-11-09 19:31:01 tasks/queue/104-kdp-llc-last-page.sh
-```
-KDP rebuild started in the background
-(exit 0)
-```
-
-## 2026-11-09 20:04:02 tasks/queue/105-kalshi-wallet-curve-evening.sh
-```
-wrote /home/kylarlovelady/starship/memory/inbox/kalshi-wallet-curve.md (66 lines)
-# Kalshi wallet curve (queue 105, Mon 09 20:04, practice money only)
-
-```
-WALLET CURVE v_hold_s500 (pretend money, after fees): 186 settled rounds, Sat 07 10:30 to Mon 09 19:45, 1 unsettled skipped
-  profit now +5385.24 | peak +7352.57 (Mon 09 03:00) | worst drop 5307.01 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 1967.33 from the peak
-  wins 119 (64%), avg win +250.67, avg loss -364.85, avg stake 284.65, avg entry price 53.8 c
-  entry price  0- 40 c:  35 rounds, won  29%, profit  +4057.83
-  entry price 40- 60 c:  56 rounds, won  66%, profit   +195.84
-  entry price 60- 80 c:  95 rounds, won  76%, profit  +1131.57
-  bet UP  : 100 rounds, won  62%, profit  -1549.08
-  bet DOWN:  86 rounds, won  66%, profit  +6934.32
-  5 best rounds: +2430, +2108, +2107, +1971, +1852  (= 194% of total profit)
-  5 worst rounds: -500, -500, -500, -500, -500
-  longest losing streak: 4 rounds
-  by hour (local): 00:-781(8)  01:+852(8)  02:+2040(8)  03:+1791(8)  04:-1123(8)  05:+1381(8)  06:-645(8)  07:-2138(8)  08:+321(7)  09:-310(5)  10:-570(6)  11:+2656(8)  12:-512(8)  13:+1459(8)  14:+2968(8)  15:-1263(7)  16:+292(8)  17:-863(8)  18:+543(8)  19:+40(9)  20:-2252(8)  21:-1081(8)  22:+2004(8)  23:+575(8)
-
-LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
-  Mon 09 02:00  UP   2471 @ 19c  stake    473  result UP    +1971.08  total  +5241.84
-  Mon 09 02:16  UP      9 @ 60c  stake      5  result UP       +3.44  total  +5245.28
-  Mon 09 02:30  UP     10 @ 50c  stake      5  result UP       +4.82  total  +5250.10
-  Mon 09 02:46  DOWN    9 @ 60c  stake      5  result UP       -5.56  total  +5244.54
-  Mon 09 03:00  DOWN 2608 @ 18c  stake    473  result DOWN  +2108.03  total  +7352.57
-  Mon 09 03:15  UP   2196 @ 18c  stake    399  result DOWN   -421.55  total  +6931.02
-  Mon 09 03:30  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +6934.73
-  Mon 09 03:45  DOWN 2373 @ 20c  stake    473  result UP     -499.95  total  +6434.78
-  Mon 09 04:00  UP   3122 @ 15c  stake    472  result DOWN   -499.94  total  +5934.84
-  Mon 09 04:15  UP    964 @ 50c  stake    483  result UP     +464.22  total  +6399.06
-  Mon 09 04:30  DOWN    9 @ 60c  stake      5  result DOWN     +3.44  total  +6402.50
-  Mon 09 04:45  UP     10 @ 54c  stake      5  result UP       +4.42  total  +6406.92
-  Mon 09 05:00  DOWN  811 @ 60c  stake    486  result DOWN   +311.56  total  +6718.48
-  Mon 09 05:15  UP     10 @ 52c  stake      5  result UP       +4.62  total  +6723.10
-  Mon 09 05:30  UP      9 @ 57c  stake      5  result UP       +3.71  total  +6726.81
-  Mon 09 05:45  DOWN    8 @ 63c  stake      5  result DOWN     +2.82  total  +6729.63
-  Mon 09 06:00  DOWN 3122 @ 15c  stake    472  result UP     -499.94  total  +6229.69
-  Mon 09 06:15  UP     10 @ 52c  stake      5  result UP       +4.62  total  +6234.31
+ @ 52c  stake      5  result UP       +4.62  total  +6234.31
   Mon 09 06:30  UP    317 @ 63c  stake    200  result UP     +112.11  total  +6346.42
   Mon 09 06:45  DOWN 2760 @ 17c  stake    473  result UP     -499.95  total  +5846.47
   Mon 09 07:00  UP   2758 @ 17c  stake    473  result DOWN   -499.87  total  +5346.60
@@ -475,4 +407,88 @@ day         label       move%  range%  vol/h  s250 pnl   news(n/bad/shock)
   keys: ['hold_pnl', 'hour', 'outcome', 'pnl', 'src', 'staked', 'strat', 't', 'trades']
 == calls.jsonl
   keys: ['call', 'conf', 'hi', 'kalshi_yes', 'lo', 'locked_at', 'outcome', 'pnl', 'price0', 'price1', 'score', 'signals(exit 0)
+```
+
+## 2026-11-16 04:37:01 tasks/queue/121-regime-days-fixed.sh
+```
+# Kalshi regime days (queue 121, Mon 16 04:37, practice money only)
+
+```
+REGIME DAYS (pretend money, fees in). Run Mon 16 04:37
+label rule: wild = day range 4%+ or hourly vol 0.5%+; trending = range 2.2%+ and mostly one direction; else calm
+
+day         label       move%  range%  vol/h  s250 pnl   news(n/bad/shock)
+2026-10-06  trending    -2.56    3.26   0.40        +0   0/0/0
+2026-10-07  calm        -1.76    2.18   0.32        +0   1/0/0
+2026-10-08  calm        -0.50    3.23   0.42        +0   2/0/0
+2026-10-09  calm        +0.43    1.23   0.26        +0   1/0/0
+2026-10-10  calm        +0.40    0.62   0.12        +0   0/0/0
+2026-10-11  calm        +1.29    1.37   0.23        +0   0/0/0
+2026-10-12  calm        -0.94    3.62   0.37        +0   0/0/0
+2026-10-13  calm        +0.42    1.39   0.35        +0   2/0/0
+2026-10-14  wild        -2.47    4.05   0.55        +0   1/0/0
+2026-10-15  calm        +0.63    3.31   0.46        +0   1/0/0
+2026-10-16  calm        -1.06    2.45   0.37        +0   1/1/1
+2026-10-17  calm        +0.25    1.22   0.20        +0   0/0/0
+2026-10-18  calm        +1.24    2.53   0.29        +0   0/0/0
+2026-10-19  calm        -0.57    2.26   0.34        +0   0/0/0
+2026-10-20  calm        +0.90    2.35   0.38        +0   1/0/0
+2026-10-21  calm        +0.01    2.73   0.39        +0   1/0/0
+2026-10-22  trending    -1.60    2.36   0.33        +0   0/0/0
+2026-10-23  calm        -0.96    1.71   0.33        +0   1/0/0
+2026-10-24  calm        +0.10    2.17   0.29        +0   0/0/0
+2026-10-25  calm        -1.01    1.81   0.34        +0   0/0/0
+2026-10-26  calm        -0.51    1.43   0.35        +0   0/0/0
+2026-10-27  calm        +1.44    2.15   0.31        +0   1/0/0
+2026-10-28  calm        -0.82    2.45   0.35        +0   1/1/0
+2026-10-29  wild        -2.67    6.70   0.60        +0   2/0/1
+2026-10-30  trending    -1.57    2.97   0.43        +0   1/0/0
+2026-10-31  calm        +0.77    0.84   0.16        +0   0/0/0
+2026-11-01  calm        +0.69    1.32   0.23        +0   0/0/0
+2026-11-02  trending    -2.13    2.28   0.38        +0   0/0/0
+2026-11-03  trending    +1.52    2.92   0.43        +0   1/0/0
+2026-11-04  wild        +3.26    4.12   0.51        +0   0/0/0
+2026-11-05  wild        -5.90    6.69   0.61        +0   2/1/0
+2026-11-06  calm        +0.53    1.42   0.39        +0   0/0/0
+2026-11-07  calm        -0.31    0.78   0.12      +885   0/0/0
+2026-11-08  trending    -1.74    2.74   0.47      +351   0/0/0
+2026-11-09  calm        +0.39    2.32   0.44      -295   1/0/0
+2026-11-10  calm        -1.12    2.84   0.47     -3097   6/1/0
+2026-11-11  calm        -0.39    1.73   0.42      +597   8/0/0
+2026-11-12  wild        -7.38    7.54   0.55     -1809   39/5/2
+2026-11-13  wild        -1.50    5.01   0.62      -245   93/21/10
+2026-11-14  wild        -3.99    7.95   0.82     -1375   50/10/4
+2026-11-15  wild        +0.23    3.19   0.66      -956   308/111/69
+
+STRATEGY BY KIND OF DAY: total profit (rounds) | profit per round
+ CALM (27 days)
+   v_hold_s250                -1911 ( 291) |  -6.57 per round
+   v_hold_s250_cheap100       -1582 ( 198) |  -7.99 per round
+   v_hold_s250_agree          -2251 ( 176) | -12.79 per round
+   v_hold_s100                 -963 ( 291) |  -3.31 per round
+   hold                        -126 ( 436) |  -0.29 per round
+   v_edge10_s100              +1917 (  70) | +27.38 per round
+   v_hold_s500                -4502 ( 291) | -15.47 per round
+ TRENDING (6 days)
+   v_hold_s250                 +351 (  95) |  +3.69 per round
+   v_hold_s100                  +17 (  95) |  +0.17 per round
+   hold                        -228 ( 188) |  -1.21 per round
+   v_hold_s500                +1219 (  95) | +12.83 per round
+ WILD (8 days)
+   v_hold_s250                -4385 ( 346) | -12.67 per round
+   v_hold_s250_cheap100       -1810 ( 346) |  -5.23 per round
+   v_hold_s250_agree          -2514 ( 304) |  -8.27 per round
+   v_hold_s100                -1307 ( 346) |  -3.78 per round
+   hold                         -47 ( 533) |  -0.09 per round
+   v_edge10_s100              -1080 ( 123) |  -8.78 per round
+   v_hold_s500                -5885 ( 346) | -17.01 per round
+
+(few days per kind means this is a first look only; judge by unseen days.)
+
+---- data file field names (keys only) ----
+== calls.jsonl
+  keys: ['call', 'conf', 'hi', 'kalshi_yes', 'lo', 'locked_at', 'outcome', 'pnl', 'price0', 'price1', 'score', 'signals', 'src', 'start', 'strike', 'ticker']
+   signals -> ['bigtrades', 'book', 'fng', 'funding', 'levels', 'momentum', 'news', 'trend_1h', 'trend_24h', 'trend_4h', 'trend_7d', 'trend_h', 'trend_w', 'whales']
+```
+(exit 0)
 ```
