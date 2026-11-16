@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-16 03:55 Kalshi forward review done (queue 117 ran after Kylar's pkill freed the queue)
+- Result filed in memory/kalshi-ai.md and memory/inbox/kalshi-forward-review.md. Big-stake wallets are net negative; only tiny-stake hold is slightly positive. Not proven either way. markets/forward_review.py is the tool.
+
 ## 2026-11-16 03:50 Kalshi briefing for Kylar's voice chat (no new runs: queue still stuck)
 - Gathered from the Pi's auto files only: digest (last 24 h, written 03:45 Mon), Sun brief, data status. Queue 117 (forward review + luck check) still has not run because the Hub media server holds the queue lock; needs `pkill -f hub2/media_server.py` on the Pi. Sandbox cannot reach the Pi or Kalshi directly; Kalshi key expired Nov 9.
 
