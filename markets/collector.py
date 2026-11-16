@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v10.1 restart: forward tests v_hold_s250_dd, v_hold_s250_cheap100_dd (drawdown throttle) and v_edge10_s100, v_edge10_s100_dd (only bet on 10c+ edge) (Claude 2026-11-10); live still OFF
+# v10.2 restart: forward test v_hold_s250_wild (small stakes when BTC moved 3%+ in 6 h) (Claude 2026-11-16); v10.1 was: forward tests v_hold_s250_dd, v_hold_s250_cheap100_dd (drawdown throttle) and v_edge10_s100, v_edge10_s100_dd (only bet on 10c+ edge) (Claude 2026-11-10); live still OFF
 """BTC 15-minute call engine. PAPER MODE ONLY: it reads public data, makes one
 call per 15-minute window (UP / DOWN / NONE), scores itself, and writes
 market.json for the Markets page. It never places orders and never touches

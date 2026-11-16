@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-16 05:30 Kalshi: news log, regime days, new wild-day forward test (captain changes, practice only)
+- markets/news_log.py (23 free feeds, news.jsonl, cron via crew-update, queue 119); markets/regime_days.py (queue 121); markets/forward_review.py. sim.py: WILD_CAP/WILD_RANGE + variant v_hold_s250_wild; collector.py marker v10.2 (Pi restarts the agent after the next pull). KDP: black-gold and rose pink built for both titles (queue 118).
+
 ## 2026-11-16 04:45 Voice decisions filed; KDP black-gold + pink queued; kdp-ready folder
 - kalshi-ai.md: standing orders (captain rule, daily review, news module, regime switching). amazon-kdp.md: colours F black and gold and G rose pink. tasks/queue/118 builds them. memory/inbox/kdp-ready/README.md = one easy list for uploading.
 

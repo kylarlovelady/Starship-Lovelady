@@ -54,6 +54,8 @@ AUTO_MIN_ROUNDS = 80    # rounds a strategy needs before the Auto wallet may fol
 FLIP = 0                # reaction test: bet the OPPOSITE of what the strategy thinks
 ODDS_SELL = 1           # sell when its own odds say selling beats holding (off for the pure-hold test)
 FLAT_BET = 0.0          # size test: bet exactly this many dollars per round (in steps) whenever the strategy wants in, ignoring the edge-based sizing (0 = off)
+WILD_CAP = 0.0          # forward test (2026-11-16): when Bitcoin has swung this much in the last 6 hours (WILD_RANGE %), never put more than this many dollars into a round (0 = off)
+WILD_RANGE = 3.0
 CHEAP_CAP = 0.0         # forward test (2026-11-09): when the side costs under 40c, never put more than this many dollars into it (0 = off)
 DD_THROTTLE = 0.0       # forward test (2026-11-10): shrink stakes while the wallet is below its own profit peak: down 20% of the start balance = half stake, down 40% = quarter stake (0 = off)
 AGREE_SIZE = 0          # forward test (2026-11-09): 1 = scale the stake by how well the signal score agrees with the side (full / 0.6 / 0.3 / 0.15), Kylar's "bigger when signals line up" rule (0 = off)
@@ -96,6 +98,7 @@ VARIANTS = {
     "v_hold_s250": ("Size test: hold to the end, $250 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0}),
     "v_hold_s500": ("Size test: hold to the end, $500 per round", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 500.0, "FLAT_BET": 500.0}),
     # FORWARD TESTS (Kylar's go 2026-11-09 20:22): same distance entries and $250 stake as v_hold_s250, one change each; judge only on rounds after this date.
+    "v_hold_s250_wild": ("Forward test (2026-11-16): hold to the end, $250 per round, but only $25 when Bitcoin moved 3%+ in the last 6 hours (wild days lose most)", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "WILD_CAP": 25.0, "WILD_RANGE": 3.0}),
     "v_hold_s250_cheap100": ("Forward test: hold to the end, $250 per round but long shots (under 40c) capped at $100", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "CHEAP_CAP": 100.0}),
     "v_hold_s250_agree": ("Forward test: hold to the end, $250 base stake sized by how well the signals agree (Kylar's rule)", "distance", {"STOP_ON": 0, "EXIT_ON": 0, "ODDS_SELL": 0, "CAP": 250.0, "FLAT_BET": 250.0, "AGREE_SIZE": 1}),
     # FORWARD TESTS (Claude, 2026-11-10, after v_hold_s500 gave back ~$5,900): both keep the $250 stake and the same entries; judge on rounds after this date.
@@ -371,6 +374,8 @@ def buy(a, side, dollars, ask_up, bid_up, why=""):
         dollars *= 1.0 if sc_ >= 10 else 0.6 if sc_ > 0 else 0.3 if sc_ > -10 else 0.15
     if CHEAP_CAP > 0 and px < 0.40:                         # forward test: cap the stake on long shots
         dollars = min(dollars, CHEAP_CAP)
+    if WILD_CAP > 0 and (_FEAT.get("rng6") or 0.0) >= WILD_RANGE:   # forward test: Bitcoin is swinging hard, so keep stakes small
+        dollars = min(dollars, WILD_CAP)
     if DD_THROTTLE > 0:                                     # forward test: protect the wallet after a losing stretch, full size again once it recovers
         a["peak"] = max(a.get("peak", 0.0), a["pnl"])
         dd_ = (a["peak"] - a["pnl"]) / START
@@ -872,7 +877,7 @@ def run_equity(a, bid, ask):
 
 
 def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, DIR, C=None, run_cfg=None, result_fn=None):
-    global AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, STOP_ON, STOP_PCT, STOP_SMALL, UNPROVEN_CAP, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
+    global WILD_CAP, WILD_RANGE, AGG, PRACTICE, _DIR, _QUOTE, BROKER, _LIVE, _SIM, _TK, ROUND_FRAC, KELLY, MIN_BET, CAP, SLICE, MAX_TRADES, EDGE_MIN, MIN_PRICE, MAX_PRICE, ENTRY_MIN, ENTRY_MAX, STAGE_FIRST, STAGE_GAP, ENTRY_BLOCK, BLACKOUT, EXIT_ON, EXIT_P, EXIT_D, STOP_ON, STOP_PCT, STOP_SMALL, UNPROVEN_CAP, PATTERN_BAD, _FEAT, _QSRC, MIN_HOLD, MIN_PROFIT_USD, MIN_PROFIT_PCT, _SZ, _EV, _CUR, _T, _W, _MIX, _TRACE, _TRUST
     if C:
         MIN_BET, MAX_TRADES = C["min_bet"], int(C["max_trades"])
         CAP = C["cap"] if C["cap"] > 0 else 1e9               # 0 = no limit: it may use the whole wallet
@@ -949,7 +954,17 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
         sim["win"] = win
         sim["strike"] = None; sim["ticker"] = None; sim["ready"] = False; sim["last_yes"] = None
     left = win + window_len - now
-    _FEAT = {"el": window_len - left, "left": left, "pm": pm, "score": score}
+    rng6 = None
+    if price:                                              # slow 6-hour price memory: how wildly has Bitcoin swung lately (percent, high minus low)
+        ph = sim.setdefault("pxh", [])
+        if not ph or now - ph[-1][0] >= 300:
+            ph.append([int(now), round(price, 2)])
+        if ph and ph[0][0] < now - 21600:
+            sim["pxh"] = ph = [x for x in ph if x[0] >= now - 21600]
+        if len(ph) >= 6:
+            vals = [x[1] for x in ph] + [price]
+            rng6 = 100.0 * (max(vals) - min(vals)) / min(vals)
+    _FEAT = {"el": window_len - left, "left": left, "pm": pm, "score": score, "rng6": rng6}
     if kal and strike and kal.get("ticker"):             # only ever use Kalshi's own target for this round
         sim["strike"] = float(strike); sim["ticker"] = kal["ticker"]
         if kal.get("yes_bid") is not None and kal.get("yes_ask") is not None:
@@ -995,7 +1010,7 @@ def step(S, now, win, window_len, price, strike, pm, kal, sigs, score, enabled, 
     items = [(n, n, a, enabled and (PRACTICE == "auto" or n == PRACTICE)) for n, a in sim["acc"].items() if n in STRATS]
     if run and run["status"] == "running":
         items.append(("run", auto_pick(sim) if run["strategy"] == "auto" else run["strategy"], run["acc"], True))
-    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET", "CHEAP_CAP", "AGREE_SIZE", "DD_THROTTLE", "MIN_BET", "EDGE_MIN")
+    _OVK = ("STOP_ON", "STOP_PCT", "STOP_SMALL", "EXIT_ON", "EXIT_P", "EXIT_D", "MAX_TRADES", "STAGE_GAP", "ODDS_SELL", "ODDS_MARGIN", "ENTRY_AFTER", "FLIP", "ENTRY_MAX", "MAX_PRICE", "ALL_IN", "CAP", "TAKE_PCT", "MIN_PROFIT_USD", "FLAT_BET", "CHEAP_CAP", "WILD_CAP", "WILD_RANGE", "AGREE_SIZE", "DD_THROTTLE", "MIN_BET", "EDGE_MIN")
     _g = globals()
     _BASE = {k: _g[k] for k in _OVK}
     for name, pname, a, enabled in items:
