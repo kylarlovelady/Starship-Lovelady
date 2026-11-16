@@ -19,7 +19,7 @@ SOURCES = [  # (name, category, url)
     ("gnews-bitcoin", "crypto", GN + "bitcoin+when:1d"),
     ("cnbc-top", "finance", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
     ("cnbc-markets", "finance", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=15839069"),
-    ("marketwatch", "finance", "https://feeds.content.dowjones.io/public/rss/mw_topstories"), ("yahoo-finance", "finance", "https://finance.yahoo.com/news/rssindex"),
+    ("marketwatch", "finance", "https://feeds.content.dowjones.io/public/rss/mw_topstories"), ("yahoo-finance", "finance", "https://finance.yahoo.com/rss/topstories"),
     ("fed", "finance", "https://www.federalreserve.gov/feeds/press_all.xml"), ("gnews-fed-rates", "finance", GN + "federal+reserve+OR+inflation+OR+tariffs+when:1d"),
     ("theverge", "tech", "https://www.theverge.com/rss/index.xml"), ("techcrunch", "tech", "https://techcrunch.com/feed/"),
     ("arstechnica", "tech", "https://feeds.arstechnica.com/arstechnica/index"), ("hackernews", "tech", "https://hnrss.org/frontpage"),
