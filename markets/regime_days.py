@@ -17,14 +17,20 @@ def btc_days():
         try:
             for t, c in json.loads(ln)["r"]: px[t] = c
         except Exception: pass
-    by = defaultdict(list)
-    for t in sorted(px): by[day(t)].append(px[t])
+    try:                                                    # newest days come from the agent's own snapshots (price every minute or so)
+        for ln in open(os.path.join(D, "snapshots.jsonl")):
+            try: r = json.loads(ln); px[int(r["t"])] = float(r["price"])
+            except Exception: pass
+    except OSError: pass
+    by = defaultdict(dict)
+    for t in sorted(px): by[day(t)][t // 300] = px[t]      # last price in each 5-minute bucket
     out = {}
-    for d, v in by.items():
-        if len(v) < 600: continue                          # need most of the day
+    for d, bk in by.items():
+        if len(bk) < 150: continue                          # need most of the day
+        v = [bk[k] for k in sorted(bk)]
         o, c, hi, lo = v[0], v[-1], max(v), min(v)
         rets = [(v[i] - v[i - 1]) / v[i - 1] for i in range(1, len(v))]
-        out[d] = {"move": 100 * (c - o) / o, "range": 100 * (hi - lo) / o, "vol": 100 * st.pstdev(rets) * 60}   # vol = per-hour %
+        out[d] = {"move": 100 * (c - o) / o, "range": 100 * (hi - lo) / o, "vol": 100 * st.pstdev(rets) * (12 ** 0.5)}   # vol = typical hourly % move
     return out
 
 def news_days():
@@ -38,14 +44,14 @@ def news_days():
     return out
 
 def label(b):
-    if b["range"] >= 4.0 or b["vol"] >= 0.45: return "wild"
+    if b["range"] >= 4.0 or b["vol"] >= 0.5: return "wild"
     if b["range"] >= 2.2 and abs(b["move"]) >= 0.5 * b["range"]: return "trending"
     return "calm"
 
 def main():
     B = btc_days(); N = news_days(); R = rounds_for(outcomes(), set(NAMES))
     print("REGIME DAYS (pretend money, fees in). Run %s" % time.strftime("%a %d %H:%M"))
-    print("label rule: wild = day range 4%+ or hourly vol 0.45%+; trending = range 2.2%+ and mostly one direction; else calm\n")
+    print("label rule: wild = day range 4%+ or hourly vol 0.5%+; trending = range 2.2%+ and mostly one direction; else calm\n")
     print("%-11s %-9s %7s %7s %6s %9s   news(n/bad/shock)" % ("day", "label", "move%", "range%", "vol/h", "s250 pnl"))
     lab = {}
     for d in sorted(B):

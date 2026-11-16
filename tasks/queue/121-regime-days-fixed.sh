@@ -3,11 +3,11 @@
 # Kalshi daily self-review step 1: label past days calm/trending/wild and show each strategy per kind of day; also list the field names of the Pi's data files (keys only) so the round-by-round review can use them.
 cd ~/starship/markets || exit 1
 OUT=~/starship/memory/inbox/kalshi-regime-days.md
-{ echo "# Kalshi regime days (queue 120, $(date '+%a %d %H:%M'), practice money only)"; echo; echo '```'
-  timeout 200 python3 regime_days.py 2>&1 | head -70
+{ echo "# Kalshi regime days (queue 121, $(date '+%a %d %H:%M'), practice money only)"; echo; echo '```'
+  timeout 200 python3 regime_days.py 2>&1 | head -90
   echo; echo "---- data file field names (keys only) ----"
   M=~/market-data
-  for f in trades.jsonl sim_windows.jsonl calls.jsonl snapshots.jsonl history/rounds.jsonl; do
+  for f in calls.jsonl; do
     echo "== $f"; tail -n 1 $M/$f 2>/dev/null | python3 -c "
 import sys, json
 for ln in sys.stdin:

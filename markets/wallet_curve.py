@@ -77,4 +77,4 @@ def main():
     for r in rows[-last:]:
         print("  %s  %-4s %4d @%3.0fc  stake %6.0f  result %-4s  %+8.2f  total %+9.2f" % (hm(r["t"]), r["side"], r["c"], 100 * r["avg"], r["stake"], r["res"], r["pnl"], r["cum"]))
     print("\nRUNNING TOTAL every 10 rounds: " + ", ".join("%+.0f" % curve[i] for i in range(9, len(curve), 10)))
-main()
+if __name__ == "__main__": main()
