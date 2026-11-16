@@ -1,84 +1,4 @@
- stake      6  result DOWN     +3.27  total  +5274.57
-  Sun 08 18:00  UP   2928 @ 16c  stake    472  result DOWN   -499.92  total  +4774.65
-  Sun 08 18:18  UP      7 @ 77c  stake      5  result UP       +1.52  total  +4776.17
-  Sun 08 18:30  DOWN    9 @ 58c  stake      5  result DOWN     +3.62  total  +4779.79
-  Sun 08 18:45  UP     10 @ 52c  stake      5  result UP       +4.62  total  +4784.41
-  Sun 08 19:00  UP    823 @ 59c  stake    485  result DOWN   -499.43  total  +4284.98
-  Sun 08 19:15  UP     10 @ 50c  stake      5  result DOWN     -5.18  total  +4279.80
-  Sun 08 19:30  DOWN 3121 @ 15c  stake    472  result UP     -499.87  total  +3779.93
-  Sun 08 19:45  UP      8 @ 67c  stake      5  result UP       +2.51  total  +3782.44
-  Sun 08 20:00  DOWN 3071 @ 15c  stake    472  result UP     -499.87  total  +3282.57
-  Sun 08 20:15  DOWN 2758 @ 17c  stake    473  result UP     -499.99  total  +2782.58
-
-RUNNING TOTAL every 10 rounds: -502, +970, -1256, +63, +629, +517, +1303, +1506, -344, +1132, +1947, +5603, +4280
-
----- v_hold_s100 (same entries, 1/5 the size) ----
-WALLET CURVE v_hold_s100 (pretend money, after fees): 134 settled rounds, Sat 07 10:30 to Sun 08 20:15, 0 unsettled skipped
-  profit now +539.46 | peak +1190.39 (Sun 08 16:30) | worst drop 650.93 (Sun 08 16:30 -> Sun 08 20:15) | drop right now 650.93 from the peak
-  wins 85 (63%), avg win +50.82, avg loss -77.16, avg stake 65.55, avg entry price 56.2 c
-  entry price  0- 40 c:  20 rounds, won  30%, profit   +390.39
-  entry price 40- 60 c:  37 rounds, won  54%, profit   -184.77
-  entry price 60- 80 c:  77 rounds, won  77%, profit   +333.84
-  bet UP  :  74 rounds, won  62%, profit   -259.05
-  bet DOWN:  60 rounds, won  65%, profit   +798.51
-  5 best rounds: +469, +358, +356, +199, +182  (= 290% of total profit)
-  5 worst rounds: -100, -100, -100, -100, -100
-  longest losing streak: 4 rounds
-  by hour (local): 00:-67(4)  01:-78(4)  02:+8(4)  03:+124(4)  04:-295(4)  05:+212(4)  06:+52(4)  07:-295(4)  08:-36(4)  09:-60(4)  10:-115(6)  11:+652(8)  12:-92(8)  13:+296(8)  14:+659(8)  15:-300(7)  16:+50(8)  17:-207(8)  18:+117(8)  19:+3(7)  20:-355(6)  21:-7(4)  22:+81(4)  23:+192(4)
-
-LATEST 6 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
-```
-(exit 0)
-```
-
-## 2026-11-09 04:07:01 tasks/queue/103-kalshi-wallet-curve-overnight.sh
-```
-wrote /home/kylarlovelady/starship/memory/inbox/kalshi-wallet-curve.md (66 lines)
-# Kalshi wallet curve (queue 103, Mon 09 04:07, practice money only)
-
-```
-WALLET CURVE v_hold_s500 (pretend money, after fees): 162 settled rounds, Sat 07 10:30 to Mon 09 03:45, 3 unsettled skipped
-  profit now +6435.92 | peak +7353.71 (Mon 09 03:00) | worst drop 5307.01 (Sun 08 16:30 -> Sun 08 22:16) | drop right now 917.79 from the peak
-  wins 102 (63%), avg win +278.14, avg loss -365.58, avg stake 298.49, avg entry price 54.2 c
-  entry price  0- 40 c:  31 rounds, won  32%, profit  +6057.53
-  entry price 40- 60 c:  44 rounds, won  61%, profit   -109.43
-  entry price 60- 80 c:  87 rounds, won  75%, profit   +487.82
-  bet UP  :  88 rounds, won  60%, profit   -914.72
-  bet DOWN:  74 rounds, won  66%, profit  +7350.64
-  5 best rounds: +2430, +2108, +2107, +1971, +1852  (= 163% of total profit)
-  5 worst rounds: -500, -500, -500, -500, -500
-  longest losing streak: 4 rounds
-  by hour (local): 00:-785(7)  01:+852(8)  02:+2046(7)  03:+1791(8)  04:-1095(4)  05:+1058(4)  06:+238(4)  07:-1146(4)  08:-208(4)  09:-304(4)  10:-570(6)  11:+2656(8)  12:-512(8)  13:+1459(8)  14:+2968(8)  15:-1263(7)  16:+292(8)  17:-863(8)  18:+543(8)  19:+33(7)  20:-2252(8)  21:-1081(8)  22:+2004(8)  23:+575(8)
-
-LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
-  Sun 08 20:00  DOWN 3071 @ 15c  stake    472  result UP     -499.87  total  +3282.57
-  Sun 08 20:15  DOWN 2758 @ 17c  stake    473  result UP     -499.99  total  +2782.58
-  Sun 08 20:31  DOWN    8 @ 66c  stake      5  result DOWN     +2.59  total  +2785.17
-  Sun 08 20:45  UP   2757 @ 17c  stake    473  result DOWN   -499.95  total  +2285.22
-  Sun 08 21:00  DOWN   10 @ 50c  stake      5  result DOWN     +4.82  total  +2290.04
-  Sun 08 21:15  DOWN  729 @ 67c  stake    488  result UP     -499.41  total  +1790.63
-  Sun 08 21:30  DOWN 2351 @ 20c  stake    474  result UP     -499.90  total  +1290.73
-  Sun 08 21:45  DOWN    7 @ 72c  stake      5  result DOWN     +1.86  total  +1292.59
-  Sun 08 22:00  UP      9 @ 59c  stake      5  result UP       +3.53  total  +1296.12
-  Sun 08 22:16  UP   2474 @ 19c  stake    473  result DOWN   -499.99  total   +796.13
-  Sun 08 22:30  DOWN 2607 @ 18c  stake    473  result DOWN  +2107.13  total  +2903.26
-  Sun 08 22:46  UP      9 @ 60c  stake      5  result DOWN     -5.56  total  +2897.70
-  Sun 08 23:00  DOWN  634 @ 78c  stake    492  result DOWN   +134.10  total  +3031.80
-  Sun 08 23:15  UP   2758 @ 17c  stake    473  result DOWN   -499.89  total  +2531.91
-  Sun 08 23:30  UP      9 @ 60c  stake      5  result DOWN     -5.56  total  +2526.35
-  Sun 08 23:45  UP      9 @ 58c  stake      5  result UP       +3.62  total  +2529.97
-  Mon 09 00:00  UP      9 @ 56c  stake      5  result UP       +3.80  total  +2533.77
-  Mon 09 00:15  DOWN    7 @ 76c  stake      5  result DOWN     +1.59  total  +2535.36
-  Mon 09 00:45  DOWN  763 @ 64c  stake    487  result UP     -499.65  total  +2035.71
-  Mon 09 01:00  UP   2471 @ 19c  stake    473  result DOWN   -499.95  total  +1535.76
-  Mon 09 01:15  DOWN 1780 @ 27c  stake    478  result DOWN  +1280.07  total  +2815.83
-  Mon 09 01:30  UP      9 @ 61c  stake      5  result UP       +3.36  total  +2819.19
-  Mon 09 01:45  DOWN  947 @ 51c  stake    483  result DOWN   +447.15  total  +3266.34
-  Mon 09 02:00  UP   2471 @ 19c  stake    473  result UP    +1971.08  total  +5237.42
-  Mon 09 02:16  UP      9 @ 60c  stake      5  result UP       +3.44  total  +5240.86
-  Mon 09 02:30  UP     10 @ 50c  stake      5  result UP       +4.82  total  +5245.68
-  Mon 09 03:00  DOWN 2608 @ 18c  stake    473  result DOWN  +2108.03  total  +7353.71
-  Mon 09 03:15  UP   2196 @ 18c  stake    399  result DOWN   -421.55  total  +6932.16
+6 @ 18c  stake    399  result DOWN   -421.55  total  +6932.16
   Mon 09 03:30  DOWN    9 @ 57c  stake      5  result DOWN     +3.71  total  +6935.87
   Mon 09 03:45  DOWN 2373 @ 20c  stake    473  result UP     -499.95  total  +6435.92
 
@@ -470,4 +390,89 @@ gnews-breaking     general  ok  61 items, newest 10 min old
 news_log: 722 new headlines, 1 feeds failed, file now 722 lines
 ```
 (exit 0)
+```
+
+## 2026-11-16 04:34:01 tasks/queue/120-regime-and-schema.sh
+```
+# Kalshi regime days (queue 120, Mon 16 04:34, practice money only)
+
+```
+WALLET CURVE v_hold_s500 (pretend money, after fees): 750 settled rounds, Sat 07 10:30 to Mon 16 04:15, 0 unsettled skipped
+  profit now -8313.75 | peak +7352.57 (Mon 09 03:00) | worst drop 18877.85 (Mon 09 03:00 -> Sun 15 19:46) | drop right now 15666.32 from the peak
+  wins 462 (62%), avg win +191.42, avg loss -335.94, avg stake 238.53, avg entry price 54.7 c
+  entry price  0- 40 c: 153 rounds, won  20%, profit  -4622.26
+  entry price 40- 60 c: 225 rounds, won  64%, profit   -787.39
+  entry price 60- 80 c: 368 rounds, won  77%, profit  -2902.38
+  entry price 80-100 c:   4 rounds, won  75%, profit     -1.72
+  bet UP  : 364 rounds, won  58%, profit  -8433.81
+  bet DOWN: 386 rounds, won  65%, profit   +120.06
+  5 best rounds: +2621, +2620, +2620, +2430, +2258  (= -151% of total profit)
+  5 worst rounds: -500, -500, -500, -500, -500
+  longest losing streak: 6 rounds
+  by hour (local): 00:-1593(35)  01:-237(33)  02:+387(31)  03:+1839(31)  04:-1278(33)  05:+861(31)  06:-2591(31)  07:-4341(29)  08:+55(29)  09:-1953(29)  10:-676(29)  11:+1805(32)  12:-1726(30)  13:+1835(31)  14:-1058(31)  15:+1008(27)  16:-4058(30)  17:-2349(
+
+LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
+  Sun 15 20:16  DOWN    7 @ 72c  stake      5  result UP       -5.14  total -11382.81
+  Sun 15 20:32  DOWN    8 @ 71c  stake      6  result DOWN     +2.20  total -11380.61
+  Sun 15 20:46  UP   3120 @ 15c  stake    472  result UP    +2620.05  total  -8760.56
+  Sun 15 21:06  DOWN  624 @ 79c  stake    492  result UP     -499.60  total  -9260.16
+  Sun 15 21:20  DOWN    8 @ 71c  stake      6  result DOWN     +2.20  total  -9257.96
+  Sun 15 21:32  DOWN  624 @ 79c  stake    492  result DOWN   +124.48  total  -9133.48
+  Sun 15 21:47  DOWN  623 @ 79c  stake    492  result UP     -499.35  total  -9632.83
+  Sun 15 22:30  DOWN  624 @ 79c  stake    492  result DOWN   +124.48  total  -9508.35
+  Sun 15 22:46  DOWN  699 @ 70c  stake    489  result DOWN   +199.42  total  -9308.93
+  Sun 15 23:00  DOWN  637 @ 77c  stake    492  result DOWN   +137.44  total  -9171.49
+  Sun 15 23:30  DOWN    7 @ 75c  stake      5  result DOWN     +1.65  total  -9169.84
+  Sun 15 23:47  DOWN    7 @ 72c  stake      5  result DOWN     +1.86  total  -9167.98
+  Mon 16 00:00  DOWN  699 @ 70c  stake    489  result DOWN   +199.42  total  -8968.56
+  Mon 16 00:16  UP      7 @ 74c  stake      5  result UP       +1.72  total  -8966.84
+  Mon 16 00:32  UP      7 @ 72c  stake      5  result UP       +1.86  total  -8964.98
+  Mon 16 00:45  UP      8 @ 66c  stake      5  result UP       +2.59  total  -8962.39
+  Mon 16 01:00  UP   2046 @ 19c  stake    393  result DOWN   -414.82  total  -9377.21
+  Mon 16 01:15  UP      8 @ 69c  stake      6  result UP       +2.36  total  -9374.85
+  Mon 16 01:30  DOWN    8 @ 70c  stake      6  result UP       -5.72  total  -9380.57
+  Mon 16 01:45  DOWN 2350 @ 20c  stake    474  result UP     -499.98  total  -9880.55
+  Mon 16 02:00  DOWN    7 @ 77c  stake      5  result DOWN     +1.52  total  -9879.03
+  Mon 16 02:17  DOWN  625 @ 79c  stake    493  result DOWN   +125.07  total  -9753.96
+  Mon 16 02:31  UP      9 @ 60c  stake      5  result UP       +3.44  total  -9750.52
+  Mon 16 02:46  UP   2927 @ 16c  stake    472  result DOWN   -499.98  total -10250.50
+  Mon 16 03:00  UP    797 @ 61c  stake    487  result DOWN   -499.92  total -10750.42
+  Mon 16 03:15  DOWN 2350 @ 20c  stake    474  result UP     -499.89  total -11250.31
+  Mon 16 03:31  UP   3121 @ 15c  stake    472  result UP    +2621.01  total  -8629.30
+  Mon 16 03:45  DOWN  810 @ 60c  stake    486  result DOWN   +310.21  total  -8319.09
+  Mon 16 04:00  UP      8 @ 66c  stake      5  result UP       +2.59  total  -8316.50
+  Mon 16 04:15  UP      8 @ 64c  stake      5  result UP       +2.75  total  -8313.75
+
+RUNNING TOTAL every 10 rounds: -502, +970, -1256, +63, +629, +517, +1303, +1506, -344, +1132, +1947, +5603, +4280, +1293, +2535, +5245, +6723, +4854, +4529, +2030, +1031, +1019, -308, -529, -2492, -4489, -4875, -2437, -4078, -4510, -7006, -7773, -8725, -6354, 
+REGIME DAYS (pretend money, fees in). Run Mon 16 04:34
+label rule: wild = day range 4%+ or hourly vol 0.45%+; trending = range 2.2%+ and mostly one direction; else calm
+
+day         label       move%  range%  vol/h  s250 pnl   news(n/bad/shock)
+2026-10-06  wild        -2.50    3.50   2.77        +0   0/0/0
+2026-10-07  wild        -1.77    2.48   2.64        +0   1/0/0
+2026-10-08  wild        -0.54    3.42   3.47        +0   2/0/0
+2026-10-09  wild        +0.53    1.55   2.30        +0   1/0/0
+2026-10-10  wild        +0.40    0.63   0.99        +0   0/0/0
+2026-10-11  wild        +1.32    1.44   1.83        +0   0/0/0
+2026-10-12  wild        -0.80    3.84   3.00        +0   0/0/0
+2026-10-13  wild        +0.44    1.43   2.65        +0   2/0/0
+2026-10-14  wild        -2.56    4.45   4.13        +0   1/0/0
+2026-10-15  wild        +0.61    3.35   3.56        +0   1/0/0
+2026-10-16  wild        -0.96    2.53   2.90        +0   1/1/1
+2026-10-17  wild        +0.31    1.47   1.65        +0   0/0/0
+2026-10-18  wild        +1.23    2.60   2.31        +0   0/0/0
+2026-10-19  wild        -0.71    2.32   2.81        +0   0/0/0
+2026-10-20  wild        +0.91    2.46   2.98        +0   1/0/0
+2026-10-21  wild        +0.11    2.76   2.99        +0   1/0/0
+2026-10-22  wild        -1.64    2.43   2.75        +0   0/0/0
+2026-10-23  wild        -0.91    1.84   2.65        +0   1/0/0
+2026-10-24  wild        +0.05    2.17   2.21        +0   0/0/0
+
+---- data file field names (keys only) ----
+== trades.jsonl
+  keys: ['a', 'ask', 'bal', 'bid', 'c', 'd', 'g', 'live', 'px', 'q', 's', 'side', 't', 'ticker', 'v', 'why']
+== sim_windows.jsonl
+  keys: ['hold_pnl', 'hour', 'outcome', 'pnl', 'src', 'staked', 'strat', 't', 'trades']
+== calls.jsonl
+  keys: ['call', 'conf', 'hi', 'kalshi_yes', 'lo', 'locked_at', 'outcome', 'pnl', 'price0', 'price1', 'score', 'signals(exit 0)
 ```
