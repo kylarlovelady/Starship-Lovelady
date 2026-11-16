@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-16 05:40 Queue 122: check the wild-day variant loaded
+- tasks/queue/122-check-wild-variant.sh (read-only). Result lands in memory/inbox/queue-results.md. Status: waiting for the Pi.
+
 ## 2026-11-16 05:30 Kalshi: news log, regime days, new wild-day forward test (captain changes, practice only)
 - markets/news_log.py (23 free feeds, news.jsonl, cron via crew-update, queue 119); markets/regime_days.py (queue 121); markets/forward_review.py. sim.py: WILD_CAP/WILD_RANGE + variant v_hold_s250_wild; collector.py marker v10.2 (Pi restarts the agent after the next pull). KDP: black-gold and rose pink built for both titles (queue 118).
 
