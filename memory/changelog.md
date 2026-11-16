@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-16 06:20 Daily check (scheduled)
+- Read inbox and Pi status (fresh, 6:00 am): all services active, 42.8 C, disk 12%, no failures, no new Jarvis notes to file (inbox holds only auto reports and studies). Queue is unstuck. Found queue 122 refused by the runner (missing approval line); did NOT add it (that line is the approval gate), flagged for Kylar in the brief. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (7 days) and KDP re-upload (7 days), both waiting on Kylar. Did not touch the Pi or Kalshi.
+
 ## 2026-11-16 05:40 Queue 122: check the wild-day variant loaded
 - tasks/queue/122-check-wild-variant.sh (read-only). Result lands in memory/inbox/queue-results.md. Status: waiting for the Pi.
 
