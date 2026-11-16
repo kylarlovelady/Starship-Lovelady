@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-16 04:45 Voice decisions filed; KDP black-gold + pink queued; kdp-ready folder
+- kalshi-ai.md: standing orders (captain rule, daily review, news module, regime switching). amazon-kdp.md: colours F black and gold and G rose pink. tasks/queue/118 builds them. memory/inbox/kdp-ready/README.md = one easy list for uploading.
+
 ## 2026-11-16 03:55 Kalshi forward review done (queue 117 ran after Kylar's pkill freed the queue)
 - Result filed in memory/kalshi-ai.md and memory/inbox/kalshi-forward-review.md. Big-stake wallets are net negative; only tiny-stake hold is slightly positive. Not proven either way. markets/forward_review.py is the tool.
 
