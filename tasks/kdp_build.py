@@ -33,7 +33,7 @@ from PIL import Image, ImageChops, ImageFilter
 IN = 72.0
 # Kylar's approved look (his reference picture, 2026-11-05): flat colour + fine grain, flat (not metallic) lettering, CAPS, thin double border, short rule.
 SERIES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "kdp_series.json")))   # locked series spec: colours, titles, lettering
-SCHEMES = {k: (v["bg"], SERIES["lettering"]) for k, v in SERIES["schemes"].items()}
+SCHEMES = {k: (v["bg"], v.get("fg", SERIES["lettering"])) for k, v in SERIES["schemes"].items()}   # a scheme may set its own lettering "fg" (black and gold, rose pink)
 TITLES = {k: tuple(v["lines"]) for k, v in SERIES["titles"].items()}
 def grain(path, w_in, h_in, bg):
     dpi = 300; w, h = int(w_in * dpi), int(h_in * dpi)
