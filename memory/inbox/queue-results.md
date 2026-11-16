@@ -1,112 +1,4 @@
-) 
-== wake clips per hour (last 24 h) and conversations
-11-05 15 1
-11-05 17 3
-11-06 02 2
-11-06 03 4
-11-06 11 1
-11-06 13 1
-11-06 17 4
-11-07 11 2
-11-07 12 3
-total wake clips 21
-== conversations.jsonl keys of last row
-['t', 'sid', 'who', 'heard', 'reply', 'secs', 'times']
-== trace.jsonl last 3 rows (trimmed)
-{"t": 1793908429.312, "sid": "phtnri1w", "kind": "client", "what": "page_visible", "info": ""}
-{"t": 1793908431.636, "sid": "phtnri1w", "kind": "client", "what": "page_hidden", "info": ""}
-{"t": 1794019030.422, "sid": "phtnri1w", "kind": "client", "what": "page_hidden", "info": ""}
-(exit 0)
-```
-
-## 2026-11-07 12:40:01 tasks/queue/097-jarvis-install.sh
-```
-{"muted": false, "unmute_at": null, "state": "idle", "now": 1794076823.6926272, "wake": {"updated": 1794076823.6450362, "threshold": 0.7, "wakes24": 10, "empty24": 3, "talk24": 1, "command24": 6, "wakes7d": 21, "false7d": 14, "by_hour": {"12": {"empty": 1, "talk": 1, "command": 1}, "17": {"empty": 3
-
-LISTEN 0      5                                     0.0.0.0:8098       0.0.0.0:*   
---- watcher report
-# Home Jarvis wake-up report (auto, audio stats only)
-
-Updated Sat 12:40. Wake word threshold now: 0.7. Mic muted now: False.
-
-Last 24 h: **10** wake-ups: 3 empty, 1 probably us talking, 6 real commands. Last 7 days: 21 wake-ups, 14 false.
-
-| hour | empty | talk | command |
-|---|---|---|---|
-| 02:00 | 2 | 0 | 0 |
-| 03:00 | 4 | 0 | 0 |
-| 11:00 | 2 | 0 | 1 |
-| 12:00 | 1 | 1 | 1 |
-(exit 0)
-```
-
-## 2026-11-07 23:07:02 tasks/queue/098-jarvis-tune-080.sh
-```
-old threshold: 0.7 new: 0.8
-container up with threshold 0.8
-active
-openwakeword Up 14 seconds
-active
-(exit 0)
-```
-
-## 2026-11-08 13:01:01 tasks/queue/099-cad-setup.sh
-```
-manifold3d ok
-trimesh 5.2.0 numpy 2.5.4
-boolean test volume 968.8 genus 0
-openscad on this Pi: not installed
-arch: aarch64; python: Python 3.13.5
-(exit 0)
-```
-
-## 2026-11-08 13:13:01 tasks/queue/100-build-case-v6.sh
-```
-node is not installed on this Pi
-(exit 0)
-```
-
-## 2026-11-08 13:46:01 tasks/queue/101-slicer-probe.sh
-```
-arch: aarch64  os: Debian GNU/Linux 13 (trixie)  ram: 8058 MB  disk free: 200G
-flatpak: no
-snap: no
-orca-slicer: no
-bambu-studio: no
-prusa-slicer: no
-slic3r: no
-mosquitto_pub: no
-curl: /usr/bin/curl
-prusa-slicer:
-  Installed: (none)
-  Candidate: 2.9.2+dfsg-1
-slic3r:
-  Installed: (none)
-  Candidate: (none)
-ModuleNotFoundError: No module named 'paho'
-printers seen on LAN (ssdp, 4s):
-none: TimeoutError
-(exit 0)
-```
-
-## 2026-11-08 20:31:01 tasks/queue/102-kalshi-wallet-curve.sh
-```
-wrote /home/kylarlovelady/starship/memory/inbox/kalshi-wallet-curve.md (66 lines)
-# Kalshi wallet curve (queue 102, Sun 08 20:31, practice money only)
-
-```
-WALLET CURVE v_hold_s500 (pretend money, after fees): 134 settled rounds, Sat 07 10:30 to Sun 08 20:15, 0 unsettled skipped
-  profit now +2782.58 | peak +6103.14 (Sun 08 16:30) | worst drop 3320.56 (Sun 08 16:30 -> Sun 08 20:15) | drop right now 3320.56 from the peak
-  wins 85 (63%), avg win +238.66, avg loss -357.21, avg stake 307.48, avg entry price 56.1 c
-  entry price  0- 40 c:  20 rounds, won  30%, profit  +2012.40
-  entry price 40- 60 c:  37 rounds, won  54%, profit   -580.88
-  entry price 60- 80 c:  77 rounds, won  77%, profit  +1351.06
-  bet UP  :  74 rounds, won  62%, profit   -475.92
-  bet DOWN:  60 rounds, won  65%, profit  +3258.50
-  5 best rounds: +2430, +1852, +1850, +1029, +545  (= 277% of total profit)
-  5 worst rounds: -500, -500, -500, -500, -500
-  longest losing streak: 4 rounds
-  by hour (local): 00:-291(4)  01:-379(4)  02:+66(4)  03:+601(4)  04:-1095(4)  05:+1058(4)  06:+238(4)  07:-1146(4)  08:-208(4)  09:-304(4)  10:-570(6)  11:+2656(8)  12:-512(8)  13:+1459(8)  14:+2968(8)  15:-1263(7)  16:+292(8)  17:-863(8)  18:+543(8)  19:+33(7)  20:-1754(6)  21:-89(4)  22:+399(4)  23:+943(4)
+4)  23:+943(4)
 
 LATEST 30 ROUNDS (time, bet, contracts, avg price c, stake, result, profit, running total)
   Sun 08 12:45  DOWN   10 @ 50c  stake      5  result UP       -5.18  total  +1926.69
@@ -511,5 +403,52 @@ LISTEN 0      5                             100.105.140.126:8097       0.0.0.0:*
 -- state:
 {"files": [], "settings": {"current": "ocean", "cycle": false, "minutes": 5, "dim_from": 20, "dim_to": 8}, "t": 1794431947}
 
+(exit 0)
+```
+
+## 2026-11-16 03:49:02 tasks/queue/117-forward-review.sh
+```
+wrote /home/kylarlovelady/starship/memory/inbox/kalshi-forward-review.md (41 lines)
+# Kalshi forward review (queue 117, Mon 16 03:49, practice money only)
+
+```
+no settled rounds for 2026-11-11
+FORWARD REVIEW (pretend money, after fees). Start Wed 11 00:00. Run Mon 16 03:49
+
+A) SINCE START, every strategy on its own rounds:
+  v_hold_s250            440 rounds | profit  -3106.66 | win  62% | avg/round    -7.06 | median round   +2.20 | stake/round 114
+  v_hold_s250_cheap100   440 rounds | profit   -302.01 | win  62% | avg/round    -0.69 | median round   +2.20 | stake/round 103
+  v_hold_s250_agree      384 rounds | profit  -1302.78 | win  63% | avg/round    -3.39 | median round   +2.20 | stake/round 100
+  v_hold_s100            440 rounds | profit   -910.94 | win  62% | avg/round    -2.07 | median round   +2.20 | stake/round 49
+  hold                   454 rounds | profit   +305.48 | win  61% | avg/round    +0.67 | median round   +2.59 | stake/round 10
+  v_edge10_s100          161 rounds | profit   -100.43 | win  32% | avg/round    -0.62 | median round  -42.26 | stake/round 55
+  v_hold_s500            440 rounds | profit  -2676.41 | win  62% | avg/round    -6.08 | median round   +2.20 | stake/round 222
+
+B) PAIRED vs v_hold_s250 (same rounds only; positive = the test beat the baseline):
+  v_hold_s250_cheap100   440 shared | total diff  +2804.65 | avg   +6.37/round | t-score +1.40 | better in 67, worse in 22, same in 351
+  v_hold_s250_agree      384 shared | total diff   +954.86 | avg   +2.49/round | t-score +0.23 | better in 136, worse in 115, same in 133
+  v_hold_s100            440 shared | total diff  +2195.72 | avg   +4.99/round | t-score +0.77 | better in 114, worse in 100, same in 226
+  hold                   440 shared | total diff  +3485.05 | avg   +7.92/round | t-score +0.75 | better in 195, worse in 155, same in 90
+  v_edge10_s100          161 shared | total diff  -3469.78 | avg  -21.55/round | t-score -0.99 | better in 64, worse in 97, same in 0
+   (t-score: about 2 or more = probably real, under 1 = could easily be luck)
+
+C) LUCK CHECK, all history:
+  v_edge10_s100: 190 rounds, total +908.74
+     without best 3 rounds -579.55 | without best 5 -1479.73 | without best 10% (19 rounds) -4974.54
+     first half +1527.56 (Tue 10 07:55 to Thu 12 20:52) | second half -618.82 (to Mon 16 02:23)
+     by day: Tue 10 +1009  Wed 11 +908  Thu 12 -596  Fri 13 +751  Sat 14 -794  Sun 15 -392  Mon 16 +22  -> 4 of 7 days positive
+  v_hold_s250_cheap100: 547 rounds, total -2953.74
+     without best 3 rounds -6317.06 | without best 5 -8195.85 | without best 10% (54 rounds) -23075.11
+     first half -2402.86 (Mon 09 20:30 to Thu 12 21:30) | second half -550.88 (to Mon 16 03:31)
+     by day: Mon 09 -645  Tue 10 -2006  Wed 11 +1070  Thu 12 -1209  Fri 13 +627  Sat 14 -1702  Sun 15 +1152  Mon 16 -239  -> 3 of 8 days positive
+  v_hold_s250: 735 rounds, total -5263.10
+     without best 3 rounds -9062.29 | without best 5 -11274.49 | without best 10% (73 rounds) -38420.15
+     first half -3263.57 (Sat 07 10:30 to Wed 11 18:15) | second half -1999.53 (to Mon 16 03:31)
+     by day: Sat 07 +885  Sun 08 +351  Mon 09 -295  Tue 10 -3097  Wed 11 +597  Thu 12 -1809  Fri 13 -245  Sat 14 -1375  Sun 15 -522  Mon 16 +248  -> 4 of 10 days positive
+  v_hold_s500: 735 rounds, total -7263.95
+     without best 3 rounds -15125.12 | without best 5 -19813.17 | without best 10% (73 rounds) -73790.58
+     first half -6668.58 (Sat 07 10:30 to Wed 11 18:15) | second half -595.37 (to Mon 16 03:31)
+     by day: Sat 07 +1311  Sun 08 +1219  Mon 09 -534  Tue 10 -6583  Wed 11 +1304  Thu 12 -3669  Fri 13 -622  Sat 14 -1907  Sun 15 +1679  Mon 16 +539  -> 5 of 10 days positive
+```
 (exit 0)
 ```
