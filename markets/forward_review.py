@@ -67,4 +67,4 @@ def main():
         for r in rows: days[time.strftime("%a %d", time.localtime(r["t"]))] += r["pnl"]
         pos = sum(1 for x in days.values() if x > 0)
         print("     by day: " + "  ".join("%s %+.0f" % (k, x) for k, x in days.items()) + "  -> %d of %d days positive" % (pos, len(days)))
-main()
+if __name__ == "__main__": main()
