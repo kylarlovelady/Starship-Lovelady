@@ -1,5 +1,4 @@
- @ 52c  stake      5  result UP       +4.62  total  +6234.31
-  Mon 09 06:30  UP    317 @ 63c  stake    200  result UP     +112.11  total  +6346.42
+    +112.11  total  +6346.42
   Mon 09 06:45  DOWN 2760 @ 17c  stake    473  result UP     -499.95  total  +5846.47
   Mon 09 07:00  UP   2758 @ 17c  stake    473  result DOWN   -499.87  total  +5346.60
   Mon 09 07:15  DOWN    8 @ 63c  stake      5  result DOWN     +2.82  total  +5349.42
@@ -492,3 +491,6 @@ STRATEGY BY KIND OF DAY: total profit (rounds) | profit per round
 ```
 (exit 0)
 ```
+
+## 2026-11-16 04:43:02 tasks/queue/122-check-wild-variant.sh
+REFUSED: header must be '#!/bin/bash' then '# QUEUE-OK'
