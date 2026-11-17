@@ -4,12 +4,6 @@ floor = background noise level (16-bit scale, 0 to 32767); speech% = share of th
 
 | time | clip | secs | peak | avg | floor | speech% | tail quiet |
 |---|---|---|---|---|---|---|---|
-| Tue 08:59:07 | 366286924889322-wake.wav | 2.0 | 5611 | 472 | 261 | 13 | 0.6 |
-| Tue 08:59:13 | 366286924889322-stt.wav | 6.6 | 4092 | 340 | 245 | 3 | 5.2 |
-| Tue 10:32:25 | 366300262765787-wake.wav | 2.0 | 2933 | 328 | 221 | 7 | 0.7 |
-| Tue 10:32:46 | 366300262765787-stt.wav | 21.0 | 2791 | 273 | 212 | 1 | 20.0 |
-| Wed 10:31:23 | 371913431766764-wake.wav | 2.0 | 11291 | 522 | 275 | 12 | 0.9 |
-| Wed 10:31:34 | 371913431766764-stt.wav | 10.1 | 5347 | 326 | 243 | 1 | 0.3 |
 | Wed 13:03:29 | 458240475183112-wake.wav | 2.0 | 1741 | 302 | 228 | 1 | 1.0 |
 | Wed 13:03:45 | 458240475183112-stt.wav | 16.5 | 1722 | 289 | 225 | 0 | 16.5 |
 | Wed 17:12:07 | 467372338484389-wake.wav | 2.0 | 16394 | 669 | 236 | 12 | 0.6 |
@@ -34,8 +28,14 @@ floor = background noise level (16-bit scale, 0 to 32767); speech% = share of th
 | Tue 14:25:59 | 980441313685654-stt.wav | 40.8 | 6451 | 488 | 259 | 14 | 3.4 |
 | Tue 15:32:57 | 990706194566837-wake.wav | 2.0 | 2231 | 382 | 271 | 0 | 2.0 |
 | Tue 15:33:11 | 990706194566837-stt.wav | 14.5 | 3431 | 447 | 291 | 1 | 1.6 |
+| Tue 16:06:39 | 994738104943465-wake.wav | 2.0 | 1755 | 346 | 241 | 0 | 2.0 |
+| Tue 16:06:57 | 994738104943465-stt.wav | 17.9 | 11636 | 683 | 291 | 22 | 0.0 |
+| Tue 16:11:49 | 996764082026892-wake.wav | 2.0 | 3130 | 486 | 270 | 16 | 0.8 |
+| Tue 16:12:02 | 996764082026892-stt.wav | 12.7 | 8810 | 596 | 251 | 25 | 0.2 |
+| Tue 16:19:26 | 997069184860476-wake.wav | 2.0 | 2655 | 417 | 263 | 4 | 0.7 |
+| Tue 16:19:40 | 997069184860476-stt.wav | 13.9 | 3905 | 378 | 258 | 5 | 2.9 |
 
-Median background noise floor: 241. Clips with less than 0.8 s of tail quiet: 13 of 39.
+Median background noise floor: 244. Clips with less than 0.8 s of tail quiet: 16 of 39.
 
 ## Satellite restarts by the watchdog (last 24 h)
 Nov 17 08:09:19 LoveladyMainAiHub python3[2953]: stuck in thinking for 65s, restarting satellite
