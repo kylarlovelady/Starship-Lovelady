@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-18 06:20 Daily check (scheduled)
+- Read inbox and Pi status (fresh, 6:00 am): all services active, 41.7 C, disk 12%, no failures, no new Jarvis notes to file (inbox holds only auto reports and studies). v_hold_s250_wild +$1,782 over 172 rounds, v_edge10_s100 +$845 over 708, both unproven. Home Jarvis had 7 empty wake-ups in 24 h (all false); left threshold at 0.8 and offered 0.85 to Kylar in the brief. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (9 days) and KDP re-upload (9 days), both waiting on Kylar. Did not touch the Pi or Kalshi.
+
 ## 2026-11-17 06:20 Daily check (scheduled)
 - Read inbox and Pi status (fresh, 6:00 am): all services active, 42.8 C, disk 12%, no failures, no new Jarvis notes to file (inbox holds only auto reports and studies). Wild-day wallet is running, so queue 122 is moot (left refused; the approval line is not mine to add). v_edge10_s100 +$480 over 623 rounds, unproven. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (8 days) and KDP re-upload (8 days), both waiting on Kylar. Did not touch the Pi or Kalshi.
 
