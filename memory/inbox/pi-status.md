@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 3 hours, 12 minutes; temp 39.5'C; throttled flags 0x0 (0x0 is clean); memory 23%; disk 12%
+- up 3 hours, 42 minutes; temp 39.5'C; throttled flags 0x0 (0x0 is clean); memory 25%; disk 12%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 3 hours; whisper Up 3 hours (healthy); piper Up 3 hours (healthy); pihole Up 3 hours (healthy); homeassistant Up 3 hours
+- containers: openwakeword Up 4 hours; whisper Up 4 hours (healthy); piper Up 4 hours (healthy); pihole Up 4 hours (healthy); homeassistant Up 4 hours
 
 ## Sync and schedule
-- Pi repo copy at: 4e67cb7 30 minutes ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: 2565dce 30 minutes ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue, series-catalog, jarvis-mic, jarvis-watch
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (23 min ago), first lines:
+- supervisor report (53 min ago), first lines:
     MARKET AGENT PROGRESS  Wed 18 Nov 14:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_hold_s5    +0.00 over  970 rounds, wins 0%   (+0.00 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 281.9 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 282.4 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 
