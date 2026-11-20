@@ -2,22 +2,22 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 day, 22 hours, 12 minutes; temp 43.3'C; throttled flags 0x0 (0x0 is clean); memory 26%; disk 12%
+- up 1 day, 22 hours, 42 minutes; temp 40.6'C; throttled flags 0x0 (0x0 is clean); memory 23%; disk 12%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
 - NOT active: none
 - failed units: none
-- containers: openwakeword Up 46 hours; whisper Up 46 hours (healthy); piper Up 46 hours (healthy); pihole Up 46 hours (healthy); homeassistant Up 46 hours
+- containers: openwakeword Up 47 hours; whisper Up 47 hours (healthy); piper Up 47 hours (healthy); pihole Up 47 hours (healthy); homeassistant Up 47 hours
 
 ## Sync and schedule
-- Pi repo copy at: 35f38bd 30 minutes ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: e6caafb 30 minutes ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue, series-catalog, jarvis-mic, jarvis-watch
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (22 min ago), first lines:
+- supervisor report (53 min ago), first lines:
     MARKET AGENT PROGRESS  Fri 20 Nov 09:07
     
     1. ALIVE
@@ -45,7 +45,7 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
             v_x40223631   -93.36 over 1308 rounds, wins 58%   (+33.03 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 324.9 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 325.4 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 
