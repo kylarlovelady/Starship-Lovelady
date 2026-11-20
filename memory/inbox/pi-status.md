@@ -2,7 +2,7 @@
 Freshness = the git commit time of this file. Ages below are counted at the moment of the snapshot.
 
 ## Pi
-- up 1 day, 21 hours, 42 minutes; temp 42.8'C; throttled flags 0x0 (0x0 is clean); memory 23%; disk 12%
+- up 1 day, 22 hours, 12 minutes; temp 43.3'C; throttled flags 0x0 (0x0 is clean); memory 26%; disk 12%
 
 ## Services
 - active: market-agent, phone-voice, tailscaled, docker, hub-dashboard, hub-devices, hub-kdp, hub-lights, hub-memlog, hub-oled, hub-outage, hub-satellite, hub-voice, hub-watchdog
@@ -11,14 +11,14 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
 - containers: openwakeword Up 46 hours; whisper Up 46 hours (healthy); piper Up 46 hours (healthy); pihole Up 46 hours (healthy); homeassistant Up 46 hours
 
 ## Sync and schedule
-- Pi repo copy at: 8bb4d9d 30 minutes ago: Jarvis notes and feedback summary sync
+- Pi repo copy at: 35f38bd 30 minutes ago: Jarvis notes and feedback summary sync
 - last notes sync result: notes pushed to the repo
 - cron jobs (script names): crew-update.sh, market-watchdog, market-supervisor, market-lab, memory_sync.sh, starship-alerts, kalshi-data-sync, task-queue, series-catalog, jarvis-mic, jarvis-watch
 
 ## Markets agent (practice money)
 - agent data last written: 0 min ago; mode shown by the agent: ?; live-run flags: {"live_run_active": false, "last_run_live": false}
-- supervisor report (52 min ago), first lines:
-    MARKET AGENT PROGRESS  Fri 20 Nov 08:07
+- supervisor report (22 min ago), first lines:
+    MARKET AGENT PROGRESS  Fri 20 Nov 09:07
     
     1. ALIVE
       OK    service market-agent is active
@@ -27,25 +27,25 @@ Freshness = the git commit time of this file. Ages below are counted at the mome
     
     2. LEARNING (rounds turned into lessons)
       STUCK 59 of the last 96 rounds were settled by Kalshi and logged
-      OK    +3 new written lessons since the last check (1439 total)
-      OK    entry_stats.json updated 1 min ago
-      OK    exit_rules.json updated 16 min ago
-      OK    patterns.json updated 14 min ago
+      OK    +3 new written lessons since the last check (1442 total)
+      OK    entry_stats.json updated 0 min ago
+      OK    exit_rules.json updated 8 min ago
+      OK    patterns.json updated 6 min ago
       OK    learn_report.json updated 6 min ago
     
     3. PRACTICE SCOREBOARD (fake money, after fees)
-            v_edge10_s100  +690.36 over  866 rounds, wins 12%   (-199.79 over +4 rounds since last check)
-            v_edge10_s100_dd  +403.82 over  866 rounds, wins 12%   (-153.40 over +4 rounds since last check)
-            v_x60222031  +102.41 over 1317 rounds, wins 47%   (-55.07 over +4 rounds since last check)
-            v_snipe_all    +2.70 over 1254 rounds, wins 0%   (+0.00 over +4 rounds since last check)
-            v_hold_s5    +0.00 over 1099 rounds, wins 0%   (+0.00 over +4 rounds since last check)
-            v_x64216772   -55.93 over 1352 rounds, wins 58%   (-30.58 over +4 rounds since last check)
-            v_x60222032   -86.70 over 1317 rounds, wins 59%   (-30.58 over +4 rounds since last check)
-            v_snipe     -96.51 over 1255 rounds, wins 27%   (+0.21 over +4 rounds since last check)
-            v_x40223631  -126.39 over 1304 rounds, wins 58%   (-30.58 over +4 rounds since last check)
+            v_edge10_s100  +765.74 over  870 rounds, wins 12%   (+75.38 over +4 rounds since last check)
+            v_hold_s250_wild  +426.26 over  334 rounds, wins 63%   (+812.47 over +4 rounds since last check)
+            v_edge10_s100_dd  +422.50 over  870 rounds, wins 12%   (+18.68 over +4 rounds since last check)
+            v_x60222031  +194.98 over 1321 rounds, wins 47%   (+92.57 over +4 rounds since last check)
+            v_snipe_all    +2.70 over 1258 rounds, wins 0%   (+0.00 over +4 rounds since last check)
+            v_hold_s5    +0.00 over 1103 rounds, wins 0%   (+0.00 over +4 rounds since last check)
+            v_x64216772   -22.90 over 1356 rounds, wins 58%   (+33.03 over +4 rounds since last check)
+            v_x60222032   -53.67 over 1321 rounds, wins 59%   (+33.03 over +4 rounds since last check)
+            v_x40223631   -93.36 over 1308 rounds, wins 58%   (+33.03 over +4 rounds since last check)
 
 ## Jarvis (phone voice), last 24 h
-- turns: 0; errors: 0; ignored blips: 0; last activity: 324.4 h ago
+- turns: 0; errors: 0; ignored blips: 0; last activity: 324.9 h ago
 - hang-ups: none
 - time to first words: no answers logged yet
 
