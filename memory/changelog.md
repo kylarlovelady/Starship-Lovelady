@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-21 06:20 Daily check (scheduled)
+- Read inbox and Pi status (fresh, 6:00 am): all services active, 43.3 C, disk 12%, no failures, up 2 days 18 h (no new restart). No new Jarvis notes to file (inbox holds only auto reports and studies). Supervisor scoreboard (05:07): v_edge10_s100 +$6.71 over 930 rounds (was +$1,190 over 856), so its profit is gone; v_hold_s250_wild was not in the lines shown, so no fresh number. kalshi-digest.md still empty (header only). Home Jarvis 0 wake-ups in 24 h (mic muted), threshold left at 0.8. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (12 days), KDP re-upload (12 days), kitchen screen Pi (10 days), all waiting on Kylar. ElevenLabs decision is Tue 11-24. Did not touch the Pi or Kalshi.
+
 ## 2026-11-20 06:20 Daily check (scheduled)
 - Read inbox and Pi status (fresh, 6:00 am): all services active, 40 C, disk 12%, no failures, up 1 day 18 h (same reboot as Wednesday). No new Jarvis notes to file (inbox holds only auto reports and studies). v_edge10_s100 +$1,190 over 856 rounds, v_hold_s250_wild +$350 over 320 (down from +$721), both unproven. kalshi-digest.md empty again (header only). Home Jarvis 0 wake-ups in 24 h (mic muted), threshold left at 0.8. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (11 days) and KDP re-upload (11 days), both waiting on Kylar. Nov 24 ElevenLabs decision is 4 days out. Did not touch the Pi or Kalshi.
 
