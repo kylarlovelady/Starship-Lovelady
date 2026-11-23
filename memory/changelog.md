@@ -1,7 +1,7 @@
 # Changelog: what Claude did (newest first)
 
 ## 2026-11-22 21:15 KDP pink made softer (queue 123, waiting on Pi)
-- Kylar asked for a more soft pink. tasks/kdp_series.json scheme g is now Soft pink #E98FB2 with white lettering (was rose #C93C74). Queue 123 rebuilds both g covers (process-operator-g, lab-operator-g); results land in memory/inbox/kdp-preview/<slug>-g. Old rose pink PDF was sent to Kylar Nov 22 but not uploaded.
+- Kylar asked for a more soft pink. tasks/kdp_series.json scheme g is now Soft girly pink #F29BBD with white lettering (was rose #C93C74). Queue 123 rebuilds both g covers (process-operator-g, lab-operator-g); results land in memory/inbox/kdp-preview/<slug>-g. Old rose pink PDF was sent to Kylar Nov 22 but not uploaded.
 
 ## 2026-11-22 06:20 Daily check (scheduled)
 - Read inbox and Pi status (fresh, 6:00 am): all services active, 41.7 C, disk 12%, no failures, up 3 days 18 h (no new restart). No new Jarvis notes to file (inbox holds only auto reports and studies). Supervisor scoreboard (05:07) did not list v_edge10_s100 or v_hold_s250_wild, so no fresh number. kalshi-digest.md still empty. Home Jarvis 0 wake-ups in 24 h (mic muted), threshold left at 0.8. Wrote memory/brief.md and updated the projects.md header. Flagged stalled: Kalshi API key (13 days), KDP re-upload (13 days), kitchen screen Pi (11 days), all waiting on Kylar. ElevenLabs decision is Tue 11-24. Did not touch the Pi or Kalshi.
