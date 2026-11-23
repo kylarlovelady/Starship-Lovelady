@@ -1,6 +1,4 @@
-    +112.11  total  +6346.42
-  Mon 09 06:45  DOWN 2760 @ 17c  stake    473  result UP     -499.95  total  +5846.47
-  Mon 09 07:00  UP   2758 @ 17c  stake    473  result DOWN   -499.87  total  +5346.60
+e    473  result DOWN   -499.87  total  +5346.60
   Mon 09 07:15  DOWN    8 @ 63c  stake      5  result DOWN     +2.82  total  +5349.42
   Mon 09 07:30  UP    895 @ 54c  stake    484  result DOWN   -499.49  total  +4849.93
   Mon 09 07:45  UP     10 @ 55c  stake      6  result UP       +4.32  total  +4854.25
@@ -494,3 +492,9 @@ STRATEGY BY KIND OF DAY: total profit (rounds) | profit per round
 
 ## 2026-11-16 04:43:02 tasks/queue/122-check-wild-variant.sh
 REFUSED: header must be '#!/bin/bash' then '# QUEUE-OK'
+
+## 2026-11-22 21:10:02 tasks/queue/123-kdp-soft-pink.sh
+```
+KDP black-gold + pink build started in the background (log ~/kdp-build-g.log)
+(exit 0)
+```
