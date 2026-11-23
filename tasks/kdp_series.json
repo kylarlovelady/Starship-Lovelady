@@ -7,7 +7,7 @@
     "c": {"name": "Burgundy", "bg": "#4D1E28"},
     "e": {"name": "Orchid purple", "bg": "#5B2A6E"},
     "f": {"name": "Black and gold", "bg": "#0C0C0E", "fg": "#D6B45A"},
-    "g": {"name": "Soft pink", "bg": "#F29BBD", "fg": "#FFFFFF"}
+    "g": {"name": "Soft pink", "bg": "#FFBFD8", "fg": "#FFFFFF"}
   },
   "titles": {
     "process-operator": {"lines": ["PROCESS", "OPERATOR"], "role": "process operators", "log_words": "handoffs", "keyword_job": "Plant operator gifts"},

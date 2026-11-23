@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-22 21:30 KDP pink still too dark, lighter bg (queue 124, waiting on Pi)
+- Built cover measured about rgb(232,142,177): the grain/linen overlay darkens the requested colour by about 10. Scheme g bg now #FFBFD8 so the printed result is a soft pastel pink. Queue 124 rebuilds the g covers. Queue 122 was refused earlier (missing '# QUEUE-OK' header); the wild-day variant check is still not done.
+
 ## 2026-11-22 21:15 KDP pink made softer (queue 123, waiting on Pi)
 - Kylar asked for a more soft pink. tasks/kdp_series.json scheme g is now Soft girly pink #F29BBD with white lettering (was rose #C93C74). Queue 123 rebuilds both g covers (process-operator-g, lab-operator-g); results land in memory/inbox/kdp-preview/<slug>-g. Old rose pink PDF was sent to Kylar Nov 22 but not uploaded.
 
