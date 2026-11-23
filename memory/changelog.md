@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-22 22:00 KDP pink choice: cotton candy (g, built) vs bubblegum (h, queue 125)
+- Kylar is choosing between Cotton candy #FFBFD8 (scheme g, already built and sent) and Bubblegum #F7A8C8 (new scheme h). Queue 125 builds h for both titles into memory/inbox/kdp-preview/<slug>-h. Correction to the 21:30 entry: the build does NOT darken colours (the 232,142,177 reading was the earlier #E98FB2 run); the lighter pink was still the right call.
+
 ## 2026-11-22 21:30 KDP pink still too dark, lighter bg (queue 124, waiting on Pi)
 - Built cover measured about rgb(232,142,177): the grain/linen overlay darkens the requested colour by about 10. Scheme g bg now #FFBFD8 so the printed result is a soft pastel pink. Queue 124 rebuilds the g covers. Queue 122 was refused earlier (missing '# QUEUE-OK' header); the wild-day variant check is still not done.
 
