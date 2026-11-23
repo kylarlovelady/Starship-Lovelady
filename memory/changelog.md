@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-23 13:00 Kalshi update for Kylar (queue 126, waiting on Pi)
+- tasks/queue/126-kalshi-update-1123.sh: read-only forward review since Nov 16 and Nov 11, wallet curves, and whether v_hold_s250_wild loaded. Result: memory/inbox/kalshi-update-1123.md. (Queue 122 was refused on its header earlier; this covers its job.)
+
 ## 2026-11-23 06:20 Daily check (scheduled)
 - Read inbox and Pi status (fresh, 6:00 am): all services active, 43.9 C, disk 12%, no failures, up 4 days 18 h (no new restart). No new Jarvis notes to file (inbox holds only auto reports and studies). Supervisor scoreboard (05:07) did not list v_edge10_s100 or v_hold_s250_wild, so no fresh number. kalshi-digest.md still empty (header only). Queue 125 ran: KDP bubblegum (h) covers built for both titles, waiting on Kylar's pink choice (g vs h). Home Jarvis 0 wake-ups in 24 h (mic muted), threshold left at 0.8. Wrote memory/brief.md. Flagged stalled: Kalshi API key (14 days), KDP re-upload (14 days), kitchen screen Pi (12 days), all waiting on Kylar. ElevenLabs decision is tomorrow noon. Did not touch the Pi or Kalshi.
 
