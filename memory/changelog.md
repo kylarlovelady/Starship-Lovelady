@@ -1,5 +1,8 @@
 # Changelog: what Claude did (newest first)
 
+## 2026-11-23 13:20 Kalshi update read and filed
+- Results of queue 126 summarised in memory/kalshi-ai.md (2026-11-23 UPDATE) with Kylar's own early-exit strategy described for a practice test. Next: get his trend/entry/exit rules tonight and build it as a practice wallet.
+
 ## 2026-11-23 13:00 Kalshi update for Kylar (queue 126, waiting on Pi)
 - tasks/queue/126-kalshi-update-1123.sh: read-only forward review since Nov 16 and Nov 11, wallet curves, and whether v_hold_s250_wild loaded. Result: memory/inbox/kalshi-update-1123.md. (Queue 122 was refused on its header earlier; this covers its job.)
 
