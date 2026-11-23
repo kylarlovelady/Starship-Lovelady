@@ -1,5 +1,4 @@
-   895 @ 54c  stake    484  result DOWN   -499.49  total  +4849.93
-  Mon 09 07:45  UP     10 @ 55c  stake      6  result UP       +4.32  total  +4854.25
+
   Mon 09 08:00  DOWN    9 @ 59c  stake      5  result DOWN     +3.53  total  +4857.78
   Mon 09 08:15  UP    762 @ 64c  stake    488  result UP     +262.20  total  +5119.98
   Mon 09 08:30  DOWN  763 @ 64c  stake    487  result DOWN   +263.25  total  +5383.23
@@ -500,5 +499,11 @@ KDP black-gold + pink build started in the background (log ~/kdp-build-g.log)
 ## 2026-11-22 21:25:02 tasks/queue/124-kdp-softer-pink.sh
 ```
 KDP black-gold + pink build started in the background (log ~/kdp-build-g.log)
+(exit 0)
+```
+
+## 2026-11-22 21:58:01 tasks/queue/125-kdp-bubblegum.sh
+```
+KDP black-gold + pink build started in the background (log ~/kdp-build-h.log)
 (exit 0)
 ```
