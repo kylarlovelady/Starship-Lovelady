@@ -1,5 +1,9 @@
 # Changelog: what Claude did (newest first)
 
+
+## 2026-11-24 06:18 Daily check (scheduled)
+- Read inbox and Pi status (fresh, 6:00 am): all services active, 43.9 C, disk 12%, no failures, up 5 days 18 h. No new Jarvis notes to file (inbox holds only auto reports and studies; all earlier Kalshi updates already filed). Forward review shows v_edge10_s100 -$1,267 over 245 rounds since Nov 16, still unproven/losing. kalshi-digest.md still empty. Home Jarvis 0 wake-ups in 24 h (mic muted), threshold left at 0.8. Phone Jarvis idle 417 h. Updated projects.md and wrote memory/brief.md. Stalled and waiting on Kylar: Kalshi API key (15 days), KDP re-upload (15 days), pink choice (2 days), kitchen screen Pi (13 days). ElevenLabs decision due today noon. Did not touch the Pi or Kalshi. Push status: see git log.
+
 ## 2026-11-23 13:20 Kalshi update read and filed
 - Results of queue 126 summarised in memory/kalshi-ai.md (2026-11-23 UPDATE) with Kylar's own early-exit strategy described for a practice test. Next: get his trend/entry/exit rules tonight and build it as a practice wallet.
 
